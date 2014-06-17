@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+#-*-python-*-
+
+#### Add py directory to path
+import sys, os.path
+import webbrowser
+sys.path.append( os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),
+                                              'py')) )
+
+#### Load needed modules
+from rattest import RatTest, RatHtml, make_template
+
+#### Parse command line options
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option('-u', '--update',
+                  action='store_true', dest='update', default=False,
+                  help='Update "standard" histogram with current results')
+
+parser.add_option('-m', '--regen-mc',
+                  action='store_true', dest='regen_mc', default=False,
+                  help='Force Monte Carlo to be regenerated')
+
+parser.add_option('-r', '--regen-plots',
+                  action='store_true', dest='regen_plots', default=False,
+                  help='Force histograms to be regenerated')
+
+parser.add_option('-t', '--text-only',
+                  action='store_false', dest='web', default=True,
+                  help='Do not open web pages with plots')
+                  
+
+parser.add_option('--make-template', action='store', dest='template', default=None,
+                  help='''Write a template rattest to current directory for you to edit.
+Supplied name is used for .mac and .C files.''')
+                  
+options, args = parser.parse_args()
+
+if options.template:
+    make_template(options.template)
+    print 'Writing test template to current directory...'
+    sys.exit()
+
+if len(args) == 0: args = ['.']
+
+#### Open runfile
+configname = 'rattest.config'
+htmlname = 'results.html'
+success = True
+for arg in args:
+    for dirpath, dirnames, filenames in os.walk(arg):
+        if configname in filenames:
+            testcase = RatTest(os.path.join(dirpath, configname))
+            if options.update:
+                testcase.update(regen_mc=options.regen_mc, regen_plots=options.regen_plots)
+
+            testcase_html = RatHtml(os.path.join(dirpath, htmlname))
+            result = testcase.run(regen_mc=options.regen_mc, regen_plots=options.regen_plots,
+                                  html=testcase_html)
+            testcase_html.write()
+            if options.web:
+                webbrowser.open('file://'+os.path.abspath(testcase_html.htmlname), new=1)
+            success = success and result
+            
+if not success:
+    sys.exit(1)
+
+            

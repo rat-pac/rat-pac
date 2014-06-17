@@ -1,0 +1,234 @@
+#-*-python-*-
+# SCons file to create Environment() for building RAT applications.
+
+import os
+from buildhelp import RATROOT, ROOTARCH, testenv, RATVERSION, RATVERSIONSTR
+
+env = Environment()
+
+#### Configuration Check: CheckCurlConfig
+def CheckCurlConfig(context):
+    context.Message('Checking for curl-config... ')
+    ret = context.TryAction('curl-config --version')
+    context.Result(ret[0])
+    return ret[0]
+
+#### Builder: RATHeader(header file)
+#
+# Copies header file to $RATROOT/include/RAT.  Modules keep their header
+# files in their respective src/ subdirectories. However, it is convenient
+# to have them all in one place to reduce the number of -I flags needed
+# for g++.
+#
+# For now, only use this builder on one header file at a time.  No source
+# lists.
+
+def ratheader_emitter(target, source, env):
+    'Returns target filenames in $RATROOT/include dir for given source files.'
+    target = [File(os.path.join(env['RATROOT'], 'include', 'RAT',
+                                env['INCLUDE_SUBDIR'],
+                                os.path.basename(str(s))))
+              for s in source]
+    return target, source
+
+def copy_generator(source,target,env,for_signature):
+    'Tell SCons how to "create" a header file (by copying it).'
+    return Copy(target[0],source[0])
+
+# Tell SCons how to "build" a header file (by copying it using ratheader_emitter above).
+ratheader = Builder(generator=copy_generator,
+                    emitter=ratheader_emitter)
+####
+
+#### Builder: RATApp([list of source files])
+#
+# Compiles and links source files into full RAT application.  Links
+# against static RAT library, and includes default rat.cc main function.
+# If you want to supply your own main function instead, set the 'mymain'
+# attribute in your environment:
+#
+# env['mymain'] = True
+# env.RATApp('myapp', ['mymain.cc', 'foo.cc', 'bar.cc'])
+
+def ratapp_emitter(target, source, env):
+    'Appends RAT library and appropriate main source file to source list.'
+    if not env.has_key('mymain') or not env['mymain']:
+        source += [ env['RATMAIN'] ]
+        
+    return (target, source + [env['RATLIB']])
+
+ratapp = Builder(action=env['BUILDERS']['Program'].action,
+                 emitter=ratapp_emitter)
+
+def ratapp_nomain_emitter(target, source, env):
+    'Appends RAT library and appropriate main source file to source list.'
+    return (target, source + [env['RATLIB']])
+
+ratapp_nomain = Builder(action=env['BUILDERS']['Program'].action,
+                        emitter=ratapp_nomain_emitter)
+
+####
+
+
+#### Create Environment for compiling RAT applications
+
+rootopts = SConscript('ROOT.scons')
+g4opts = SConscript('GEANT4.scons')
+arch = SConscript('ARCH.'+ROOTARCH)
+
+for key in ['CXX', 'CC']:
+    if os.environ.has_key(key):
+        kwargs = { key : os.environ[key] }
+        env.Replace(**kwargs)
+    elif arch.has_key(key):
+        kwargs = { key : arch[key] }
+        env.Replace(**kwargs)
+
+env.Append(ENV=os.environ,
+           CPPPATH=['#/include', '#/include/RAT'],  # FIXME: remove second
+           CPPDEFINES=[('KL_USE_ROOT', 1),
+                       # Hack around GLG4sim bug
+                       ('RATVERSION', RATVERSION),
+                       ('RATVERSIONSTR', '\\"'+RATVERSIONSTR+'\\"'),
+                       ],
+           LIBPATH=['#/lib']
+           )
+
+# Add architecture-dependent flags, GEANT4, and ROOT
+env.Append(**arch['default'])
+env.Append(**rootopts)
+env.Append(**g4opts)
+
+conf = Configure(env, custom_tests={'CheckCurlConfig' : CheckCurlConfig})
+# Add flags for curl if present
+if conf.CheckCurlConfig():
+    conf.env.ParseConfig('curl-config --cflags --libs')
+    conf.env.Append(CPPDEFINES=[('__HAS_CURL', 1)])
+
+# Build with bzip2 support if header can be found
+if conf.CheckLibWithHeader('bz2', 'bzlib.h', 'c'):
+    conf.env.Append(CPPDEFINES=[('__HAS_BZ2', 1)])
+
+#Build with zlib support if header can be found                  
+if conf.CheckLibWithHeader('z','zlib.h','c'):
+    conf.env.Append(CPPDEFINES=[('_HAS_Z',1)])
+
+# Turn on G4 visualization
+conf.env.Append(CPPDEFINES=[('G4VIS_USE',1)])
+
+env = conf.Finish()
+
+# Add flags for OpenMP if supported
+default_openmp=0
+gcc_parts = env['CXXVERSION'].split('.')
+gcc_major = int(gcc_parts[0])
+gcc_minor = int(gcc_parts[1])
+gcc_combo = gcc_major * 100 + gcc_minor
+if gcc_combo >= 402 and int(ARGUMENTS.get('openmp', default_openmp)):
+    env.Append(**arch['OpenMP'])
+
+# GCC 4.3 and later fails with GEANT4 headers
+if gcc_combo >= 403:
+    env.Append(CXXFLAGS='-Wno-unused-result')
+
+# Add flags from the shell environment
+user_controlled_vars = ['CPPFLAGS', 'CXXFLAGS', 'LDFLAGS']
+envdict = {}
+for envvar in user_controlled_vars:
+        if envvar in os.environ:
+                envdict[envvar] = os.environ[envvar]
+env.Append(**envdict)
+
+# Add flags from the command line
+envdict = {}
+for envvar in user_controlled_vars:
+        if envvar in ARGUMENTS:
+                envdict[envvar] = ARGUMENTS.get(envvar)
+env.Append(**envdict)
+
+# Add optional build flags
+# These use command line arguments:
+#  scons profile=1
+#  scons debug=1
+#  scons opt=1
+#
+# Also checks environment variables:
+#  G4DEBUG=1
+#  G4OPTIMISE=1 or G4OPTIMIZE=1
+
+profile = int(ARGUMENTS.get('profile', 0)) == 1
+if profile:
+    env.Append(CXXFLAGS=arch['PROFILEFLAGS'])
+    env.Append(LINKFLAGS=arch['PROFILEFLAGS'])
+    debugdefault = 1
+else:
+    debugdefault = 0
+
+
+# Detect and add CUDA support.  Default to use CUDA if nvcc found.
+# Override with command line argument cuda=0
+default_cuda = 1
+if 'CUDA_TOOLKIT_PATH' in os.environ:
+    env.Append(CUDA_TOOLKIT_PATH=os.environ['CUDA_TOOLKIT_PATH'])
+if 'CUDA_SDK_PATH' in os.environ:
+    env.Append(CUDA_SDK_PATH=os.environ['CUDA_SDK_PATH'])
+if env.Detect('nvcc') and int(ARGUMENTS.get('cuda', default_cuda)):
+    env.Tool('cuda', toolpath=[os.path.join(RATROOT, 'python')])
+
+    env.Append(CPPFLAGS='-D__CUDA -isystem /usr/local/cuda/include')
+    # Allow user to override NVCC flags
+    if 'NVCCFLAGS' in os.environ:
+        env['NVCCFLAGS'] = os.environ['NVCCFLAGS']
+    if 'NVCCFLAGS' in ARGUMENTS:
+        env['NVCCFLAGS'] = ARGUMENTS['NVCCFLAGS']
+
+
+debug = int(ARGUMENTS.get('debug', debugdefault)) == 1
+if debug:
+    env.Append(CXXFLAGS=arch['DEBUGFLAGS'])
+    env.Append(LINKFLAGS=arch['DEBUGFLAGS'])
+    
+if debug:
+    optdefault = 0
+else:
+    optdefault = 1
+    
+opt = int(ARGUMENTS.get('opt', optdefault)) == 1
+if opt:
+    env.Append(CXXFLAGS=arch['OPTFLAGS'])
+
+
+# Add arch-dependent flags needed by extra packages (X11, OpenGL, etc.)
+for pkg in env['ARCHEXTRA']:
+    env.Append(**arch[pkg])
+
+#### Set other useful RAT-specific variables
+
+# Put all intermediate build targets into build/[ROOTARCH] directory
+# This allows multiple platforms to be compiled in same RAT tree
+env['BUILDDIR'] = os.path.join('#/build', ROOTARCH)
+env.BuildDir(env['BUILDDIR'], '#/', duplicate=0)
+
+env['RATROOT'] = RATROOT
+# Static library name for linking to RAT applications
+env['RATLIB'] = os.path.join(RATROOT, 'lib', 'librat.a')
+# Shared library name loaded into ROOT for scripts
+env['RATSOLIB'] = os.path.join(RATROOT, 'lib', 'libRATEvent.so')
+env['RATBIN'] = os.path.join(RATROOT, 'bin', 'rat')
+# Name of source file containing default main function
+env['RATMAIN'] = env.Object(os.path.join(env['BUILDDIR'], 'rat.cc'))
+
+env['ROOTCINT_INCFLAGS'] = ['-I$RATROOT/include/RAT',
+                            '-I$RATROOT/include/RAT/DS']
+
+env.Append(BUILDERS={'RATApp' : ratapp,
+                     'RATAppNoMain' : ratapp_nomain,
+                     'RATHeader' : ratheader})
+
+# Allows user-compiled apps to find rat.cc main function.
+env.Repository('$RATROOT')
+    
+# Return enviroment object to caller who loaded us this way:
+#
+# env = SConscript('$RATROOT/config/RAT.scons')
+Return('env')

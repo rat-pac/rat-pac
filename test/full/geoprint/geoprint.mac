@@ -1,0 +1,27 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "cylinder"
+/rat/db/set DETECTOR geometry "cylinder/cylinder.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+
+/rat/proc count
+/rat/procset update 1000
+
+
+/rat/proc outroot
+/rat/procset file "geoprint.root"
+
+# END EVENT LOOP
+/tracking/storeTrajectory 1
+
+/generator/add combo gun:point
+/generator/vtx/set geantino 0 0 0 0.020
+/generator/pos/set 100 0 0
+/generator/rate/set 1
+
+/run/beamOn 100000

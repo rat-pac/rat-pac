@@ -1,0 +1,254 @@
+#!/usr/bin/env python
+
+import os, sys, bz2, struct
+import optparse
+import couchdb
+import json
+from rat import *
+
+def init(server, dbname, args):
+    '''Creates a new database on the CouchDB server and sets up the views required for use with RAT.'''
+
+    if dbname in server:
+        print 'Database "%s" already exists on server.  Updating views only.' % (dbname,)
+    else:
+        server.create(dbname)
+        print 'Created database "%s".' % (dbname,)
+        
+    update_views(server, dbname, [])
+
+def update_views(server, dbname, args):
+    '''Update CouchDB views in database to latest version.'''
+    db = server[dbname]
+    
+    design_doc = os.path.join(os.environ['RATROOT'], 'data', 'ratdb_couchdb.json')
+    doc = json.load(open(design_doc))
+    
+    # Set revision number for update
+    if doc['_id'] in db:
+        olddoc = db[doc['_id']]
+        doc['_rev'] = olddoc['_rev']
+        
+    db.save(doc)
+    print 'Views in database have been updated.'
+
+def pack_int_array(x):
+    return struct.pack('<'+str(len(x))+'i', *x)
+
+def unpack_int_array(a):
+    size = len(a) / 4
+    return struct.unpack('<'+str(size)+'i', a)
+
+def pack_double_array(y):
+    return struct.pack('<'+str(len(y))+'d', *y)
+
+def unpack_double_array(a):
+    size = len(a) / 8
+    return struct.unpack('<'+str(size)+'d', a)
+
+def ratdb_to_json_iter(filename):
+    tables = RAT.DB.ReadRATDBFile(filename)
+    for table in tables:
+        json = {'name' : table.GetName(),
+                'index' : table.GetIndex()}
+        
+        if table.GetFieldType('run_range') != RAT.DBTable.INTEGER_ARRAY:
+            print 'Error: Only tables with a run_range can be uploaded!: %s[%s]' % (table.GetName(), table.GetIndex())
+            sys.exit(1)
+        
+        json['run_range'] = table.GetIArray('run_range')
+        attachments = {}
+
+        fieldlist = table.GetFieldList()
+        for i,field in enumerate(fieldlist):
+            fieldtype = table.GetFieldType(field)
+            if fieldtype == RAT.DBTable.INTEGER:
+                val = table.GetI(field)
+            elif fieldtype == RAT.DBTable.DOUBLE:
+                val = table.GetD(field)
+            elif fieldtype == RAT.DBTable.STRING:
+                val = table.GetS(field)
+            elif fieldtype == RAT.DBTable.INTEGER_ARRAY:
+                val = list(table.GetIArray(field))
+                if len(val) > 2000:
+                    attachments[field] = (pack_int_array(val),
+                                          'vnd.rat/array-int')
+                    continue
+            elif fieldtype == RAT.DBTable.DOUBLE_ARRAY:
+                val = list(table.GetDArray(field))
+                if len(val) > 2000:
+                    attachments[field] = (pack_double_array(val),
+                                          'vnd.rat/array-double')
+                    continue
+            elif fieldtype == RAT.DBTable.STRING_ARRAY:
+                val = list(table.GetSArray(field))
+            elif fieldtype == RAT.DBTable.JSON:
+                val = json.loads(table.GetJSON(field).toStyledString())
+            json[field] = val
+            
+        yield json, attachments
+
+
+def force_view_refresh(db):
+    print >>sys.stderr, 'Recalculating views (this may take a few seconds)'
+    len(db.view('_design/ratdb/_view/select').rows)
+
+def replace(server, dbname, args):
+    '''Replace an existing RATDB table on the server'''
+    replace_or_upload(server, dbname, True, args)
+
+def upload(server, dbname, args):
+    '''Upload new RATDB tables to the server.'''
+    replace_or_upload(server, dbname, False, args)
+    
+def replace_or_upload(server, dbname, overwrite, args):
+    '''Does the work for replace and upload commands, depending on whether overwrite is True or False.'''
+    db = server[dbname]
+    
+    for filename in args:
+        for json, attachments in ratdb_to_json_iter(filename):
+            docid = '%s_%s_%d_%d' % (json['name'], json['index'],
+                                     json['run_range'][0], json['run_range'][1]) 
+            json['_id'] = docid
+            if docid in db:
+                if overwrite:
+                    json['_rev'] = db[docid]['_rev']
+                    print 'Replacing %s...' % (docid,)
+                else:
+                    print 'Document %s already exist.  Please use "ratdb replace" to overwrite documents.' % (docid,)
+                    sys.exit(1)
+            else:
+                print 'Uploading %s...' % (docid,)
+            db.save(json)
+            
+            for key, (contents, mimetype) in attachments.items():
+                print 'Uploading array field %s to %s...' % (key, docid)
+                db.put_attachment(json, contents, key, mimetype)
+
+
+    force_view_refresh(db)
+    
+def dump(server, dbname, args):
+    '''Dump all tables for given runs to bzip2 compressed files.'''
+
+    db = server[dbname]
+    for arg in args:
+        if '-' in arg:
+            start, stop = map(int, arg.split('-'))
+        else:
+            start = int(arg)
+            stop = start
+            
+        for run in xrange(start, stop+1):
+            filename = 'tables_%d.ratdb.bz2' % (run)
+            f = bz2.BZ2File(filename, 'wb');
+            
+            print >>sys.stderr, 'Writing %s:' % (filename, ),
+            tables = db.view('_design/ratdb/_view/run', key=run, include_docs=True).rows
+            for table in tables:
+                doc = table.doc
+                # Expand out any large attached arrays
+                if '_attachments' in doc:
+                    attachments = doc['_attachments']
+                    del doc['_attachments']
+                else:
+                    attachments = {}
+                for fieldname, info in attachments.items():
+                    if info['content_type'] == 'vnd.rat/array-int':
+                        doc[fieldname] = unpack_int_array(db.get_attachment(doc['_id'], fieldname).read())
+                    elif info['content_type'] == 'vnd.rat/array-double':
+                        doc[fieldname] = unpack_double_array(db.get_attachment(doc['_id'], fieldname).read())
+                    else:
+                        print >>sys.stderr, 'Unknown array type for', fieldname, 'in', table['_id']
+                        assert False
+                
+                json.dump(doc, f)
+                f.write('\n')
+                print >>sys.stderr, ' %s[%s]' % (doc['name'], doc['index']), 
+            print >>sys.stderr
+            f.close()
+
+def append(server, dbname, args):
+    '''Upload a table to the database, setting the run range to the next N runs.
+    Will grab the last run for this table and reset its range to one less than the first run of the new table.'''
+    db = server[dbname]
+    filename = args[0]
+    run_increment = int(args[1])
+    
+    for newjson, newattach in ratdb_to_json_iter(filename):
+        new_first_run = newjson['run_range'][0]
+        
+        # Grab last table in database for this name and index
+        key = [newjson['name'], newjson['index'], {}]
+        results = db.view('_design/ratdb/_view/select', startkey=key, descending=True, limit=1, include_docs=True).rows
+        if len(results) == 1:
+            olddoc = results[0].doc
+            
+            if olddoc['run_range'][0] >= new_first_run:
+                print >>sys.stderr, "Error: New table has start run before the start run of another table already in database."
+                sys.exit(1)
+            
+            # Truncate range if extends past new table
+            if olddoc['run_range'][1] > new_first_run:
+                # Copy this document to a new id (use copy to get attachments)
+                revised_old_last_run = new_first_run - 1
+                revised_old_docid = '%s_%s_%d_%d' % (olddoc['name'], olddoc['index'], olddoc['run_range'][0], revised_old_last_run)
+                print >>sys.stderr, 'Copying %s to %s...' % (olddoc['_id'], revised_old_docid)
+                db.copy(olddoc['_id'], revised_old_docid)
+            
+                # Reset the range value
+                revised_olddoc = db.get(revised_old_docid)
+                revised_olddoc['run_range'][1] = revised_old_last_run
+                db.save(revised_olddoc)
+            
+                # Remove the original last document
+                print >>sys.stderr, 'Removing %s...' % (olddoc['_id'],)
+                db.delete(olddoc)
+            
+        newjson['run_range'][1] = new_first_run + run_increment
+        newdocid = '%s_%s_%d_%d' % (newjson['name'], newjson['index'],
+                                 newjson['run_range'][0], newjson['run_range'][1]) 
+        newjson['_id'] = newdocid
+        print >>sys.stderr, 'Uploading %s...' % (newdocid,)
+        db.save(newjson)
+         
+        for key, (contents, mimetype) in newattach.items():
+            print >>sys.stderr, 'Uploading array field %s to %s...' % (key, newdocid)
+            db.put_attachment(newjson, contents, key, mimetype)
+        
+
+#######################
+
+commands = {
+    'init' : init,
+    'update_views' : update_views,
+    'upload' : upload,
+    'replace' : replace,
+    'dump' : dump,
+    'append' : append,
+}
+
+def main():
+    parser = optparse.OptionParser()
+    parser.add_option('-s', '--server', dest='server_url', help='URL to CouchDB server',
+                      default='http://localhost:5984/')
+    parser.add_option('-d', '--dbname', dest='dbname', help='Name of database on server',
+                      default='ratdb')
+
+    (options, args) = parser.parse_args()
+    
+    if len(args) == 0 or args[0] == 'help':
+        print 
+    
+    print 'Connecting to CouchDB at', options.server_url
+    
+    server = couchdb.Server(options.server_url)
+    if args[0] not in commands:
+        print 'Unknown command:', args[0]
+        
+    commands[args[0]](server, options.dbname, args[1:])
+    
+    
+if __name__ == '__main__':
+    main()
+    

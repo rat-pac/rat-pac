@@ -1,0 +1,51 @@
+#!/bin/bash
+# Configure script
+# Run once when you unpack source
+
+### Check for GEANT4 install
+
+if [ -x geant4-config ]; then
+    echo 'geant4-config not present.  Please install GEANT4 and source the geant4.sh script.'
+    exit 1
+fi
+
+### Create environment files
+ratroot=`pwd`
+
+cat > env.sh <<EOF
+#!/bin/sh
+RATROOT=$ratroot
+PATH=\$RATROOT/bin:\$PATH
+LD_LIBRARY_PATH=\$RATROOT/lib:\$LD_LIBRARY_PATH
+# For Mac OS X
+DYLD_LIBRARY_PATH=\$RATROOT/lib:\$DYLD_LIBRARY_PATH
+GLG4DATA=\$RATROOT/data
+PYTHONPATH=\$RATROOT/python:\$PYTHONPATH
+export RATROOT PATH LD_LIBRARY_PATH DYLD_LIBRARY_PATH GLG4DATA PYTHONPATH
+EOF
+
+cat > env.csh <<EOF
+#!/bin/csh
+setenv RATROOT $ratroot
+setenv PATH "\$RATROOT/bin:\$PATH"
+if ({\$?LD_LIBRARY_PATH}) then
+  setenv LD_LIBRARY_PATH "\${RATROOT}/lib:\$LD_LIBRARY_PATH"
+else
+  setenv LD_LIBRARY_PATH "\${RATROOT}/lib"
+endif
+
+# For Mac OS X
+if ({\$?DYLD_LIBRARY_PATH}) then
+  setenv DYLD_LIBRARY_PATH "\${RATROOT}/lib:\$DYLD_LIBRARY_PATH"
+else
+  setenv DYLD_LIBRARY_PATH "\${RATROOT}/lib"
+endif
+
+if ({\$?PYTHONPATH}) then
+  setenv PYTHONPATH "\$RATROOT/python:\$PYTHONPATH"
+else
+  setenv PYTHONPATH "\$RATROOT/python"
+endif
+setenv GLG4DATA "\$RATROOT/data"
+EOF
+

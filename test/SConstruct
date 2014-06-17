@@ -1,0 +1,43 @@
+#-*-python-*-
+# SConstruct file for compiling unit tests.
+#
+# Assumes all Test*.hh in the current directory contain CxxTest-style unit
+# tests.
+
+
+appname = 'testrat'
+append_platform_name = False
+
+####
+
+import os
+import glob
+from buildhelp import RATENVFILE, ROOTARCH, build_list
+
+env = SConscript(RATENVFILE)
+
+#### Builder: CxxTest(name of test file, [list of test headers])
+#
+# Generates CxxTest test-runner source file from set of header files.
+
+cxxtest = Builder(action='./cxxtestgen.pl --error-printer -o $TARGET $SOURCES')
+env.Append(BUILDERS={ 'CxxTest' : cxxtest })
+####
+
+
+env['mymain'] = True
+env.Append(CPPPATH='#') # For cxxtest/ in current dir
+
+if append_platform_name:
+    appname += "_" + ROOTARCH
+
+#### Target: cxxtest harness
+testcc = env.CxxTest(os.path.join(env['BUILDDIR'],'testrat.cc'),
+                     glob.glob('Test*.hh'))
+testobj = env.Object(testcc)
+testapp = env.RATApp(appname, testobj)
+env.Default(testapp)
+
+#### Target: Execute cxxtest harness
+runtest = env.Command('runtest', testapp, './$SOURCE')
+env.Alias('test', runtest)

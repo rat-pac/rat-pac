@@ -1,0 +1,13 @@
+/** Spectra definitions for VertexGen_Spectrum generator */
+{
+name: "SPECTRUM",
+index: "flat",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+// default spectrum is flat
+spec_e:     [ 1.00, 1.50, 2.00, 2.50, 3.00, 3.50, 4.00, 4.50, 5.00], // (MeV) 
+// (Note that first point is minimum of spectrum, last is maximum)
+spec_mag:   [ 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.00], // don't worry about normalisation 
+}
+

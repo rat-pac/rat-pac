@@ -1,0 +1,41 @@
+/* Sample RATDB file: used by unit tests in TestTextLoader.h */
+
+{
+name: "MEDIA",
+valid_begin: [0, 0],   // special value meaning "use this by default"
+valid_end: [0, 0],      // Notice you can use C and C++ style comments
+index: "vacuum",                // media code
+
+media_name: "Vacuum",
+optical_flag: 1,  // Integer
+
+/* Refraction */
+refractive_index: 1.0, // Float
+refractive_index_img: 0.0, // Mean imaginary refractive index
+refractive_index_poly: [ 1.0, 0.0, 0.0], // Polynomial for refractive index as function of wavelength
+
+/* Absorption */
+absorb_coeff_scaling: 1.0,
+absorb_coeff_data_wl: [ 220.0, 800.0], // Measured wavelengths
+absorb_coeff_data_abs: [ 1.0e-6, 1.0e-6], // Measured absorption at those wavelengths
+}
+
+{
+name: "MEDIA",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+index: "h2o",
+
+media_name: "Light water",
+optical_flag: 1,
+
+/* Refraction */
+refractive_index: 1.342, 
+refractive_index_img: 0.0, // Mean imaginary refractive index
+refractive_index_poly: [ 1.302, 0.01562, 0.32], // Polynomial for refractive index as function of wavelength
+
+/* Absorption */
+absorb_coeff_scaling: 1.0,
+absorb_coeff_data_wl: [ 250.0, 350.0, 400.0, 450.0, 500.0, 548.0, 578.0], // Measured wavelengths
+absorb_coeff_data_abs: [  1.0e-5, 1.0e-5, 1.3e-5, 6.0e-5,  2.0e-4,  5.8e-4,  9.2e-4], // Measured absorption at those wavelengths
+}

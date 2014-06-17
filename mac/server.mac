@@ -1,0 +1,18 @@
+# Example of using ratserve utility to farm out "difficult" processors
+# to a grid of CPUs or a system with a shared resource (e.g. GPU)
+#
+# You must start this script with ratserve:
+# ratserve 7770 7770 server.mac
+
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "demo"
+/rat/db/set DETECTOR geo_file "demo/cylinder.mac"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc fitcentroid
+#END EVENT LOOP
+

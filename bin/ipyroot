@@ -1,0 +1,5 @@
+#!/usr/bin/env ipython
+
+import ipyroot
+from rat import *
+from ROOT import *

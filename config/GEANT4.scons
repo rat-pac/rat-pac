@@ -1,0 +1,22 @@
+#-*-python-*-
+# GEANT4 configuration for SCons
+
+import os
+from buildhelp import RATROOT, testenv
+
+# Build a temporary GEANT4 environment to hold compile/link flags
+g4env = Environment(ENV={'PATH' : os.environ['PATH']})
+g4env.ParseConfig('geant4-config --cflags --libs')
+
+g4opts = { 'ARCHEXTRA' : ''}
+for key in ['ASFLAGS','CCFLAGS','CPPFLAGS','CPPPATH','LIBPATH','LIBS',
+            'LINKFLAGS', 'CPPDEFINES']:
+    if key in g4env:
+        g4opts[key] = g4env[key]
+
+# Returns a dictionary when you import this file using:
+# g4opts = SConscript('config/GEANT4.scons')
+#
+# Merge into your build environment with:
+# env.Append(g4opts)
+Return("g4opts")

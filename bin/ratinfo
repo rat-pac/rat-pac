@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+
+# ROOT sucks
+import sys
+_argv = sys.argv
+sys.argv = sys.argv[:1]
+from rat import ROOT
+sys.argv = _argv
+del _argv
+###
+
+import rat
+from math import sqrt
+
+def help():
+    print \
+'''Usage:
+  ratinfo log file.root
+    - Print log from RAT run which generated this output file
+
+  ratinfo macro file.root
+    - Print RAT macro which generated this file.
+
+  ratinfo var file.root selector [cut]
+    - Prints distribution summary of selector variable in tree, applying a cut if
+      given.  Use quotes around selector or cut if they contain spaces.
+
+  ratinfo status [file1] [file2] [file3] ...
+    - Prints the filename, and whether the processed which created the file
+      terminated with:
+          OK (job finished properly)
+          ABORT (user pressed Ctrl-C once, file closed properly)
+          CRASH (multiple Ctrl-C or segmentation fault, file not closed)
+          UNKNOWN (file has unexpected status value)
+          UNSUPPORTED (file does not have a status tag)
+          NOTROOT (file is not a ROOT file or cannot be read)
+'''
+
+
+if len(sys.argv) < 3:
+    help()
+    sys.exit(1)
+
+if sys.argv[1] == 'log':
+    f = ROOT.TFile.Open(sys.argv[2])
+    log = f.Get("log")
+    if log:
+        print log.GetString()
+    else:
+        print >>sys.stderr, "No log present in ROOT file."
+elif sys.argv[1] == 'macro':
+    f = ROOT.TFile.Open(sys.argv[2])
+    macro = f.Get('macro')
+    if macro:
+        print macro.GetString()        
+    else:
+        print >>sys.stderr, "No macro present in ROOT file."
+elif sys.argv[1] == 'db':
+    f = ROOT.TFile.Open(sys.argv[2])
+    tables = rat.extract_db(f)
+            
+    # Generate RATDB formatted tables with the validity range set to the
+    # user plane.  Then importing this file will override all other settings
+    for tablename, tableset in tables.items():
+        for indexname, table in tableset.items():
+
+            print '''{
+  name: "%s",
+  index: "%s",
+  valid_begin: [-1, -1],
+  valid_end: [-1, -1],
+''' % (tablename, indexname)
+
+            for fieldname, value in table.items():
+                print "  %s: %s," % (fieldname, value)
+            print '}\n'
+    
+elif sys.argv[1] == 'var':
+    f = ROOT.TFile(sys.argv[2])
+    T = f.Get('T')
+    if len(sys.argv) > 4:
+        cut = sys.argv[4]
+    else:
+        cut = ''
+    T.Draw(sys.argv[3], cut, 'goff')
+    h = ROOT.gDirectory.Get('htemp')
+    print 'selector = "%s", cut = "%s"' % (sys.argv[3], cut)
+    print '# of events = %d' % h.GetEntries()
+    print 'mean = %f, rms = %f, uncert_mean = %f' % (h.GetMean(), h.GetRMS(),
+                                              h.GetRMS()/sqrt(h.GetEntries()))
+
+elif sys.argv[1] == 'status':
+    # Silence obnoxious ROOT warnings
+    ROOT.gErrorIgnoreLevel = ROOT.kFatal
+    for filename in sys.argv[2:]:
+        f = ROOT.TFile(filename)
+        if f.IsZombie():
+            status_str = 'NOTROOT'
+        else:
+            status = f.Get("status")
+            if status == None:
+                status_str = 'UNSUPPORTED'
+            else:
+                if status.GetInt() == -1:
+                    status_str = 'CRASH'
+                elif status.GetInt() == 0:
+                    status_str = 'ABORT'
+                elif status.GetInt() == 1:
+                    status_str = 'OK'
+                else:
+                    status_str = 'UNKNOWN'
+        print '%s: %s' % (filename, status_str)
+else:
+    print >>sys.stderr, "Unknown option:", sys.argv[1]

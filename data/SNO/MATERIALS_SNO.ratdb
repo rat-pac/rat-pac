@@ -1,0 +1,48 @@
+{
+name: "MATERIAL",
+index: "glass_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 2.2d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Silicon", "Oxygen",],
+elemprop: [0.4675d, 0.5325d],
+}
+
+{
+name: "MATERIAL",
+index: "lightwater_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.0d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Hydrogen", "Oxygen",],
+elemprop: [0.1119d, 0.8881d],
+}
+
+{
+name: "MATERIAL",
+index: "acrylic_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.14d,
+nelements: 3,
+nmaterials: 0,
+elements: ["Hydrogen", "Carbon", "Oxygen"],
+elemprop: [0.0703d, 0.558d, 0.3717d],
+}
+
+{
+name: "MATERIAL",
+index: "HeavyWater",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.1056d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Deuterium", "Oxygen",],
+elemprop: [0.2011d, 0.7989d],
+}
+

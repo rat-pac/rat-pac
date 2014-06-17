@@ -1,0 +1,19 @@
+{
+name: "DETECTOR",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+/* Select experiment to load experiment specific ratdb tables.
+   None loaded by default, but can be loaded from macro */
+//experiment: "cylinder",
+
+/* Detector geometry.  No geometry by default, 
+   but can be loaded from macro. */
+//geo_file: "cylinder/cylinder.geo",
+
+/* PMT response model.  Use GEO[PMTs].pmt_type response model unless
+   the model is specified from a macro using the field below. */
+//pmt_type: "r1408",
+
+}
+

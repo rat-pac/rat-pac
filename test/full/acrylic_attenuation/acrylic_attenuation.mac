@@ -1,0 +1,38 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR geo_file "acrylic_sphere.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc count
+/rat/procset update 50
+
+/rat/proc outroot
+/rat/procset file "acrylic_attenuation.root"
+
+# END EVENT LOOP
+/tracking/storeTrajectory 1
+
+/generator/add combo pbomb:point
+/generator/vtx/set 100 100
+/generator/pos/set  0.0 0.0 0.0 
+
+/generator/add combo pbomb:point
+/generator/vtx/set 100 200
+/generator/pos/set  0.0 0.0 0.0
+
+/generator/add combo pbomb:point
+/generator/vtx/set 100 300
+/generator/pos/set  0.0 0.0 0.0 
+
+/generator/add combo pbomb:point
+/generator/vtx/set 100 400
+/generator/pos/set  0.0 0.0 0.0 
+
+/generator/add combo pbomb:point
+/generator/vtx/set 100 500
+/generator/pos/set  0.0 0.0 0.0 
+
+/run/beamOn 500

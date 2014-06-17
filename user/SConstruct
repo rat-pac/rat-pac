@@ -1,0 +1,27 @@
+#-*-python-*-
+# SConstruct file for building user-customized RAT applications
+# Assumes all *.cc in the current directory should be compiled and linked in.
+#
+# Copy this file to any directory to build source contained therein.
+
+appname = 'myrat'
+append_platform_name = False # Put '_archname' on end of appname for
+                             # multi-plaform builds in same directory
+
+mymain = False # Do you have a main function defined in your source files?
+               # If not, default RAT main function is used.
+
+
+########### Hopefully you won't need to edit below this line ##########
+
+from buildhelp import RATENVFILE, ROOTARCH, build_list
+
+env = SConscript(RATENVFILE)
+env['mymain'] = mymain
+
+if append_platform_name:
+    appname += "_" + ROOTARCH
+
+myobj = env.Object(build_list('*.cc', env['BUILDDIR']))
+myapp = env.RATApp(appname, myobj)
+env.Default(myapp)

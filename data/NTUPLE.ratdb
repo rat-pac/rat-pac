@@ -1,0 +1,76 @@
+{
+name: "NTUPLE",
+index: "mc",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+fields: [ 
+	"mc_id", "mc.mcEventID",
+	"mc_numPE", "mc.numPE",
+	"mc_numNoise", "mc.numNoise",
+	"mc_fprompt", "mc.mcFprompt",
+	"mc_pdgcode", "mc.particle.pdgcode",
+	"mc_t",  "mc.particle.t",
+	"mc_ke", "mc.particle.ke",
+	"mc_x",  "mc.particle.pos.X()",
+	"mc_y",  "mc.particle.pos.Y()",
+	"mc_z",  "mc.particle.pos.Z()",
+	"mc_r",  "mc.particle.pos.Mag()",
+	"mc_px", "mc.particle.mom.X()",
+	"mc_py", "mc.particle.mom.Y()",
+	"mc_pz", "mc.particle.mom.Z()",
+	"mc_edep", "mc.summary.totalScintEdep",
+	"mc_edep_quenched", "mc.summary.totalScintEdepQuenched",
+	"mc_nhit", "mc.@pmt.size()",
+	],
+}
+
+{
+name: "NTUPLE",
+index: "data",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+fields: [ 
+	"ev_id", "ev.triggerSummary.eventID",
+	"qTotal", "ev.qTotal",
+	"centroid_x", "ev.centroid?.pos.X()",
+	"centroid_y", "ev.centroid?.pos.Y()",
+	"centroid_z", "ev.centroid?.pos.Z()",
+	"centroid_r", "ev.centroid?.pos.Mag()",
+	],
+}
+
+{
+name: "NTUPLE",
+index: "mc_ev",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+fields: [ 
+	"mc_id", "mc.mcEventID",
+	"mc_numPE", "mc.numPE",
+	"mc_numNoise", "mc.numNoise",
+	"mc_fprompt", "mc.mcFprompt",
+	"mc_pdgcode", "mc.particle.pdgcode",
+	"mc_t",  "mc.particle.t",
+	"mc_ke", "mc.particle.ke",
+	"mc_x",  "mc.particle.pos.X()",
+	"mc_y",  "mc.particle.pos.Y()",
+	"mc_z",  "mc.particle.pos.Z()",
+	"mc_r",  "mc.particle.pos.Mag()",
+	"mc_px", "mc.particle.mom.X()",
+	"mc_py", "mc.particle.mom.Y()",
+	"mc_pz", "mc.particle.mom.Z()",
+	"mc_edep", "mc.summary.totalScintEdep",
+	"mc_edep_quenched", "mc.summary.totalScintEdepQuenched",
+	"mc_nhit", "mc.@pmt.size()",
+	"ev_id", "ev?.triggerSummary.eventID",
+	"qTotal", "ev?.qTotal",
+	"centroid_x", "ev?.centroid.pos.X()",
+	"centroid_y", "ev?.centroid.pos.Y()",
+	"centroid_z", "ev?.centroid.pos.Z()",
+	"centroid_r", "ev?.centroid.pos.Mag()",
+	],
+}
+

@@ -1,0 +1,35 @@
+{
+name : "TEST",
+index : "foo",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+
+myint : 4,
+myfloat : 4.0,
+mydouble : 5.0d,
+mystring : "default",
+
+ia : [ 1, 1, 2, 3, 5, 8],
+fa : [ 1.0, 4.0, 9.0, 16.0],
+da : [ 2.0d, 3.0d, 5.0d],
+sa : [ "larry", "curly", "moe" ],
+
+foo : "bar"
+}
+
+{
+name : "TEST",
+index : "foo",
+valid_begin : [-1, -1],
+valid_end : [-1, -1],
+
+myint : 17,
+myfloat : 14.0,
+// Do not override mydouble or mystring
+
+// Do not override ia fa
+da : [ 1.0d, 6.0d, 24.0d],
+sa : [ "alvin", "simon", "theodore" ],
+
+foo : "baz",
+}

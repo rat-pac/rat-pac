@@ -1,0 +1,6 @@
+#-*-python-*-
+# Linux with gcc
+
+arch = SConscript('ARCH.gcc') # Use default settings
+arch['default']['CXXFLAGS'] += ['-D_FORTIFY_SOURCE=0']
+Return('arch')

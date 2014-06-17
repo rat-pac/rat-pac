@@ -1,0 +1,34 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR geo_file "cylinder/cylinder.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc fitcentroid
+
+/rat/proc count
+/rat/procset update 10
+/rat/proc outroot
+/rat/procset file "fitcentroid.root"
+# END EVENT LOOP
+
+# Generate 3 classes of events: 
+#   monoenergetic center
+#   monoenergetic distributed
+#   energy range center
+/generator/add combo gun:point
+/generator/vtx/set e- 0 0 0 10.0
+/generator/pos/set 0 0 0
+
+/generator/add combo gun:fillshell
+/generator/vtx/set e- 0 0 0 0.020
+/generator/pos/set 0 0 0 0 0 0 437.0 10.0
+
+/generator/add combo gun2:point
+/generator/vtx/set e- 0 0 0 0 3.5 15.0
+/generator/pos/set 0 0 0
+
+/run/beamOn 1000

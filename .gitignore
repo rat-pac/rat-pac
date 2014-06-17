@@ -1,0 +1,11 @@
+build
+env.sh
+env.csh
+include/RAT
+include/local_g4version.hh
+*.pyc
+.sconsign
+.sconsign.dblite
+.sconf_temp
+lib
+

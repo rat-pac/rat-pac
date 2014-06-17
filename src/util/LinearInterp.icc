@@ -1,0 +1,52 @@
+//-*- c++ -*-
+template <class NumType>
+void LinearInterp<NumType>::Set(int _npoints, const NumType _x[], const NumType _y[]) 
+{
+  npoints = _npoints;
+  x.resize(npoints);
+  y.resize(npoints);
+
+  for(int i=0; i < npoints; i++) {
+    x[i] = _x[i];
+    y[i] = _y[i];
+  }
+}
+
+template <class NumType>
+NumType LinearInterp<NumType>::operator() (const NumType xeval) const
+{
+  int i = LowerElement(xeval);
+  
+  // This could be made faster by pre-computing the slopes in the constructor
+  return (y[i+1]-y[i])/(x[i+1]-x[i]) * (xeval - x[i]) + y[i];
+}
+
+template <class NumType>
+int LinearInterp<NumType>::LowerElement(const NumType xeval) const
+{
+  if (npoints == 0)
+    throw RangeError(0.0, 0.0, xeval);
+  else if (npoints == 1)
+    throw RangeError(x[0], x[0], xeval);
+  if (x[npoints-1] <= xeval)
+    throw RangeError(x[0], x[npoints-1], xeval);  // xeval above upper limit
+  else if (x[0] > xeval)
+    throw RangeError(x[0], x[npoints-1], xeval); // xeval below lower limit
+
+
+  // Binary search to find the largest element <= xeval
+  int i=0, j=npoints-1;
+  int pos;
+
+  while (i < j - 1) {
+    pos = (i + j)/2;
+
+    if (xeval < x[pos])
+      j = pos;
+    else
+      i = pos;
+  }
+
+
+  return i;
+}

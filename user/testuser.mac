@@ -1,0 +1,23 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+
+/rat/proc count
+/rat/procset update 5
+
+# my user processor that constructs a numPE histogram
+/rat/proc user
+
+# END EVENT LOOP
+
+/generator/add combo gun:point
+/generator/vtx/set e- 0 0 0  0.020
+/generator/pos/set 0 0 0
+/generator/rate/set 1.0
+
+/run/beamOn 50
+

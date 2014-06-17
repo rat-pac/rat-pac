@@ -1,0 +1,22 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "cylinder"
+/rat/db/set DETECTOR geo_file "cylinder/cylinder.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+#END EVENT LOOP
+
+/generator/add combo gun2:fill
+/generator/vtx/set e-  0 0 0 0 10.0 10.0
+/generator/pos/set 0 0 0
+
+/run/beamOn 1000

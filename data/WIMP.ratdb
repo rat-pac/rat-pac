@@ -1,0 +1,22 @@
+// Configuration for WIMP generator
+{
+  name: "WIMP",
+  index: "",
+  valid_begin: [0,0],
+  valid_end:   [0,0],
+
+  // Range of nuclear recoil energies to generate (keV)
+  energy_lo: 20.0,
+  energy_hi: 300.0,
+
+  // Important velocities (all km/sec)
+  v_esc:     544.0, // Local galactic escape velocity, from M.C. Smith, et al., Mon.Not.Roy.Astron.Soc.379:755-772,2007, arXiv:astro-ph/0611671. 90 % confidence interval is (498,608) km/s
+  v_0:       220.0, // Mean galactic WIMP velocity, from F.J. Kerr and D. Lynden-Bell, Mon. Not. Royal Ast. Soc. 221 (Aug, 1986) 1023-1038. (220 +/- 20) km/s
+  v_SunGal:  232.0, // Sun's velocity around galactic center, from R.W.Schnee, http://arxiv.org/abs/1101.5205
+  v_EarthSun: 15.0, // Earth's velocity around sun in direction of Sun's velocity around galactic center, from R.W.Schnee, http://arxiv.org/abs/1101.5205
+
+  // Other dark matter attributes
+  rho: 0.3,  // (0.30 +/- 0.05) GeV/cm^3, according to L.M. Widrow et al, Astrophys. J., vol. 679, pp. 1239, 2008, but could vary by a factor of 2
+
+  date: 61.1875,//day of the year since January 1st. Default (March 2 or 1) is a node of modulation
+}

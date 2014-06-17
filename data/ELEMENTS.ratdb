@@ -1,0 +1,405 @@
+{
+name: "ELEMENT",
+index: "Helium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "He",
+z: 2,
+a: 4.00260d,
+}
+
+{
+name: "ELEMENT",
+index: "Deuterium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "D",
+z: 1,
+a: 2.0144d,
+isotopes: [2],
+isotopes_frac: [1.0d],
+}
+
+{
+name: "ELEMENT",
+index: "Aluminum",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Al",
+z: 13,
+a: 26.98d,
+}
+
+{
+name: "ELEMENT",
+index: "Argon",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ar",
+z: 18,
+a: 39.948d,
+}
+
+{
+name: "ELEMENT",
+index: "Barium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ba",
+z: 56,
+a: 137.327d,
+}
+
+{
+name: "ELEMENT",
+index: "Boron",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "B",
+z: 5,
+a: 10.811d,
+}
+
+{
+name: "ELEMENT",
+index: "Calcium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ca",
+z: 20,
+a: 40.078d,
+}
+
+{
+name: "ELEMENT",
+index: "Carbon",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "C",
+z: 6,
+a: 12.01d,
+
+}
+{
+name: "ELEMENT",
+index: "Copper",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Cu",
+z: 29,
+a: 63.546d,
+
+}
+
+{
+name: "ELEMENT",
+index: "Chlorine",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Cl",
+z: 17,
+a: 35.4527d,
+
+}
+
+{
+name: "ELEMENT",
+index: "Chromium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Cr",
+z: 24,
+a: 51.996d,
+}
+
+{
+name: "ELEMENT",
+index: "Hydrogen",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "H",
+z: 1,
+a: 1.008d,
+}
+
+{
+name: "ELEMENT",
+index: "Iron",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Fe",
+z: 26,
+a: 55.845d,
+}
+
+{
+name: "ELEMENT",
+index: "Magnesium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Mg",
+z: 12,
+a: 24.3050d,
+
+}
+
+{
+name: "ELEMENT",
+index: "Manganese",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Mn",
+z: 25,
+a: 54.938045d,
+
+}
+{
+name: "ELEMENT",
+index: "Molybdenum",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Mo",
+z: 42,
+a: 95.96d,
+
+}
+
+
+{
+name: "ELEMENT",
+index: "Nickel",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ni",
+z: 28,
+a: 58.693d,
+}
+
+{
+name: "ELEMENT",
+index: "Nitrogen",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "N",
+z: 7,
+a: 14.01d,
+}
+
+{
+name: "ELEMENT",
+index: "Oxygen",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "O",
+z: 8,
+a: 16.00d,
+
+}
+
+{
+name: "ELEMENT",
+index: "Phosphorus",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "P",
+z: 15,
+a: 30.973762d,
+
+}
+
+
+
+{
+name: "ELEMENT",
+index: "Potassium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "K",
+z: 19,
+a: 39.0983d,
+
+}
+{
+name: "ELEMENT",
+index: "Silicon",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Si",
+z: 14,
+a: 28.09d,
+
+}
+{
+name: "ELEMENT",
+index: "Sodium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Na",
+z: 11,
+a: 22.989770d,
+
+}
+{
+name: "ELEMENT",
+index: "Sulphur",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "S",
+z: 16,
+a: 32.066d,
+}
+{
+name: "ELEMENT",
+index: "Titanium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ti",
+z: 22,
+a: 47.867d,
+}
+{
+name: "ELEMENT",
+index: "Lead",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Pb",
+z: 82,
+a: 207.19d,
+} 
+
+{
+name: "ELEMENT",
+index: "Neon",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Ne",
+z: 10,
+a: 20.1797d,
+}
+
+{
+name: "ELEMENT",
+index: "Fluorine",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "F",
+z: 9,
+a: 18.9984032d,
+}
+
+{
+name: "ELEMENT",
+index: "Xenon",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Xe",
+z: 54,
+a: 131.293d,
+}
+
+{
+name: "ELEMENT",
+index: "Zinc",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Zn",
+z: 30,
+a: 65.38d,
+}
+
+{
+name: "ELEMENT",
+index: "Iodine",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "I",
+z: 53,
+a: 126.9045d,
+}
+
+{
+name: "ELEMENT",
+index: "Tungsten",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "W",
+z: 74,
+a: 183.84d,
+}
+
+{
+name: "ELEMENT",
+index: "Niobium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Nb",
+z: 41,
+a: 92.90638d,
+} 
+
+{
+name: "ELEMENT",
+index: "Lithium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Li",
+z: 3,
+a: 6.941d,
+}
+
+{
+name: "ELEMENT",
+index: "Lutetium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Lu",
+z: 71,
+a: 174.967d,
+}
+
+{
+name: "ELEMENT",
+index: "Yttrium",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Y",
+z: 39,
+a:88.9d,
+}
+

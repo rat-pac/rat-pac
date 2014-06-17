@@ -1,0 +1,35 @@
+#-*-python-*-
+# Generic gcc-based architecture.  Good for most targets that use gcc.
+
+import os
+if os.environ.has_key("OGLHOME"):
+    OGLHOME = os.environ["OGLHOME"]
+else:
+    OGLHOME = '/usr'
+    
+arch = {
+    'OPTFLAGS' : '-O3',
+    'DEBUGFLAGS' : '-g',
+    'PROFILEFLAGS' : '-pg',
+
+    # Main compile flags.  Always used #-Werror removed
+    'default' : { 'CXXFLAGS' : Split('-W -Wall -ansi -pedantic -Wno-non-virtual-dtor'
+                                     ' -Wno-long-long -Wwrite-strings -Wno-strict-aliasing'
+                                     ' -Wpointer-arith -Wno-unused-parameter -Woverloaded-virtual -pipe'
+                                     ' -fPIC -Werror'),
+                  'LDFLAGS' : '-fPIC',
+                  },
+
+    # Extra flags for optional components
+    'X11'  : { 'CPPPATH' : ['/usr/include/X11/extensions', '/usr/include/X11'],
+               'LIBPATH' : '/usr/X11R6/lib',
+               'LIBS' : ['Xmu', 'Xt', 'Xext', 'X11', '-lSM', '-lICE'] },
+    'Xm'   : { 'CPPPATH' : '/usr/X11R6/include',
+               'LIBS' : ['Xm', 'Xpm'] },
+    'OpenGL' : { 'CPPPATH' : os.path.join(OGLHOME, 'include'),
+                 'LIBPATH' : os.path.join(OGLHOME, 'lib'),
+                 'LIBS'    : ['-lGLU', '-lGL'] },
+    'OpenMP' : { 'CXXFLAGS' : '-fopenmp',
+                 'LIBS'     : 'gomp'       },
+}
+Return("arch")

@@ -1,0 +1,31 @@
+# Example of the OutNetProc
+#
+# This macro must be used with the -o options to RAT 
+#   rat -o client.root
+
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "cylinder"
+/rat/db/set DETECTOR geo_file "cylinder/cylinder.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+
+/rat/proc outnet
+/rat/procset host "localhost:7770-7777"
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+# END EVENT LOOP
+
+/generator/add combo gun2:multipoint
+/generator/vtx/set e-  0 0 0 0 10.0 10.0
+/generator/pos/set uniform 100 0 433.0
+/run/beamOn 100
+

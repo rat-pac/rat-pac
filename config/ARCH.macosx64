@@ -1,0 +1,22 @@
+#-*-python-*-
+# 64-bit MacOS X with gcc
+import commands
+
+arch = SConscript('ARCH.gcc') # Use default settings
+
+osx_version = commands.getoutput('sw_vers -productVersion')
+parts = osx_version.split('.')
+if len(parts) >= 2 and parts[1] == '5': 
+    # Workaround for OpenGL bug on OS X 10.5
+    # http://wiki.finkproject.org/index.php/Fink:Packaging:Preparing_for_10.5#OpenGL_Bug
+    arch['default']['LINKFLAGS'] = [ '-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib']
+if len(parts) >= 2 and int(parts[1]) >= 8:
+    arch['CC'] = 'clang'
+    arch['CXX'] = 'clang++'
+    print 'Using clang/clang++ on OS X', osx_version
+
+#arch['default'].update({'LINKFLAGS': ['-stdlib=libstdc++', '-lstdc++', '-lc++']})
+
+arch['Xm'].update( { 'CPPPATH' : '/sw/include',
+                     'LIBPATH' : '/sw/lib' }    )
+Return('arch')

@@ -1,0 +1,20 @@
+{
+   "_id": "_design/ratdb",
+    "views": {
+       "select": {
+           "map": "function(doc) { for (i=doc.run_range[0]; i <= doc.run_range[1]; i++) { emit([doc.name, doc.index, i], null);}};"
+       },
+
+       "run": {
+           "map": "function(doc) { for (i=doc.run_range[0]; i <= doc.run_range[1]; i++) { emit(i, null);}};"
+       },
+       "name": {
+           "map": "function(doc) { emit(doc.name, 1); };",
+           "reduce" : "function(keys, values) { return sum(values); };"
+       },
+       "linkgroup" : {
+           "map": "function(doc) { emit([doc.name,doc.index], 1); };",
+	   "reduce": "function(keys, values) { return sum(values); };"
+       }
+   }
+}

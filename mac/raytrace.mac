@@ -1,0 +1,22 @@
+# Use the GEANT4 raytracer to generate a JPEG image of the detector
+
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "cylinder"
+/rat/db/set DETECTOR geo_file "cylinder/cylinder.geo"
+
+/run/initialize
+
+/vis/open RayTracer
+/vis/rayTracer/lightDirection 1 1 1
+/vis/rayTracer/column 800
+/vis/rayTracer/row 1000
+# This is degrees per 100 pixels
+/vis/rayTracer/span 1 deg
+/vis/rayTracer/target 0 0 0 mm	
+/vis/rayTracer/eyePosition 60000.0 -10.0 30000.0 mm
+# For some reason 270 is upright?
+/vis/rayTracer/headAngle 270 deg
+/vis/rayTracer/trace raytrace.jpg
+

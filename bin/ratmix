@@ -1,0 +1,495 @@
+#!/usr/bin/env python
+
+from rat import ROOT, RAT, dsreader
+import random
+import bisect
+import sys
+import optparse
+import datetime
+import time
+try:
+    import avalanche
+except ImportError:
+    pass  # Silently continue if zeromq not present
+
+
+class PriorityQueue(object):
+    '''A queue that holds values in order of a numeric priority key.'''
+    def __init__(self, items=[]):
+        '''Initialize the priority queue with (key, value) tuples
+        from `items`.
+
+        >>> PriorityQueue([(3.0, 'a'), (1.5, 'b'), (2.0, 'c')])
+        PriorityQueue([(1.5, 'b'), (2.0, 'c'), (3.0, 'a')])
+        '''
+        self._keys = []
+        self._values = []
+        for k, v in items:
+            self.insert(k, v)
+
+    def insert(self, priority_key, value):
+        '''Add value to queue with given priority.
+
+        >>> q = PriorityQueue()
+        >>> q.insert(3.0, 'a')
+        >>> q.insert(1.5, 'b')
+        >>> q.insert(2.0, 'c')
+        >>> q[0]
+        (1.5, 'b')
+        '''
+        index = bisect.bisect_left(self._keys, priority_key)
+        self._keys.insert(index, priority_key)
+        self._values.insert(index, value)
+
+    def __getitem__(self, index):
+        '''Return the (key, value) tuple for the item at `index`.
+
+        >>> q = PriorityQueue()
+        >>> q.insert(3.0, 'a')
+        >>> q[0]
+        (3.0, 'a')
+        >>> q.insert(1.5, 'b')
+        >>> q[0]
+        (1.5, 'b')
+        >>> q.insert(2.0, 'c')
+        >>> q[0]
+        (1.5, 'b')
+        '''
+        return self._keys[index], self._values[index]
+
+    def pop(self):
+        '''Removes the (key, value) at the front of the queue and returns
+        it.
+
+        >>> q = PriorityQueue([(3.0, 'a'), (1.5, 'b'), (2.0, 'c')])
+        >>> q.pop()
+        (1.5, 'b')
+        >>> q.pop()
+        (2.0, 'c')
+        >>> q.pop()
+        (3.0, 'a')
+        >>> len(q)
+        0
+        '''
+        item = self[0]
+        del self._keys[0]
+        del self._values[0]
+        return item
+
+    def add_to_keys(self, x):
+        '''Add a constant value `x` to all priority keys.  This does not
+        change the order of any entries.
+
+        >>> q = PriorityQueue([(3.0, 'a'), (1.5, 'b'), (2.0, 'c')])
+        >>> q.add_to_keys(0.25)
+        >>> q
+        PriorityQueue([(1.75, 'b'), (2.25, 'c'), (3.25, 'a')])
+        >>> q.add_to_keys(-1)
+        >>> q
+        PriorityQueue([(0.75, 'b'), (1.25, 'c'), (2.25, 'a')])
+        '''
+        for i in xrange(len(self._keys)):
+            self._keys[i] += x
+
+    def __len__(self):
+        '''Returns number of items in the queue.
+
+        >>> len(PriorityQueue([(3.0, 'a'), (1.5, 'b'), (2.0, 'c')]))
+        3
+        '''
+        return len(self._keys)
+
+    def __repr__(self):
+        return 'PriorityQueue([' + ', '.join(['(%s, %s)' % (repr(k), repr(v))
+            for k, v in zip(self._keys, self._values)]) + '])'
+
+
+def timestamp_difference(a, b):
+    '''Returns the difference between two TTimeStamp objects in seconds.
+
+    >>> a = ROOT.TTimeStamp(2012, 6, 2, 10, 20, 35, int(1e5))
+    >>> b = ROOT.TTimeStamp(2012, 6, 1, 10, 20, 05, int(3e5))
+    >>> timestamp_difference(a, b)
+    86429.9998
+    '''
+    return (a.GetSec() - b.GetSec()) \
+        + 1e-9 * (a.GetNanoSec() - b.GetNanoSec())
+
+
+def add_timestamp(a, x):
+    '''Return a timestamp `x` seconds in the future of timestamp `a`.
+
+    >>> a = ROOT.TTimeStamp(2012, 6, 2, 10, 20, 35, int(1e5))
+    >>> b = add_timestamp(a, 100310.05)
+    >>> timestamp_difference(b, a)
+    100310.05
+    '''
+    sec = int(x)
+    nsec = int((x - sec) * 1e9)
+    delta = ROOT.TTimeStamp(sec, nsec)
+    ret = ROOT.TTimeStamp(a)
+    ret.Add(delta)
+    return ret
+
+
+class MultipleTriggerError(Exception):
+    '''Multiple triggers were encountered when not expected.'''
+    def __init__(self, message):
+        '''message: string
+           Detailed explanation of error.
+        '''
+        Exception.__init__(self, message)
+
+
+class EventSource(object):
+    '''A source of events from a RAT file.
+
+    Triggered events will be emitted from this source with Poisson-distributed
+    times regardless of the original event times.  If a single physics event
+    produces multiple triggers, then the delta t between those triggers will
+    be preserved, although additional events might be interleaved between
+    them.'''
+
+    ALLOWED_MC_VALUES = ['keep', 'duplicate', 'prune']
+
+    def __init__(self, filename, rate, mc='keep', loop=False):
+        '''Create new event source.
+
+            `filename`: string
+              Name of RAT ROOT file to read events from.
+
+            `rate`: float
+              Desired rate of production for events in Hz.  Note
+              that this controls the rate of stepping through
+              physics events in this file.  The triggered events
+              will be produced relative to that rate.  This will
+              handle events that don't trigger and events that
+              produce multiple triggers in a physically realistic
+              way.
+
+            `mc`: string - 'keep', 'duplicate', 'prune'
+              Specify desired handling of the Monte Carlo branch
+              of the data structure.
+
+              'keep' will preserve the Monte Carlo as-is, but will generate
+              a MultipleTriggerError exception if multiple triggered events
+              are found in one physics event.
+
+              'duplicate' will copy the Monte Carlo contents to all emitted
+              events when multiple triggers are encountered.
+
+              'prune' will remove the Monte Carlo branch from every event,
+              which eliminated the ambiguity.
+
+            `loop`: bool
+              Specifies whether to loop back to the beginning of the file
+              when the end of the file has been reached.
+        '''
+        self.filename = filename
+        self.reader = dsreader(self.filename)
+
+        self.rate = rate
+        if mc not in EventSource.ALLOWED_MC_VALUES:
+            raise ValueError('EventSource: mc attribute must be one of ',
+                    str(EventSource.ALLOWED_MC_VALUES))
+        self.mc = mc
+        self.loop = loop
+
+        self.next_time_from_file = random.expovariate(self.rate)
+
+    #@profile
+    def load_next_from_file(self, queue):
+        '''Load the next event from the file, if possible, and process it
+        into the event queue.  If this source is looping, this should always
+        succeed.  Otherwise, if the file contents have been exhausted, this
+        function is a no-op to allow the queue to drain.
+        '''
+        try:
+            ds = self.reader.next()
+        except StopIteration:
+            if self.loop:
+                self.reader = dsreader(self.filename)
+                ds = self.reader.next()
+            else:
+                print self.filename, 'out of events.  Terminating...'
+                # Keep moving the time forward so that the caller will
+                # stop calling this function in case they ignore the exception
+                self.next_time_from_file += random.expovariate(self.rate)
+                raise
+
+        n_trig = ds.GetEVCount()
+
+        if n_trig == 0:
+            self.next_time_from_file += random.expovariate(self.rate)
+            return  # Nothing to add to queue
+        if n_trig > 1 and self.mc == 'keep':
+            raise MultipleTriggerError(
+                '%d triggers found and MC handling set to "keep"' % n_trig)
+
+        # Separate EVs from root data structure before making template
+        ev_list = [ds.StealEV(i) for i in xrange(n_trig)]
+        if self.mc == 'prune':
+            ds.PruneMC()
+        ds_template = RAT.DS.Root(ds)
+        ds_template.PruneEV()
+
+        # Note that we do not change any of the event time stamps in this
+        # function.  That is left to the master file writer.  We do, however
+        # record the appropriate event times in the priority queue
+
+        ### Process the first event
+        ev = ev_list[0]
+        first_trigger_time = ev.GetUTC()
+        ds_copy = RAT.DS.Root(ds_template)
+        ds_copy.AddEV(ev)
+        ROOT.SetOwnership(ev, False)
+
+        queue.insert(self.next_time_from_file, ds_copy)
+
+        ### Process the rest of the events
+        for iev in xrange(1, n_trig):
+            ev = ev_list[iev]
+            ds_copy = RAT.DS.Root(ds_template)
+            ds_copy.AddEV(ev)
+            ROOT.SetOwnership(ev, False)
+
+            trigger_time = ev.GetUTC()
+            delta_t = timestamp_difference(trigger_time, first_trigger_time)
+
+            queue.insert(self.next_time_from_file + delta_t, ds_copy)
+
+        self.next_time_from_file += random.expovariate(self.rate)
+
+    def refill_queue(self, queue):
+        '''Add enough event from the file to queue in order to ensure proper
+        interleaving of triggers if multiple triggers are present.
+        '''
+        if len(queue) == 0:
+            self.load_next_from_file(queue)
+        else:
+            last_time_in_queue = queue[-1][0]
+            while last_time_in_queue > self.next_time_from_file:
+                self.load_next_from_file(queue)
+
+
+def event_mixer(sources, start_run_number, start_timestamp,
+    start_event_id=0, max_n_per_run=None, max_t=None, run_limit=1):
+    '''Generator that emits events, rewriting the run number, event ID,
+    and the trigger timestamp given the start_timestamp and relative source
+    rates.'''
+
+    queue = PriorityQueue()
+    event_id = start_event_id
+    run = start_run_number
+
+    while run_limit is None or run < start_run_number + run_limit:
+        t = 0.0
+        n = 0
+        if len(queue) > 0:
+            queue.add_to_keys(-queue[0][0])  # offset times back to 0
+
+        while (max_n_per_run is None or n < max_n_per_run) and (max_t is None or t < max_t):
+
+            # Cycle through all the sources until the size of the queue is stable
+            last_len_queue = -1  # dummy starter value
+            while len(queue) != last_len_queue:
+                last_len_queue = len(queue)
+                for source in sources:
+                    source.refill_queue(queue)
+
+            t, ds = queue.pop()
+            if max_t is not None and t > max_t:
+                break
+            else:
+                ds.SetRunID(run)
+                timestamp = add_timestamp(start_timestamp, t)
+                ev = ds.GetEV(0)
+                ev.SetEventID(event_id)
+                event_id += 1
+                ev.SetUTC(timestamp)
+
+                yield ds
+
+            n += 1
+
+        run += 1
+
+
+def parse_timestamp(option, opt, value, parser):
+    '''Parse a timestamp in "YYYY/MM/DD HH:MM:SS" format in a optparse
+    argument.  Also accepts dashes between date components.
+
+    >>> class Mock(object): pass
+    >>> option = Mock(); option.dest = 'start_time'
+    >>> parser = Mock(); parser.values = Mock()
+    >>> parse_timestamp(option, None, '2012/06/12 12:35:54', parser)
+    >>> parser.values.start_time.AsString("s")
+    '2012-06-12 12:35:54'
+    >>> parse_timestamp(option, None, '2012-06-12 12:35:54', parser)
+    >>> parser.values.start_time.AsString("s")
+    '2012-06-12 12:35:54'
+    '''
+    value = value.replace('-', '/')  # In case dashes were used
+    start = datetime.datetime.strptime(value, '%Y/%m/%d %H:%M:%S')
+    root_timestamp = ROOT.TTimeStamp(start.year, start.month, start.day,
+        start.hour, start.minute, start.second)
+    setattr(parser.values, option.dest, root_timestamp)
+
+
+def parse_source_string(source_str):
+    '''Parse a source string of the form "filename=rate" into parts
+
+    >>> parse_source_string('foo.root=63.6')
+    ('foo.root', 63.6)
+    '''
+    parts = source_str.split('=')
+    return parts[0], float(parts[1])
+
+
+def total_seconds(td):
+    '''Copy of Python 2.7 function to reduce a timedelta to a floating point
+    number of seconds.
+
+    >>> total_seconds(datetime.timedelta(1, 30, 30))
+    86430.00003
+    '''
+    return (td.microseconds + (td.seconds + td.days * 24.0 * 3600.0) * 1e6) / 1e6
+
+
+def main(argv):
+    parser = optparse.OptionParser(usage="%prog [options] file1.root=RATE1 file2.root=RATE2 ...",
+        description='Mixes together triggered events from multiple source files.  The physics event '
+        'rate for each file is given in Hz, and triggered events are separated into distinct DS::Root '
+        'objects in the output stream.  Run numbers, event numbers and UTC times are rewritten '
+        'accordingly.  Multiple triggers from one physics event will retain their existing time '
+        'differences.  Pilup of multiple physics events in one trigger event is not simulated by %prog! ',
+        epilog='Mixing ends when an event number or time limit is reached, or when a source file runs '
+        'out of events.  Due to the Poisson-distributed nature of the output events, some input events '
+        'at the end of a file will often not be used.'
+        )
+
+    parser.add_option('-o', '--output', action='store', type='string',
+        dest='output', default=None,
+        help='Name of output ROOT file.')
+
+    parser.add_option('-p', '--prefix', action='store', type='string',
+        dest='prefix', default=None,
+        help='Prefix for output ROOT file names to put different runs in different files. '
+        '"_RUNNUM.root" is appended to prefix for each run. Do not use both -o and -p at the same time.')
+
+    parser.add_option('--start-run', action='store', type='int',
+        dest='start_run', default=100000,
+        help='Starting run number (default=100000).')
+
+    parser.add_option('--start-time', action="callback", type='str',
+        dest='start_time', default=ROOT.TTimeStamp(),
+        callback=parse_timestamp,
+        help='Start time of first run (default=program start time).')
+
+    parser.add_option('--start-event-id', action='store', type='int',
+        dest='start_event_id', default=0,
+        help='Event ID of first event (default=0).  The event ID counter '
+             ' is not reset back to zero between runs.')
+
+    parser.add_option('-n', '--nevents', action='store', type='int',
+        dest='nevents', default=None,
+        help='Number of events per run.  Default is unbounded.')
+
+    parser.add_option('-r', '--run-limit', action='store', type='int',
+        dest='run_limit', default=None,
+        help='Number of runs to generate.  Default is unbounded.')
+
+    parser.add_option('-t', '--time-limit', action='store', type='float',
+        dest='time_limit', default=None,
+        help='Maximum number of seconds of detector time to generate (across all runs).  Default is unbounded.')
+
+    parser.add_option('-l', '--loop', action='store_true',
+        dest='loop', default=False,
+        help='Make source files appear infinite by looping back to the beginning when the end is reached.')
+
+    parser.add_option('--mc', action='store', type='str',
+        dest='mc', default='keep',
+        help='''Handling of Monte Carlo branch in source events.  "prune" will remove it,
+"duplicate" will copy it if multiple triggers are present, and "keep" will preserve the MC branch,
+but raise an error if there are multiple triggers (default).''')
+
+    parser.add_option('--realtime', action='store_true',
+        dest='realtime', default=False,
+        help='''Output events in real time at the same rate as the simulated detector times.
+Good for simulating a running detector.''')
+
+    parser.add_option('--serve', action='store', type='str',
+        dest='serve', default=None,
+        help='''Serve generated events from the given ZeroMQ address.
+Ex: "tcp://*:2020" will listen for clients on port 2020 on all available network interfaces.''')
+
+    program_start_time = datetime.datetime.now()
+
+    options, args = parser.parse_args(argv[1:])
+
+    sources = [EventSource(filename, rate, options.mc, options.loop)
+                for filename, rate in map(parse_source_string, args)]
+
+    if options.output is not None and options.prefix is not None:
+        print 'Error: Cannot use -o and -p option at the same time.'
+        return
+
+    if options.output is not None:
+        print 'Opening', options.output
+        writer = RAT.DSWriter(options.output)
+    elif options.prefix is not None:
+        filename = options.prefix + '_%d.root' % options.start_run
+        print 'Opening', filename
+        writer = RAT.DSWriter(filename)
+    else:
+        writer = None
+
+    if options.serve is not None:
+        server = avalanche.Server(options.serve)
+    else:
+        server = None
+
+    mixer = event_mixer(sources, options.start_run, options.start_time,
+                        start_event_id=options.start_event_id,
+                        max_n_per_run=options.nevents,
+                        max_t=options.time_limit,
+                        run_limit=options.run_limit)
+
+    try:
+        last_update = 0.0
+        last_run = options.start_run
+        for i, ds in enumerate(mixer):
+            ev = ds.GetEV(0)
+            detector_time_since_start = timestamp_difference(ev.GetUTC(), options.start_time)
+            program_time_since_start = total_seconds(datetime.datetime.now() - program_start_time)
+
+            detector_program_delta = detector_time_since_start - program_time_since_start
+            if options.realtime and detector_program_delta > 0.0:
+                time.sleep(detector_program_delta)
+
+            if server is not None:
+                server.send_object(ds)
+
+            # Open next file if run number has changed
+            if options.prefix is not None and ds.GetRunID() != last_run:
+                last_run = ds.GetRunID()
+                writer.Close()
+                filename = options.prefix + '_%d.root' % last_run
+                print 'Opening', filename
+                writer = RAT.DSWriter(filename)
+
+            if writer is not None:
+                writer.Fill(ds)
+
+            if (program_time_since_start - last_update) > 2.0:
+                ev = ds.GetEV(0)
+                print 'Run:', ds.GetRunID(), ' Event ID:', ev.GetEventID(), \
+                  ' Time:', ev.GetUTC().AsString('c')
+                last_update = program_time_since_start
+    finally:
+        if writer is not None:
+            print 'Closing output file...'
+            writer.Close()
+
+if __name__ == '__main__':
+    main(sys.argv)

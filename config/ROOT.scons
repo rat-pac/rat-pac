@@ -1,0 +1,53 @@
+#-*-python-*-
+# ROOT configuration for SCons
+
+import os, os.path
+from buildhelp import ROOTARCH, RATROOT
+
+#### Builder: RootDict(dictionary_name, [list of header files])
+#
+# Produces a ROOT dictionary for the header files listed.  Include
+# LinkDef.h at the end if needed to control dictionary generation
+
+def generate_action(source, target, env, for_signature):
+    'Generates rootcint call to output ROOT dictionary for source.'
+    # Strip off leading include/
+    sources = [str(s).replace('include/','') for s in source]
+        
+    return 'rootcint -f ' + str(target[0]) \
+           + ' -c -p $_CPPINCFLAGS $_CPPDEFFLAGS ' \
+           + ' '.join(sources)
+    
+rootdict = Builder(generator = generate_action,
+                   src_suffix = '.hh')
+####
+
+
+# Obtain ROOT build flags
+# Temporary SCons object to parse root-config output
+rootenv = Environment(ENV={'PATH' : os.environ['PATH']})
+rootenv.ParseConfig("root-config --cflags --ldflags --libs")
+rootenv.Append(LIBS='-lMinuit2')
+rootenv.Append(LIBS='-lSpectrum')
+rootenv.Append(LIBS=['-lFoam', '-lMinuit', '-lPyROOT'])
+
+
+# Put it into form that can be easily merged into main environment
+rootopts = { 'BUILDERS'      : {'RootDict' : rootdict} }
+for key in ['ASFLAGS','CCFLAGS','CPPFLAGS','CPPPATH','LIBPATH','LIBS',
+            'LINKFLAGS']:
+    if key in rootenv:
+        rootopts[key] = rootenv[key]
+             
+# ROOT headers use long long as 64 bit data type, which g++ complains
+# is C99 but not ISO C++ data type.  Need this flag to get things to
+# compile
+if ROOTARCH.find("gcc") >= 0:
+    rootopts['CCFLAGS'].append('-Wno-long-long')
+
+# Returns a dictionary when you import this file using:
+# rootopts = SConscript('config/ROOT.scons')
+#
+# Merge into your build environment with:
+# env.Append(rootopts)
+Return("rootopts")

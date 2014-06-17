@@ -1,0 +1,19 @@
+#!/bin/sh
+this_dir=`dirname $0`
+rat_exe=${this_dir}/rat
+
+if [ -x ${rat_exe} ]; then
+  if command -v gdb 2> /dev/null; then
+    gdb -x ${this_dir}/gdb.cmd --args ${rat_exe} $*
+  elif command -v lldb 2> /dev/null; then
+    lldb -f ${rat_exe} -- $*
+  else
+    echo "No debugger found! Is gdb or lldb installed?"
+    exit 1
+  fi
+else
+  echo "RAT has not been built yet.  Please run the following commands:"
+  echo "  cd $RATROOT"
+  echo "  scons"
+fi
+

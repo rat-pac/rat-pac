@@ -1,0 +1,9 @@
+#-*-python-*-
+# Linux on AMD64/EMT64, gcc 3.2 and higer
+
+
+arch = SConscript('ARCH.gcc') # Use default settings
+arch['default']['CXXFLAGS'] += Split('-march=k8 -mfpmath=sse -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0')
+arch['X11']['LIBPATH'] = arch['X11']['LIBPATH'].replace('lib', 'lib64')
+arch['OpenGL']['LIBPATH'] = arch['OpenGL']['LIBPATH'].replace('lib', 'lib64')
+Return("arch")

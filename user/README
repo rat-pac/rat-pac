@@ -1,0 +1,15 @@
+This directory contains a build script and example of how to make your
+own copy of RAT with a user-defined processor in it.
+
+To compile:
+
+  scons
+
+To test:
+
+  ./myrat testuser.mac
+  root numpe.root
+  hNumPE->Draw()
+
+See TestUser.cc for explanation of how to modify the processor.
+

@@ -1,0 +1,68 @@
+{
+name: "OPTICS",
+index: "HeavyWater",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+NEUTRON_CAPTURE_TIME_value1: [0.0d, 1.0d, ],
+NEUTRON_CAPTURE_TIME_value2: [163000.d, 163000.d, ],
+NEUTRON_SLOW_DIFFUSION_CONST_value1: [0.0d, 1.0d, ],
+NEUTRON_SLOW_DIFFUSION_CONST_value2: [0.03d, 0.03d, ],
+NEUTRON_FAST_DIFFUSION_RMS_value1: [0.0d, 1.0d, ],
+NEUTRON_FAST_DIFFUSION_RMS_value2: [50.0d, 50.0d, ],
+RINDEX_option: "wavelength",
+RINDEX_value1: [200d, 210d, 220d, 230d, 240d, 250d, 260d, 270d, 280d, 290d, 300d, 310d, 320d, 330d, 340d, 350d, 360d, 370d, 380d, 390d, 400d, 410d, 420d, 430d, 440d, 450d, 460d, 470d, 480d, 490d, 500d, 510d, 520d, 530d, 540d, 550d, 560d, 570d, 580d, 590d, 600d, 610d, 620d, 630d, 640d, 650d, 660d, 670d, 680d, 690d, 700d, 710d, 720d, 730d, 740d, 750d, 760d, 770d, 780d, 790d, 800d, ],
+RINDEX_value2: [1.399d, 1.390d, 1.383d, 1.377d, 1.372d, 1.367d, 1.363d, 1.360d, 1.357d, 1.354d, 1.352d, 1.350d, 1.348d, 1.346d, 1.345d, 1.343d, 1.342d, 1.341d, 1.340d, 1.339d, 1.338d, 1.337d, 1.336d, 1.336d, 1.335d, 1.334d, 1.334d, 1.333d, 1.332d, 1.332d, 1.331d, 1.331d, 1.331d, 1.330d, 1.330d, 1.329d, 1.329d, 1.329d, 1.328d, 1.328d, 1.328d, 1.328d, 1.327d, 1.327d, 1.327d, 1.327d, 1.326d, 1.326d, 1.326d, 1.326d, 1.325d, 1.325d, 1.325d, 1.325d, 1.325d, 1.325d, 1.324d, 1.324d, 1.324d, 1.324d, 1.324d, ],
+ABSLENGTH_option: "wavelength",
+ABSLENGTH_value1: [ 200d, 337d, 365d, 386d, 420d, 500d, 620d, 800d],
+ABSLENGTH_value2: [ 1.65d5, 1.65d5, 3.73d5, 3.00d5, 3.33d5, 3.61d5, 3.65d5, 3.65d5 ],
+PROPERTY_LIST: ["NEUTRON_CAPTURE_TIME", "NEUTRON_SLOW_DIFFUSION_CONST", "NEUTRON_FAST_DIFFUSION_RMS", "RINDEX", "ABSLENGTH", ]
+}
+
+{
+name: "OPTICS",
+index: "lightwater_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+NEUTRON_CAPTURE_TIME_value1: [0.0d, 1.0d, ],
+NEUTRON_CAPTURE_TIME_value2: [163000.d, 163000.d, ],
+NEUTRON_SLOW_DIFFUSION_CONST_value1: [0.0d, 1.0d, ],
+NEUTRON_SLOW_DIFFUSION_CONST_value2: [0.03d, 0.03d, ],
+NEUTRON_FAST_DIFFUSION_RMS_value1: [0.0d, 1.0d, ],
+NEUTRON_FAST_DIFFUSION_RMS_value2: [50.0d, 50.0d, ],
+RINDEX_option: "wavelength",
+RINDEX_value1: [200d, 210d, 220d, 230d, 240d, 250d, 260d, 270d, 280d, 290d, 300d, 310d, 320d, 330d, 340d, 350d, 360d, 370d, 380d, 390d, 400d, 410d, 420d, 430d, 440d, 450d, 460d, 470d, 480d, 490d, 500d, 510d, 520d, 530d, 540d, 550d, 560d, 570d, 580d, 590d, 600d, 610d, 620d, 630d, 640d, 650d, 660d, 670d, 680d, 690d, 700d, 710d, 720d, 730d, 740d, 750d, 760d, 770d, 780d, 790d, 800d, ],
+RINDEX_value2: [1.416d, 1.405d, 1.397d, 1.390d, 1.384d, 1.378d, 1.374d, 1.370d, 1.366d, 1.363d, 1.361d, 1.358d, 1.356d, 1.354d, 1.352d, 1.351d, 1.349d, 1.348d, 1.346d, 1.345d, 1.344d, 1.343d, 1.342d, 1.341d, 1.340d, 1.340d, 1.339d, 1.338d, 1.338d, 1.337d, 1.337d, 1.336d, 1.335d, 1.335d, 1.335d, 1.334d, 1.334d, 1.333d, 1.333d, 1.333d, 1.332d, 1.332d, 1.332d, 1.331d, 1.331d, 1.331d, 1.330d, 1.330d, 1.330d, 1.330d, 1.330d, 1.329d, 1.329d, 1.329d, 1.329d, 1.329d, 1.328d, 1.328d, 1.328d, 1.328d, 1.328d, ],
+ABSLENGTH_option: "wavelength",
+ABSLENGTH_value1: [ 200d, 337d, 365d, 386d, 420d, 500d, 620d, 800d,],
+ABSLENGTH_value2: [ 1.19d5, 1.19d5, 3.47d6, 6.99d4, 9.67d4, 1.91d3, 4.03d3, 4.03d3 ],
+PROPERTY_LIST: ["NEUTRON_CAPTURE_TIME", "NEUTRON_SLOW_DIFFUSION_CONST", "NEUTRON_FAST_DIFFUSION_RMS", "RINDEX", "ABSLENGTH", ]
+}
+
+{
+name: "OPTICS",
+index: "acrylic_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+RINDEX_option: "wavelength",
+RINDEX_value1: [200d, 210d, 220d, 230d, 240d, 250d, 260d, 270d, 280d, 290d, 300d, 310d, 320d, 330d, 340d, 350d, 360d, 370d, 380d, 390d, 400d, 410d, 420d, 430d, 440d, 450d, 460d, 470d, 480d, 490d, 500d, 510d, 520d, 530d, 540d, 550d, 560d, 570d, 580d, 590d, 600d, 610d, 620d, 630d, 640d, 650d, 660d, 670d, 680d, 690d, 700d, 710d, 720d, 730d, 740d, 750d, 760d, 770d, 780d, 790d, 800d, ],
+RINDEX_value2: [1.597d, 1.584d, 1.573d, 1.564d, 1.556d, 1.550d, 1.544d, 1.539d, 1.534d, 1.531d, 1.527d, 1.524d, 1.521d, 1.519d, 1.516d, 1.514d, 1.512d, 1.510d, 1.509d, 1.507d, 1.506d, 1.505d, 1.503d, 1.502d, 1.501d, 1.500d, 1.499d, 1.499d, 1.498d, 1.497d, 1.496d, 1.496d, 1.495d, 1.494d, 1.494d, 1.493d, 1.493d, 1.492d, 1.492d, 1.491d, 1.491d, 1.490d, 1.490d, 1.490d, 1.489d, 1.489d, 1.488d, 1.488d, 1.488d, 1.488d, 1.487d, 1.487d, 1.487d, 1.486d, 1.486d, 1.486d, 1.486d, 1.485d, 1.485d, 1.485d, 1.485d, ],
+ABSLENGTH_option: "wavelength",
+ABSLENGTH_value1: [200d, 337d, 365d, 386d, 420d, 500d, 620d, 800d,],
+ABSLENGTH_value2: [17.83d1, 17.83d1, 43.88d1, 83.06d1, 131.80d1, 142.13d1, 141.48d1, 141.48d1],
+PROPERTY_LIST: ["RINDEX", "ABSLENGTH", ]
+}
+
+{
+name: "OPTICS",
+index: "glass_sno",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+RINDEX_option: "wavelength",
+RINDEX_value1: [200d, 210d, 220d, 230d, 240d, 250d, 260d, 270d, 280d, 290d, 300d, 310d, 320d, 330d, 340d, 350d, 360d, 370d, 380d, 390d, 400d, 410d, 420d, 430d, 440d, 450d, 460d, 470d, 480d, 490d, 500d, 510d, 520d, 530d, 540d, 550d, 560d, 570d, 580d, 590d, 600d, 610d, 620d, 630d, 640d, 650d, 660d, 670d, 680d, 690d, 700d, 710d, 720d, 730d, 740d, 750d, 760d, 770d, 780d, 790d, 800d, ],
+RINDEX_value2: [1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, 1.490d, ],
+ABSLENGTH_option: "wavelength",
+ABSLENGTH_value1: [200d, 300d, 330d, 500d, 600d, 770d, 800d, ],
+ABSLENGTH_value2: [0.1d-3, 0.1d-3, 1.0d3, 2.0d3, 1.0d3, 0.5d3, 0.1d-3, ],
+PROPERTY_LIST: ["RINDEX", "ABSLENGTH", ]
+}
+
