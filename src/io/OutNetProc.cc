@@ -1,5 +1,7 @@
 #include <RAT/OutNetProc.hh>
 #include <RAT/Log.hh>
+#include <RAT/Config.hh>
+
 #include <vector>
 #include <string_utilities.hpp>
 
@@ -113,7 +115,7 @@ void OutNetProc::PickServer(std::vector<std::string> &hostlist)
 {
     double minLoad = 1e9;
     TSocket *minLoadSocket = 0;
-    int minLoadSVNVersion = 0;
+    int minLoadGITVersion = 0;
 
     for (unsigned i=0; i < hostlist.size(); i++) {
 	std::vector<std::string> parts = split(hostlist[i], ":");
@@ -150,7 +152,7 @@ void OutNetProc::PickServer(std::vector<std::string> &hostlist)
 		// This is a candidate lowest load server process
 		delete minLoadSocket;
 		minLoad = load;
-		minLoadSVNVersion = svnVersion;
+		minLoadGITVersion = svnVersion;
 		minLoadSocket = socket;
 	    } else {
 		// This socket is worse than one we already found, close it now
@@ -162,8 +164,8 @@ void OutNetProc::PickServer(std::vector<std::string> &hostlist)
     
     if (minLoadSocket) {
 	info << "outnet: Using server " << to_string(minLoadSocket) << "\n";
-	info << dformat("outnet: Local SVN = %d, Remote SVN = %d, Remote load = %1.2f\n",
-			RATVERSION, minLoadSVNVersion, minLoad);
+	info << dformat("outnet: Local GIT = %s, Remote GIT = %s, Remote load = %1.2f\n",
+			RATVERSION.c_str(), minLoadGITVersion, minLoad);
 	fSocket = minLoadSocket;
     } else {
 	throw ParamInvalid("host", "Could not locate a suitable server!");

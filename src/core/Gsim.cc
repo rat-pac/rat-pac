@@ -29,6 +29,7 @@
 #include <RAT/GLG4VertexGen.hh>
 
 #include <RAT/TimeUtil.hh>
+#include <RAT/Config.hh>
 
 #include <Randomize.hh>
 #include <vector>

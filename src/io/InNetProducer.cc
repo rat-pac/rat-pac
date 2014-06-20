@@ -3,6 +3,7 @@
 #include <RAT/DS/Root.hh>
 #include <RAT/SignalHandler.hh>
 #include <RAT/Log.hh>
+#include <RAT/Config.hh>
 
 #include <G4UIdirectory.hh>
 #include <G4UIcmdWithAnInteger.hh>
@@ -101,8 +102,7 @@ bool InNetProducer::Listen(int port, int event_limit)
 
 	    // Send initial header info
 	    TMessage header;
-	    header.WriteInt(RATVERSION);
-
+	    header.WriteFastArrayString(RATVERSION.c_str(),RATVERSION.length());
 	    // Use number of clients as our load measure
 	    double load = sockets.size();
 	    header.WriteDouble(load);

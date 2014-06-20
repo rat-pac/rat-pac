@@ -2,7 +2,7 @@
 # SCons file to create Environment() for building RAT applications.
 
 import os
-from buildhelp import RATROOT, ROOTARCH, testenv, RATVERSION, RATVERSIONSTR
+from buildhelp import RATROOT, ROOTARCH, testenv
 
 env = Environment()
 
@@ -86,10 +86,7 @@ for key in ['CXX', 'CC']:
 
 env.Append(ENV=os.environ,
            CPPPATH=['#/include', '#/include/RAT'],  # FIXME: remove second
-           CPPDEFINES=[('KL_USE_ROOT', 1),
-                       # Hack around GLG4sim bug
-                       ('RATVERSION', RATVERSION),
-                       ('RATVERSIONSTR', '\\"'+RATVERSIONSTR+'\\"'),
+           CPPDEFINES=[('KL_USE_ROOT', 1)
                        ],
            LIBPATH=['#/lib']
            )
