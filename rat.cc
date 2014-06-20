@@ -125,15 +125,6 @@ int main(int argc, char** argv) {
     InNetProducer *innet = new InNetProducer(mainBlock);
     // RATFsim *fsim = new RATFsim(analysisStack); // SOMEDAY!
 
-
-#ifdef G4VIS_USE_RAYTRACERX
-    // Initialize visualization
-    G4VisManager* visManager = new G4VisExecutive;
-    // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-    // G4VisManager* visManager = new G4VisExecutive("Quiet");
-    visManager->Initialize();
-#endif
-
     // Setup signal handler to intercept Ctrl-C and quit event loop
     // nicely (closing files and all that).
     SignalHandler::Init();
