@@ -92,8 +92,8 @@ public:
    *  200.  It is guaranteed that this number will monotonically
    *  increase with new RAT releases.
    */
-  virtual int GetRatVersion() const { return ratVersion; }
-  virtual void SetRatVersion(int _ratVersion) { ratVersion = _ratVersion; }
+  virtual std::string GetRatVersion() const { return ratVersion; }
+  virtual void SetRatVersion(std::string _ratVersion) { ratVersion = _ratVersion; }
 
   /** Monte Carlo information for this event. */
   virtual MC* GetMC() {
@@ -139,7 +139,7 @@ public:
 
 protected:
   int runID;
-  int ratVersion;
+  std::string ratVersion;
   std::vector< std::pair<std::string, int> > procResult;
   std::vector<MC> mc;
   std::vector<Calib> calib;

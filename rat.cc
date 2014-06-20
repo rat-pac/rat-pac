@@ -19,6 +19,7 @@
 // time.h must come after Randomize.hh on RedHat 7.3 
 #include <time.h>
 
+#include <RAT/Config.hh>
 #include <RAT/Log.hh>
 #include <RAT/RunManager.hh>
 #include <RAT/InROOTProducer.hh>
@@ -67,7 +68,7 @@ int main(int argc, char** argv) {
 
     options = parse_command_line(argc, argv);
 
-    info << "RAT, version " << RATVERSIONSTR << newline;
+    info << "RAT, version " << RATVERSION << newline;
 
     info << "Status messages enabled: info ";
     detail << "detail ";
@@ -123,6 +124,7 @@ int main(int argc, char** argv) {
     InROOTProducer *inroot = new InROOTProducer(mainBlock);
     InNetProducer *innet = new InNetProducer(mainBlock);
     // RATFsim *fsim = new RATFsim(analysisStack); // SOMEDAY!
+
 
 #ifdef G4VIS_USE_RAYTRACERX
     // Initialize visualization
@@ -264,7 +266,7 @@ CmdOptions parse_command_line(int argc, char** argv) {
       break;
     case 'h': help(); exit(0); break;
     case 'V':
-      cout << "RAT " << RATVERSIONSTR << std::endl;
+      cout << "RAT " << RATVERSION << std::endl;
       exit(0);
       break;
     case 'd': debug_log = true; break;
@@ -299,7 +301,7 @@ CmdOptions parse_command_line(int argc, char** argv) {
 
 void help() {
     // Logging not yet initialized so use cout
-    cout << "RAT " << RATVERSIONSTR << std::endl << std::endl;
+    cout << "RAT " << RATVERSION << std::endl << std::endl;
     cout << "Usage: rat [-qvVh] [-s seedval] [-l logfile] [-n num] [-r run] macro1.mac macro2.mac ...\n";
     cout << " -q, --quiet     Quiet mode, only show warnings\n";
     cout << " -v, --verbose   Verbose mode, show more information. Can use multiple times\n";
