@@ -72,10 +72,9 @@ protected:
                    bool isDarkHit=false, EventInfo* exinfo=NULL);
   
     /* Storing optical creation track ID and step */
-    void PhotonRecurse(int* PhotonIDs, int trackID, int& parentID, int& firstCreatedID);
-    void SetOpticalPhotonIDs(std::string particle_type, int trackID, int parentID);
-    int* OpticalPhotonIDs;
-    int OpticalPhotonIDs_size;
+  void PhotonRecurse(std::vector<int> &PhotonIDs, int trackID, int &parentID, int &firstCreatedID);
+  void SetOpticalPhotonIDs(std::string particle_type, int trackID, int parentID);
+  std::vector<int> OpticalPhotonIDs;
 
   G4RunManager* theRunManager;
   GLG4DebugMessenger* theDebugMessenger;

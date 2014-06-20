@@ -190,9 +190,9 @@ void Gsim::BeginOfEventAction(const G4Event* anEvent) {
 
   eventInfo->StorePhotonIDs = StoreOpticalTrackID;
 
+  // This is only necessary if the photons are flagged to be tracked and stored
   if (StoreOpticalTrackID) {
-    OpticalPhotonIDs_size = 1000000;
-    OpticalPhotonIDs = (int*) malloc(OpticalPhotonIDs_size * sizeof(int));;
+  	OpticalPhotonIDs.resize(10000);
   }
 }
 
@@ -218,8 +218,9 @@ void Gsim::EndOfEventAction(const G4Event* anEvent) {
     // Reset the store trajectory state to the initial state as
     // specified in the user macro.
     fpTrackingManager->SetStoreTrajectory(fInitialStoreTrajectoryState);
+
     if (StoreOpticalTrackID) {
-      free(OpticalPhotonIDs);
+    	OpticalPhotonIDs.resize(0);
     }
 }
 
@@ -622,8 +623,7 @@ G4String Gsim::GetStoreParticleTrajString(const bool& gDoStore) {
 // PhotonRecurse runs back from the PMT photon through the track - parent
 // ID pairs in PhotonIDs to find the original track which created the
 // optical photon
-void Gsim::PhotonRecurse(int* PhotonIDs, int trackID, int& parentID,
-                         int& firstCreatedID){
+void Gsim::PhotonRecurse(std::vector<int> &PhotonIDs, int trackID, int &parentID, int &firstCreatedID) {
   if (PhotonIDs[trackID]==0 || PhotonIDs[trackID]==-1) {
     parentID=trackID;
     return;
@@ -637,10 +637,9 @@ void Gsim::PhotonRecurse(int* PhotonIDs, int trackID, int& parentID,
 
 void Gsim::SetOpticalPhotonIDs(std::string particle_type, int trackID,
                                int parentID) {
-  if (trackID > OpticalPhotonIDs_size) {
-    OpticalPhotonIDs_size = 2 * trackID;
-    OpticalPhotonIDs = \
-      (int*)realloc(OpticalPhotonIDs, OpticalPhotonIDs_size * sizeof(int));
+	if (static_cast<size_t>(trackID) > OpticalPhotonIDs.size()) {
+  	// this factor of 2 seems pretty random.
+  	OpticalPhotonIDs.resize(2*trackID,0);
   }
   if (particle_type.compare("opticalphoton") == 0) {
     OpticalPhotonIDs[trackID] = parentID;
