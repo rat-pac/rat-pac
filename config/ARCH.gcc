@@ -16,7 +16,7 @@ arch = {
     'default' : { 'CXXFLAGS' : Split('-W -Wall -ansi -pedantic -Wno-non-virtual-dtor'
                                      ' -Wno-long-long -Wwrite-strings -Wno-strict-aliasing'
                                      ' -Wpointer-arith -Wno-unused-parameter -Woverloaded-virtual -pipe'
-                                     ' -fPIC -Werror'),
+                                     ' -fPIC'),
                   'LDFLAGS' : '-fPIC',
                   },
 
