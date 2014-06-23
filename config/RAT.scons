@@ -94,6 +94,11 @@ env.Append(ENV=os.environ,
 # Add architecture-dependent flags, GEANT4, and ROOT
 env.Append(**arch['default'])
 env.Append(**rootopts)
+
+# Hack to make GEANT4 include paths -isystem instead of normal -I
+for path in g4opts['CPPPATH']:
+    env.Append(CXXFLAGS='-isystem ' + path)
+del g4opts['CPPPATH']
 env.Append(**g4opts)
 
 conf = Configure(env, custom_tests={'CheckCurlConfig' : CheckCurlConfig})
