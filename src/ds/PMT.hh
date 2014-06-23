@@ -8,8 +8,6 @@
 #ifndef __RAT_DS_PMT__
 #define __RAT_DS_PMT__
 
-#include <RTypes.h>
-
 namespace RAT {
   namespace DS {
 
