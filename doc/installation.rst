@@ -4,16 +4,9 @@ Prerequisites
 `````````````
 These software packages should be installed before you attempt to build RAT.  Take note of the version numbers as many of these packages make incompatible changes between releases.
 
- * [http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/ CLHEP 2.0.4.5] - Utility Classes for High Energy Physics. This package is required by GEANT4.
+ * `GEANT4 9.6.p03 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ - Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=YES`` to download the interaction cross-section files (or download them manually).
 
- * [http://geant4.web.cern.ch/geant4/support/download.shtml GEANT 4.9.3.p01] - Toolkit used by the Monte Carlo simulation.  When configuring GEANT4, make sure these options are selected:
-    * Copy all headers in one directory
-    * Make static libraries
-    * For using the OpenGL event viewer, enable linking with OpenGL
-    * For nicer visualization with Wired 3/4, enable "Link with ZLIB" to produce compressed HEPREP files, much smaller than normal HEPREP.
-    * Don't forget to download the interaction cross-section files from the GEANT4 site! (Below the source code links)
-
- * [http://root.cern.ch/drupal/content/production-version-526 ROOT 5.26.00] - Used for object serialization and network processors.  As of revision [467], you must add the --enable-minuit2 option when you run the ROOT ./configure script.  If installing on Mac OS X 10.5 on 64bit intel, configure with macosx, not macosx64.  OS X 10.6 requires no special settings.
+ * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).
 
 Build Steps
 ```````````
@@ -139,16 +132,15 @@ Test Drive
 
 * Run a macro job::
 
-    rat mac/electron_demo_cyliner.mac -o test.root
+    rat mac/electron_demo_cylinder.mac -o test.root
 
 This will simulate 10 MeV electrons in a cylindrical detector. 
 
-* Now you can start ROOT to analyze the events you just created. The rootlogon.C file in the RAT directory will load the RATEvent shared library::
+* Now you can start ROOT to analyze the events you just created::
 
     $ root test.root 
     root [0] 
     Attaching file test.root as _file0...
     root [1] T->Draw("mc.particle.pos.fX")
 
-You should get a plot of particle x coordinates.
-
+You should get a plot of particle x coordinates. Note that with the RAT environment sourced, you are getting a special copy of ROOT that automatically loads the RAT ROOT event library.
