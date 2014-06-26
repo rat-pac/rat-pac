@@ -106,7 +106,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   pmtParam.dynode_surface=Materials::optical_surface[lpmt->GetS("dynode_surface")];
   
   if (pmtParam.photocathode == 0)
-    Log::Die("GeoBuilder error: photocathode surface \""
+    Log::Die("GeoPMTFactoryBase error: Photocathode surface \""
 		+ pc_surface_name + "\" not found");
 
   // Simplified PMT drawing for faster visualization
@@ -124,7 +124,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     else if (orient_str == "point")
       orient_manual = false;
     else 
-      Log::Die("GeoBuilder error: Unknown PMT orientation " 
+      Log::Die("GeoPMTFactoryBase error: Unknown PMT orientation " 
 		  + orient_str);
   } catch (DBNotFoundError &e) { }
 
@@ -140,7 +140,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   } else {
     orient_point_array = table->GetDArray("orient_point");
     if (orient_point_array.size() != 3)
-      Log::Die("GeoBuilder error: orient_point must have 3 values");
+      Log::Die("GeoPMTFactoryBase error: orient_point must have 3 values");
     orient_point.set(orient_point_array[0], orient_point_array[1],
 		     orient_point_array[2]);    
   }
@@ -156,7 +156,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   // get pointer to physical mother volume
   G4VPhysicalVolume* phys_mother = FindPhysMother(mother_name);
   if (phys_mother == 0)
-    Log::Die("GeoBuilder error: PMT mother physical volume " + mother_name
+    Log::Die("GeoPMTFactoryBase error: PMT mother physical volume " + mother_name
 		+" not found");
 
 

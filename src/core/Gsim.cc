@@ -28,7 +28,10 @@
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
 
+#include <RAT/PMTTime.hh>
+#include <RAT/PMTCharge.hh>
 #include <RAT/TimeUtil.hh>
+#include <RAT/PMTTime.hh>
 #include <RAT/Config.hh>
 
 #include <Randomize.hh>
@@ -121,6 +124,10 @@ void Gsim::Init() {
   // ...and finally the hook.  Here's where we trap GEANT4 at the end of
   // each event and do our business.
   theRunManager->SetUserAction(static_cast<G4UserEventAction*>(this));
+
+  // PMT transit time and single-pe charge calculators
+  fPMTTime = NULL;
+  fPMTCharge = NULL;
 }
 
 Gsim::~Gsim() {
@@ -130,6 +137,9 @@ Gsim::~Gsim() {
   // SetUserAction() is overloaded.
   theRunManager->SetUserAction(static_cast<G4UserEventAction*>(NULL));
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(NULL));
+
+  delete fPMTTime;
+  delete fPMTCharge;
 }
   
 void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
@@ -142,6 +152,12 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
 
   DBLinkPtr ldaq = DB::Get()->GetLink("DAQ");
   channelEfficiency = ldaq->GetD("channel_efficiency");
+
+  delete fPMTTime;
+  fPMTTime = new RAT::PMTTime();
+
+  delete fPMTCharge;
+  fPMTCharge = new RAT::PMTCharge();
 
   // Tell the generator when the run starts
   GLG4PrimaryGeneratorAction* theGLG4PGA= 
@@ -457,8 +473,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
   int numPE = 0;
  
-  double firsthittime = 99999;
-  double lasthittime = -99999;
+  double firsthittime = DBL_MAX;
+  double lasthittime = -DBL_MAX;
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
@@ -563,6 +579,8 @@ void Gsim::AddMCPhoton(DS::MCPMT* rat_mcpmt, const GLG4HitPhoton* photon,
     rat_mcphoton->SetTrackID(-1);
   }
   rat_mcphoton->SetHitTime(photon->GetTime());
+  rat_mcphoton->SetFrontEndTime(fPMTTime->PickTime(photon->GetTime()));
+  rat_mcphoton->SetCharge(fPMTCharge->PickCharge());
 }
 
 void Gsim::SetStoreParticleTraj(const G4String& particleName,

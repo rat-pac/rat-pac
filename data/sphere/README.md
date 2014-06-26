@@ -1,9 +1,8 @@
 Example Spherical Detector
 ==========================
 The tables in this directory define a simple spherical detector consisting
-of 9261 inward-looking Hamamatsu R1408 PMTs immersed in water at a radius of
-8.5 m. Inside the PMT sphere at a radius of 6 m is a 30-cm thick acrylic
-sphere full of more water.
+of 5586 inward-looking Hamamatsu R11780 PMTs immersed in water at a radius of
+8 m, for coverage of about 50%.
 
 `PMTINFO.ratdb` lists the PMT positions and directions, and was generated with
 the utility at `$RATROOT/util/sphere_pmts.py`. `sphere.geo` is a RAT
