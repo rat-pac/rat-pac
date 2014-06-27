@@ -279,7 +279,7 @@ GLG4Scint::PostPostStepDoIt(const G4Track& aTrack, const G4Step& aStep) {
       // Check if there are multiple components
       if (mpt_scint->ConstPropertyExists("COMPONENTS")) {
         RAT::Log::Die("GLG4Scint: COMPONENTS not yet implemented");
-        numComponents = mpt_scint->GetConstProperty("NUM_COMP");
+        numComponents = (G4int) mpt_scint->GetConstProperty("NUM_COMP");
       }
 
       G4MaterialPropertyVector* mpv_scint_reemission =
