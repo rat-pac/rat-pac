@@ -22,6 +22,8 @@ namespace RAT {
 
 class ProcBlock;
 class DetectorConstruction;
+class PMTTime;
+class PMTCharge;
 
 int get_pdgcode(const G4PrimaryParticle *p);
 
@@ -78,6 +80,9 @@ protected:
 
   G4RunManager* theRunManager;
   GLG4DebugMessenger* theDebugMessenger;
+
+  RAT::PMTTime* fPMTTime;  //< PMT transit time/delay calculator
+  RAT::PMTCharge* fPMTCharge;  //< PMT single-pe charge calculator
 
   int runID;
   TTimeStamp utc;

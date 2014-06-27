@@ -11,12 +11,13 @@
 /rat/proc count
 /rat/procset update 10
 
-# Use IO.default_output_filename
 /rat/proclast outroot
+/rat/procset file "sphere_betas.root"
 #END EVENT LOOP
 
-/generator/add combo gun2:fill
-/generator/vtx/set e-  0 0 0 0 10.0 10.0
+/generator/add combo gun:fill:poisson
+/generator/vtx/set e- 0 0 0 10.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 1000
+/run/beamOn 100
+

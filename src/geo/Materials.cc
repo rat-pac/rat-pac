@@ -1,8 +1,10 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
-#include <RAT/Materials.hh>
+#include <G4OpticalSurface.hh>
+#include <G4SurfaceProperty.hh>
 #include <G4NistManager.hh>
+#include <RAT/Materials.hh>
 
 using namespace::std;
 
@@ -11,220 +13,111 @@ namespace RAT {
 std::map<std::string, G4OpticalSurface*> Materials::optical_surface;
 
 void Materials::LoadOpticalSurfaces() {
-  // Duplicate of work in GLG4DetectorConstruction, but there is no
-  // global store for optical surfaces, so we have to make one ourselves
+  // String interface to enums in G4OpticalSurface and G4SurfaceProperty
+  std::map<std::string, G4OpticalSurfaceFinish> opticalSurfaceFinishes;
+  opticalSurfaceFinishes["polished"] = polished;
+  opticalSurfaceFinishes["polishedfrontpainted"] = polishedfrontpainted;
+  opticalSurfaceFinishes["polishedbackpainted"] = polishedbackpainted;
+  opticalSurfaceFinishes["ground"] = ground;
+  opticalSurfaceFinishes["groundfrontpainted"] = groundfrontpainted;
+  opticalSurfaceFinishes["groundbackpainted"] = groundbackpainted;
 
-  // Materials used below (assume LoadMaterials() already called)
-  G4Material* _stainless = G4Material::GetMaterial("stainless_steel");
-  G4Material* _stainless_316L = G4Material::GetMaterial("stainless_steel_316L");
-  G4Material* _aluminum = G4Material::GetMaterial("aluminum");
-  G4Material* _polyethylene = G4Material::GetMaterial("polyethylene");
-  G4Material* _tyvek = G4Material::GetMaterial("tyvek");
-  G4Material* _tank_liner = G4Material::GetMaterial("tank_liner");
-  G4Material* _blackAcryl = G4Material::GetMaterial("acrylic_black");
-  G4Material* _whiteAcryl = G4Material::GetMaterial("acrylic_white");
-  G4Material* _polycast = G4Material::GetMaterial("acrylic_polycast");
-  G4Material* _ptfe = G4Material::GetMaterial("ptfe");
-  G4Material* _ptfe_fabric = G4Material::GetMaterial("ptfe_fabric");
-  G4Material* _zno2 = G4Material::GetMaterial("ZnO2");
-  G4Material* _quartz = G4Material::GetMaterial("quartz");
-  G4Material* _glass = G4Material::GetMaterial("glass");
-  G4Material* _sapphire = G4Material::GetMaterial("sapphire");
-  
-  // load ALL the photocathodes here
-  // note that *each* photocathode will need to be loaded here
-  G4OpticalSurface *Photocathode =  new G4OpticalSurface("photocathode");
-  Photocathode->SetType(dielectric_metal); // ignored if RINDEX defined
-  Photocathode->SetMaterialPropertiesTable(
-           G4Material::GetMaterial("photocathode")
-                ->GetMaterialPropertiesTable() );
-  optical_surface[Photocathode->GetName()] = Photocathode;
-  
-  G4OpticalSurface *Photocathode_R5912HQE =  new G4OpticalSurface("photocathode_R5912_HQE");
-  Photocathode_R5912HQE->SetType(dielectric_metal); // ignored if RINDEX defined
-  Photocathode_R5912HQE->SetMaterialPropertiesTable(
-           G4Material::GetMaterial("photocathode_R5912_HQE")
-                ->GetMaterialPropertiesTable() );
-  optical_surface[Photocathode_R5912HQE->GetName()] = Photocathode_R5912HQE;
-  
-  G4OpticalSurface *Photocathode_R11065 =  new G4OpticalSurface("photocathode_R11065");
-  Photocathode_R11065->SetType(dielectric_metal); // ignored if RINDEX defined
-  Photocathode_R11065->SetMaterialPropertiesTable(
-           G4Material::GetMaterial("photocathode_R11065")
-                ->GetMaterialPropertiesTable() );
-  optical_surface[Photocathode_R11065->GetName()] = Photocathode_R11065;
-  
-  
-  G4OpticalSurface *Photocathode_R1408 =  new G4OpticalSurface("photocathode_R1408");
-  Photocathode_R1408->SetType(dielectric_metal); // ignored if RINDEX defined
-  Photocathode_R1408->SetMaterialPropertiesTable(
-           G4Material::GetMaterial("photocathode_R1408")
-                ->GetMaterialPropertiesTable() );
-  optical_surface[Photocathode_R1408->GetName()] = Photocathode_R1408;
-  
-  G4OpticalSurface *Photocathode_et9390b =  new G4OpticalSurface("photocathode_et9390b");
-  Photocathode_et9390b->SetType(dielectric_metal); // ignored if RINDEX defined
-  Photocathode_et9390b->SetMaterialPropertiesTable(
-           G4Material::GetMaterial("photocathode_et9390b")
-                ->GetMaterialPropertiesTable() );
-  optical_surface[Photocathode_et9390b->GetName()] = Photocathode_et9390b;
-  
-  G4OpticalSurface *Stainless =  new G4OpticalSurface("stainless_steel");
-  Stainless->SetFinish(ground); 
-  Stainless->SetModel(glisur); 
-  Stainless->SetType(dielectric_metal); 
-  Stainless->SetPolish(0.1);              // a guess -- FIXME?
-  Stainless->SetMaterialPropertiesTable(
-           _stainless->GetMaterialPropertiesTable() );
-  optical_surface[Stainless->GetName()] = Stainless;
-  
-  G4OpticalSurface *Stainless_316L =  new G4OpticalSurface("stainless_steel_316L");
-  Stainless_316L->SetFinish(ground); 
-  Stainless_316L->SetModel(glisur); 
-  Stainless_316L->SetType(dielectric_metal); 
-  Stainless_316L->SetPolish(0.1);              // a guess -- FIXME?
-  Stainless_316L->SetMaterialPropertiesTable(
-           _stainless_316L->GetMaterialPropertiesTable() );
-  optical_surface[Stainless_316L->GetName()] = Stainless_316L;
-  
-  G4OpticalSurface *Aluminum =  new G4OpticalSurface("aluminum");
-  Aluminum->SetFinish(ground); 
-  Aluminum->SetModel(glisur); 
-  Aluminum->SetType(dielectric_metal); 
-  Aluminum->SetPolish(0.9);              // a guess -- FIXME?
-  Aluminum->SetMaterialPropertiesTable(
-           _aluminum->GetMaterialPropertiesTable() );
-  optical_surface[Aluminum->GetName()] = Aluminum;
+  std::map<std::string, G4OpticalSurfaceModel> opticalSurfaceModels;
+  opticalSurfaceModels["glisur"] = glisur;
+  opticalSurfaceModels["unified"] = unified;
 
-  G4OpticalSurface *Polyethylene =  new G4OpticalSurface("polyethylene");
-  Polyethylene->SetFinish(ground); // a guess -- FIXME?
-  Polyethylene->SetModel(glisur); // a guess -- FIXME?
-  Polyethylene->SetType(dielectric_dielectric); // a guess -- FIXME?
-  Polyethylene->SetPolish(0.7);              // a guess -- FIXME?
-  Polyethylene->SetMaterialPropertiesTable(
-     _polyethylene->GetMaterialPropertiesTable() );
-  optical_surface[Polyethylene->GetName()] = Polyethylene;
+  std::map<std::string, G4SurfaceType> opticalSurfaceTypes;
+  opticalSurfaceTypes["dielectric_metal"] = dielectric_metal;
+  opticalSurfaceTypes["dielectric_dielectric"] = dielectric_dielectric;
+  opticalSurfaceTypes["firsov"] = firsov;
+  opticalSurfaceTypes["x_ray"] = x_ray;
 
-  G4OpticalSurface *Tyvek =  new G4OpticalSurface("tyvek");
-  Tyvek->SetFinish(ground); 
-  Tyvek->SetModel(glisur); 
-  Tyvek->SetType(dielectric_metal); 
-  Tyvek->SetPolish(0.01);              // a guess -- FIXME
-  Tyvek->SetMaterialPropertiesTable(
-           _tyvek->GetMaterialPropertiesTable() );
-  optical_surface[Tyvek->GetName()] = Tyvek;
+  // Loop over OPTICS to find photocathodes and general surfaces
+  DBLinkGroup lOptics = DB::Get()->GetLinkGroup("OPTICS");
+  for (DBLinkGroup::iterator iv=lOptics.begin(); iv!=lOptics.end(); iv++) {
+    G4Material* mat = G4Material::GetMaterial(iv->first.c_str());
+    Log::Assert(mat, dformat("Materials::LoadOpticalSurfaces: Missing material for entry %s", iv->first.c_str()));
 
-  G4OpticalSurface *Tank_liner =  new G4OpticalSurface("tank_liner");
-  Tank_liner->SetFinish(ground); 
-  Tank_liner->SetModel(glisur); 
-  Tank_liner->SetType(dielectric_metal); 
-  Tank_liner->SetPolish(0.01);              // a guess -- FIXME
-  Tank_liner->SetMaterialPropertiesTable(
-           _tank_liner->GetMaterialPropertiesTable() );
-  optical_surface[Tank_liner->GetName()] = Tank_liner;
+    // Load the photocathodes
+    bool isPhotocathode = false;
+    try {
+      isPhotocathode = (bool) iv->second->GetI("photocathode");
+    }
+    catch (DBNotFoundError& e) {}
 
-  G4OpticalSurface *BlackSheet =  new G4OpticalSurface("black_sheet");
-  BlackSheet->SetFinish(ground); 
-  BlackSheet->SetModel(glisur); 
-  BlackSheet->SetType(dielectric_metal); 
-  BlackSheet->SetPolish(0.1);              // a guess -- FIXME
-  BlackSheet->SetMaterialPropertiesTable(
-           _blackAcryl->GetMaterialPropertiesTable() );
-  optical_surface[BlackSheet->GetName()] = BlackSheet;
+    if (isPhotocathode) {
+      G4OpticalSurface* pc = new G4OpticalSurface(iv->first.c_str());
+      pc->SetType(dielectric_metal);  // Ignored if RINDEX is defined
+      pc->SetMaterialPropertiesTable(mat->GetMaterialPropertiesTable());
+      optical_surface[pc->GetName()] = pc;
+    }
 
-  G4OpticalSurface *WhiteAcrylic =  new G4OpticalSurface("acrylic_white");
-  WhiteAcrylic->SetFinish(ground); 
-  WhiteAcrylic->SetModel(glisur); 
-  WhiteAcrylic->SetType(dielectric_metal); 
-  WhiteAcrylic->SetPolish(0.01);              // a guess -- FIXME?
-  WhiteAcrylic->SetMaterialPropertiesTable(
-           _whiteAcryl->GetMaterialPropertiesTable() );
-  optical_surface[WhiteAcrylic->GetName()] = WhiteAcrylic;
-  
-  G4OpticalSurface *PolishedPolycast =  new G4OpticalSurface("polished_polycast");
-  PolishedPolycast->SetFinish(ground); // a guess -- FIXME?
-  PolishedPolycast->SetModel(glisur); // a guess -- FIXME?
-  PolishedPolycast->SetType(dielectric_dielectric); // a guess -- FIXME?
-  PolishedPolycast->SetPolish(0.9);              // a guess -- FIXME?
-  PolishedPolycast->SetMaterialPropertiesTable(
-     _polycast->GetMaterialPropertiesTable() );
-  optical_surface[PolishedPolycast->GetName()] = PolishedPolycast;
-  
-  G4OpticalSurface *ptfe =  new G4OpticalSurface("ptfe");
-  ptfe->SetFinish(ground); 
-  ptfe->SetModel(glisur); 
-  ptfe->SetType(dielectric_metal); 
-  ptfe->SetPolish(0.01);              // a guess -- FIXME?
-  ptfe->SetMaterialPropertiesTable(
-           _ptfe->GetMaterialPropertiesTable() );
-  optical_surface[ptfe->GetName()] = ptfe;
-  
-  G4OpticalSurface *ptfe_fabric =  new G4OpticalSurface("ptfe_fabric");
-  ptfe_fabric->SetFinish(ground); 
-  ptfe_fabric->SetModel(glisur); 
-  ptfe_fabric->SetType(dielectric_metal); 
-  ptfe_fabric->SetPolish(0.01);              // a guess -- FIXME?
-  ptfe_fabric->SetMaterialPropertiesTable(
-           _ptfe_fabric->GetMaterialPropertiesTable() );
-  optical_surface[ptfe_fabric->GetName()] = ptfe_fabric;
-  
-  G4OpticalSurface *zno2 =  new G4OpticalSurface("ZnO2");
-  zno2->SetFinish(ground); 
-  zno2->SetModel(glisur); 
-  zno2->SetType(dielectric_metal); 
-  zno2->SetPolish(0.01);              // a guess -- FIXME?
-  zno2->SetMaterialPropertiesTable(
-           _zno2->GetMaterialPropertiesTable() );
-  optical_surface[zno2->GetName()] = zno2;
-  
-  G4OpticalSurface *quartz =  new G4OpticalSurface("quartz");
-  quartz->SetFinish(polished); 
-  quartz->SetModel(glisur); 
-  quartz->SetType(dielectric_dielectric); 
-  quartz->SetPolish(0.9);              // Using SetFinish(polished) is the same as SetPolish(1.0) for a dielectric_dielectric
-  quartz->SetMaterialPropertiesTable(
-           _quartz->GetMaterialPropertiesTable() );
-  optical_surface[quartz->GetName()] = quartz;
-  
-  G4OpticalSurface *glass =  new G4OpticalSurface("glass");
-  glass->SetFinish(ground); 
-  glass->SetModel(glisur); 
-  glass->SetType(dielectric_dielectric); 
-  glass->SetPolish(0.9);              // a guess -- FIXME?
-  glass->SetMaterialPropertiesTable(
-           _glass->GetMaterialPropertiesTable() );
-  optical_surface[glass->GetName()] = glass;
-  
-  G4OpticalSurface *sapphire =  new G4OpticalSurface("sapphire");
-  sapphire->SetFinish(ground);
-  sapphire->SetModel(glisur);
-  sapphire->SetType(dielectric_dielectric);
-  sapphire->SetPolish(0.9);              // a guess -- FIXME?
-  sapphire->SetMaterialPropertiesTable(
-                                       _sapphire->GetMaterialPropertiesTable() );
-  optical_surface[sapphire->GetName()] = sapphire;
+    // Load other optical surfaces
+    bool isOpticalSurface = false;
+    try {
+      isOpticalSurface = (bool) iv->second->GetI("surface");
+    }
+    catch (DBNotFoundError& e) {}
 
-  G4OpticalSurface *mirror = new G4OpticalSurface("mirror");
-  mirror->SetFinish(polishedfrontpainted); // needed for mirror
-  mirror->SetModel(glisur); 
-  mirror->SetType(dielectric_metal); 
-  mirror->SetPolish(0.999);              // a guess -- FIXME
-  G4MaterialPropertiesTable* propMirror=
-    new G4MaterialPropertiesTable();
-  propMirror->AddProperty("REFLECTIVITY", new G4MaterialPropertyVector());
-  propMirror->AddEntry("REFLECTIVITY", twopi*hbarc/(800.0e-9*m), 0.9999);
-  propMirror->AddEntry("REFLECTIVITY", twopi*hbarc/(60.0e-9*m), 0.9999);
-  mirror->SetMaterialPropertiesTable( propMirror ); 
-  optical_surface[mirror->GetName()] = mirror;
+    Log::Assert(!(isOpticalSurface && isPhotocathode),
+                dformat("Materials::LoadOpticalSurfaces: Entry %s is defined as both \"photocathode\" and \"surface\", must be one or the other.", iv->first.c_str()));
 
-  G4OpticalSurface* styrofoam_surface=new G4OpticalSurface("styrofoam");
-  styrofoam_surface->SetFinish(ground);
-  // left default Model (glisur)
-  styrofoam_surface->SetType(dielectric_metal);
-  // styrofoam_surface->SetPolish();//rather than guessing, left default (=1.0)
-  styrofoam_surface->SetMaterialPropertiesTable(
-    G4Material::GetMaterial("styrofoam")->GetMaterialPropertiesTable());
-  optical_surface[styrofoam_surface->GetName()]=styrofoam_surface;
+    if (isOpticalSurface) {
+      // Surface properties
+      G4OpticalSurfaceModel model = glisur;
+      G4OpticalSurfaceFinish finish = polished;
+      G4SurfaceType type = dielectric_dielectric;
+      double polish = 0.1;
+
+      try {
+        std::string name = iv->second->GetS("model");
+        if (opticalSurfaceModels.find(name) != opticalSurfaceModels.end()) {
+          model = opticalSurfaceModels[name];
+        }
+        else {
+          Log::Die(dformat("Materials::LoadOpticalSurfaces: Invalid surface model %s", name.c_str()));
+        }
+      }
+      catch (DBNotFoundError& e) {}
+
+      try {
+        std::string name = iv->second->GetS("finish");
+        if (opticalSurfaceFinishes.find(name) != opticalSurfaceFinishes.end()) {
+          finish = opticalSurfaceFinishes[name];
+        }
+        else {
+          Log::Die(dformat("Materials::LoadOpticalSurfaces: Invalid surface finish %s", name.c_str()));
+        }
+      }
+      catch (DBNotFoundError& e) {}
+      
+      try {
+        std::string name = iv->second->GetS("type");
+        if (opticalSurfaceTypes.find(name) != opticalSurfaceTypes.end()) {
+          type = opticalSurfaceTypes[name];
+        }
+        else {
+          Log::Die(dformat("Materials::LoadOpticalSurfaces: Invalid surface type %s", name.c_str()));
+        }
+      }
+      catch (DBNotFoundError& e) {}
+
+      try {
+        polish = iv->second->GetD("polish");
+      }
+      catch (DBNotFoundError& e) {}
+
+      G4OpticalSurface* surf = new G4OpticalSurface(iv->first.c_str());
+      surf->SetFinish(finish);
+      surf->SetModel(model);
+      surf->SetType(type);
+      surf->SetPolish(polish);
+
+      surf->SetMaterialPropertiesTable(mat->GetMaterialPropertiesTable());
+
+      optical_surface[surf->GetName()] = surf;
+    }
+  }
 }
 
 // ----------------------------------------------------------------
@@ -306,19 +199,17 @@ void Materials::ConstructMaterials() {
     BuildMaterial(namedb,table);
   }
 
-  G4Material::GetMaterial("stainless_steel");  
-  G4Material::GetMaterial("aluminum");  
-  G4Material::GetMaterial("acrylic_black");
-  G4Material::GetMaterial("acrylic_white");
-  G4Material::GetMaterial("acrylic_polycast");
-  G4Material::GetMaterial("polyethylene");
-  G4Material::GetMaterial("tyvek");
-  G4Material::GetMaterial("ptfe");
-  G4Material::GetMaterial("ptfe_fabric");
-  G4Material::GetMaterial("ZnO2");
-  G4Material::GetMaterial("quartz");
-  G4Material::GetMaterial("glass");
-  G4Material::GetMaterial("sapphire");
+  for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
+    bool isOpticalSurface = false;
+    try {
+      isOpticalSurface = (bool) iv->second->GetI("surface");
+    }
+    catch (DBNotFoundError& e) {}
+
+    if (isOpticalSurface) {
+      G4Material::GetMaterial(iv->first);
+    }
+  }
 
   // == Optics ==================================================
 

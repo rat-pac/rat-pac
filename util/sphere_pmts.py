@@ -65,6 +65,3 @@ with open(args.output, 'w') as f:
     f.write(ratdb_template % (x, y, z, t))
     print 'Wrote positions to', args.output
 
-for i in range(len(points)):
-    print '%f %f %f' % (points[:,0][i], points[:,1][i], points[:,2][i])
-
