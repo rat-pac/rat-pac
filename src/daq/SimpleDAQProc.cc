@@ -32,8 +32,8 @@ Processor::Result SimpleDAQProc::DSEvent(DS::Root *ds) {
 
   double totalQ = 0.0;
   double calibQ = 0.0;
-  for (int imcpmt=0; imcpmt < mc->GetPMTCount(); imcpmt++) {
-      DS::MCPMT *mcpmt = mc->GetPMT(imcpmt);
+  for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
+      DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
       int pmtID = mcpmt->GetID();
 
       if (mcpmt->GetMCPhotonCount() > 0) {

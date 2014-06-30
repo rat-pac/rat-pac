@@ -473,8 +473,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
   int numPE = 0;
  
-  double firsthittime = DBL_MAX;
-  double lasthittime = -DBL_MAX;
+  double firsthittime = 99999;
+  double lasthittime = -99999;
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
@@ -487,7 +487,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
     // Create and initialize a RAT DS::MCPMT 
     // note that GLG4HitPMTs are given IDs which are their index
-    DS::MCPMT* rat_mcpmt = mc->AddNewPMT();
+    DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
     mcpmtObjects[a_pmt->GetID()] = rat_mcpmt;
     rat_mcpmt->SetID(a_pmt->GetID());
     DS::Run* run = DS::RunStore::GetRun(runID);
@@ -544,7 +544,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     //hit->SetIsNoise();
     // Add the PMT if it did not register a "real" hit
     if (!mcpmtObjects.count(pmtid)) {
-      DS::MCPMT* rat_mcpmt = mc->AddNewPMT();
+      DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
       mcpmtObjects[pmtid] = rat_mcpmt;
       rat_mcpmt->SetID(pmtid);
       rat_mcpmt->SetType(pmtinfo->GetType(pmtid));

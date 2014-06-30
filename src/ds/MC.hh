@@ -85,9 +85,9 @@ public:
   }
 
   /** List of PMTs which had at least one photoelectron generated */
-  virtual MCPMT* GetPMT(int i) { return &pmt[i]; }
-  virtual int GetPMTCount() const { return pmt.size(); }
-  virtual MCPMT* AddNewPMT() {
+  virtual MCPMT* GetMCPMT(int i) { return &pmt[i]; }
+  virtual int GetMCPMTCount() const { return pmt.size(); }
+  virtual MCPMT* AddNewMCPMT() {
     pmt.resize(pmt.size() + 1);
     return &pmt.back();
   };

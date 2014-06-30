@@ -88,8 +88,8 @@ Processor::Result PruneProc::DSEvent(DS::Root *ds) {
       mc->PrunePMT();
 
     if (mc_pmt_photon) {
-      for (int i=0; i < mc->GetPMTCount(); i++)
-        mc->GetPMT(i)->PruneMCPhoton();
+      for (int i=0; i < mc->GetMCPMTCount(); i++)
+        mc->GetMCPMT(i)->PruneMCPhoton();
     }
   }
   
