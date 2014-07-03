@@ -473,8 +473,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
   int numPE = 0;
  
-  double firsthittime = 99999;
-  double lasthittime = -99999;
+  double firsthittime = std::numeric_limits<double>::max();
+  double lasthittime = std::numeric_limits<double>::min();
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
