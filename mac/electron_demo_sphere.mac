@@ -10,10 +10,13 @@
 /rat/proc simpledaq
 /rat/proc count
 /rat/procset update 10
+/rat/proc fitcentroid
 
 /rat/proclast outroot
 /rat/procset file "sphere_betas.root"
 #END EVENT LOOP
+
+#/tracking/storeTrajectory 1
 
 /generator/add combo gun:fill:poisson
 /generator/vtx/set e- 0 0 0 10.0
