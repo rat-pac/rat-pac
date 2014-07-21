@@ -1,16 +1,21 @@
 #ifndef __RAT_GeoWatchmanShieldFactory__
 #define __RAT_GeoWatchmanShieldFactory__
 
-#include <GeoSolidFactory.hh>
+#include <GeoFactory.hh>
 
-#include <G4VSolid.hh>
+#include <G4VPhysicalVolume.hh>
+#include <G4VisAttributes.hh>
+#include <G4OpticalSurface.hh>
 
 namespace RAT {
- class GeoWatchmanShieldFactory : public GeoSolidFactory {
- public:
-   GeoWatchmanShieldFactory() : GeoSolidFactory("watchmanshield") {};
-   virtual G4VSolid *ConstructSolid(DBLinkPtr table);
- };
+    class GeoWatchmanShieldFactory : public GeoFactory {
+        public:
+            GeoWatchmanShieldFactory() : GeoFactory("watchmanshield") {};
+            virtual G4VPhysicalVolume *Construct(DBLinkPtr table);
+        protected:
+            G4VisAttributes *GetVisAttributes(DBLinkPtr table);
+            G4OpticalSurface *GetSurface(std::string surface_name);
+    };
   
 } // namespace RAT
 
