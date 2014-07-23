@@ -1,4 +1,13 @@
-#include <math.h>
+#include <cmath>
+#include <string>
+#include <TVector3.h>
+#include <RAT/DS/Centroid.hh>
+#include <RAT/DS/EV.hh>
+#include <RAT/DS/PMT.hh>
+#include <RAT/DS/Root.hh>
+#include <RAT/DS/Run.hh>
+#include <RAT/DS/RunStore.hh>
+#include <RAT/Processor.hh>
 #include <RAT/FitCentroidProc.hh>
 
 namespace RAT {
@@ -21,7 +30,7 @@ void FitCentroidProc::SetD(std::string param, double value) {
 }
 
 
-Processor::Result FitCentroidProc::Event(DS::Root* /*ds*/, DS::EV* ev) {
+Processor::Result FitCentroidProc::Event(DS::Root* ds, DS::EV* ev) {
   double totalQ = 0;
   TVector3 centroid(0.0, 0.0, 0.0);
 
@@ -31,16 +40,20 @@ Processor::Result FitCentroidProc::Event(DS::Root* /*ds*/, DS::EV* ev) {
     double Qpow = 0.0;
     Qpow = pow(pmt->GetCharge(), fPower);
     totalQ += Qpow;
-    TVector3 pmtpos(0.0, 0.0, 0.0);
-    // FIXME
-    //fDetector->GetPMTPosition(pmt->GetID(), pmtpos);
-    //if(fRescale != 1.0)
-    //  pmtpos.SetMag(pmtpos.Mag() * fRescale);
-    //centroid += Qpow * pmtpos;
+
+    DS::Run* run = DS::RunStore::Get()->GetRun(ds);
+    DS::PMTInfo* pmtinfo = run->GetPMTInfo();
+    TVector3 pmtpos = pmtinfo->GetPosition(pmt->GetID());
+
+    if (fRescale != 1.0) {
+      pmtpos.SetMag(pmtpos.Mag() * fRescale);
+    }
+
+    centroid += Qpow * pmtpos;
   }
 
   centroid *= 1.0 / totalQ;
-  DS::Centroid *fit = ev->GetCentroid();
+  DS::Centroid* fit = ev->GetCentroid();
   fit->SetPosition(centroid);
   fit->SetPower(fPower);
 
