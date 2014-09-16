@@ -5,10 +5,8 @@ valid_begin: [0, 0],
 valid_end: [0, 0],
 
 fields: [ 
-	"mc_id", "mc.mcEventID",
+	"mc_id", "mc.id",
 	"mc_numPE", "mc.numPE",
-	"mc_numNoise", "mc.numNoise",
-	"mc_fprompt", "mc.mcFprompt",
 	"mc_pdgcode", "mc.particle.pdgcode",
 	"mc_t",  "mc.particle.t",
 	"mc_ke", "mc.particle.ke",
@@ -19,8 +17,8 @@ fields: [
 	"mc_px", "mc.particle.mom.X()",
 	"mc_py", "mc.particle.mom.Y()",
 	"mc_pz", "mc.particle.mom.Z()",
-	"mc_edep", "mc.summary.totalScintEdep",
-	"mc_edep_quenched", "mc.summary.totalScintEdepQuenched",
+	"mc_edep", "mc.GetMCSummary().totalScintEdep",
+	"mc_edep_quenched", "mc.GetMCSummary().totalScintEdepQuenched",
 	"mc_nhit", "mc.@pmt.size()",
 	],
 }
