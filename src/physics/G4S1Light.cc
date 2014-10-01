@@ -1135,7 +1135,7 @@ G4double GetLiquidElectronDriftSpeed(G4double tempinput, G4double efieldinput,
     thri=58.3785811395493,
     thrj=201512.080026704;
   G4double y1=0,y2=0,f1=0,f2=0,f3=0,edrift=0,
-    t1=0,t2=0,frac=0,slope=0,intercept=0;
+    t1=0,t2=0,slope=0,intercept=0;
 
   //Equations defined
   f1=onea/(1+exp(-(efieldinput-oneb)/onec))+oned/
@@ -1174,7 +1174,7 @@ G4double GetLiquidElectronDriftSpeed(G4double tempinput, G4double efieldinput,
   else if (tempinput == 200.0) edrift = f2;
   else if (tempinput == 230.0) edrift = f3;
   else { //Linear interpolation
-    frac=(tempinput-t1)/(t2-t1);
+//    double frac=(tempinput-t1)/(t2-t1);
     slope = (y1-y2)/(t1-t2);
     intercept=y1-slope*t1;
     edrift=slope*tempinput+intercept;
