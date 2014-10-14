@@ -1,0 +1,79 @@
+BONSAI and Clusfit Shared Parameters
+-------------------------------------------------------
+PMT time resolution:                           3.00 ns
+PMT coincidence time difference:               3.00 ns
+PMT pair maximal distance fraction:            0.1785
+PMT pair maximal time difference fraction:     0.1079
+Maximum # of hits to do all 4-hit combin.:    12
+Initial grid constant:                        50.00 cm
+Minimum wall distance for 4-hit vertices:   -300.00 cm
+
+Clusfit Parameters
+-------------------------------------------------------
+Clusfit grid constant:                       200.00 cm
+Minimum wall distance for Clusfit vertex:   -100.00 cm
+Initial Clusfit Cherenkov cone opening angle: 23.00 deg
+Initial Clusfit angle positive deviation:   none
+Initial Clusfit angle negative deviation:   none
+Initial Clusfit angle goodness weight:         0.00
+Number of Clusfit passes:                      3
+First wall distance to invoke finer search: -200.00 cm
+Second wall distance to invoke finer search:  -200.00 cm
+Third wall distance to invoke finer search:   -200.00 cm
+First minimum goodness difference to skim:     0.06
+Second minimum goodness difference to skim:    0.03
+Third minimum goodness difference to skim:     0.02
+Final minimum goodness difference to skim:     0.01
+First goodness skim fraction:                  0.06
+Second goodness skim fraction:                 0.06
+Third goodness skim fraction:                  0.05
+Final goodness skim fraction:                  0.05
+Grid search goodness time window:              10.00 ns
+First search goodness time window:             7.00 ns
+Second search goodness time window:            5.00 ns
+Third search goodness time window:             4.00 ns
+First search Clusfit minimum radius:         100.00 cm
+Second search Clusfit minimum radius:         10.00 cm
+Third search Clusfit minimum radius:           2.00 cm
+First search Clusfit stop radius:            80.00 cm
+Second search Clusfit stop radius:            13.00 cm
+Third search Clusfit stop radius:             10.00 cm
+First Clusfit Cherenkov cone opening angle:   45.17 deg
+First Clusfit angle positive deviation:     none
+First Clusfit angle negative deviation:     none
+First Clusfit angle goodness weight:           0.00
+Second Clusfit Cherenkov cone opening angle:  45.17 deg
+Second Clusfit angle positive deviation:       7.60 deg
+Second Clusfit angle negative deviation:       5.08 deg
+Second Clusfit angle goodness weight:          0.20
+Third Clusfit Cherenkov cone opening angle:   45.17 deg
+Third Clusfit angle positive deviation:        7.60 deg
+Third Clusfit angle negative deviation:        5.08 deg
+Third Clusfit angle goodness weight:           0.10
+
+BONSAI Parameters
+-------------------------------------------------------
+BONSAI grid constant:                        100.00 cm
+Minimum wall distance for BONSAI vertex:    -100.00 cm
+Wall distance to invoke fine search:          -200.00 cm
+Initial Cherenkov cone opening angle:         44.75 deg
+Initial Cherenkov angle positive deviation:    8.00 deg
+Initial Cherenkov angle negative deviation:   19.12 deg
+Final minimum likelihood difference to skim:   0.01
+Final likelihood skim fraction:                0.08
+Coarse Search Parameters-------------------------------
+Coarse search Cherenkov cone opening angle:   44.75 deg
+Coarse search positive angle deviation:        8.00 deg
+Coarse search negative angle deviation:       19.12 deg
+Coarse search minimum likelihood diff to skim: 0.4
+Coarse search likelihood skim fraction:        0.04
+Coarse search start radius:                  200.00 cm
+Coarse search stop radius:                   100.00 cm
+Fine Search Parameters---------------------------------
+Fine search Cherenkov cone opening angle:     44.75 deg
+Fine search positive angle deviation:          8.00 deg
+Fine search negative angle deviation:         21.18 deg
+Fine search minimum likelihood diff to skim:   0.5
+Fine search likelihood skim fraction:          0.06
+Fine search search minimum radius:           100.00 cm
+Fine search search stop radius:               60.0 cm
