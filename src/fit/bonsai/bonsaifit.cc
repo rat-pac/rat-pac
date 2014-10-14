@@ -1,5 +1,7 @@
 #include <math.h>
-#include "bonsaifit.h"
+#include "RAT/BONSAI/bonsaifit.h"
+
+namespace BONSAI {
 
 // *************************************************************
 // * find deviation to fiducial volume edge, adjust search rad *
@@ -106,7 +108,7 @@ void bonsaifit::search(float *start,float rmax)
       // if that quality is the maximum, set center to this
       // point and the search radius to the distance between
       // old and new center; otherwise cut radius in half
-      if (q[qual->ncheck()]>q[0])
+      if (q[(int)qual->ncheck()]>q[0])
 	{
 	  if (!qual->fit_volume(vertex+3*qual->ncheck(),vertex+3,dev))
 	    {
@@ -131,7 +133,7 @@ void bonsaifit::search(float *start,float rmax)
 	  vertex[1]=vertex[4]=vertex[3*qual->ncheck()+1];
 	  vertex[2]=vertex[5]=vertex[3*qual->ncheck()+2];
 	  if (inter[3]<1) rad*=inter[3];
-	  q[0]=q[qual->ncheck()];
+	  q[0]=q[(int)qual->ncheck()];
           qual->get_result(start+STORERES);
 	}
       else
@@ -144,4 +146,6 @@ void bonsaifit::search(float *start,float rmax)
 	  return;
 	}
     }
+}
+
 }

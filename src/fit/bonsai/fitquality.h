@@ -2,6 +2,7 @@
 #define FITQUALITY
 #include <math.h>
 
+namespace BONSAI {
 // *************************************************************
 // * dummy class to provide function to be maximized           *
 // *************************************************************
@@ -137,4 +138,5 @@ class fitquality
       if (rwall<zwall) return(rwall); else return(zwall);
     };
 };
+}
 #endif

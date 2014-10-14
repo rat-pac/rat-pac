@@ -28,6 +28,7 @@ ratobj = []
 for m in modules:
     ratobj += src_module(env, m)
 ratobj += src_module(env, 'ds', header_subdir='DS')
+ratobj += src_module(env, 'fit/bonsai', header_subdir='BONSAI')
 
 #### Target: Copy RAT header files to $RATROOT/include
 # Define an alias so one can just type "scons headers" to only copy headers.

@@ -1,4 +1,4 @@
-#include "ariadne.h"
+#include "RAT/BONSAI/ariadne.h"
 #define COS_CUT   0.88
 #define COS_CUT2  0.65
 #define CUT_FRAC1 0.80
@@ -9,13 +9,15 @@
 
 #include "stdlib.h"
 
+namespace BONSAI {
+
 void ariadne(float *vertex,hits *event,float *direct,float &goodness)
 {
   int   hit,row,column,ntot,nsel,ndir;
   float *ttof,*dirs,*directions,dx,dy,dz,dr2,cos_alpha;
   float sx,sy,sz,cx,cy,cz,ratio,sin_gamma2,sin_alpha2;
   char  *active;
-  float *clus_dir,maxmag,quality,limit,limit0;
+  float *clus_dir,maxmag,limit,limit0;
   float dirx,diry,dirz,sum,sumx,sumy,sumz;
   int   clus_index,max_index,iter,nclus,nrow;
 
@@ -119,7 +121,7 @@ void ariadne(float *vertex,hits *event,float *direct,float &goodness)
  * directions already added
  **********************************************************************/
   maxmag=2.5;
-  limit=2.5;
+  limit0=limit=2.5; //FIXME is this okay
   nclus=0;
   nrow=ndir;
   for(iter=0; iter<3; iter++)
@@ -228,7 +230,6 @@ void ariadne(float *vertex,hits *event,float *direct,float &goodness)
     }
   if (maxmag<2.5)
     {
-      quality=0;
       return;
     }
   goodness=2*maxmag/(nsel*(nsel+1));
@@ -296,7 +297,6 @@ void ariadne(float *vertex,hits *event,float *direct,float &goodness)
             ENDIF
          ENDDO
          IF (max_index .EQ. -1) THEN
-            quality=0
             RETURN
          ENDIF
 C-------------------------------------------------------------------
@@ -325,7 +325,6 @@ C and quality from the best direction found
             ENDIF
          ENDDO
          IF (max_index .EQ. -1) THEN
-            quality=0
             RETURN
          ENDIF
 c         DO i=1,3
@@ -340,4 +339,6 @@ c         ENDDO
             direction(i)=tempdir(i)
          ENDDO
          RETURN*/
+}
+
 }

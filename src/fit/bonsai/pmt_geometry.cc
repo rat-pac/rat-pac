@@ -1,6 +1,8 @@
 #include <stdlib.h>
-#include "binfile.h"
-#include "pmt_geometry.h"
+#include "RAT/BONSAI/binfile.h"
+#include "RAT/BONSAI/pmt_geometry.h"
+
+namespace BONSAI {
 
 // **********************************************
 // * load PMT positions                         *
@@ -9,7 +11,7 @@ void pmt_geometry::loadgeom(void)
 {
   int     *sizes,*numbers;
   void    **starts;
-  binfile bf("geom.bin",'r');
+  binfile bf((char*)"geom.bin",'r');
 
   npmt=bf.read(sizes,numbers,starts);
   if (npmt!=1) 
@@ -46,4 +48,6 @@ void pmt_geometry::set(void)
   rmax=sqrt(rmax);
   printf("Loaded %d PMT locations, maximum r=%f, maximum z=%f\n",
 	 npmt,rmax,zmax);
+}
+
 }

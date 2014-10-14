@@ -1,10 +1,13 @@
-#include "binfile.h"
+#include "RAT/BONSAI/binfile.h"
 #include <stdlib.h>
+
+namespace BONSAI {
 
 inline void binfile::order2(char *point)
 {
   short test=258;
-  char  i,j,*testp=(char *) &test;
+  int  i,j;
+  char *testp=(char *) &test;
 
   for(i=0; i<2; i++)
     for(j=1; j<=2; j++)
@@ -14,7 +17,8 @@ inline void binfile::order2(char *point)
 inline void binfile::order4(char *point)
 {
   long test=16909060;
-  char i,j,*testp=(char *) &test;
+  int i,j;
+  char *testp=(char *) &test;
 
   for(i=0; i<4; i++)
     for(j=1; j<=4; j++)
@@ -25,7 +29,8 @@ inline void binfile::order8(char *point)
 {
 
   double test=1212121212121212.;
-  char   i,*testp=(char *) &test;
+  int   i;
+  char *testp=(char *) &test;
 
   for(i=0; i<8; i++)
     switch(testp[i])
@@ -102,24 +107,24 @@ int binfile::read(int *&sizes,int *&numbers,void **&starts)
       {
       case 0:
 	sizes[i]=1;
-	datp[offset[3]]=*buffp;
+	datp[(int)offset[3]]=*buffp;
 	break;
       case 32:
 	sizes[i]=2;
-	datp[offset[3]]=*buffp-32;
+	datp[(int)offset[3]]=*buffp-32;
 	break;
       case 64:
 	sizes[i]=4;
-	datp[offset[3]]=*buffp-64;
+	datp[(int)offset[3]]=*buffp-64;
 	*buffp-=64;
 	break;
       case 96:
 	sizes[i]=8;
-	datp[offset[3]]=*buffp-96;
+	datp[(int)offset[3]]=*buffp-96;
 	break;
       }
-      datp[offset[4]]=buffp[1];
-      datp[offset[5]]=buffp[2];
+      datp[(int)offset[4]]=buffp[1];
+      datp[(int)offset[5]]=buffp[2];
     }
   for(i=0; i<narray; i++)
     {
@@ -152,16 +157,16 @@ int binfile::read(int *&sizes,int *&numbers,void **&starts)
 	      *datp=*primer;
 	      break;
 	    case 2:
-	      datp[*offset]=*primer;
-	      datp[offset[1]]=primer[1];
+	      datp[(int)offset[0]]=*primer;
+	      datp[(int)offset[1]]=primer[1];
 	      break;
 	    case 4:
 	      for(k=2; k<6; k++)
-		datp[offset[k]]=primer[k-2];
+		datp[(int)offset[k]]=primer[k-2];
 	      break;
 	    case 8: 
 	      for(k=6; k<14; k++)
-		datp[offset[k]]=primer[k-6];
+		datp[(int)offset[k]]=primer[k-6];
 	      break;
 	    }
 	}
@@ -197,9 +202,9 @@ void binfile::write(int *sizes,int *numbers,void **starts)
   for(i=0; i<narray; i++)
     {
       datp=(char *)(numbers+i);
-      buffer[3*i]=datp[offset[3]];
-      buffer[3*i+1]=datp[offset[4]];
-      buffer[3*i+2]=datp[offset[5]];
+      buffer[3*i]=datp[(int)offset[3]];
+      buffer[3*i+1]=datp[(int)offset[4]];
+      buffer[3*i+2]=datp[(int)offset[5]];
       datp=(char *) (starts[i]);
       switch(sizes[i])
 	{
@@ -211,21 +216,21 @@ void binfile::write(int *sizes,int *numbers,void **starts)
 	  buffer[3*i]+=32;
 	  for(j=0; j<numbers[i]; j++,datp+=2)
 	    {
-	      *buffp++=datp[*offset];
-	      *buffp++=datp[offset[1]];
+	      *buffp++=datp[(int)offset[0]];
+	      *buffp++=datp[(int)offset[1]];
 	    }
 	  break;
 	case 4:
 	  buffer[3*i]+=64;
 	  for(j=0; j<numbers[i]; j++,datp+=4)
 	    for(k=2; k<6; k++)
-	      *buffp++=datp[offset[k]];
+	      *buffp++=datp[(int)offset[k]];
 	  break;
 	case 8:
 	  buffer[3*i]+=96;
 	  for(j=0; j<numbers[i]; j++,datp+=8)
 	    for(k=6; k<14; k++)
-	      *buffp++=datp[offset[k]];
+	      *buffp++=datp[(int)offset[k]];
 	  break;
 	}
       if (sizes[i+1]<0) buffer[3*i]=buffer[3*i] | 0x80;
@@ -237,4 +242,5 @@ void binfile::write(int *sizes,int *numbers,void **starts)
       exit(1);
     }
   delete(buffer);
+}
 }

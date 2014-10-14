@@ -1,4 +1,6 @@
-#include "vertex.h"
+#include "RAT/BONSAI/vertex.h"
+
+namespace BONSAI {
 
 // **********************************************
 // find starting position for vertex fit
@@ -30,3 +32,5 @@ protected:
     { rinit=rcent=rpmt=top=0; };
   void search();
 };
+
+}

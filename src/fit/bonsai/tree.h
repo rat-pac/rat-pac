@@ -1,5 +1,7 @@
-#include "pot.h"
-#include "bonsai.h"
+#include "RAT/BONSAI/bonsai.h"
+#include "RAT/BONSAI/pot.h"
+
+namespace BONSAI {
 
 // **********************************************
 // do tree search to fit vertex
@@ -22,3 +24,5 @@ class tree: public pot
   void search(void);
   void search(float *vert,float rad,int maxiter);
 };
+
+}

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "fit_param.h"
+#include "RAT/BONSAI/fit_param.h"
 
 #define FLOAT_TYPE           1
 #define INT_TYPE             2
@@ -12,6 +12,9 @@
 #define ARRAY_SHORT_INT_TYPE 6
 
 #define PI180 0.01745329252
+
+namespace BONSAI {
+
 
 char *    fit_param::numbers[MAX_NUMBER];
 float     fit_param::tres;
@@ -161,7 +164,7 @@ char fit_param::parse(char *line,unsigned char length,
   length-=pos1;
   // check none
   for(pos3=0; pos3<length-4; pos3++)
-    if (!strncmp(line+pos3,"none",4))
+    if (!strncmp(line+pos3,(char*)"none",4))
       {
 	switch(type)
 	  {
@@ -189,11 +192,11 @@ char fit_param::parse(char *line,unsigned char length,
   switch(type)
     {
     case FLOAT_TYPE:
-    case ARRAY_FLOAT_TYPE:     sscanf(line,"%f",(float *)var); return(1);
+    case ARRAY_FLOAT_TYPE:     sscanf(line,(char*)"%f",(float *)var); return(1);
     case INT_TYPE:
-    case ARRAY_INT_TYPE:       sscanf(line,"%d",(int *)var); return(1);
+    case ARRAY_INT_TYPE:       sscanf(line,(char*)"%d",(int *)var); return(1);
     case SHORT_INT_TYPE:
-    case ARRAY_SHORT_INT_TYPE: sscanf(line,"%hd",(short int *)var); return(1);
+    case ARRAY_SHORT_INT_TYPE: sscanf(line,(char*)"%hd",(short int *)var); return(1);
     }
   return(0);
 }
@@ -206,26 +209,26 @@ inline void fit_param::parse(char *line)
 {
   unsigned char length=strlen(line),ar;
 
-  if (parse(line,length,"PMT","ime","esolution",FLOAT_TYPE,&tres)) return;
-  if (parse(line,length,"PMT","oincidence","ime",FLOAT_TYPE,&tcoin)) return;
-  if (parse(line,length,"air","istance","raction",FLOAT_TYPE,&dlim)) return;
-  if (parse(line,length,"air","ime","raction",FLOAT_TYPE,&tlim)) return;
-  if (parse(line,length,"aximum","its","ombin",SHORT_INT_TYPE,&nselall)) return;
-  if (parse(line,length,"nitial","rid","onstant",FLOAT_TYPE,&gcon0)) return;
+  if (parse(line,length,(char*)"PMT",(char*)"ime",(char*)"esolution",FLOAT_TYPE,&tres)) return;
+  if (parse(line,length,(char*)"PMT",(char*)"oincidence",(char*)"ime",FLOAT_TYPE,&tcoin)) return;
+  if (parse(line,length,(char*)"air",(char*)"istance",(char*)"raction",FLOAT_TYPE,&dlim)) return;
+  if (parse(line,length,(char*)"air",(char*)"ime",(char*)"raction",FLOAT_TYPE,&tlim)) return;
+  if (parse(line,length,(char*)"aximum",(char*)"its",(char*)"ombin",SHORT_INT_TYPE,&nselall)) return;
+  if (parse(line,length,(char*)"nitial",(char*)"rid",(char*)"onstant",FLOAT_TYPE,&gcon0)) return;
   
-  if (parse(line,length,"lusfit","rid","onstant",
+  if (parse(line,length,(char*)"lusfit",(char*)"rid",(char*)"onstant",
 			    ARRAY_FLOAT_TYPE,&cgrid)) return;
-  if (parse(line,length,"all","istance","ertices",FLOAT_TYPE,&dw4hit)) return;
-  if (parse(line,length,"all","lusfit","ertex",FLOAT_TYPE,&dwfit)) return;
-  if (parse(line,length,"nitial","Clusfit","pening",FLOAT_TYPE,&clusgtheta0))
+  if (parse(line,length,(char*)"all",(char*)"istance",(char*)"ertices",FLOAT_TYPE,&dw4hit)) return;
+  if (parse(line,length,(char*)"all",(char*)"lusfit",(char*)"ertex",FLOAT_TYPE,&dwfit)) return;
+  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"pening",FLOAT_TYPE,&clusgtheta0))
     return;
-  if (parse(line,length,"nitial","Clusfit","ositive",
+  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"ositive",
 	    FLOAT_TYPE,&clusgthetaplus)) return;
-  if (parse(line,length,"nitial","Clusfit","egative",
+  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"egative",
 	    FLOAT_TYPE,&clusgthetaminus)) return;
-  if (parse(line,length,"nitial","Clusfit","eight",FLOAT_TYPE,&clusgdirweight))
+  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"eight",FLOAT_TYPE,&clusgdirweight))
     return;
-  if ((np==-1) && (parse(line,length,"umber","lusfit","asses",SHORT_INT_TYPE,&np)))
+  if ((np==-1) && (parse(line,length,(char*)"umber",(char*)"lusfit",(char*)"asses",SHORT_INT_TYPE,&np)))
     {
       if (np<1) { np=-1; return; }
       if (np>10) np=10;
@@ -246,57 +249,57 @@ inline void fit_param::parse(char *line)
 	}
       return;
     }
-  if (parse(line,length,"inal","oodness","ifference",FLOAT_TYPE,&lastdiff))
+  if (parse(line,length,(char*)"inal",(char*)"oodness",(char*)"ifference",FLOAT_TYPE,&lastdiff))
     return;
-  if ((np!=-1) && (parse(line,length,"all","nvoke","iner",
+  if ((np!=-1) && (parse(line,length,(char*)"all",(char*)"nvoke",(char*)"iner",
                          ARRAY_FLOAT_TYPE,cdwall))) return;
-  if ((np!=-1) && (parse(line,length,"oodness","ifference","kim",
+  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"ifference",(char*)"kim",
 			 ARRAY_FLOAT_TYPE,gdiff))) return;
-  if (parse(line,length,"inal","oodness","raction",FLOAT_TYPE,&lastfrac))
+  if (parse(line,length,(char*)"inal",(char*)"oodness",(char*)"raction",FLOAT_TYPE,&lastfrac))
     return;
-  if ((np!=-1) && (parse(line,length,"oodness","kim","raction",
+  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"kim",(char*)"raction",
 			 ARRAY_FLOAT_TYPE,gfrac))) return;
-  if (parse(line,length,"rid","ime","indow",FLOAT_TYPE,&tim0)) return;
-  if ((np!=-1) && (parse(line,length,"oodness","ime","indow",
+  if (parse(line,length,(char*)"rid",(char*)"ime",(char*)"indow",FLOAT_TYPE,&tim0)) return;
+  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"ime",(char*)"indow",
 			 ARRAY_FLOAT_TYPE,time))) return;
-  if ((np!=-1) && (parse(line,length,"lusfit","inimum","adius",
+  if ((np!=-1) && (parse(line,length,(char*)"lusfit",(char*)"inimum",(char*)"adius",
 			 ARRAY_FLOAT_TYPE,rmin))) return;
-  if ((np!=-1) && (parse(line,length,"lusfit","top","adius",
+  if ((np!=-1) && (parse(line,length,(char*)"lusfit",(char*)"top",(char*)"adius",
 			 ARRAY_FLOAT_TYPE,rstop))) return;
-  if (parse(line,length,"Clusfit","pening","ngle",ARRAY_FLOAT_TYPE,clustheta0))
+  if (parse(line,length,(char*)"Clusfit",(char*)"pening",(char*)"ngle",ARRAY_FLOAT_TYPE,clustheta0))
     return;
-  if (parse(line,length,"Clusfit","ositive","ngle",
+  if (parse(line,length,(char*)"Clusfit",(char*)"ositive",(char*)"ngle",
 	    ARRAY_FLOAT_TYPE,clusthetaplus)) return;
-  if (parse(line,length,"Clusfit","egative","ngle",
+  if (parse(line,length,(char*)"Clusfit",(char*)"egative",(char*)"ngle",
 	    ARRAY_FLOAT_TYPE,clusthetaminus)) return;
-  if (parse(line,length,"Clusfit","ngle","eight",ARRAY_FLOAT_TYPE,clusdirweight))
+  if (parse(line,length,(char*)"Clusfit",(char*)"ngle",(char*)"eight",ARRAY_FLOAT_TYPE,clusdirweight))
     return;
-  if (parse(line,length,"BONSAI","rid","onstant",FLOAT_TYPE,&bgrid)) return;
-  if (parse(line,length,"all","BONSAI","ertex",FLOAT_TYPE,&bdwfit)) return;
-  if (parse(line,length,"all","nvoke","ine",FLOAT_TYPE,&bdwall)) return;
-  if (parse(line,length,"nitial","pening","ngle",FLOAT_TYPE,&bc0)) return;
-  if (parse(line,length,"nitial","ngle","ositive",FLOAT_TYPE,&bpangle)) return;
-  if (parse(line,length,"nitial","ngle","egative",FLOAT_TYPE,&bmangle)) return;
-  if (parse(line,length,"inal","ikelihood","ifference",FLOAT_TYPE,&blastdiff))
+  if (parse(line,length,(char*)"BONSAI",(char*)"rid",(char*)"onstant",FLOAT_TYPE,&bgrid)) return;
+  if (parse(line,length,(char*)"all",(char*)"BONSAI",(char*)"ertex",FLOAT_TYPE,&bdwfit)) return;
+  if (parse(line,length,(char*)"all",(char*)"nvoke",(char*)"ine",FLOAT_TYPE,&bdwall)) return;
+  if (parse(line,length,(char*)"nitial",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&bc0)) return;
+  if (parse(line,length,(char*)"nitial",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&bpangle)) return;
+  if (parse(line,length,(char*)"nitial",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&bmangle)) return;
+  if (parse(line,length,(char*)"inal",(char*)"ikelihood",(char*)"ifference",FLOAT_TYPE,&blastdiff))
     return;
-  if (parse(line,length,"inal","ikelihood","raction",FLOAT_TYPE,&blastfrac))
+  if (parse(line,length,(char*)"inal",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&blastfrac))
     return;
-  if (parse(line,length,"oarse","pening","ngle",FLOAT_TYPE,&oc0)) return;
-  if (parse(line,length,"oarse","ngle","ositive",FLOAT_TYPE,&opangle)) return;
-  if (parse(line,length,"oarse","ngle","egative",FLOAT_TYPE,&omangle)) return;
-  if (parse(line,length,"oarse","ikelihood","iff",FLOAT_TYPE,&obgdiff)) return;
-  if (parse(line,length,"oarse","ikelihood","raction",FLOAT_TYPE,&obgfrac))
+  if (parse(line,length,(char*)"oarse",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&oc0)) return;
+  if (parse(line,length,(char*)"oarse",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&opangle)) return;
+  if (parse(line,length,(char*)"oarse",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&omangle)) return;
+  if (parse(line,length,(char*)"oarse",(char*)"ikelihood",(char*)"iff",FLOAT_TYPE,&obgdiff)) return;
+  if (parse(line,length,(char*)"oarse",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&obgfrac))
     return;
-  if (parse(line,length,"oarse","tart","adius",FLOAT_TYPE,&obrmin)) return;
-  if (parse(line,length,"oarse","top","adius",FLOAT_TYPE,&obrstop)) return;
-  if (parse(line,length,"ine","pening","ngle",FLOAT_TYPE,&cc0)) return;
-  if (parse(line,length,"ine","ngle","ositive",FLOAT_TYPE,&cpangle)) return;
-  if (parse(line,length,"ine","ngle","egative",FLOAT_TYPE,&cmangle)) return;
-  if (parse(line,length,"ine","ikelihood","iff",FLOAT_TYPE,&cbgdiff)) return;
-  if (parse(line,length,"ine","ikelihood","raction",FLOAT_TYPE,&cbgfrac))
+  if (parse(line,length,(char*)"oarse",(char*)"tart",(char*)"adius",FLOAT_TYPE,&obrmin)) return;
+  if (parse(line,length,(char*)"oarse",(char*)"top",(char*)"adius",FLOAT_TYPE,&obrstop)) return;
+  if (parse(line,length,(char*)"ine",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&cc0)) return;
+  if (parse(line,length,(char*)"ine",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&cpangle)) return;
+  if (parse(line,length,(char*)"ine",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&cmangle)) return;
+  if (parse(line,length,(char*)"ine",(char*)"ikelihood",(char*)"iff",FLOAT_TYPE,&cbgdiff)) return;
+  if (parse(line,length,(char*)"ine",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&cbgfrac))
     return;
-  if (parse(line,length,"ine","inimum","adius",FLOAT_TYPE,&cbrmin)) return;
-  if (parse(line,length,"ine","top","adius",FLOAT_TYPE,&cbrstop)) return;
+  if (parse(line,length,(char*)"ine",(char*)"inimum",(char*)"adius",FLOAT_TYPE,&cbrmin)) return;
+  if (parse(line,length,(char*)"ine",(char*)"top",(char*)"adius",FLOAT_TYPE,&cbrstop)) return;
 }
 
 // *************************************************************
@@ -357,21 +360,21 @@ fit_param::fit_param(void)
   if (nselall) return;
   printf("reading fit_param.dat...\n");
 
-  FILE          *pfile=fopen("fit_param.dat","r");
+  FILE          *pfile=fopen("fit_param.dat",(char*)"r");
 
   char          line[256];
   unsigned char ar;
 
-  numbers[0]="First";
-  numbers[1]="Second";
-  numbers[2]="Third";
-  numbers[3]="Fourth";
-  numbers[4]="Fifth";
-  numbers[5]="Sixth";
-  numbers[6]="Seventh";
-  numbers[7]="Eighth";
-  numbers[8]="Ninth";
-  numbers[9]="Tenth";
+  numbers[0]=(char*)"First";
+  numbers[1]=(char*)"Second";
+  numbers[2]=(char*)"Third";
+  numbers[3]=(char*)"Fourth";
+  numbers[4]=(char*)"Fifth";
+  numbers[5]=(char*)"Sixth";
+  numbers[6]=(char*)"Seventh";
+  numbers[7]=(char*)"Eighth";
+  numbers[8]=(char*)"Ninth";
+  numbers[9]=(char*)"Tenth";
   opangle=omangle=oc0=-1;
   bgrid=cgrid=obgdiff=-1;
   blastdiff=blastfrac=obrmin=obrstop=-1;
@@ -611,4 +614,6 @@ void fit_param::print(void)
   printf("Fine search likelihood skim fraction:      %8.2f\n",cbgfrac);
   printf("Fine search search minimum radius:         %8.2f cm\n",cbrmin);
   printf("Fine search search stop radius:            %8.2f cm\n",cbrstop);
+}
+
 }

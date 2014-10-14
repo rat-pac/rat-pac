@@ -1,4 +1,5 @@
 #include <stdio.h>
+namespace BONSAI {
 
 class binfile
 {
@@ -15,3 +16,5 @@ class binfile
   int read(int *&sizes,int *&numbers,void **&starts);
   void write(int *sizes,int *numbers,void **starts);
 };
+
+}

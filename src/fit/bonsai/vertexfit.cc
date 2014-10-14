@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>                                                
-#include "vertexfit.h"
-#include "binfile.h"
+#include "RAT/BONSAI/vertexfit.h"
+#include "RAT/BONSAI/binfile.h"
+
+namespace BONSAI {
 
 // hit selection parameter
 #define TCLOSE      3.      // timing difference to pass unchecked
@@ -15,7 +17,7 @@ void vertexfit::loadgeom(void)
 {
   int     *sizes,*numbers;
   void    **starts;
-  binfile bf("geom.bin",'r');
+  binfile bf((char*)"geom.bin",'r');
 
   npmt=bf.read(sizes,numbers,starts);
   if (npmt!=1) 
@@ -89,4 +91,6 @@ vertexfit::vertexfit(float resolution,
 vertexfit::~vertexfit(void)
 {
   delete(pmts);
+}
+
 }

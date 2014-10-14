@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "pot.h"
+#include "RAT/BONSAI/pot.h"
 
 //#define FOURNEIGHBOR  60 // above: all PMTs must be neighbors in time
 //#define THREENEIGHBOR 32 // above: three PMTs must be neighbors in time
@@ -8,6 +8,7 @@
 #define THREENEIGHBOR 16 // above: three PMTs must be neighbors in time
 #define TWONEIGHBOR   13 // above: two PMTs must be neighbors in time
 
+namespace BONSAI {
 // **********************************************
 // try fit new vertices based on 4-hit combinations
 // **********************************************
@@ -35,7 +36,7 @@ void pot::search()
 
   nind=event_hits->nselected();
   reset();
-  if (nind>=4)
+  if (nind>=4) {
     if (nind>FOURNEIGHBOR)
       { // all four PMTs must be temporal neighbors
 	checksize(2*(nind-3)+nind);
@@ -87,6 +88,8 @@ void pot::search()
 	      for(cab[3]=cab[2]+1; cab[3]<nind; cab[3]++)
 		add4vert(1,cab,ffit);
       }
+  }
   add_pmt_vertices(1,rpmt,rcent,top);
   return;
+}
 }

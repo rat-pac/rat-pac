@@ -1,3 +1,4 @@
+namespace BONSAI {
 
 void itfitter_init(comtype *itgeom);
 void it_sort(comtype2 *itevent);
@@ -65,3 +66,5 @@ void bsfilewriteopen_(char *name,int length);
 void bsfileclose_(void);
 char bsfileitread(unsigned int *eventnr,comtype2 *itevent);
 void bsfileitwrite(unsigned int eventnr,comtype2 *itevent);
+
+}

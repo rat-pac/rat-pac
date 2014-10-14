@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include "tree.h"
+#include "RAT/BONSAI/tree.h"
+
+namespace BONSAI {
 
 // **********************************************
 // new bonsai is empty
@@ -74,4 +76,6 @@ void tree::search(float *vert,float rad,int maxiter)
       active=root->prune();
     }
   return;
+}
+
 }

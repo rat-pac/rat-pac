@@ -1,6 +1,9 @@
-#include "centroid.h"
+#include "RAT/BONSAI/centroid.h"
 #ifndef PLATO
 #define PLATO
+
+namespace BONSAI {
+
 class plato
 {
  protected:
@@ -93,4 +96,5 @@ class icosahedron: public plato
  public:
   icosahedron(void);
 };
+}
 #endif

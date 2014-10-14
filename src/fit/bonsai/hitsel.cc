@@ -1,6 +1,6 @@
-#include <stdlib.h>
+    #include <stdlib.h>
 
-#include "centroid.h"
+#include "RAT/BONSAI/centroid.h"
 #define MINPRESEL  10         /* desired minimum number of preselected hits */
 #define MINHIT      3         /* required minimum number of hits            */
 #define MAXRAW   2000         /* maximum number of raw hits                 */
@@ -8,6 +8,8 @@
 #define ALLOWED_SIZE_FRACTION 1.0
 
 #define ARRAYSIZE MAXRAW*(MAXRAW-1)/2
+
+namespace BONSAI {
 
 // **********************************************
 // does hit selection, wenn needed
@@ -385,7 +387,7 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
   int       max_index;
   short int new_pmt;
   short int *related,*relations,*cluster,**clusterp,*joined,*occur;
-  short int *max_clus=NULL,*clus,*max_end,*select;
+  short int *max_clus=NULL,*clus,*select;
   short int *relp,*relp1,*relp2;
 
   if (nsel>MAXRAW)
@@ -413,7 +415,6 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
     max_size=MAXSTOSIZE;
   cluster=new short int[max_size];
   clus=cluster;
-  max_end=cluster+max_size;
   n_clus=0;
   min_size=MINHIT;
   max_size=0;
@@ -607,11 +608,15 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
 void hitsel::printset(int nset,short int *set)
 {
   int       m;
-  short int s[nset];
+  short int *s = new short int[nset];
 
   for(m=0; m<nset; m++) s[m]=set[m];
   hits::qsort(s,nset);
   for(m=0; m<nset; m++)
     printf("%3d %5d %10.4f %8.2f\n",m,
            hitcable(s[m]),hittime(s[m]),hitcharge(s[m]));
+  
+  delete s;
+}
+
 }
