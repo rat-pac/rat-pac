@@ -8,7 +8,7 @@ namespace RAT {
 
   PythonProc::PythonProc() : Processor("python")
   {
-    fPyProcName = dformat("proc_%d", fgProcCounter++);
+    fPyProcName = dformat("proc_%i", fgProcCounter++);
   }
 
   PythonProc::~PythonProc()

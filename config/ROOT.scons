@@ -27,9 +27,8 @@ rootdict = Builder(generator = generate_action,
 # Temporary SCons object to parse root-config output
 rootenv = Environment(ENV={'PATH' : os.environ['PATH']})
 rootenv.ParseConfig("root-config --cflags --ldflags --libs")
-rootenv.Append(LIBS='-lMinuit2')
 rootenv.Append(LIBS='-lSpectrum')
-rootenv.Append(LIBS=['-lFoam', '-lMinuit', '-lPyROOT'])
+rootenv.Append(LIBS=['-lFoam', '-lPyROOT'])
 
 
 # Put it into form that can be easily merged into main environment

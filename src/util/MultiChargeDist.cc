@@ -226,8 +226,8 @@ namespace RAT {
 	// Deallocate the TH1Ds and check the means
 	int inorm = -1;
 	for (unsigned i=0; i < chargeDist.size(); i++){
-	  if(abs(chargeDist[i]->GetMean() - 
-		 i*meanSinglePE) / (i*meanSinglePE) > 0.01 && inorm < 0)
+	  if(fabs(chargeDist[i]->GetMean() -
+		  i*meanSinglePE) / (i*meanSinglePE) > 0.01 && inorm < 0)
 	    inorm = i;
 	  delete chargeDist[i];
 	}
