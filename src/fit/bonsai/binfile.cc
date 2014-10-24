@@ -1,5 +1,6 @@
 #include "RAT/BONSAI/binfile.h"
 #include <stdlib.h>
+#include <string>
 
 namespace BONSAI {
 
@@ -62,7 +63,7 @@ binfile::binfile(char *name,char mode)
   order8(offset+6);
   allmode[0]=mode;
 
-  fp=fopen(name,allmode);
+  fp=fopen((std::string(getenv("GLG4DATA"))+"/bonsai/"+std::string(name)).c_str(),allmode); //FIXME this is probably not good enough
 
   if (fp==NULL)
     {

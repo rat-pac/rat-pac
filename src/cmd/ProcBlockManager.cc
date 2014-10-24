@@ -15,6 +15,7 @@
 #include <RAT/OutNetProc.hh>
 #include <RAT/PruneProc.hh>
 #include <RAT/FitCentroidProc.hh>
+#include <RAT/FitBonsaiProc.hh>
 #include <RAT/SimpleDAQProc.hh>
 
 namespace RAT {
@@ -60,6 +61,7 @@ ProcBlockManager::ProcBlockManager(ProcBlock *theMainBlock)
 
   // Fitters
   procAllocators["fitcentroid"] = new ProcAllocatorTmpl<FitCentroidProc>;
+  procAllocators["fitbonsai"] = new ProcAllocatorTmpl<FitBonsaiProc>;
 
   // DAQ
   procAllocators["simpledaq"]= new ProcAllocatorTmpl<SimpleDAQProc>;
