@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <string>
+
 #include "RAT/BONSAI/fit_param.h"
 
 #define FLOAT_TYPE           1
@@ -358,9 +360,12 @@ inline void fit_param::printspace(int n)
 fit_param::fit_param(void)
 {
   if (nselall) return;
-  printf("reading fit_param.dat...\n");
+  
+  std::string path = std::string(getenv("GLG4DATA")) + "/bonsai/fit_param.dat";  //FIXME store all this in the DB (move away from the .dat)
+  
+  printf("reading %s...\n",path.c_str());
 
-  FILE          *pfile=fopen("fit_param.dat",(char*)"r");
+  FILE          *pfile=fopen(path.c_str(),(char*)"r");
 
   char          line[256];
   unsigned char ar;

@@ -22,6 +22,8 @@ FitBonsaiProc::~FitBonsaiProc() {
 
 Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
 
+    info << "IT'S HAPPENING\n";
+
     DS::Run *run = DS::RunStore::Get()->GetRun(ds);
     DS::PMTInfo *pmtinfo = run->GetPMTInfo();
     

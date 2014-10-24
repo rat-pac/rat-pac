@@ -101,7 +101,7 @@ void timefit::integrate_dist(void)
 	   qminmax[set],qminmax[set+1],nneg[set],
 	   0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
   printf("pdf for %5.2fpe<=q: zero at %d total=%fns\n",
-	 qminmax[set],nneg[set],0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
+    qminmax[set],nneg[set],0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
 }
 
 // **********************************************
