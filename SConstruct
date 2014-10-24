@@ -18,6 +18,7 @@ import glob
 from buildhelp import RATENVFILE, src_module, build_list
 
 # Get build environment for making RAT applications
+SetOption('num_jobs', 4)
 env = SConscript(RATENVFILE)
 
 # Collect list of object files from source directories and prepare
@@ -41,7 +42,7 @@ cint_cls= Split('DS/Root DS/MC DS/EV DS/MCParticle DS/MCPhoton '
                 'DS/RunStore DS/Run '
                 'DS/PosFit DS/PMTInfo '
                 'DS/MCTrack DS/MCTrackStep DS/Calib '
-                'DS/Centroid '
+                'DS/Centroid DS/BonsaiFit '
                 'DSReader DSWriter TrackNav TrackNode TrackCursor DB DBLink '
                 'DBTextLoader DBJsonLoader HTTPDownloader Log ObjInt ObjDbl '
                 'DS/LinkDef')

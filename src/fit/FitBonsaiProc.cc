@@ -1,10 +1,13 @@
 #include <RAT/FitBonsaiProc.hh>
+#include <RAT/DS/BonsaiFit.hh>
 #include <RAT/DS/RunStore.hh>
 #include <RAT/DS/Run.hh>
 
+#include <RAT/BONSAI/goodness.h>
+#include <RAT/BONSAI/fourhitgrid.h>
+
 using namespace RAT;
 using namespace std;
-using namespace BONSAI;
 
 FitBonsaiProc::FitBonsaiProc() : Processor::Processor("BONSAI"), bonsai_geometry(NULL), bonsai_likelihood(NULL), bonsai_fit(NULL) {
 
@@ -37,10 +40,10 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
                 pmtmap[i] = bonsai_idx++;
             }
         }
-        bonsai_geometry = new pmt_geometry(packedPos.size()/3,&packedPos[0]);
-        bonsai_likelihood = new likelihood(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height());
+        bonsai_geometry = new BONSAI::pmt_geometry(packedPos.size()/3,&packedPos[0]);
+        bonsai_likelihood = new BONSAI::likelihood(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height());
         goodness.resize(bonsai_likelihood->sets());
-        bonsai_fit = new bonsaifit(bonsai_likelihood);
+        bonsai_fit = new BONSAI::bonsaifit(bonsai_likelihood);
     } 
     
     const size_t nhit = ev->GetPMTCount(); 
@@ -55,12 +58,60 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
         hit_pmtid[i] = pmtmap[pmt->GetID()];
     }
     
-    //goodness hits(bonsai_likelihood->sets(), bonsai_likelihood->chargebins(), bonsai_geometry, nhit, &hit_pmtids[0], &hit_times[0], &hit_charge[0]);
-    //fourhitgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(), &hits);
+    /*
+     * The following is based on the WCsim implementation of BONSAI. Vague comments
+     * where comments might be appropriate.
+     */
     
-    //bonsai_likelihood->set_hits(&hits);
+    //uses magic to select "good" hits
+    BONSAI::goodness hitselection(bonsai_likelihood->sets(), bonsai_likelihood->chargebins(), bonsai_geometry, nhit, &hit_pmtid[0], &hit_time[0], &hit_charge[0]);
     
-    //actually fit
+    //probably something to do with combanatorics 
+    BONSAI::fourhitgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(), &hitselection);
+    
+    //use the selected hits
+    bonsai_likelihood->set_hits(&hitselection);
+    
+    //do some sort of fitting
+    bonsai_likelihood->maximize(bonsai_fit,&grid);
+    
+    //we got a position fit result
+    float vtx[4]; // (x,y,z,t)
+    vtx[0] = bonsai_fit->xfit();
+    vtx[1] = bonsai_fit->yfit();
+    vtx[2] = bonsai_fit->zfit();
+    
+    //something internal to bonsai / unsure what this does
+    bonsai_fit->fitresult(); 
+    
+    //now we have a time result
+    vtx[3] = bonsai_likelihood->get_zero();
+    
+    //and a direction result
+    float dir[6]; //why 6 / what is dirx,diry,dirz,?,?,ll0
+    bonsai_likelihood->get_dir(dir);
+    dir[5] = bonsai_likelihood->get_ll0(); //loglikelihood w/o angle constraint (?)
+    
+    //reset likelihood
+    bonsai_likelihood->set_hits(NULL);
+    
+    /* This time fit won't work properly until calibrated
+    
+    //now fit the time
+    bonsai_likelihood->set_hits(&hitselection);
+    float dt; // called dt in bonsai / apparently related to loglikelihood of time fit
+    bonsai_likelihood->fittime(0,vtx,dir,dt); //probably modifies vtx[3]
+    
+    //reset likelihood
+    bonsai_likelihood->set_hits(NULL);
+    
+    */
+    
+    DS::BonsaiFit *result = ev->GetBonsaiFit();
+    
+    TVector3 pos(vtx[0],vtx[1],vtx[2]);
+    result->SetPosition(pos);
+    result->SetTime(vtx[3]);
     
     return OK;
     
