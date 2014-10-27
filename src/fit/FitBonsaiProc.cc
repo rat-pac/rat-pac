@@ -4,6 +4,7 @@
 #include <RAT/DS/Run.hh>
 
 #include <RAT/BONSAI/goodness.h>
+#include <RAT/BONSAI/searchgrid.h>
 #include <RAT/BONSAI/fourhitgrid.h>
 
 using namespace RAT;
@@ -21,8 +22,6 @@ FitBonsaiProc::~FitBonsaiProc() {
 
 
 Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
-
-    info << "IT'S HAPPENING\n";
 
     DS::Run *run = DS::RunStore::Get()->GetRun(ds);
     DS::PMTInfo *pmtinfo = run->GetPMTInfo();
@@ -70,6 +69,8 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     
     //probably something to do with combanatorics 
     BONSAI::fourhitgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(), &hitselection);
+    
+    //BONSAI::searchgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(),0.0);
     
     //use the selected hits
     bonsai_likelihood->set_hits(&hitselection);
