@@ -41,6 +41,29 @@ elements: ["Hydrogen", "Oxygen",],
 elemprop: [0.1119d, 0.8881d],
 }
 
+{
+name: "MATERIAL",
+index: "gd_sulfate",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 3.01d,
+nelements: 3,
+nmaterials: 0,
+elements: ["Gadolinium", "Sulfur", "Oxygen",],
+elemprop: [0.5218d, 0.1596d, 0.3186d],
+}
+
+{
+name: "MATERIAL",
+index: "water_egads_gd_sulfate_0p2",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.0d,
+nelements: 0,
+nmaterials: 2,
+materials: ["water", "gd_sulfate",],
+matprop: [0.998d, 0.002d],
+}
  
 {
 name: "MATERIAL",
