@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#include <vector>
 #include <string>
 
+#include <RAT/DB.hh>
+#include <RAT/DBLink.hh>
 #include "RAT/BONSAI/fit_param.h"
 
 #define FLOAT_TYPE           1
@@ -70,241 +74,6 @@ float     fit_param::cbrmin;
 float     fit_param::cbrstop;
 
 // *************************************************************
-// * identify up to two key words and read into appropriate    *
-// * array or variable                                         *
-// *************************************************************
-char fit_param::parse(char *line,unsigned char length,
-		      char *key1,char *key2,char *key3,
-		      char type,void *var)
-{
-  unsigned char key_length1=strlen(key1),key_length2=strlen(key2);
-  unsigned char key_length3=strlen(key3),pos1,pos2,pos3,ar,nl;
-
-  // if array, find array position using for number words
-  // adjust variable pointer accordingly (assume float or int)
-  if ((type==ARRAY_FLOAT_TYPE) || (type==ARRAY_INT_TYPE) ||
-      (type==ARRAY_SHORT_INT_TYPE))
-    for(ar=0; ar<MAX_NUMBER; ar++)
-      {
-	nl=strlen(numbers[ar])-1;
-	for(pos1=0; pos1<length-nl; pos1++)
-	  if (!strncmp(line+pos1,numbers[ar]+1,nl))
-	    break;
-	if (pos1<length-nl)
-	  {
-	    var=(float *)var+ar;
-	    line+=pos1+nl;
-	    length-=pos1+nl;
-            break;
-	  }
-      }
-  // check key1, if not an empty string
-  if (key_length1>0)
-    {
-      for(pos1=0; pos1<length-key_length1; pos1++)
-	if (!strncmp(line+pos1,key1,key_length1)) break;
-      pos1+=key_length1;
-      if (pos1>=length) return(0); // return, if not found
-    }
-  else
-    pos1=0;
-  // check key2, if not an empty string
-  if (key_length2>0)
-    {
-      for(pos2=0; pos2<length-key_length2; pos2++)
-	if (!strncmp(line+pos2,key2,key_length2)) break;
-      pos2+=key_length2;
-      if (pos2>=length) return(0); // return, if not found
-    }
-  else
-    pos2=0;
-  // check key2, if not an empty string
-  if (key_length3>0)
-    {
-      for(pos3=0; pos3<length-key_length3; pos3++)
-	if (!strncmp(line+pos3,key3,key_length3)) break;
-      pos3+=key_length3;
-      if (pos3>=length) return(0); // return, if not found
-    }
-  else
-    pos3=0;
-
-  // reset string pointer to after both keywords
-  if (pos1>pos2)
-    {
-      if (pos1>pos3)
-	{
-	  line+=pos1;
-	  length-=pos1;
-	}
-      else
-	{
-	  line+=pos3;
-	  length-=pos3;
-	}
-    }
-  else
-    {
-      if (pos2>pos3)
-	{
-	  line+=pos2;
-	  length-=pos2;
-	}
-      else
-	{
-	  line+=pos3;
-	  length-=pos3;
-	}
-    }
-  // find end of description
-  for(pos1=0; (pos1<length) && (line[pos1]!=':'); pos1++);
-  if (++pos1>=length) return(0);
-  // eliminate empty spaces
-  for(; (pos1<length) && (line[pos1]==' '); pos1++);
-  if (pos1>=length) return(0);
-  line+=pos1;
-  length-=pos1;
-  // check none
-  for(pos3=0; pos3<length-4; pos3++)
-    if (!strncmp(line+pos3,(char*)"none",4))
-      {
-	switch(type)
-	  {
-	  case FLOAT_TYPE:
-	  case ARRAY_FLOAT_TYPE:     *((float *)var)=FIT_PARAM_NONE; return(1);
-	  case INT_TYPE:
-	  case ARRAY_INT_TYPE:       *((int *)var)=FIT_PARAM_NONE; return(1);
-	  case SHORT_INT_TYPE:
-	  case ARRAY_SHORT_INT_TYPE: *((short int *)var)=FIT_PARAM_NONE;
-	                             return(1);
-	  }
-      }
-  // accept + and - character
-  if ((*line=='+') || (*line=='-'))
-    pos1=1;
-  else
-    pos1=0;
-  // find end of number
-  for(; (pos1<length) && 
-	((line[pos1]=='.') || ((line[pos1]>='0') && (line[pos1]<='9')));
-      pos1++);
-  // end the string at the end of the number
-  if (pos1<length) line[pos1]=0;
-  // read into variable
-  switch(type)
-    {
-    case FLOAT_TYPE:
-    case ARRAY_FLOAT_TYPE:     sscanf(line,(char*)"%f",(float *)var); return(1);
-    case INT_TYPE:
-    case ARRAY_INT_TYPE:       sscanf(line,(char*)"%d",(int *)var); return(1);
-    case SHORT_INT_TYPE:
-    case ARRAY_SHORT_INT_TYPE: sscanf(line,(char*)"%hd",(short int *)var); return(1);
-    }
-  return(0);
-}
-
-// *************************************************************
-// * check all variables and read in values; initialize arrays *
-// * where possible                                            *
-// *************************************************************
-inline void fit_param::parse(char *line)
-{
-  unsigned char length=strlen(line),ar;
-
-  if (parse(line,length,(char*)"PMT",(char*)"ime",(char*)"esolution",FLOAT_TYPE,&tres)) return;
-  if (parse(line,length,(char*)"PMT",(char*)"oincidence",(char*)"ime",FLOAT_TYPE,&tcoin)) return;
-  if (parse(line,length,(char*)"air",(char*)"istance",(char*)"raction",FLOAT_TYPE,&dlim)) return;
-  if (parse(line,length,(char*)"air",(char*)"ime",(char*)"raction",FLOAT_TYPE,&tlim)) return;
-  if (parse(line,length,(char*)"aximum",(char*)"its",(char*)"ombin",SHORT_INT_TYPE,&nselall)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"rid",(char*)"onstant",FLOAT_TYPE,&gcon0)) return;
-  
-  if (parse(line,length,(char*)"lusfit",(char*)"rid",(char*)"onstant",
-			    ARRAY_FLOAT_TYPE,&cgrid)) return;
-  if (parse(line,length,(char*)"all",(char*)"istance",(char*)"ertices",FLOAT_TYPE,&dw4hit)) return;
-  if (parse(line,length,(char*)"all",(char*)"lusfit",(char*)"ertex",FLOAT_TYPE,&dwfit)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"pening",FLOAT_TYPE,&clusgtheta0))
-    return;
-  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"ositive",
-	    FLOAT_TYPE,&clusgthetaplus)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"egative",
-	    FLOAT_TYPE,&clusgthetaminus)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"Clusfit",(char*)"eight",FLOAT_TYPE,&clusgdirweight))
-    return;
-  if ((np==-1) && (parse(line,length,(char*)"umber",(char*)"lusfit",(char*)"asses",SHORT_INT_TYPE,&np)))
-    {
-      if (np<1) { np=-1; return; }
-      if (np>10) np=10;
-      cdwall=new float[np];
-      time=new float[np];
-      gdiff=new float[np];
-      gfrac=new float[np];
-      rmin=new float[np];
-      rstop=new float[np];
-      clustheta0=new float[np];
-      clusthetaplus=new float[np];
-      clusthetaminus=new float[np];
-      clusdirweight=new float[np];
-      for(ar=0; ar<np; ar++)
-	{	 
-	  cdwall[ar]=time[ar]=gdiff[ar]=gfrac[ar]=rmin[ar]=rstop[ar]=-1;
-	  clustheta0[ar]=clusthetaplus[ar]=clusthetaminus[ar]=clusdirweight[ar]=-1;
-	}
-      return;
-    }
-  if (parse(line,length,(char*)"inal",(char*)"oodness",(char*)"ifference",FLOAT_TYPE,&lastdiff))
-    return;
-  if ((np!=-1) && (parse(line,length,(char*)"all",(char*)"nvoke",(char*)"iner",
-                         ARRAY_FLOAT_TYPE,cdwall))) return;
-  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"ifference",(char*)"kim",
-			 ARRAY_FLOAT_TYPE,gdiff))) return;
-  if (parse(line,length,(char*)"inal",(char*)"oodness",(char*)"raction",FLOAT_TYPE,&lastfrac))
-    return;
-  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"kim",(char*)"raction",
-			 ARRAY_FLOAT_TYPE,gfrac))) return;
-  if (parse(line,length,(char*)"rid",(char*)"ime",(char*)"indow",FLOAT_TYPE,&tim0)) return;
-  if ((np!=-1) && (parse(line,length,(char*)"oodness",(char*)"ime",(char*)"indow",
-			 ARRAY_FLOAT_TYPE,time))) return;
-  if ((np!=-1) && (parse(line,length,(char*)"lusfit",(char*)"inimum",(char*)"adius",
-			 ARRAY_FLOAT_TYPE,rmin))) return;
-  if ((np!=-1) && (parse(line,length,(char*)"lusfit",(char*)"top",(char*)"adius",
-			 ARRAY_FLOAT_TYPE,rstop))) return;
-  if (parse(line,length,(char*)"Clusfit",(char*)"pening",(char*)"ngle",ARRAY_FLOAT_TYPE,clustheta0))
-    return;
-  if (parse(line,length,(char*)"Clusfit",(char*)"ositive",(char*)"ngle",
-	    ARRAY_FLOAT_TYPE,clusthetaplus)) return;
-  if (parse(line,length,(char*)"Clusfit",(char*)"egative",(char*)"ngle",
-	    ARRAY_FLOAT_TYPE,clusthetaminus)) return;
-  if (parse(line,length,(char*)"Clusfit",(char*)"ngle",(char*)"eight",ARRAY_FLOAT_TYPE,clusdirweight))
-    return;
-  if (parse(line,length,(char*)"BONSAI",(char*)"rid",(char*)"onstant",FLOAT_TYPE,&bgrid)) return;
-  if (parse(line,length,(char*)"all",(char*)"BONSAI",(char*)"ertex",FLOAT_TYPE,&bdwfit)) return;
-  if (parse(line,length,(char*)"all",(char*)"nvoke",(char*)"ine",FLOAT_TYPE,&bdwall)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&bc0)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&bpangle)) return;
-  if (parse(line,length,(char*)"nitial",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&bmangle)) return;
-  if (parse(line,length,(char*)"inal",(char*)"ikelihood",(char*)"ifference",FLOAT_TYPE,&blastdiff))
-    return;
-  if (parse(line,length,(char*)"inal",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&blastfrac))
-    return;
-  if (parse(line,length,(char*)"oarse",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&oc0)) return;
-  if (parse(line,length,(char*)"oarse",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&opangle)) return;
-  if (parse(line,length,(char*)"oarse",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&omangle)) return;
-  if (parse(line,length,(char*)"oarse",(char*)"ikelihood",(char*)"iff",FLOAT_TYPE,&obgdiff)) return;
-  if (parse(line,length,(char*)"oarse",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&obgfrac))
-    return;
-  if (parse(line,length,(char*)"oarse",(char*)"tart",(char*)"adius",FLOAT_TYPE,&obrmin)) return;
-  if (parse(line,length,(char*)"oarse",(char*)"top",(char*)"adius",FLOAT_TYPE,&obrstop)) return;
-  if (parse(line,length,(char*)"ine",(char*)"pening",(char*)"ngle",FLOAT_TYPE,&cc0)) return;
-  if (parse(line,length,(char*)"ine",(char*)"ngle",(char*)"ositive",FLOAT_TYPE,&cpangle)) return;
-  if (parse(line,length,(char*)"ine",(char*)"ngle",(char*)"egative",FLOAT_TYPE,&cmangle)) return;
-  if (parse(line,length,(char*)"ine",(char*)"ikelihood",(char*)"iff",FLOAT_TYPE,&cbgdiff)) return;
-  if (parse(line,length,(char*)"ine",(char*)"ikelihood",(char*)"raction",FLOAT_TYPE,&cbgfrac))
-    return;
-  if (parse(line,length,(char*)"ine",(char*)"inimum",(char*)"adius",FLOAT_TYPE,&cbrmin)) return;
-  if (parse(line,length,(char*)"ine",(char*)"top",(char*)"adius",FLOAT_TYPE,&cbrstop)) return;
-}
-
-// *************************************************************
 // * convert angular constraint from theta to cos(theta)       *
 // *************************************************************
 inline void fit_param::ang_constr(float &theta_0,
@@ -347,6 +116,8 @@ inline void fit_param::ang_constr(float &theta_0,
   theta_minus=0.5/(theta_minus*theta_minus);
 }
 
+
+
 // *************************************************************
 // * print n number of spaces                                  *
 // *************************************************************
@@ -357,102 +128,101 @@ inline void fit_param::printspace(int n)
   for(i=0; i<n; i++) printf(" ");
 }
 
-fit_param::fit_param(void)
-{
-  if (nselall) return;
-  
-  std::string path = std::string(getenv("GLG4DATA")) + "/bonsai/fit_param.dat";  //FIXME store all this in the DB (move away from the .dat)
-  
-  printf("reading %s...\n",path.c_str());
-
-  FILE          *pfile=fopen(path.c_str(),(char*)"r");
-
-  char          line[256];
-  unsigned char ar;
-
-  numbers[0]=(char*)"First";
-  numbers[1]=(char*)"Second";
-  numbers[2]=(char*)"Third";
-  numbers[3]=(char*)"Fourth";
-  numbers[4]=(char*)"Fifth";
-  numbers[5]=(char*)"Sixth";
-  numbers[6]=(char*)"Seventh";
-  numbers[7]=(char*)"Eighth";
-  numbers[8]=(char*)"Ninth";
-  numbers[9]=(char*)"Tenth";
-  opangle=omangle=oc0=-1;
-  bgrid=cgrid=obgdiff=-1;
-  blastdiff=blastfrac=obrmin=obrstop=-1;
-  cc0=cmangle=-1;
-  cpangle=bpangle=cbgdiff=-1;
-  cbrmin=cbrstop=obgfrac=cbgfrac=-1;
-  bdwall=bdwfit=bc0=bmangle=-1;
-  tres=tcoin=dlim=tlim=gcon0=-1;
-  clusgtheta0=clusgthetaplus=clusgthetaminus=clusgdirweight=-1;
-  nselall=np=-1;
-  dw4hit=dwfit=lastdiff=lastfrac=tim0=-1;
-  for(fgets(line,255,pfile);!feof(pfile);fgets(line,255,pfile))
-    parse(line);
-  fclose(pfile);
-  if (clusgtheta0==-1) exit(1);
-  if (clusgthetaplus==-1) exit(1);
-  if (clusgthetaminus==-1) exit(1);
-  ang_constr(clusgtheta0,clusgthetaplus,clusgthetaminus);
-  for(ar=0; ar<np; ar++)
-    {
-      if (cdwall[ar]==-1) exit(1);
-      if (clustheta0[ar]==-1) exit(1);
-      if (clusthetaplus[ar]==-1) exit(1);
-      if (clusthetaminus[ar]==-1) exit(1);
-      ang_constr(clustheta0[ar],clusthetaplus[ar],clusthetaminus[ar]);
+float* GetFArray(RAT::DBLinkPtr table, std::string field) {
+    std::vector<double> temp = table->GetDArray(field);
+    float *result = new float[temp.size()];
+    for (size_t i = 0; i < temp.size(); i++) {
+        result[i] = temp[i];
     }
-  if (bc0==-1) exit(1);
-  if (bpangle==-1) exit(1);
-  if (bmangle==-1) exit(1);
-  ang_constr(bc0,bpangle,bmangle);
-  if (oc0==-1) exit(1);
-  if (opangle==-1) exit(1);
-  if (omangle==-1) exit(1);
-  ang_constr(oc0,opangle,omangle);
-  if (cc0==-1) exit(1);
-  if (cpangle==-1) exit(1);
-  if (cmangle==-1) exit(1);
-  ang_constr(cc0,cpangle,cmangle);
-  print();
-  if (clusgdirweight==-1) exit(1);
-  if (cbrstop==-1) exit(1);
-  if (tres==-1) exit(1);
-  if (tcoin==-1) exit(1);
-  if (dlim==-1) exit(1);
-  if (tlim==-1) exit(1);
-  if (nselall==-1) exit(1);
-  if (gcon0==-1) exit(1);
-  if (dw4hit==-1) exit(1);
-  if (dwfit==-1) exit(1);
-  if (np==-1) exit(1);
-  if (tim0==-1) exit(1);
-  for(ar=0; ar<np; ar++)
-    {
-      if (gdiff[ar]==-1) exit(1);
-      if (gfrac[ar]==-1) exit(1);
-      if (time[ar]==-1) exit(1);
-      if (rmin[ar]==-1) exit(1);
-      if (rstop[ar]==-1) exit(1);
-      if (clusdirweight[ar]==-1) exit(1);
+    return result;
+} 
+
+fit_param::fit_param(void) {
+
+    if (nselall) return;
+
+    numbers[0]=(char*)"First";
+    numbers[1]=(char*)"Second";
+    numbers[2]=(char*)"Third";
+    numbers[3]=(char*)"Fourth";
+    numbers[4]=(char*)"Fifth";
+    numbers[5]=(char*)"Sixth";
+    numbers[6]=(char*)"Seventh";
+    numbers[7]=(char*)"Eighth";
+    numbers[8]=(char*)"Ninth";
+    numbers[9]=(char*)"Tenth";
+    
+    RAT::DB *db = RAT::DB::Get();
+    RAT::DBLinkPtr table = db->GetLink("BONSAI");
+    
+    tres = table->GetD("tres");
+    tcoin = table->GetD("tcoin");
+    dlim = table->GetD("dlim");
+    tlim = table->GetD("tlim");
+    nselall = table->GetI("nselall");
+    gcon0 = table->GetD("gcon0");
+    dw4hit = table->GetD("dw4hit");
+    dwfit = table->GetD("dwfit");
+    clusgtheta0 = table->GetD("clusgtheta0");
+    clusgthetaplus = table->GetD("clusgthetaplus");
+    clusgthetaminus = table->GetD("clusgthetaminus");
+    clusgdirweight = table->GetD("clusgdirweight");
+    
+    np = table->GetI("np");
+    if (np < 1) { 
+        np=-1; 
+    } else { 
+        if (np > 10) np = 10;
+        cdwall = GetFArray(table,"cdwall");
+        time = GetFArray(table,"time");
+        gdiff = GetFArray(table,"gdiff");
+        gfrac = GetFArray(table,"gfrac");
+        rmin = GetFArray(table,"rmin");
+        rstop = GetFArray(table,"rstop");
+        clustheta0 = GetFArray(table,"clustheta0");
+        clusthetaplus = GetFArray(table,"clusthetaplus");
+        clusthetaminus = GetFArray(table,"clusthetaminus");
+        clusdirweight = GetFArray(table,"clusdirweight");
     }
-  if (lastfrac==-1) exit(1);
-  if (lastdiff==-1) exit(1);
-  if (cgrid==-1) exit(1);
-  if (bgrid==-1) exit(1);
-  if (bdwall==-1) exit(1);
-  if (blastdiff==-1) exit(1);
-  if (obgfrac==-1) exit(1);
-  if (cbgfrac==-1) exit(1);
-  if (obrmin==-1) exit(1);
-  if (obrstop==-1) exit(1);
-  if (bdwfit==-1) exit(1);
-  if (blastfrac==-1) exit(1);
-  if (cbrmin==-1) exit(1);
+    
+    ang_constr(clusgtheta0,clusgthetaplus,clusgthetaminus);
+    for (int ar = 0; ar < np; ar++) {
+        ang_constr(clustheta0[ar],clusthetaplus[ar],clusthetaminus[ar]);
+    }
+    
+    tim0 = table->GetD("tim0");
+    lastdiff = table->GetD("lastdiff");
+    lastfrac = table->GetD("lastfrac");
+    bgrid = table->GetD("bgrid");
+    oc0 = table->GetD("oc0");
+    obgdiff = table->GetD("obgdiff");
+    blastdiff = table->GetD("blastdiff");
+    obgfrac = table->GetD("obgfrac");
+    cbgfrac = table->GetD("cbgfrac");
+    obrmin = table->GetD("obrmin");
+    obrstop = table->GetD("obrstop");
+    bdwall = table->GetD("bdwall");
+    bdwfit = table->GetD("bdwfit");
+    cgrid = table->GetD("cgrid");
+    blastfrac = table->GetD("blastfrac");
+    opangle = table->GetD("opangle");
+    omangle = table->GetD("omangle");
+    cc0 = table->GetD("cc0");
+    bc0 = table->GetD("bc0");
+    cpangle = table->GetD("cpangle");
+    bpangle = table->GetD("bpangle");
+    cmangle = table->GetD("cmangle");
+    bmangle = table->GetD("bmangle");
+    cbgdiff = table->GetD("cbgdiff");
+    cbrmin = table->GetD("cbrmin");
+    cbrstop = table->GetD("cbrstop");
+    
+    ang_constr(bc0,bpangle,bmangle);
+    ang_constr(oc0,opangle,omangle);
+    ang_constr(cc0,cpangle,cmangle);
+  
+    print();
+
 }
 
 // *************************************************************

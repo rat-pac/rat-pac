@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <string>
 
+#include <RAT/DB.hh>
+#include <RAT/DBLink.hh>
+
 namespace BONSAI {
 
 inline void binfile::order2(char *point)
@@ -62,8 +65,11 @@ binfile::binfile(char *name,char mode)
   order4(offset+2);
   order8(offset+6);
   allmode[0]=mode;
-
-  fp=fopen((std::string(getenv("GLG4DATA"))+"/bonsai/"+std::string(name)).c_str(),allmode); //FIXME this is probably not good enough
+  
+  RAT::DB *db = RAT::DB::Get();
+  RAT::DBLinkPtr table = db->GetLink("BONSAI");
+  std::string path = table->GetS("data_path");
+  fp=fopen((std::string(getenv("GLG4DATA"))+"/" + path + "/"+std::string(name)).c_str(),allmode); //FIXME this is probably not good enough
 
   if (fp==NULL)
     {
