@@ -2,9 +2,9 @@
 #include <RAT/DS/Root.hh>
 #include <RAT/Processor.hh>
 
-#include <RAT/pmt_geometry.h>
-#include <RAT/likelihood.h>
-#include <RAT/bonsaifit.h>
+#include <RAT/BONSAI/pmt_geometry.h>
+#include <RAT/BONSAI/likelihood.h>
+#include <RAT/BONSAI/bonsaifit.h>
 
 #include <vector>
 #include <map>
