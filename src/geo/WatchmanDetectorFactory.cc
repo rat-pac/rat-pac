@@ -10,18 +10,23 @@ using namespace std;
 namespace RAT {
 
     void WatchmanDetectorFactory::DefineDetector(DBLinkPtr detector) {
-        const double pmt_area = detector->GetD("pmt_area");
-        const double covering_fraction = detector->GetD("covering_fraction");
+        const double photocathode_coverage = detector->GetD("photocathode_coverage");
         const std::string geo_template = "Watchman/Watchman.geo";
         DB *db = DB::Get();
         if (db->Load(geo_template) == 0) {
             Log::Die("WatchmanDetectorFactory: could not load template Watchman/Watchman.geo");
         }
         
-        info << "Disable veto_pmts for dynamic coverage...\n";
-        db->SetI("GEO","veto_pmts","enable",0);
-        db->SetI("GEO","shield","veto_start",0);
-        db->SetI("GEO","shield","veto_len",0);
+        //calculate the area of the defined inner_pmts
+        DBLinkPtr inner_pmts = db->GetLink("GEO","inner_pmts");
+        string pmt_type = inner_pmts->GetS("pmt_type");
+        DBLinkPtr pmt = db->GetLink("PMT", pmt_type);
+        vector<double> rho_edge = pmt->GetDArray("rho_edge");
+        double photocathode_radius = rho_edge[0];
+        for (size_t i = 1; i < rho_edge.size(); i++) {
+            if (photocathode_radius < rho_edge[i]) photocathode_radius = rho_edge[i];
+        }
+        const double photocathode_area = M_PI*photocathode_radius*photocathode_radius;
         
         DBLinkPtr shield = db->GetLink("GEO","shield");
         const double steel_thickness = shield->GetD("steel_thickness");
@@ -33,7 +38,7 @@ namespace RAT {
         const double topbot_offset = detector_size/2.0 - shield_thickness;
         
         const double surface_area = 2.0*M_PI*pmt_radius*pmt_radius + 2.0*topbot_offset*2.0*M_PI*pmt_radius;
-        const double required_pmts = ceil(covering_fraction * surface_area / pmt_area);
+        const double required_pmts = ceil(photocathode_coverage * surface_area / photocathode_area);
         
         const double pmt_space = sqrt(surface_area/required_pmts);
         
@@ -41,9 +46,10 @@ namespace RAT {
         const size_t rows = round(2.0*topbot_offset/pmt_space);
         
         info << "Generating new PMT positions for:\n";
-        info << "\tdesired covering fraction " << covering_fraction << '\n';
+        info << "\tdesired photocathode coverage " << photocathode_coverage << '\n';
         info << "\ttotal area " << surface_area << '\n';
-        info << "\tpmt area " << pmt_area << '\n';
+        info << "\tphotocathode radius " << photocathode_radius << '\n';
+        info << "\tphotocathode area " << photocathode_area << '\n';
         info << "\tdesired PMTs " << required_pmts << '\n';
         info << "\tPMT spacing " << pmt_space << '\n';
         
@@ -61,7 +67,7 @@ namespace RAT {
         size_t num_pmts = cols*rows + 2*topbot.size();
         
         info << "Actual calculated values:\n"; 
-        info << "\tactual covering fraction " << pmt_area*num_pmts/surface_area << '\n';
+        info << "\tactual photocathode coverage " << photocathode_area*num_pmts/surface_area << '\n';
         info << "\tgenerated PMTs " << num_pmts << '\n';
         info << "\tcols " << cols << '\n';
         info << "\trows " << rows << '\n';
@@ -127,6 +133,11 @@ namespace RAT {
         db->SetDArray("PMTINFO","dir_y",dir_y);
         db->SetDArray("PMTINFO","dir_z",dir_z);
         db->SetIArray("PMTINFO","type",type);
+        
+        info << "Disable veto_pmts for dynamic coverage...\n";
+        db->SetI("GEO","veto_pmts","enable",0);
+        db->SetI("GEO","shield","veto_start",0);
+        db->SetI("GEO","shield","veto_len",0);
         
         info << "Update geometry fields related to normal PMTs...\n";
         db->SetI("GEO","shield","cols",cols);
