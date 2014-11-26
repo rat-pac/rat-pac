@@ -17,7 +17,7 @@ class DetectorFactory {
     
         DetectorFactory() { }
         
-        virtual ~DetectorFactory() = 0;
+        virtual ~DetectorFactory() { }
         
         /// Invokes DefineDetector on the DetectorFactory registered to name
         static void DefineWithFactory(const std::string name, DBLinkPtr detector);

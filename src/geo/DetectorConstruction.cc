@@ -13,7 +13,9 @@
 #include <RAT/Log.hh>
 #include <RAT/GeoBuilder.hh>
 #include <RAT/Materials.hh>
+
 #include <RAT/DetectorFactory.hh>
+#include <RAT/WatchmanDetectorFactory.hh>
 
 using namespace std;
 
@@ -22,7 +24,7 @@ namespace RAT {
 DetectorConstruction* DetectorConstruction::sDetectorConstruction = NULL;
 
 DetectorConstruction::DetectorConstruction() {
-    
+    DetectorFactory::Register("Watchman",new WatchmanDetectorFactory());
 }
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
