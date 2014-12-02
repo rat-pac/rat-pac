@@ -46,17 +46,21 @@ Processor::Result SimpleDAQProc::DSEvent(DS::Root *ds) {
         // WARNING: gets multiphoton effect right, but not walk correction
         // Write directly to calibrated waveform branch
 
-        //double time = mcpmt->GetMCPhoton(0)->GetAnodeTime();
+        double time = 0;
         double charge = 0;
 
         for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
+          time += mcpmt->GetMCPhoton(i)->GetHitTime();
           charge += mcpmt->GetMCPhoton(i)->GetCharge();
         }
-
+        
+        time /= mcpmt->GetMCPhotonCount();
+        
         //pmt->SetCalibratedCharge(charge);
         totalQ += charge;
 
         //charge *= fSPECharge[pmtID] * 1e12; /* convert to pC */
+        pmt->SetTime(time);
         pmt->SetCharge(charge);
         calibQ += charge;
     }
