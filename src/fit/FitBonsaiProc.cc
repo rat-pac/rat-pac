@@ -113,7 +113,9 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     DS::BonsaiFit *result = ev->GetBonsaiFit();
     
     TVector3 pos(vtx[0],vtx[1],vtx[2]);
+    TVector3 direct(dir[0],dir[1],dir[2]);
     result->SetPosition(pos);
+    result->SetDirection(direct);
     result->SetTime(vtx[3]);
     
     return OK;
