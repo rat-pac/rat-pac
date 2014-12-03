@@ -50,11 +50,10 @@ Processor::Result SimpleDAQProc::DSEvent(DS::Root *ds) {
         double charge = 0;
 
         for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
-          time += mcpmt->GetMCPhoton(i)->GetHitTime();
+          if (time > mcpmt->GetMCPhoton(i)->GetHitTime())
+            time = mcpmt->GetMCPhoton(i)->GetHitTime();
           charge += mcpmt->GetMCPhoton(i)->GetCharge();
         }
-        
-        time /= mcpmt->GetMCPhotonCount();
         
         //pmt->SetCalibratedCharge(charge);
         totalQ += charge;
