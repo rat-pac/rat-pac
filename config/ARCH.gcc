@@ -16,10 +16,10 @@ arch = {
     'default' : { 'CXXFLAGS' : Split('-W -Wall -ansi -pedantic -Wno-non-virtual-dtor'
                                      ' -Wno-long-long -Wwrite-strings -Wno-strict-aliasing'
                                      ' -Wpointer-arith -Wno-unused-parameter -Woverloaded-virtual -pipe'
-                                     ' -fPIC -Werror'),
+                                     ' -fPIC -ferror-limit=0'),
                   'LDFLAGS' : '-fPIC',
                   },
-
+    # Took out -Werror
     # Extra flags for optional components
     'X11'  : { 'CPPPATH' : ['/usr/include/X11/extensions', '/usr/include/X11'],
                'LIBPATH' : '/usr/X11R6/lib',

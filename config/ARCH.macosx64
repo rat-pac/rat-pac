@@ -15,7 +15,7 @@ if len(parts) >= 2 and int(parts[1]) >= 8:
     arch['CXX'] = 'clang++'
     print 'Using clang/clang++ on OS X', osx_version
 
-#arch['default'].update({'LINKFLAGS': ['-stdlib=libstdc++', '-lstdc++', '-lc++']})
+#arch['default'].update({'LINKFLAGS': ['-stdlib=libstdc++', '-lstdc++', '-lc++','-ferror-limit=0']})
 
 arch['Xm'].update( { 'CPPPATH' : '/sw/include',
                      'LIBPATH' : '/sw/lib' }    )

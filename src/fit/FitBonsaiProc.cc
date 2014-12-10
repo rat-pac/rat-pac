@@ -57,6 +57,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
         hit_time[i] = pmt->GetTime();
         hit_charge[i] = pmt->GetCharge();
         hit_pmtid[i] = pmtmap[pmt->GetID()];
+        
     }
     
     /*
@@ -98,7 +99,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     //reset likelihood
     bonsai_likelihood->set_hits(NULL);
     
-    /* This time fit won't work properly until calibrated
+    //This time fit won't work properly until calibrated
     
     //now fit the time
     bonsai_likelihood->set_hits(&hitselection);
@@ -108,9 +109,11 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     //reset likelihood
     bonsai_likelihood->set_hits(NULL);
     
-    */
+    //
     
     DS::BonsaiFit *result = ev->GetBonsaiFit();
+    
+    printf("%8.2f %8.2f %8.2f %8.2f %8.2f %8.2f %8.2f\n",vtx[0],vtx[1],vtx[2],dir[0],dir[1],dir[2],dt);
     
     TVector3 pos(vtx[0],vtx[1],vtx[2]);
     TVector3 direct(dir[0],dir[1],dir[2]);
