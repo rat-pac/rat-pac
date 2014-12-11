@@ -114,3 +114,28 @@ The PMT array type is designed to construct a large number of similar PMTs effic
 || orientation || string || Method of determining PMT direction.  "point" will aim all PMTs at a point in space.  "manual" requires that the position table also contain dir_x, dir_y, and dir_z fields which define the direction vector for each PMT. ||
 || orient_point || float![3] (optional) || Point (mm) in mother volume to aim all PMTs toward. ||
 || rescale_radius || float (optional) || Assumes all PMTs are spherically arranged around the center of the mother volume and rescales their positions to a particular radius.  By default, no rescaling is done. ||
+
+
+Creating a parameterized geometry
+````````````````
+Using a `DetectorFactory` one can build a DB defined geometry on the fly (less useful),
+or modify a normal DB defined geometry template (more useful) before the geometry itself is built. 
+Using only `.geo` files there is no nice way to have a property of a geometry component defined 
+as a formula (a function of other geometry parameters), and no nice way to algorithmicly define 
+components of a scalable geometry, e.g. PMT positions for various photocathode coverage fractions. 
+
+The DetectorFactory to use is specified by name in the `DETECTOR` table under the field `detector_factory` 
+and supersedes the `geo_file` field if used. If no `DetectorFactory` is specified, the `geo_file` specified 
+is loaded as described above. A DetectorFactory should define tables in the DB in the same way a `.geo` 
+file would and make use of `GeoFactory` components. 
+
+    /rat/db/set DETECTOR experiment "Watchman"
+    /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+
+v.s.
+
+    /rat/db/set DETECTOR experiment "Watchman"
+    /rat/db/set DETECTOR detector_factory "Watchman"
+
+Example usage would be to load a normal (statically defined) `.geo` file into the DB and modify
+it as necessary for the dynamic functionality. See the `WatchmanDetectorFactor` for example use.
