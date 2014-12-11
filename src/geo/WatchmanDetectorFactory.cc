@@ -11,6 +11,8 @@ namespace RAT {
 
     void WatchmanDetectorFactory::DefineDetector(DBLinkPtr detector) {
         const double photocathode_coverage = detector->GetD("photocathode_coverage");
+        const double veto_coverage = detector->GetD("veto_coverage");
+        const double veto_offset = 700;
         const std::string geo_template = "Watchman/Watchman.geo";
         DB *db = DB::Get();
         if (db->Load(geo_template) == 0) {
@@ -35,15 +37,23 @@ namespace RAT {
         
         const double cable_radius = detector_size/2.0 - shield_thickness + 4.0*steel_thickness;
         const double pmt_radius = detector_size/2.0 - shield_thickness - 4.0*steel_thickness;
+        const double veto_radius = pmt_radius + veto_offset;
+        
         const double topbot_offset = detector_size/2.0 - shield_thickness;
+        const double topbot_veto_offset = topbot_offset + veto_offset;
         
         const double surface_area = 2.0*M_PI*pmt_radius*pmt_radius + 2.0*topbot_offset*2.0*M_PI*pmt_radius;
         const double required_pmts = ceil(photocathode_coverage * surface_area / photocathode_area);
+        const double veto_surface_area = 2.0*M_PI*veto_radius*veto_radius + 2.0*topbot_veto_offset*2.0*M_PI*veto_radius;
+        const double required_vetos = ceil(veto_coverage * veto_surface_area / photocathode_area);
         
         const double pmt_space = sqrt(surface_area/required_pmts);
+        const double veto_space = sqrt(veto_surface_area/required_vetos);
         
         const size_t cols = round(2.0*M_PI*pmt_radius/pmt_space);
         const size_t rows = round(2.0*topbot_offset/pmt_space);
+        const size_t veto_cols = round(2.0*M_PI*veto_radius/veto_space);
+        const size_t veto_rows = round(2.0*topbot_veto_offset/veto_space);
         
         info << "Generating new PMT positions for:\n";
         info << "\tdesired photocathode coverage " << photocathode_coverage << '\n';
@@ -55,27 +65,36 @@ namespace RAT {
         
         //make the grid for top and bottom PMTs
         vector<pair<int,int> > topbot;
+        vector<pair<int,int> > topbot_veto;
         const int rdim = round(pmt_radius/pmt_space); 
         for (int i = -rdim; i <= rdim; i++) {
             for (int j = -rdim; j <= rdim; j++) {
                 if (pmt_space*sqrt(i*i+j*j) <= pmt_radius-pmt_space/2.0) {
                     topbot.push_back(make_pair(i,j));
                 }
+                if (veto_space*sqrt(i*i+j*j) <= pmt_radius-pmt_space/2.0) { // pmt_* is not a mistake
+                    topbot_veto.push_back(make_pair(i,j));
+                }
             }
         }
         
         size_t num_pmts = cols*rows + 2*topbot.size();
+        size_t num_vetos = veto_cols*veto_rows + 2*topbot_veto.size();
+        size_t total_pmts = num_pmts + num_vetos;
         
         info << "Actual calculated values:\n"; 
         info << "\tactual photocathode coverage " << photocathode_area*num_pmts/surface_area << '\n';
         info << "\tgenerated PMTs " << num_pmts << '\n';
         info << "\tcols " << cols << '\n';
         info << "\trows " << rows << '\n';
+        info << "\tgenerated Vetos " << num_vetos << '\n';
+        info << "\tcols " << veto_cols << '\n';
+        info << "\trows " << veto_rows << '\n';
+        
+        vector<double> x(total_pmts), y(total_pmts), z(total_pmts), dir_x(total_pmts), dir_y(total_pmts), dir_z(total_pmts);
+        vector<int> type(total_pmts);
         
         //generate cylinder PMT positions
-        vector<double> x(num_pmts), y(num_pmts), z(num_pmts), dir_x(num_pmts), dir_y(num_pmts), dir_z(num_pmts);
-        vector<int> type(num_pmts);
-        
         for (size_t col = 0; col < cols; col++) {
             for (size_t row = 0; row < rows; row++) {
                 const size_t idx = row + col*rows;
@@ -118,6 +137,49 @@ namespace RAT {
             type[idx+1] = 1;
         }
         
+        //generate cylinder Veto positions
+        for (size_t col = 0; col < veto_cols; col++) {
+            for (size_t row = 0; row < veto_rows; row++) {
+                const size_t idx = num_pmts + row + col*veto_rows;
+                const double phi = 2.0*M_PI*col/veto_cols;
+                
+                x[idx] = veto_radius*cos(phi);
+                y[idx] = veto_radius*sin(phi);
+                z[idx] = row*2.0*topbot_offset/veto_rows + veto_space/2 - topbot_offset;
+                
+                dir_x[idx] = cos(phi);
+                dir_y[idx] = sin(phi);
+                dir_z[idx] = 0.0;
+                
+                type[idx] = 2;
+            }
+        }
+        
+        //generate topbot Veto positions
+        for (size_t i = 0; i < topbot_veto.size(); i++) {
+            const size_t idx = num_pmts + veto_rows*veto_cols+i*2;
+            
+            //top = idx
+            x[idx] = veto_space*topbot_veto[i].first;
+            y[idx] = veto_space*topbot_veto[i].second;
+            z[idx] = topbot_veto_offset;
+            
+            dir_x[idx] = dir_y[idx] = 0.0;
+            dir_z[idx] = 1.0;
+            
+            type[idx] = 2;
+            
+            //bot = idx+1
+            x[idx+1] = veto_space*topbot_veto[i].first;
+            y[idx+1] = veto_space*topbot_veto[i].second;
+            z[idx+1] = -topbot_veto_offset;
+            
+            dir_x[idx+1] = dir_y[idx] = 0.0;
+            dir_z[idx+1] = -1.0;
+            
+            type[idx+1] = 2;
+        }
+        
         //generate cable positions
         vector<double> cable_x(cols), cable_y(cols);
         for (size_t col = 0; col < cols; col++) {
@@ -134,10 +196,11 @@ namespace RAT {
         db->SetDArray("PMTINFO","dir_z",dir_z);
         db->SetIArray("PMTINFO","type",type);
         
-        info << "Disable veto_pmts for dynamic coverage...\n";
-        db->SetI("GEO","veto_pmts","enable",0);
-        db->SetI("GEO","shield","veto_start",0);
-        db->SetI("GEO","shield","veto_len",0);
+        info << "Update geometry fields related to veto PMTs...\n";
+        db->SetI("GEO","shield","veto_start",num_pmts);
+        db->SetI("GEO","shield","veto_len",num_vetos);
+        db->SetI("GEO","veto_pmts","start_num",num_pmts);
+        db->SetI("GEO","veto_pmts","max_pmts",total_pmts);
         
         info << "Update geometry fields related to normal PMTs...\n";
         db->SetI("GEO","shield","cols",cols);
