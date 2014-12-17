@@ -40,7 +40,7 @@ double PDFPMTCharge::PickCharge() const {
     double rval = CLHEP::RandFlat::shoot(1);
     for (size_t i = 1; i < fCharge.size(); i++) {
         if (rval <= fChargeProbCumu[i]) {
-            return (rval - fChargeProbCumu[i-1])*(fCharge[i]-fCharge[i-1])/(fChargeProbCumu[i]-fChargeProbCumu[i-1]); //linear interpolation
+            return (rval - fChargeProbCumu[i-1])*(fCharge[i]-fCharge[i-1])/(fChargeProbCumu[i]-fChargeProbCumu[i-1]) + fCharge[i-1]; //linear interpolation
         }
     }
     Log::Die("Sans cosmis ray bit flips, cannot get here");
