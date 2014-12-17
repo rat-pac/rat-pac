@@ -8,13 +8,14 @@ valid_end: [0, 0],
 photocathode_coverage: 0.90,
 veto_coverage: 0.00,
 
-det_diameter: 40000.0,
-det_height: 40000.0,
+fiducial_diameter: 40000.0,
+fiducial_height: 40000.0,
+fiducial_buffer: 2000.0,
 
 wall_thickness: 10.0,
 
-shield_thickness: 2000.0,
-veto_offset: 700.0,
+veto_buffer: 2000.0,
+veto_pmt_offset: 700.0,
 
 }
 

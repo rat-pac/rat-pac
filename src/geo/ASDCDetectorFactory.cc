@@ -20,11 +20,15 @@ namespace RAT {
         const double photocathode_coverage = params->GetD("photocathode_coverage");
         const double veto_coverage = params->GetD("veto_coverage");
         
-        const double det_radius = params->GetD("det_diameter")/2.0;
-        const double det_halfheight = params->GetD("det_height")/2.0;
-        const double shield_thickness = params->GetD("shield_thickness");
-        const double veto_offset = params->GetD("veto_offset");
+        const double fiducial_radius = params->GetD("fiducial_diameter")/2.0;
+        const double fiducial_halfheight = params->GetD("fiducial_height")/2.0;
+        const double fiducial_buffer = params->GetD("fiducial_buffer");
+        const double veto_buffer = params->GetD("veto_buffer");
+        const double veto_pmt_offset = params->GetD("veto_pmt_offset");
         const double tank_thickness = params->GetD("wall_thickness");
+        
+        const double det_radius = fiducial_radius+veto_buffer+fiducial_buffer;
+        const double det_halfheight = fiducial_halfheight+veto_buffer+fiducial_buffer;
         
         //calculate the area of the defined inner_pmts
         DBLinkPtr inner_pmts = db->GetLink("GEO","inner_pmts");
@@ -37,15 +41,15 @@ namespace RAT {
         }
         const double photocathode_area = M_PI*photocathode_radius*photocathode_radius;
         
-        const double pmt_radius = det_radius - shield_thickness;
-        const double veto_radius = pmt_radius + veto_offset;
+        const double pmt_radius = det_radius - veto_buffer;
+        const double veto_radius = pmt_radius + veto_pmt_offset;
         
-        const double topbot_offset = det_halfheight - shield_thickness;
-        const double topbot_veto_offset = topbot_offset + veto_offset;
+        const double topbot_offset = det_halfheight - veto_buffer;
+        const double topbot_veto_pmt_offset = topbot_offset + veto_pmt_offset;
         
         const double surface_area = 2.0*M_PI*pmt_radius*pmt_radius + 2.0*topbot_offset*2.0*M_PI*pmt_radius;
         const double required_pmts = ceil(photocathode_coverage * surface_area / photocathode_area);
-        const double veto_surface_area = 2.0*M_PI*veto_radius*veto_radius + 2.0*topbot_veto_offset*2.0*M_PI*veto_radius;
+        const double veto_surface_area = 2.0*M_PI*veto_radius*veto_radius + 2.0*topbot_veto_pmt_offset*2.0*M_PI*veto_radius;
         const double required_vetos = ceil(veto_coverage * veto_surface_area / photocathode_area);
         
         const double pmt_space = sqrt(surface_area/required_pmts);
@@ -54,7 +58,7 @@ namespace RAT {
         const size_t cols = round(2.0*M_PI*pmt_radius/(pmt_space*1.118));
         const size_t rows = round(2.0*topbot_offset/(pmt_space/1.118));
         const size_t veto_cols = round(2.0*M_PI*veto_radius/(veto_space*1.118));
-        const size_t veto_rows = round(2.0*topbot_veto_offset/(veto_space/1.118));
+        const size_t veto_rows = round(2.0*topbot_veto_pmt_offset/(veto_space/1.118));
         
         info << "Generating new PMT positions for:\n";
         info << "\tdesired photocathode coverage " << photocathode_coverage << '\n';
@@ -167,7 +171,7 @@ namespace RAT {
             //top = idx
             x[idx] = topbot_veto[i].first;
             y[idx] = topbot_veto[i].second;
-            z[idx] = topbot_veto_offset;
+            z[idx] = topbot_veto_pmt_offset;
             
             dir_x[idx] = dir_y[idx] = 0.0;
             dir_z[idx] = 1.0;
@@ -177,7 +181,7 @@ namespace RAT {
             //bot = idx+1
             x[idx+1] = topbot_veto[i].first;
             y[idx+1] = topbot_veto[i].second;
-            z[idx+1] = -topbot_veto_offset;
+            z[idx+1] = -topbot_veto_pmt_offset;
             
             dir_x[idx+1] = dir_y[idx] = 0.0;
             dir_z[idx+1] = -1.0;
