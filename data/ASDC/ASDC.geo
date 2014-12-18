@@ -56,7 +56,7 @@ type: "tube",
 r_max: 20000.0,
 size_z: 20000.0,
 position: [0.0, 0.0, 0.0],
-material: "scintillator",
+material: "wbls_10pct",
 color: [0.4, 0.4, 0.6, 0.3],
 drawstyle: "solid"
 }
