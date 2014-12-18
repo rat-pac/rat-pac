@@ -5,6 +5,7 @@
 #include <G4SurfaceProperty.hh>
 #include <G4NistManager.hh>
 #include <RAT/Materials.hh>
+#include <RAT/Log.hh>
 
 using namespace::std;
 
@@ -144,7 +145,7 @@ void Materials::ConstructMaterials() {
       zdb = table->GetI("z");
     }
     catch (DBNotFoundError &e) {
-      G4cout << "Materials error: Could not construct elements" << G4endl;
+      warn << "Materials error: Could not construct elements" << newline;
     }
 
     // Check if this element has special isotope abundances
@@ -183,20 +184,58 @@ void Materials::ConstructMaterials() {
   DBLinkGroup mats = db->GetLinkGroup("MATERIAL");
   for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
     std::string namedb = iv->first;
-    G4cout << "Loaded material: " << namedb << G4endl;
+    info << "Loaded material: [" << namedb << "]" << newline;
 
     DBLinkPtr table = iv->second;
     if(!BuildMaterial(namedb, table)) {
       queue.push_back(namedb);
-      G4cout << namedb << " thrown on construction queue" << G4endl;
+      info << "[" << namedb << "] thrown on construction queue" << newline;
     }
   }
 
+  // Erasing an iterator to the vector implies re-shifting all the subsequent
+  // entries which can lead the code to crash.
+  // Therefore, the loop goes backwards, which ensures that
+  // consistency is maintained
+  for (vector<string>::iterator i=queue.begin(); i!=queue.end(); ++i) {
+    std::string namedb = *i;
+    DBLinkPtr table = DB::Get()->GetLink("MATERIAL", namedb);
+    info << "queue (pass1): [" << namedb << "]" << newline;
+    if(BuildMaterial(namedb, table)) {
+      queue.erase(i);
+      // Step backwards to make sure that the iterator will point to the right place
+      --i;
+      info << "[" << namedb << "] found and removed from construction queue" << newline;
+    }
+    // BuildMaterial(namedb,table);
+  }
+
+  /// if after the second pass it is not yet found, default to the NIST databse
+  if (!queue.empty()) {
+  	info << "Not all materials were found in the database. Trying to load them from NIST." << newline;
+  	G4NistManager* nist_db = G4NistManager::Instance();
+  	nist_db->SetVerbose(1);
+  	for (vector<string>::iterator i=queue.begin(); i!=queue.end(); i++) {
+  		std::string namedb = *i;
+  		G4Material *addmatptr = nist_db->FindOrBuildMaterial(namedb);
+  		if (addmatptr) {
+        info << "[" << namedb << "] found in NISTDB and removed from construction queue" << newline;
+  			queue.erase(i);
+  			--i;
+  		}
+  	}
+  }
+
+  // Now that loaded from the database do a final loop on the queue
   for (vector<string>::iterator i=queue.begin(); i!=queue.end(); i++) {
     std::string namedb = *i;
     DBLinkPtr table = DB::Get()->GetLink("MATERIAL", namedb);
-    G4cout << "queue: " << namedb << G4endl;
-    BuildMaterial(namedb,table);
+    info << "queue (pass2): [" << namedb << "]" << newline;
+    if(BuildMaterial(namedb, table)) {
+      queue.erase(i);
+      --i;
+      info << "[" << namedb << "] found and removed from construction queue" << newline;
+    }
   }
 
   for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
@@ -323,11 +362,9 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     for (vector<string>::size_type i=0; i<elemname.size(); i++) {
       std::string addmatname = elemname[i];
       G4Material* addmatptr = NULL;
-      if (addmatname == "G4_Gd") {
-        G4NistManager* man = G4NistManager::Instance();
-        addmatptr = man->FindOrBuildMaterial("G4_Gd");
-      }
-      else{
+      G4NistManager* man = G4NistManager::Instance();
+      addmatptr = man->FindOrBuildMaterial(addmatname);
+      if (!addmatptr) {
         addmatptr = G4Material::GetMaterial(elemname[i]);
       }
 
