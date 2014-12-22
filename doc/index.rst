@@ -9,10 +9,11 @@ RAT-PAC (RAT, Plus Additional Codes) is hosted on
 and working with the code using Git and GitHub, see
 :download:`Using GitHub with RAT-PAC Code <github_guide/ratpac_github.pdf>`.
 
-Table of Contents:
+User's Guide
+------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    overview
    installation
@@ -32,6 +33,19 @@ Table of Contents:
    tracks
    rattest
    wired
+
+Programmer's Guide
+------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   programmer_ds
+   programmer_db
+   programmer_log
+   programmer_processors
+   programmer_generators
+   programmer_style
 
 Authors
 -------
