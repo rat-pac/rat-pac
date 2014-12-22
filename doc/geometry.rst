@@ -117,7 +117,7 @@ The PMT array type is designed to construct a large number of similar PMTs effic
 
 
 Creating a parameterized geometry
-````````````````
+`````````````````````````````````
 Using a `DetectorFactory` one can build a DB defined geometry on the fly (less useful),
 or modify a normal DB defined geometry template (more useful) before the geometry itself is built. 
 Using only `.geo` files there is no nice way to have a property of a geometry component defined 
