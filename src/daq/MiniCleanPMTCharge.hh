@@ -1,3 +1,18 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \class RAT::MiniCleanPMTCharge
+///
+/// \brief  Implementation of PMTCharge using MiniCLEAN's parameterization.
+///         
+/// \author Benjamin Land <benland100@berkeley.edu>
+///
+/// REVISION HISTORY:\n
+///     2015-01-07 : B Land - Added doxygen header block \n
+///
+/// \details See MiniCLEAN docs for details. This is the default model if no 
+///          other model is specified.
+///
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef __RAT_MiniCleanPMTCharge__
 #define __RAT_MiniCleanPMTCharge__
 
