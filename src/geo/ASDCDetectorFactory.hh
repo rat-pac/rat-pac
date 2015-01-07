@@ -15,8 +15,8 @@
 ///
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __ASDCDETECTORFACTORY__
-#define __ASDCDETECTORFACTORY__
+#ifndef __RAT_ASDCDetectorFactory__
+#define __RAT_ASDCDetectorFactory__
 
 #include <RAT/DetectorFactory.hh>
 

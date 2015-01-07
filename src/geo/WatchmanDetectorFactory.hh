@@ -1,5 +1,5 @@
-#ifndef __WATCHMANDETECTORFACTORY__
-#define __WATCHMANDETECTORFACTORY__
+#ifndef __RAT_WatchmanDetectorFactory__
+#define __RAT_WatchmanDetectorFactory__
 
 #include <RAT/DetectorFactory.hh>
 
