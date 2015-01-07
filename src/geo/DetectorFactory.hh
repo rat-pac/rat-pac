@@ -1,5 +1,5 @@
-#ifndef __DETECTORFACTORY__
-#define __DETECTORFACTORY__
+#ifndef __RAT_DetectorFactory__
+#define __RAT_DetectorFactory__
 
 #include <string>
 #include <map>
