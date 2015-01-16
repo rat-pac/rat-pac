@@ -34,6 +34,8 @@
 #include <RAT/PMTTime.hh>
 #include <RAT/Config.hh>
 
+#include <RAT/GeoPMTFactoryBase.hh>
+
 #include <Randomize.hh>
 #include <vector>
 #include <cstdlib>
@@ -368,31 +370,7 @@ void Gsim::MakeRun(int runID) {
   run->SetID(runID);
   run->SetType((unsigned) lrun->GetI("runtype"));
 
-  // Load PMT information from the database
-  DS::PMTInfo* pmtinfo = run->GetPMTInfo();
-  DBLinkPtr lpmt = DB::Get()->GetLink("PMTINFO");
-  std::vector<double> pmtx = lpmt->GetDArray("x");
-  std::vector<double> pmty = lpmt->GetDArray("y");
-  std::vector<double> pmtz = lpmt->GetDArray("z");
-
-  std::vector<double> pmtu(pmtx.size());
-  std::vector<double> pmtv(pmtx.size());
-  std::vector<double> pmtw(pmtx.size());
-  std::vector<int> pmttype(pmtx.size(), 1);
-
-  try {
-    pmtu = lpmt->GetDArray("rot_x");
-    pmtv = lpmt->GetDArray("rot_y");
-    pmtw = lpmt->GetDArray("rot_z");
-    pmttype = lpmt->GetIArray("type");
-  }
-  catch (DBNotFoundError& e) {}
-
-  for (size_t i=0; i<pmtx.size(); i++) {
-    pmtinfo->AddPMT(TVector3(pmtx[i], pmty[i], pmtz[i]),
-                    TVector3(pmtu[i], pmtv[i], pmtw[i]),
-                    pmttype[i]);
-  }
+  run->SetPMTInfo(&GeoPMTFactoryBase::GetPMTInfo());
 
   DS::RunStore::AddNewRun(run);
 }

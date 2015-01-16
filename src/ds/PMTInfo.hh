@@ -10,6 +10,7 @@
 
 #include <TObject.h>
 #include <TVector3.h>
+#include <algorithm>
 
 namespace RAT {
   namespace DS {
@@ -21,22 +22,64 @@ public:
 
   virtual void AddPMT(const TVector3& _pos,
                       const TVector3& _dir,
-                      const int _type) {
+                      const int _type,
+                      const int _pmtid,
+                      const std::string _model) {
     pos.push_back(_pos);
     dir.push_back(_dir);
     type.push_back(_type);
+    pmtid.push_back(_pmtid);
+    std::vector<std::string>::iterator which = std::find(models.begin(),models.end(),_model);
+    if (which != models.end()) {
+        modeltype.push_back(which-models.begin());
+    } else {
+        models.push_back(_model);
+        modeltype.push_back(models.size()-1);
+    }
+  }
+  
+  virtual void AddPMT(const TVector3& _pos,
+                      const TVector3& _dir,
+                      const int _type) {
+    AddPMT(_pos,_dir,_type,pos.size(),"");                   
   }
 
   virtual Int_t GetPMTCount() const { return pos.size(); }
 
-  virtual TVector3 GetPosition(int i) const { return pos.at(i); }
-  virtual void SetPosition(int i, const TVector3& _pos) { pos.at(i) = _pos; }
+  virtual TVector3 GetPosition(int index) const { return pos.at(index); }
+  virtual void SetPosition(int index, const TVector3& _pos) { pos.at(index) = _pos; }
 
-  virtual TVector3 GetDirection(int i) const { return dir.at(i); }
-  virtual void SetDirection(int i, const TVector3& _dir) { dir.at(i) = _dir; }
+  virtual TVector3 GetDirection(int index) const { return dir.at(index); }
+  virtual void SetDirection(int index, const TVector3& _dir) { dir.at(index) = _dir; }
 
-  virtual int GetType(int i) const { return type.at(i); }
-  virtual void SetType(int i, int _type) { type.at(i) = _type; }
+  virtual int GetType(int index) const { return type.at(index); }
+  virtual void SetType(int index, int _type) { type.at(index) = _type; }
+  
+  virtual int GetPMTID(int index) const { return pmtid.at(index); }
+  virtual void SetPMTID(int index, int _pmtid) { pmtid.at(index) = _pmtid; }
+  
+  virtual int GetModelType(int index) const { return modeltype.at(index); }
+  virtual std::string GetModel(int _modeltype) {
+    return models.at(_modeltype);
+  }
+  virtual void SetModel(int index, std::string _model) {
+    std::vector<std::string>::iterator which = std::find(models.begin(),models.end(),_model);
+    if (which != models.end()) {
+        modeltype.push_back(which-models.begin());
+    } else {
+        models.push_back(_model);
+        modeltype.push_back(models.size()-1);
+    }
+  }
+  
+  virtual int GetIndex(int _pmtid) { 
+    std::vector<int>::iterator index = std::find(pmtid.begin(),pmtid.end(),_pmtid);
+    if (index != pmtid.end()) {
+      return *index;
+    } else {
+      return -1;
+    }
+  }
 
   ClassDef(PMTInfo, 1)
 
@@ -44,6 +87,9 @@ protected:
   std::vector<TVector3> pos;
   std::vector<TVector3> dir;
   std::vector<int> type;
+  std::vector<int> pmtid;
+  std::vector<int> modeltype;
+  std::vector<std::string> models;
 };
 
   } // namespace DS

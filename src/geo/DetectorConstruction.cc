@@ -54,6 +54,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     info << "Loading detector factory " << detector_factory << newline;
     DetectorFactory::DefineWithFactory(detector_factory,ldetector);
   } catch (DBNotFoundError &e) {
+    throw e;
     try {
       string geo_file = ldetector->GetS("geo_file");
       info << "Loading detector geometry from " << geo_file << newline;

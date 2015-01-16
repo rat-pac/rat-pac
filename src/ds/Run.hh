@@ -40,6 +40,12 @@ public:
     }
     return &pmtinfo[0];
   }
+  virtual void SetPMTInfo(const PMTInfo *_pmtinfo) {
+    if (pmtinfo.empty()) {
+      pmtinfo.resize(1);
+    }
+    pmtinfo[0] = *_pmtinfo;
+  }
   virtual bool ExistPMTInfo() { return !pmtinfo.empty(); }
   virtual void PrunePMTInfo() { pmtinfo.resize(0); }
 

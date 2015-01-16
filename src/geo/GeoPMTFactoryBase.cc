@@ -14,6 +14,7 @@
 #include <RAT/WaveguideFactory.hh>
 #include <RAT/Factory.hh>
 #include <vector>
+#include <algorithm>
 
 #include "G4FastSimulationManager.hh"
 #include "G4VFastSimulationModel.hh"
@@ -28,43 +29,45 @@ using namespace std;
 
 namespace RAT {
 
+DS::PMTInfo GeoPMTFactoryBase::pmtinfo;
+
 G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, 
                        std::vector<double> pmt_x, std::vector<double> pmt_y, std::vector<double> pmt_z)
 {
   // ------------------ Extra PMT settings --------------------
   string volume_name = table->GetIndex();
   string sensitive_detector_name = table->GetS("sensitive_detector");
+  
+  int start_idx, end_idx,start_pmtid;
+  try {
+    start_pmtid = table->GetI("start_pmtid"); //physical identification number of the first pmt in this array, all others increment (e.g. logical channel number)
+  } catch (DBNotFoundError &e) {
+    start_pmtid = pmtinfo.GetPMTCount(); // defaults to correspond to the index
+  }
+  try {
+    start_idx = table->GetI("start_idx"); //position in this array to start building pmts
+  } catch (DBNotFoundError &e) {
+    start_idx = 0; // defaults to beginning
+  }
+  try {
+    end_idx = table->GetI("end_idx"); //index of the last pmt to build in this array
+  } catch (DBNotFoundError &e) {
+    end_idx = pmt_x.size()-1; // defaults to whole array
+  }
 
-  // Read PMT positions
   string pos_table_name = table->GetS("pos_table");
   DBLinkPtr lpos_table = DB::Get()->GetLink(pos_table_name);
-
-  // read max number of pmts to use
-  int max_pmts = pmt_x.size(); // default to read all
-  try { max_pmts = table->GetI("max_pmts"); }
-  catch (DBNotFoundError &e) { }
-  if (max_pmts > static_cast<int>(pmt_x.size()))
-      max_pmts = static_cast<int>(pmt_x.size());
   
-  // read pmt_id_start, which is the starting
-  // index for a PMT in a particular group of PMTs.
-  // Eg., inner detector PMTs begin with index 0,
-  // and therefore have pmt_id_start = 0;
-  // PMTs in the outer detector (= veto detector)
-  // have pmt_id_start = 1000.;
-  int pmt_id_start = 0; // default to start with index 0
-  try{ pmt_id_start = table->GetI("pmt_id_start"); }
-  catch (DBNotFoundError &e) { }
+  vector<int> pmt_type;
+  try {
+    pmt_type = lpos_table->GetIArray("type"); // functional type (e.g. inner, veto, etc. - arbitrary integers)
+  } catch (DBNotFoundError &e) {
+    pmt_type.resize(pmt_x.size());
+    fill(pmt_type.begin(),pmt_type.end(),-1); //defaults to type -1 if unspecified
+  }
 
   // read pmt_detector_type
   string pmt_detector_type = table->GetS("pmt_detector_type");
-
-  // read starting number of solids to use
-  int start_pmt_num = pmt_id_start; // default to start with pmt_id_start, ie to read all
-  try {  start_pmt_num = table->GetI("start_num"); }  
-  catch (DBNotFoundError &e) { }
-  if (start_pmt_num < pmt_id_start)
-      start_pmt_num = pmt_id_start;
 
   // flip pmts to face outwards e.g. for use in a veto
   int flip = 0;
@@ -78,8 +81,8 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     Log::Die("Unable to find mother volume " + mother_name + " for "
 		+ volume_name);
  
-  string pmt_type = table->GetS("pmt_type");
-  DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_type);
+  string pmt_model = table->GetS("pmt_model"); // the form factor of the PMT (physical properties)
+  DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
 
   PMTConstructionParams pmtParam;
   pmtParam.faceGap = 0.1 * mm;
@@ -164,8 +167,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
 
   // PMT sensitive detector
   G4SDManager* fSDman = G4SDManager::GetSDMpointer();  
-  GLG4PMTSD* pmtSDInner= new GLG4PMTSD(sensitive_detector_name, max_pmts,
-				       start_pmt_num, 10);
+  GLG4PMTSD* pmtSDInner= new GLG4PMTSD(sensitive_detector_name, end_idx-start_idx+1, pmtinfo.GetPMTCount(), -1 /* evidently unused? */);
   fSDman->AddNewDetector(pmtSDInner);
   pmtParam.detector = pmtSDInner;
   
@@ -360,36 +362,33 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     BEffiTable=NULL;
   
   // Place physical PMTs
-  std::vector<int> pmtIDs;
-  std::vector<G4ThreeVector> pmtPositions;
-
-  for (int pmtID = start_pmt_num; pmtID < max_pmts + pmt_id_start; pmtID++) {
-    //std::cout << "pmtID = " << pmtID << std::endl;
-    // name
-    string pmtname = volume_name + ::to_string(pmtID);
-
-    // pmt_index is for reading the vectors in the .geo file
-    // 0 <= pmt_index <= max_pmts
-    // pmt_id_start <= start_pmt_num <= pmtID <= max_pmts + pmt_id_start
-    int pmt_index = pmtID-pmt_id_start;
+  // idx - the element of the particular set of arrays we are reading
+  // pmtid - the physical identification number of this pmt (e.g. logical channel number)
+  // index - the nth pmt that GeoPMTFactoryBase has built
+  for (int idx = start_idx, pmtid = start_pmtid+start_idx, index = pmtinfo.GetPMTCount(); idx <= end_idx; idx++, pmtid++, index++) {
+  
+    string pmtname = volume_name + ::to_string(index); //internally PMTs are represented by the nth pmt built, not pmtid
+    
+    pmtinfo.AddPMT( //This goes to Gsim and hence into the DS
+        TVector3(pmt_x[idx],pmt_y[idx],pmt_z[idx]),
+        TVector3(dir_x[idx],dir_y[idx],dir_z[idx]),
+        pmt_type[idx],pmtid,pmt_model); 
+        
     // position
-    G4ThreeVector pmtpos(pmt_x[pmt_index], pmt_y[pmt_index], pmt_z[pmt_index]);
+    G4ThreeVector pmtpos(pmt_x[idx], pmt_y[idx], pmt_z[idx]);
     if (rescale_radius)
       pmtpos.setMag(new_radius);
 
-    pmtIDs.push_back(pmtID);
-    pmtPositions.push_back(pmtpos);
-      
     // direction
     G4ThreeVector pmtdir;
     if (orient_manual)
-      pmtdir.set(dir_x[pmt_index], dir_y[pmt_index], dir_z[pmt_index]);
+      pmtdir.set(dir_x[idx], dir_y[idx], dir_z[idx]);
     else
       pmtdir = orient_point - pmtpos;
     pmtdir = pmtdir.unit();
-    if(flip == 1) pmtdir = -pmtdir; 
+    if (flip == 1) pmtdir = -pmtdir; 
     
-    //if requested, generates the magnetic efficiency corrections as the PMTs are created
+    // if requested, generates the magnetic efficiency corrections as the PMTs are created
     if(BFieldOn){
       //finds the point of the B grid closest to the current PMT, and attributes it that Bfield
       double MinDist=DBL_MAX;
@@ -401,7 +400,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
         }
       }
       if(imin<0)
-        cout<<"can't find a point close to the "<<pmt_index<<"-th pmt; MinDist is "<<MinDist<<"\n";
+        cout<<"can't find a point close to the "<<index<<"-th pmt; MinDist is "<<MinDist<<"\n";
       else{
         G4ThreeVector bfield=Bf[imin].perpPart(pmtdir);
         G4ThreeVector dynorient;
@@ -414,7 +413,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
               mini=i;
             }
           if(mini<0){
-            cout<<"can't find the orientation of the "<<pmt_index<<"-th pmt's dynode; MinDiff is "<<MinDiff<<"\n"
+            cout<<"can't find the orientation of the "<<index<<"-th pmt's dynode; MinDiff is "<<MinDiff<<"\n"
               <<"Throwing a random dynode orientation\n";
             dynorient=G4RandomDirection();
             dynorient=dynorient.perpPart(pmtdir);
@@ -434,7 +433,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
             dynorient=dynorient.perpPart(pmtdir);
           }
           if(dynorient.mag()==0)
-            cout<<"Warning: tried 100 times to generate a random dynode orientation for "<<pmtID<<"-th PMT and failed. dynorient "<<dynorient(0)<<","<<dynorient(1)<<","<<dynorient(2)<<"\n";
+            cout<<"Warning: tried 100 times to generate a random dynode orientation for "<<index<<"-th PMT and failed. dynorient "<<dynorient(0)<<","<<dynorient(1)<<","<<dynorient(2)<<"\n";
         }
         dynorient=dynorient.unit();
     //build BEfficiencyCorrection table. PMT x axis is dynorient
@@ -450,17 +449,17 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
         if(BEffiModel=="multiplicative"){
           BeffiComp=Bepsix[sheetno].GetValue(bfield*dynorient,isOutRange)*Bepsiy[sheetno].GetValue(bfield*(pmtdir.cross(dynorient)).unit(),isOutRange);
           if(CorrBEpsiInput && BeffiComp>1)
-            BEfficiencyCorrection.push_back(pair<int,double>(pmtID,1));
+            BEfficiencyCorrection.push_back(pair<int,double>(index,1));
           else
-            BEfficiencyCorrection.push_back(pair<int,double>(pmtID,BeffiComp));
+            BEfficiencyCorrection.push_back(pair<int,double>(index,BeffiComp));
         }
         else
           if(BEffiModel=="additive"){
             BeffiComp=Bepsix[sheetno].GetValue(bfield*dynorient,isOutRange)+Bepsiy[sheetno].GetValue(bfield*(pmtdir.cross(dynorient)).unit(),isOutRange)-1.;
           if(CorrBEpsiInput && BeffiComp>1)
-            BEfficiencyCorrection.push_back(pair<int,double>(pmtID,1));
+            BEfficiencyCorrection.push_back(pair<int,double>(index,1));
           else
-            BEfficiencyCorrection.push_back(pair<int,double>(pmtID,BeffiComp));
+            BEfficiencyCorrection.push_back(pair<int,double>(index,BeffiComp));
           }
           else
             cout<<"\nError: undefined B Efficiency Model\n";
@@ -486,7 +485,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
                       logiPMT,
                       phys_mother,
                       false,
-                      pmtID);
+                      index);
     if (!pmtParam.useEnvelope) {
       // If not using envelope volume, the PMT optical surfaces have NOT been set
       // and we must do so NOW.
@@ -508,10 +507,10 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
         logiWg,               // the logical volume
         phys_mother,          // the mother volume
         false,                // no boolean ops
-        pmtID);  // copy number
+        index);  // copy number
     }
     
-  } // end loop over pmtID
+  } // end loop over index
 
 //finally pass the lookup table to GLG4PMTOpticalModel
   if(BFieldOn){
