@@ -29,7 +29,8 @@
 #include <RAT/GLG4VertexGen.hh>
 
 #include <RAT/PMTTime.hh>
-#include <RAT/PMTCharge.hh>
+#include <RAT/MiniCleanPMTCharge.hh>
+#include <RAT/PDFPMTCharge.hh>
 #include <RAT/TimeUtil.hh>
 #include <RAT/PMTTime.hh>
 #include <RAT/Config.hh>
@@ -159,7 +160,11 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
   fPMTTime = new RAT::PMTTime();
 
   delete fPMTCharge;
-  fPMTCharge = new RAT::PMTCharge();
+  try {
+    fPMTCharge = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",lmc->GetS("pmt_charge_model")));
+  } catch (DBNotFoundError& e) {
+    fPMTCharge = new RAT::MiniCleanPMTCharge();
+  }
 
   // Tell the generator when the run starts
   GLG4PrimaryGeneratorAction* theGLG4PGA= 
