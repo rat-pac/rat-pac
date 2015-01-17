@@ -28,11 +28,10 @@
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
 
-#include <RAT/PMTTime.hh>
+#include <RAT/PDFPMTTime.hh>
 #include <RAT/MiniCleanPMTCharge.hh>
 #include <RAT/PDFPMTCharge.hh>
 #include <RAT/TimeUtil.hh>
-#include <RAT/PMTTime.hh>
 #include <RAT/Config.hh>
 
 #include <RAT/GeoPMTFactoryBase.hh>
@@ -179,11 +178,16 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
   fPMTCharge.resize(numModels);  
   for (size_t i = 0; i < numModels; i++) {
     const std::string modelName = fPMTInfo->GetModelName(i);
-    //FIXME replace (MiniClean)PMTTime with something more generic (PDFPMTTime?)
-    fPMTTime[i] = new RAT::PMTTime();
     try {
-      fPMTCharge[i] = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",modelName));
+      fPMTTime[i] = new RAT::PDFPMTTime(modelName);
     } catch (DBNotFoundError& e) {
+      //fallback to default table if model is not available
+      fPMTTime[i] = new RAT::PDFPMTTime();
+    }
+    try {
+      fPMTCharge[i] = new RAT::PDFPMTCharge(modelName);
+    } catch (DBNotFoundError& e) {
+      //fallback to MiniCleanPMTCharge if nothing else avaliable
       fPMTCharge[i] = new RAT::MiniCleanPMTCharge();
     }
   }

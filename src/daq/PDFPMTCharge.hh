@@ -29,7 +29,7 @@ namespace RAT {
 class PDFPMTCharge : public PMTCharge {
 
 public:
-    PDFPMTCharge(DBLinkPtr model);
+    PDFPMTCharge(std::string pmt_model = "");
     virtual ~PDFPMTCharge();
 
     /** Returns charge for one photoelectron. */

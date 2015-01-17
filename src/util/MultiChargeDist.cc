@@ -112,12 +112,9 @@ namespace RAT {
   std::vector<TGraph*> MultiChargeDist(int maxPE, double qMaxStepSize,
 				       int qBins, double meanSinglePE)
     {
-    PMTCharge* pmtCharge;
-    try {
-      pmtCharge = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",DB::Get()->GetLink("MC")->GetS("pmt_charge_model")));
-    } catch (DBNotFoundError& e) {
-      pmtCharge = new RAT::MiniCleanPMTCharge();
-    }
+    //FIXME: future people might appreciate being able to specify a pmt_model
+    //to be used with PDFPMTCharge, but this was original behavior
+    PMTCharge* pmtCharge = new RAT::MiniCleanPMTCharge();
     
 	// Calculate the range of the 1 PE PDF.  The value of the PDF
 	// at this value sets the boundaries for the PE > 1 PDFs.
