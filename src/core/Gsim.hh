@@ -12,6 +12,7 @@
 #include <set>
 #include <RAT/Producer.hh>
 #include <RAT/DS/Root.hh>
+#include <RAT/DS/PMTInfo.hh>
 #include <RAT/GLG4VEventAction.hh>
 #include <RAT/EventInfo.hh>
 
@@ -80,9 +81,10 @@ protected:
 
   G4RunManager* theRunManager;
   GLG4DebugMessenger* theDebugMessenger;
-
-  RAT::PMTTime* fPMTTime;  //< PMT transit time/delay calculator
-  RAT::PMTCharge* fPMTCharge;  //< PMT single-pe charge calculator
+  
+  RAT::DS::PMTInfo* fPMTInfo;
+  std::vector<RAT::PMTTime*> fPMTTime;  //< PMT transit time/delay calculator (indexed by modeltype)
+  std::vector<RAT::PMTCharge*> fPMTCharge;  //< PMT single-pe charge calculator (indexed by modeltype)
 
   int runID;
   TTimeStamp utc;

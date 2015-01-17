@@ -58,19 +58,21 @@ public:
   virtual int GetPMTID(int index) const { return pmtid.at(index); }
   virtual void SetPMTID(int index, int _pmtid) { pmtid.at(index) = _pmtid; }
   
-  virtual int GetModelType(int index) const { return modeltype.at(index); }
-  virtual std::string GetModel(int _modeltype) {
-    return models.at(_modeltype);
-  }
-  virtual void SetModel(int index, std::string _model) {
+  virtual int GetModel(int index) const { return modeltype.at(index); }
+  virtual int SetModel(int index, std::string _model) {
     std::vector<std::string>::iterator which = std::find(models.begin(),models.end(),_model);
+    int _modeltype;
     if (which != models.end()) {
-        modeltype.push_back(which-models.begin());
+        _modeltype = which - models.begin();
     } else {
         models.push_back(_model);
-        modeltype.push_back(models.size()-1);
+        _modeltype = models.size()-1;
     }
+    modeltype.at(index) = _modeltype;
+    return _modeltype;
   }
+  virtual std::string GetModelName(int _modeltype) const { return models.at(_modeltype); }
+  virtual int GetModelCount() const { return models.size(); }
   
   virtual int GetIndex(int _pmtid) { 
     std::vector<int>::iterator index = std::find(pmtid.begin(),pmtid.end(),_pmtid);

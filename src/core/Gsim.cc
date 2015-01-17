@@ -129,8 +129,8 @@ void Gsim::Init() {
   theRunManager->SetUserAction(static_cast<G4UserEventAction*>(this));
 
   // PMT transit time and single-pe charge calculators
-  fPMTTime = NULL;
-  fPMTCharge = NULL;
+  fPMTTime.resize(0);
+  fPMTCharge.resize(0);
 }
 
 Gsim::~Gsim() {
@@ -141,35 +141,17 @@ Gsim::~Gsim() {
   theRunManager->SetUserAction(static_cast<G4UserEventAction*>(NULL));
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(NULL));
 
-  delete fPMTTime;
-  delete fPMTCharge;
+  for (size_t i = 0; i < fPMTTime.size(); i++) {
+    delete fPMTTime[i];
+    delete fPMTCharge[i];
+  }
 }
   
 void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
+
   DBLinkPtr lmc = DB::Get()->GetLink("MC");
   runID = DB::Get()->GetDefaultRun();
   utc = TTimeStamp(); // default to now
-
-  DBLinkPtr lnoise = DB::Get()->GetLink("NOISE");
-  noiseRate = lnoise->GetD("noise_rate");
-
-  DBLinkPtr ldaq = DB::Get()->GetLink("DAQ");
-  channelEfficiency = ldaq->GetD("channel_efficiency");
-
-  delete fPMTTime;
-  fPMTTime = new RAT::PMTTime();
-
-  delete fPMTCharge;
-  try {
-    fPMTCharge = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",lmc->GetS("pmt_charge_model")));
-  } catch (DBNotFoundError& e) {
-    fPMTCharge = new RAT::MiniCleanPMTCharge();
-  }
-
-  // Tell the generator when the run starts
-  GLG4PrimaryGeneratorAction* theGLG4PGA= 
-      GLG4PrimaryGeneratorAction::GetTheGLG4PrimaryGeneratorAction();
-  theGLG4PGA->SetRunUTC(utc);
   
   info << "Gsim: Simulating run " << runID << newline;
   info << "Gsim: Run start at " << utc.AsString() << newline;
@@ -178,6 +160,39 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
     MakeRun(runID);
   }
 
+  DBLinkPtr lnoise = DB::Get()->GetLink("NOISE");
+  noiseRate = lnoise->GetD("noise_rate");
+
+  DBLinkPtr ldaq = DB::Get()->GetLink("DAQ");
+  channelEfficiency = ldaq->GetD("channel_efficiency");
+
+  DS::Run* run = DS::RunStore::GetRun(runID);
+  fPMTInfo = run->GetPMTInfo();
+  
+  for (size_t i = 0; i < fPMTTime.size(); i++) {
+    delete fPMTTime[i];
+    delete fPMTCharge[i];
+  }
+  
+  const size_t numModels = fPMTInfo->GetModelCount();
+  fPMTTime.resize(numModels);
+  fPMTCharge.resize(numModels);  
+  for (size_t i = 0; i < numModels; i++) {
+    const std::string modelName = fPMTInfo->GetModelName(i);
+    //FIXME replace (MiniClean)PMTTime with something more generic (PDFPMTTime?)
+    fPMTTime[i] = new RAT::PMTTime();
+    try {
+      fPMTCharge[i] = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",modelName));
+    } catch (DBNotFoundError& e) {
+      fPMTCharge[i] = new RAT::MiniCleanPMTCharge();
+    }
+  }
+
+  // Tell the generator when the run starts
+  GLG4PrimaryGeneratorAction* theGLG4PGA= 
+      GLG4PrimaryGeneratorAction::GetTheGLG4PrimaryGeneratorAction();
+  theGLG4PGA->SetRunUTC(utc);
+  
   // Find out whether /tracking/storeTrajectory was set by user.
   // fpTrackingManager provided by G4UserTrackingAction parent class
   // We have to restore this state at the end of the event.
@@ -473,8 +488,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
     mcpmtObjects[a_pmt->GetID()] = rat_mcpmt;
     rat_mcpmt->SetID(a_pmt->GetID());
-    DS::Run* run = DS::RunStore::GetRun(runID);
-    rat_mcpmt->SetType(run->GetPMTInfo()->GetType(a_pmt->GetID()));
+    rat_mcpmt->SetType(fPMTInfo->GetType(a_pmt->GetID()));
 
     numPE += a_pmt->GetEntries();
 
@@ -509,10 +523,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
    * Generate noise hits in a `noise window' which extends from the first
    * to last photon hits.
    */
-  DS::Run* run = DS::RunStore::GetRun(runID);
-  DS::PMTInfo* pmtinfo = run->GetPMTInfo();
   double noiseWindowWidth = lasthittime - firsthittime;
-  size_t npmts = pmtinfo->GetPMTCount();
+  size_t npmts = fPMTInfo->GetPMTCount();
   double channelRate = noiseRate * noiseWindowWidth;
   double detectorWideRate = channelRate * npmts / channelEfficiency;
   int noiseHits = \
@@ -530,7 +542,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
       DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
       mcpmtObjects[pmtid] = rat_mcpmt;
       rat_mcpmt->SetID(pmtid);
-      rat_mcpmt->SetType(pmtinfo->GetType(pmtid));
+      rat_mcpmt->SetType(fPMTInfo->GetType(pmtid));
     }
     AddMCPhoton(mcpmtObjects[pmtid], hit, true, (StoreOpticalTrackID ? exinfo : NULL));
   }
@@ -562,8 +574,8 @@ void Gsim::AddMCPhoton(DS::MCPMT* rat_mcpmt, const GLG4HitPhoton* photon,
     rat_mcphoton->SetTrackID(-1);
   }
   rat_mcphoton->SetHitTime(photon->GetTime());
-  rat_mcphoton->SetFrontEndTime(fPMTTime->PickTime(photon->GetTime()));
-  rat_mcphoton->SetCharge(fPMTCharge->PickCharge());
+  rat_mcphoton->SetFrontEndTime(fPMTTime[rat_mcpmt->GetID()]->PickTime(photon->GetTime()));
+  rat_mcphoton->SetCharge(fPMTCharge[rat_mcpmt->GetID()]->PickCharge());
 }
 
 void Gsim::SetStoreParticleTraj(const G4String& particleName,
