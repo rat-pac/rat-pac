@@ -1,5 +1,6 @@
 #include <cmath>
 #include <string>
+#include <vector>
 #include <TVector3.h>
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/EV.hh>
@@ -11,6 +12,8 @@
 #include <RAT/FitPathProc.hh>
 
 #include <RAT/SimulatedAnnealing.hh>
+
+using namespace std;
 
 namespace RAT {
 
@@ -60,7 +63,7 @@ double FitPathProc::Probability(double x, double y, double z, double dx, double 
 
 //x,y,z,costheta,phi,t
 double FitPathProc::operator()(double *params) {
-    const double sintheta = sqrt(1-params[3]*params[3])
+    const double sintheta = sqrt(1-params[3]*params[3]);
     return -log(Probability(params[0],params[1],params[2],sintheta*cos(params[4]),sintheta*sin(params[4]),params[3],params[5]));
 }
 
@@ -91,25 +94,27 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
     point = seed;
     anneal.SetSimplexPoint(0,point);
     point = seed;
-    point[0] += 0.0;
+    point[0] += fPositionVar;
     anneal.SetSimplexPoint(1,point);
     point = seed;
-    point[1] += 0.0;
+    point[1] += fPositionVar;
     anneal.SetSimplexPoint(2,point);
     point = seed;
-    point[2] += 0.0;
+    point[2] += fPositionVar;
     anneal.SetSimplexPoint(3,point);
     point = seed;
-    point[3] += 0.0;
+    point[3] += fCosThetaVar;
     anneal.SetSimplexPoint(4,point);
     point = seed;
-    point[4] += 0.0;
+    point[4] += fPhiVar;
     anneal.SetSimplexPoint(5,point);
     point = seed;
-    point[5] += 0.0;
+    point[5] += fTimeVar;
     anneal.SetSimplexPoint(6,point);
     
     anneal.Anneal(fTemp0,fNumCycles,fNumEvals,fAlpha,fFTol);
+
+    //FIXME: get and set result
 
     return Processor::OK;
 }

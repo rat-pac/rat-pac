@@ -2,6 +2,7 @@
 #define __RAT_FitPathProc__
 
 #include <string>
+#include <vector>
 #include <RAT/SimulatedAnnealing.hh>
 #include <RAT/Processor.hh>
 
