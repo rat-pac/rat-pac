@@ -361,6 +361,15 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   else
     BEffiTable=NULL;
   
+  //PMTINFO is always in global coordinates - so calculate the local offset first
+  G4ThreeVector offset = G4ThreeVector(0.0,0.0,0.0);
+  for (string parent_name = mother_name; parent_name != ""; ) {
+     G4VPhysicalVolume *parent_phys = FindPhysMother(parent_name);
+     offset += parent_phys->GetFrameTranslation();
+     DBLinkPtr parent_table = DB::Get()->GetLink("GEO",parent_name);
+     parent_name = parent_table->GetS("mother");
+  }
+  
   // Place physical PMTs
   // idx - the element of the particular set of arrays we are reading
   // pmtid - the physical identification number of this pmt (e.g. logical channel number)
@@ -376,6 +385,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
         
     // position
     G4ThreeVector pmtpos(pmt_x[idx], pmt_y[idx], pmt_z[idx]);
+    pmtpos += offset;
     if (rescale_radius)
       pmtpos.setMag(new_radius);
 
