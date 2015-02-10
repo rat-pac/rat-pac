@@ -1,4 +1,4 @@
-#include <RAT/ASDCDetectorFactory.hh>
+#include <RAT/TheiaDetectorFactory.hh>
 #include <RAT/Log.hh>
 #include <RAT/DB.hh>
 
@@ -9,13 +9,13 @@ using namespace std;
 
 namespace RAT {
 
-void ASDCDetectorFactory::DefineDetector(DBLinkPtr detector) {
-    const std::string geo_template = "ASDC/ASDC.geo";
+void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
+    const std::string geo_template = "Theia/Theia.geo";
     DB *db = DB::Get();
     if (db->Load(geo_template) == 0) {
-        Log::Die("ASDCDetectorFactory: could not load template ASRD/ASDC.geo");
+        Log::Die("TheiaDetectorFactory: could not load template ASRD/Theia.geo");
     }
-    DBLinkPtr params = db->GetLink("ASDC_PARAMS");
+    DBLinkPtr params = db->GetLink("THEIA_PARAMS");
     
     const double photocathode_coverage = params->GetD("photocathode_coverage");
     const double veto_coverage = params->GetD("veto_coverage");
@@ -189,7 +189,7 @@ void ASDCDetectorFactory::DefineDetector(DBLinkPtr detector) {
         type[idx+1] = 2;
     }
     
-    info << "Rescale ASDC geometry...\n";
+    info << "Rescale Theia geometry...\n";
     vector<double> world_size(3);
     world_size[0] = world_size[1] = det_radius+10000.0;
     world_size[2] = det_halfheight+10000.0;

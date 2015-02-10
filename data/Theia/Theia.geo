@@ -1,5 +1,5 @@
-// ASDCDetectorFactory recomputes the following geometry components to match
-// the values specified in the ASDC_PARAMS table
+// TheiaDetectorFactory recomputes the following geometry components to match
+// the values specified in the Theia_PARAMS table
 
 {
 name: "GEO",

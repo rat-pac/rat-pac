@@ -16,7 +16,7 @@
 
 #include <RAT/DetectorFactory.hh>
 #include <RAT/WatchmanDetectorFactory.hh>
-#include <RAT/ASDCDetectorFactory.hh>
+#include <RAT/TheiaDetectorFactory.hh>
 
 using namespace std;
 
@@ -26,7 +26,7 @@ DetectorConstruction* DetectorConstruction::sDetectorConstruction = NULL;
 
 DetectorConstruction::DetectorConstruction() {
     DetectorFactory::Register("Watchman",new WatchmanDetectorFactory());
-    DetectorFactory::Register("ASDC",new ASDCDetectorFactory());
+    DetectorFactory::Register("Theia",new TheiaDetectorFactory());
 }
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
