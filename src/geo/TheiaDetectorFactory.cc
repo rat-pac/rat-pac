@@ -13,7 +13,7 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
     const std::string geo_template = "Theia/Theia.geo";
     DB *db = DB::Get();
     if (db->Load(geo_template) == 0) {
-        Log::Die("TheiaDetectorFactory: could not load template ASRD/Theia.geo");
+        Log::Die("TheiaDetectorFactory: could not load template Theia/Theia.geo");
     }
     DBLinkPtr params = db->GetLink("THEIA_PARAMS");
     
@@ -32,8 +32,8 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
     
     //calculate the area of the defined inner_pmts
     DBLinkPtr inner_pmts = db->GetLink("GEO","inner_pmts");
-    string pmt_type = inner_pmts->GetS("pmt_type");
-    DBLinkPtr pmt = db->GetLink("PMT", pmt_type);
+    string pmt_model = inner_pmts->GetS("pmt_model");
+    DBLinkPtr pmt = db->GetLink("PMT", pmt_model);
     vector<double> rho_edge = pmt->GetDArray("rho_edge");
     double photocathode_radius = rho_edge[0];
     for (size_t i = 1; i < rho_edge.size(); i++) {
@@ -209,12 +209,12 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
     db->SetIArray("PMTINFO","type",type);
     
     info << "Update geometry fields related to veto PMTs...\n";
-    db->SetI("GEO","veto_pmts","start_num",num_pmts);
-    db->SetI("GEO","veto_pmts","max_pmts",total_pmts);
+    db->SetI("GEO","veto_pmts","start_idx",num_pmts);
+    db->SetI("GEO","veto_pmts","end_idx",total_pmts-1);
     
     info << "Update geometry fields related to normal PMTs...\n";
-    db->SetI("GEO","inner_pmts","start_num",0);
-    db->SetI("GEO","inner_pmts","max_pmts",num_pmts);
+    db->SetI("GEO","inner_pmts","start_idx",0);
+    db->SetI("GEO","inner_pmts","end_idx",num_pmts-1);
     
 }
 
