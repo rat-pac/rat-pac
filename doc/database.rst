@@ -41,9 +41,11 @@ Planes
 Normally, tables and fields are all you have to think about, but RATDB also addresses an additional complication: overriding constants.  It is a common use case to have default values of constants, values which are only valid in certain time intervals and can change (like the optical properties of the scintilator), and user-specified values which are intended to override everything.
 
 RATDB handles this by internally grouping tables into three ''planes''.  The name is intended to suggest a stack of layers where you start at the top, and keep going down until you find your answer.  The RATDB planes are (from highest to lowest priority):
+
  * the user plane
  * the time plane
  * the default plane
+
 When an item is requested, RATDB will attempt to locate it in the user plane first, then the time plane, and finally the default plane.  Note that this is all handled in the background.  You simply request the index_of_refraction field in the MEDIA[acrylic] table, and RATDB figures out the appropriate plane from which to retreive the data.
 
 How do I load data into RATDB?

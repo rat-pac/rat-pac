@@ -1,11 +1,19 @@
 RAT (is an Analysis Tool) User's Guide
 ======================================
-This manual describes how to configure and run RAT for simulation and analysis. Those who wish to modify the source code of RAT should first be familiar with this guide, then read the Programmer Guide.
+This manual describes how to configure and run RAT for simulation and analysis.
+Those who wish to modify the source code of RAT should first be familiar with
+this guide, then read the Programmer Guide.
 
-Table of Contents:
+RAT-PAC (RAT, Plus Additional Codes) is hosted on
+`GitHub <https://github.com/rat-pac/rat-pac>`_. For information on accessing
+and working with the code using Git and GitHub, see
+:download:`Using GitHub with RAT-PAC Code <github_guide/ratpac_github.pdf>`.
+
+User's Guide
+------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    overview
    installation
@@ -17,7 +25,7 @@ Table of Contents:
    generators
    geometry
    processes
-   pmts
+   pmt
    producers
    processors
    user_processors
@@ -25,6 +33,19 @@ Table of Contents:
    tracks
    rattest
    wired
+
+Programmer's Guide
+------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   programmer_ds
+   programmer_db
+   programmer_log
+   programmer_processors
+   programmer_generators
+   programmer_style
 
 Authors
 -------

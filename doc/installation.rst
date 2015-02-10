@@ -1,5 +1,5 @@
-RAT User's Guide: Installation
-------------------------------
+Installation
+------------
 Prerequisites
 `````````````
 These software packages should be installed before you attempt to build RAT.  Take note of the version numbers as many of these packages make incompatible changes between releases.
