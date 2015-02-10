@@ -14,5 +14,8 @@ hadronic_processes: 0,
 // simulate muon physics processes
 muon_processes: 0,
 
+// pmt charge model to use - miniclean model if unspecified
+//pmt_charge_model: "r11780_hqe",
+
 }
 

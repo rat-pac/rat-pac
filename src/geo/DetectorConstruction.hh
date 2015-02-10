@@ -14,8 +14,8 @@ namespace RAT {
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
-  DetectorConstruction() {}
-  virtual ~DetectorConstruction() {}
+  DetectorConstruction();
+  virtual ~DetectorConstruction() { }
 
   // Make volumes, return pointer to world
   virtual G4VPhysicalVolume* Construct();

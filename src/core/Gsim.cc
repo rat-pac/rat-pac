@@ -29,7 +29,8 @@
 #include <RAT/GLG4VertexGen.hh>
 
 #include <RAT/PMTTime.hh>
-#include <RAT/PMTCharge.hh>
+#include <RAT/MiniCleanPMTCharge.hh>
+#include <RAT/PDFPMTCharge.hh>
 #include <RAT/TimeUtil.hh>
 #include <RAT/PMTTime.hh>
 #include <RAT/Config.hh>
@@ -157,7 +158,11 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
   fPMTTime = new RAT::PMTTime();
 
   delete fPMTCharge;
-  fPMTCharge = new RAT::PMTCharge();
+  try {
+    fPMTCharge = new RAT::PDFPMTCharge(DB::Get()->GetLink("PMTCHARGE",lmc->GetS("pmt_charge_model")));
+  } catch (DBNotFoundError& e) {
+    fPMTCharge = new RAT::MiniCleanPMTCharge();
+  }
 
   // Tell the generator when the run starts
   GLG4PrimaryGeneratorAction* theGLG4PGA= 
@@ -473,8 +478,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
   int numPE = 0;
  
-  double firsthittime = 99999;
-  double lasthittime = -99999;
+  double firsthittime = std::numeric_limits<double>::max();
+  double lasthittime = std::numeric_limits<double>::min();
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
