@@ -1,3 +1,24 @@
+///////////////////////////////////////////////////////////////////////////////
+/// \class RAT::DetectorFactory
+///
+/// \brief  Pure virtual class for defining parameterized geometries. 
+///         
+/// \author Benjamin Land <benland100@berkeley.edu>
+///
+/// REVISION HISTORY:\n
+///     2015-01-07 : B Land - Added doxygen header block \n
+///
+/// \details Extend to create and/or modify database entries related to a 
+///          geometry (e.g. based on some parameterization) before the geometry 
+///          is built. If the parameterization is stored in a database table,
+///          this makes it particularly easy to control the geometry with simple
+///          macro commands. Basic implementations should load a .geo file into
+///          the database and modify the fields that can't be defined static.
+///          DetectorFactory implementations should be registered in 
+///          DetectorConstruction.cc
+///
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef __RAT_DetectorFactory__
 #define __RAT_DetectorFactory__
 
@@ -8,9 +29,6 @@
 
 namespace RAT {
 
-/// Allows a detector geometry to be based on values that are calculated at 
-/// runtime based on some parameters instead of simply being static in a RATDB
-/// file while preserving DB functionality in dynamicly built detectors
 class DetectorFactory {
 
     public:
