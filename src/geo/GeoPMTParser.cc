@@ -91,8 +91,8 @@ namespace RAT {
     }
   
     //////////// Read PMT dimensions
-    string pmt_type = table->GetS("pmt_type");
-    DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_type);
+    string pmt_model = table->GetS("pmt_model");
+    DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
     
     fParam.faceGap = 0.1 * mm;
     fParam.zEdge = lpmt->GetDArray("z_edge");

@@ -51,13 +51,13 @@ valid_begin: [0, 0],
 valid_end: [0, 0], 
 mother: "detector", 
 type: "pmtarray", 
-max_pmts: 0, //index of last inner pmt
-start_num: 0, //index of first inner pmt
-pmt_type: "r11780_hqe",
+pmt_model: "r11780_hqe",
 pmt_detector_type: "idpmt",
 sensitive_detector: "/mydet/pmt/inner", 
 efficiency_correction: 1.000,  
 pos_table: "PMTINFO", //generated on the fly
+start_idx: 0, //index of first inner pmt
+end_idx: 0, //index of last inner pmt
 orientation: "manual",
 } 
 
@@ -69,13 +69,13 @@ valid_begin: [0, 0],
 valid_end: [0, 0], 
 mother: "detector", 
 type: "pmtarray", 
-max_pmts: 0, //index of last veto pmt
-start_num: 4330, //index of first veto pmt
-pmt_type: "r11780_hqe",
+pmt_model: "r11780_hqe",
 pmt_detector_type: "idpmt",
 sensitive_detector: "/mydet/pmt/veto", 
 efficiency_correction: 1.000,  
 pos_table: "PMTINFO", //generated on the fly
+start_idx: 0, //index of first veto pmt
+end_idx: 0, //index of last veto pmt
 orientation: "manual",
 } 
 

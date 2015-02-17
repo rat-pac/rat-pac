@@ -1,5 +1,5 @@
 
-#include <CLHEP/Random/RandFlat.h>
+#include <Randomize.hh>
 #include <RAT/PDFPMTCharge.hh>
 #include <RAT/Log.hh>
 
@@ -7,8 +7,9 @@ using namespace std;
 
 namespace RAT {
 
-PDFPMTCharge::PDFPMTCharge(DBLinkPtr model) {
-    info << "Setting up PDF PMTCharge model for " << model->GetS("index") << endl;
+PDFPMTCharge::PDFPMTCharge(string pmt_model) {
+    DBLinkPtr model = DB::Get()->GetLink("PMTCHARGE",pmt_model);
+    info << "Setting up PDF PMTCharge model for " << pmt_model << endl;
     
     fCharge = model->GetDArray("charge");
     fChargeProb = model->GetDArray("charge_prob");
@@ -37,7 +38,7 @@ PDFPMTCharge::~PDFPMTCharge() {
 
 /** Returns charge for one photoelectron. */
 double PDFPMTCharge::PickCharge() const {
-    double rval = CLHEP::RandFlat::shoot(1);
+    double rval = G4UniformRand();
     for (size_t i = 1; i < fCharge.size(); i++) {
         if (rval <= fChargeProbCumu[i]) {
             return (rval - fChargeProbCumu[i-1])*(fCharge[i]-fCharge[i-1])/(fChargeProbCumu[i]-fChargeProbCumu[i-1]) + fCharge[i-1]; //linear interpolation

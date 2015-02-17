@@ -21,8 +21,8 @@ namespace RAT {
         
         //calculate the area of the defined inner_pmts
         DBLinkPtr inner_pmts = db->GetLink("GEO","inner_pmts");
-        string pmt_type = inner_pmts->GetS("pmt_type");
-        DBLinkPtr pmt = db->GetLink("PMT", pmt_type);
+        string pmt_model = inner_pmts->GetS("pmt_model");
+        DBLinkPtr pmt = db->GetLink("PMT", pmt_model);
         vector<double> rho_edge = pmt->GetDArray("rho_edge");
         double photocathode_radius = rho_edge[0];
         for (size_t i = 1; i < rho_edge.size(); i++) {
@@ -199,16 +199,16 @@ namespace RAT {
         info << "Update geometry fields related to veto PMTs...\n";
         db->SetI("GEO","shield","veto_start",num_pmts);
         db->SetI("GEO","shield","veto_len",num_vetos);
-        db->SetI("GEO","veto_pmts","start_num",num_pmts);
-        db->SetI("GEO","veto_pmts","max_pmts",total_pmts);
+        db->SetI("GEO","veto_pmts","start_idx",num_pmts);
+        db->SetI("GEO","veto_pmts","end_idx",total_pmts-1);
         
         info << "Update geometry fields related to normal PMTs...\n";
         db->SetI("GEO","shield","cols",cols);
         db->SetI("GEO","shield","rows",rows);
         db->SetI("GEO","shield","inner_start",0);
         db->SetI("GEO","shield","inner_len",num_pmts);
-        db->SetI("GEO","inner_pmts","start_num",0);
-        db->SetI("GEO","inner_pmts","max_pmts",num_pmts);
+        db->SetI("GEO","inner_pmts","start_idx",0);
+        db->SetI("GEO","inner_pmts","end_idx",num_pmts-1);
         
         info << "Update cable positions to match shield...\n";
         db->SetDArray("cable_pos","x",cable_x);
