@@ -30,28 +30,39 @@ protected:
     //per-event hit data
     std::vector<hit> fHits;
     
+    std::vector<double> fSeed;
+    
     //whole-run constants
     double fDirectProb, fOtherProb, fPhotocathodeArea;
     double fLightSpeed, fCherenkovMultiplier;
+    double fDirectTime0, fDirectTimeStep, fOtherTime0, fOtherTimeStep;
+    std::vector<double> fDirectTimeProb, fOtherTimeProb;
     
     //minimization parameters
+    int fStage;
     size_t fNumCycles, fNumEvals;
-    double fPosSigma, fCosThetaSigma, fPhiSigma, fTimeSigma;
-    double fTemp0, fAlpha, fFTol;
+    double fPosSigma0, fPosSigma1, fThetaSigma, fPhiSigma, fTimeSigma0, fTimeSigma1;
+    double fTemp0, fTemp1, fAlpha;
     
     inline double PDFDirectTime(double tresid) {
-        return 1.0;
+        const int i = (int)((tresid - fDirectTime0)/fDirectTimeStep);
+        if (i < 0 || i >= (int)fDirectTimeProb.size()) return 0.0;
+        return fDirectTimeProb[i];
     }
 
     inline double PDFOtherTime(double tresid) {
-        return 1.0;
+        const int i = (int)((tresid - fOtherTime0)/fOtherTimeStep);
+        if (i < 0 || i >= (int)fOtherTimeProb.size()) return 0.0;
+        return fOtherTimeProb[i];
     }
 
     inline double PDFCherenkovAngle(double cosalpha) {
-        return 1.0;
+        return 0.5; //flat for now
     }
     
-    double Probability(double x, double y, double z, double dx, double dy, double dz, double t);
+    double FTPProbability(double x, double y, double z, double dx, double dy, double dz, double t);
+    
+    double AvgSquareTimeResid(double x, double y, double z, double t);
     
 };
 

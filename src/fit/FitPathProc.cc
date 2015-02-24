@@ -1,8 +1,9 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <TVector3.h>
-#include <RAT/DS/Centroid.hh>
+#include <RAT/DS/PathFit.hh>
 #include <RAT/DS/EV.hh>
 #include <RAT/DS/PMT.hh>
 #include <RAT/DS/Root.hh>
@@ -10,7 +11,7 @@
 #include <RAT/DS/RunStore.hh>
 #include <RAT/Processor.hh>
 #include <RAT/FitPathProc.hh>
-
+#include <RAT/DB.hh>
 #include <RAT/SimulatedAnnealing.hh>
 
 using namespace std;
@@ -18,16 +19,62 @@ using namespace std;
 namespace RAT {
 
 FitPathProc::FitPathProc() : Processor("fitpath") { 
-    fCherenkovMultiplier = 2.0; // nCherenkov/nHits
-    fLightSpeed = 300; // mm/ns 
-    fDirectProb = 0.879; // fraction of direct detected light
-    fOtherProb = 0.121; // fraction of late detected light
-    fPhotocathodeArea = 72000.0; // area of photocathode mm^2
+    DBLinkPtr ftp = DB::Get()->GetLink("FTP");
+    
+    fSeed = ftp->GetDArray("seed_pos");
+    fSeed.resize(6);
+    fSeed[3] = ftp->GetD("seed_theta");
+    fSeed[4] = ftp->GetD("seed_phi");
+    fSeed[5] = ftp->GetD("seed_time");
+    
+    fNumCycles = ftp->GetI("num_cycles");
+    fNumEvals = ftp->GetI("num_evals");
+    fPosSigma0 = ftp->GetD("pos_sigma0");
+    fPosSigma1 = ftp->GetD("pos_sigma1");
+    fThetaSigma = ftp->GetD("theta_sigma");
+    fPhiSigma = ftp->GetD("phi_sigma");
+    fTimeSigma0 = ftp->GetD("time_sigma0");
+    fTimeSigma1 = ftp->GetD("time_sigma1");
+    fTemp0 = ftp->GetD("temp0");
+    fTemp1 = ftp->GetD("temp1");
+    fAlpha = ftp->GetD("alpha");
+    
+    fCherenkovMultiplier = ftp->GetD("cherenkov_multiplier");
+    fLightSpeed = ftp->GetD("light_speed");
+    fDirectProb = ftp->GetD("direct_prob");
+    fOtherProb = ftp->GetD("other_prob");
+    fPhotocathodeArea = ftp->GetD("photocathode_area");
+    
+    fDirectTime0 = ftp->GetD("direct_time_first");
+    fDirectTimeStep = ftp->GetD("direct_time_step");
+    fDirectTimeProb = ftp->GetDArray("direct_time_prob");
+    
+    double integral = 0.0;
+    for (size_t i = 0; i < fDirectTimeProb.size(); i++) {
+        integral += fDirectTimeProb[i];
+    }
+    integral *= fDirectTimeStep;
+    for (size_t i = 0; i < fDirectTimeProb.size(); i++) {
+        fDirectTimeProb[i] /= integral;
+    }
+    
+    fOtherTime0 = ftp->GetD("other_time_first");
+    fOtherTimeStep = ftp->GetD("other_time_step");
+    fOtherTimeProb = ftp->GetDArray("other_time_prob");
+    
+    integral = 0.0;
+    for (size_t i = 0; i < fOtherTimeProb.size(); i++) {
+        integral += fOtherTimeProb[i];
+    }
+    integral *= fOtherTimeStep;
+    for (size_t i = 0; i < fOtherTimeProb.size(); i++) {
+        fOtherTimeProb[i] /= integral;
+    }
 }
 
 ///Arguments are event {position},{direction unit},time
 ///Excuse my intentional use of basic types and explicit variables - optomization in progress
-double FitPathProc::Probability(double x, double y, double z, double dx, double dy, double dz, double t) {
+double FitPathProc::FTPProbability(double x, double y, double z, double dx, double dy, double dz, double t) {
     const double c = fLightSpeed;
     const double prob_direct = fDirectProb;
     const double prob_other = fOtherProb;
@@ -36,11 +83,11 @@ double FitPathProc::Probability(double x, double y, double z, double dx, double 
     const double sensitive_area = fPhotocathodeArea;
     
     double prob = 1.0;
-    
+    //cout << x << ' ' << y << ' ' << z << ' ' << dx << ' ' << dy << ' ' << dz << ' ' << t << ") = ";
     for (size_t i = 0; i < nHits; i++) {
         const hit &cur = fHits[i]; //constant reference for speed
         
-        const double rx = dx-cur.x, ry = dy-cur.y, rz = dz-cur.z; //vector r points from event to hit 
+        const double rx = cur.x-x, ry = cur.y-y, rz = cur.z-z; //vector r points from event to hit 
         const double dist = sqrt(rx*rx+ry*ry+rz*rz); //distance from event to hit
         const double nx = rx/dist, ny = ry/dist, nz = rz/dist; //vector n is the unit vector of r
         
@@ -50,21 +97,56 @@ double FitPathProc::Probability(double x, double y, double z, double dx, double 
         const double prob_directtime = PDFDirectTime(tresid); // probability of detecting direct light with this time residual
         const double prob_othertime = PDFOtherTime(tresid); // probability of detecting other light with this time residual
         
+        //cout << '{' << prob_directtime << ',' << prob_othertime << "} ";
+        
         const double cosalpha = nx*dx+ny*dy+nz*dz; // cosine of angle formed by hit-event-direction
         
         const double solidangle = sensitive_area/(dist*dist)*(nx*cur.px+ny*cur.py+nz*cur.pz); //solid angle correction to PMT hit probability
         const double prob_directangle = nCherenkov*PDFCherenkovAngle(cosalpha)*solidangle/(2.0*M_PI); //probability of detecting direct light at this angle
         
-        prob *= prob_direct*prob_directtime*prob_directangle + prob_other*prob_othertime;
+        const double hitprob = prob_direct*prob_directtime*prob_directangle + prob_other*prob_othertime;
+        if (hitprob > 1e-50) prob *= hitprob; else prob *= 1e-50;
     }
-    
-    return prob;
+    //cout << prob << endl;
+    return prob < 1e-200 ? 1e-200 : prob;
 }
+
+double FitPathProc::AvgSquareTimeResid(double x, double y, double z, double t) {
+    const double c = fLightSpeed;
+    const size_t nHits = fHits.size();
+    
+    double sum = 0.0;
+    //if (t < -10) cout << '(' << x << ',' << y << ',' << z << ',' << t << ')';
+    for (size_t i = 0; i < nHits; i++) {
+        const hit &cur = fHits[i]; //constant reference for speed
+        
+        const double rx = cur.x-x, ry = cur.y-y, rz = cur.z-z; //vector r points from event to hit 
+        const double dist = sqrt(rx*rx+ry*ry+rz*rz); //distance from event to hit
+        
+        const double trel = cur.t - t; //time of hit relative to event time
+        const double tresid = trel - dist/c; //hit time corrected by time of flight
+        
+        sum += tresid*tresid;
+    }
+    //if (t < -10) cout << " = " << sum/nHits << endl;
+    return sum/nHits;
+}
+
 
 //x,y,z,costheta,phi,t
 double FitPathProc::operator()(double *params) {
-    const double sintheta = sqrt(1-params[3]*params[3]);
-    return -log(Probability(params[0],params[1],params[2],sintheta*cos(params[4]),sintheta*sin(params[4]),params[3],params[5]));
+    switch (fStage) {
+        case 0:
+            return AvgSquareTimeResid(params[0],params[1],params[2],params[3]);
+        case 1: {
+            const double costheta = cos(params[3]);
+            const double sintheta = sqrt(1-costheta*costheta);
+            return -log(FTPProbability(params[0],params[1],params[2],sintheta*cos(params[4]),sintheta*sin(params[4]),costheta,params[5]));
+        }
+        default:
+            cout << fStage << "!" << endl;
+            return 0.0;
+    }
 }
 
 Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
@@ -88,33 +170,78 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
         
     }
     
-    SimulatedAnnealing<6> anneal(this);
-    vector<double> seed, point;
+    DS::PathFit* fit = ev->GetPathFit();
+    
+    vector<double> point,seed;
+    
+    fStage = 0;
+    SimulatedAnnealing<4> stage0(this);
+    
+    seed.resize(4);
+    seed[0] = fSeed[0];
+    seed[1] = fSeed[1];
+    seed[2] = fSeed[2];
+    seed[3] = fSeed[5];
     
     point = seed;
-    anneal.SetSimplexPoint(0,point);
+    stage0.SetSimplexPoint(0,point);
     point = seed;
-    point[0] += fPositionVar;
-    anneal.SetSimplexPoint(1,point);
+    point[0] += fPosSigma0;
+    stage0.SetSimplexPoint(1,point);
     point = seed;
-    point[1] += fPositionVar;
-    anneal.SetSimplexPoint(2,point);
+    point[1] += fPosSigma0;
+    stage0.SetSimplexPoint(2,point);
     point = seed;
-    point[2] += fPositionVar;
-    anneal.SetSimplexPoint(3,point);
+    point[2] += fPosSigma0;
+    stage0.SetSimplexPoint(3,point);
     point = seed;
-    point[3] += fCosThetaVar;
-    anneal.SetSimplexPoint(4,point);
-    point = seed;
-    point[4] += fPhiVar;
-    anneal.SetSimplexPoint(5,point);
-    point = seed;
-    point[5] += fTimeVar;
-    anneal.SetSimplexPoint(6,point);
+    point[3] += fTimeSigma0;
+    stage0.SetSimplexPoint(4,point);
     
-    anneal.Anneal(fTemp0,fNumCycles,fNumEvals,fAlpha,fFTol);
-
-    //FIXME: get and set result
+    stage0.Anneal(fTemp0,fNumCycles,fNumEvals,fAlpha);
+    stage0.GetBestPoint(seed);
+    
+    TVector3 pos0(seed[0],seed[1],seed[2]);
+    fit->SetPos0(pos0);
+    fit->SetTime0(seed[3]);
+    
+    fStage = 1;
+    SimulatedAnnealing<6> stage1(this);
+    
+    seed.resize(6);
+    seed[5] = seed[3];
+    seed[3] = fSeed[3];
+    seed[4] = fSeed[4];
+    
+    point = seed;
+    stage1.SetSimplexPoint(0,point);
+    point = seed;
+    point[0] += fPosSigma1;
+    stage1.SetSimplexPoint(1,point);
+    point = seed;
+    point[1] += fPosSigma1;
+    stage1.SetSimplexPoint(2,point);
+    point = seed;
+    point[2] += fPosSigma1;
+    stage1.SetSimplexPoint(3,point);
+    point = seed;
+    point[3] += fThetaSigma;
+    stage1.SetSimplexPoint(4,point);
+    point = seed;
+    point[4] += fPhiSigma;
+    stage1.SetSimplexPoint(5,point);
+    point = seed;
+    point[5] += fTimeSigma1;
+    stage1.SetSimplexPoint(6,point);
+    
+    stage1.Anneal(fTemp1,fNumCycles,fNumEvals,fAlpha);
+    stage1.GetBestPoint(point);
+    
+    TVector3 pos(point[0],point[1],point[2]);
+    
+    fit->SetPosition(pos);
+    fit->SetTime(point[5]);
+    
 
     return Processor::OK;
 }
