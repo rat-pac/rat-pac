@@ -185,5 +185,8 @@ You should get a plot of particle x coordinates similar to the plot below.
 
 .. |RootOutputTutorial000| image:: Tutorial000.png
 
+
+
+
 :Note: that with the RAT environment sourced, you are getting a special copy of ROOT that automatically loads the RAT ROOT event library.
 report errors to Derek Rountree -- rountree@vt.edu
