@@ -70,6 +70,19 @@ FitPathProc::FitPathProc() : Processor("fitpath") {
     for (size_t i = 0; i < fOtherTimeProb.size(); i++) {
         fOtherTimeProb[i] /= integral;
     }
+    
+    fCosAlpha0 = ftp->GetD("cosalpha_first");
+    fCosAlphaStep = ftp->GetD("cosalpha_step");
+    fCosAlphaProb = ftp->GetDArray("cosalpha_prob");
+    
+    integral = 0.0;
+    for (size_t i = 0; i < fCosAlphaProb.size(); i++) {
+        integral += fCosAlphaProb[i];
+    }
+    integral *= fCosAlphaStep;
+    for (size_t i = 0; i < fCosAlphaProb.size(); i++) {
+        fCosAlphaProb[i] /= integral;
+    }
 }
 
 ///Arguments are event {position},{direction unit},time
@@ -239,7 +252,12 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
     
     TVector3 pos(point[0],point[1],point[2]);
     
+    const double costheta = cos(point[3]);
+    const double sintheta = sqrt(1-costheta*costheta);
+    TVector3 dir(sintheta*cos(point[4]),sintheta*sin(point[4]),costheta);
+    
     fit->SetPosition(pos);
+    fit->SetDirection(dir);
     fit->SetTime(point[5]);
     
 

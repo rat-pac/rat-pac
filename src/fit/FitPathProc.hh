@@ -37,6 +37,8 @@ protected:
     double fLightSpeed, fCherenkovMultiplier;
     double fDirectTime0, fDirectTimeStep, fOtherTime0, fOtherTimeStep;
     std::vector<double> fDirectTimeProb, fOtherTimeProb;
+    double fCosAlpha0, fCosAlphaStep;
+    std::vector<double> fCosAlphaProb;
     
     //minimization parameters
     int fStage;
@@ -57,7 +59,9 @@ protected:
     }
 
     inline double PDFCherenkovAngle(double cosalpha) {
-        return 0.5; //flat for now
+        const int i = (int)((cosalpha - fCosAlpha0)/fCosAlphaStep);
+        if (i < 0 || i >= (int)fCosAlphaProb.size()) return 0.0;
+        return fCosAlphaProb[i];
     }
     
     double FTPProbability(double x, double y, double z, double dx, double dy, double dz, double t);
