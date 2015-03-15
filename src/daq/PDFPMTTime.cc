@@ -12,11 +12,17 @@ namespace RAT {
 
 PDFPMTTime::PDFPMTTime(string pmt_model) {
     DBLinkPtr model = DB::Get()->GetLink("PMTTRANSIT",pmt_model);
-    info << "Setting up PDF PMTTime model for " << pmt_model << endl;
     
     fTime = model->GetDArray("time");
     fTimeProb = model->GetDArray("time_prob");
     fCableDelay = model->GetD("cable_delay");
+    
+    info << "Setting up PDF PMTTime model for ";
+    if (pmt_model == "") { 
+        info << "DEFAULT" << endl;
+    } else {
+        info << pmt_model << endl;
+    }
     
     if (fTime.size() != fTimeProb.size()) 
         Log::Die("PDFPMTTime: time and probability arrays of different length");
@@ -46,8 +52,8 @@ double PDFPMTTime::PickTime(double time) const {
             return fCableDelay + (rval - fTimeProbCumu[i-1])*(fTime[i]-fTime[i-1])/(fTimeProbCumu[i]-fTimeProbCumu[i-1]) + fTime[i-1]; //linear interpolation
         }
     }
-    Log::Die("PDFPMTTime::PickTime: impossible condition encountered");
-    return 0.0;
+    info << "PDFPMTTime::PickTime: impossible condition encountered - returning highest defined time" << endl;
+    return fTime[fTime.size()-1];
 }
   
 } // namespace RAT
