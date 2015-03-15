@@ -9,10 +9,16 @@ namespace RAT {
 
 PDFPMTCharge::PDFPMTCharge(string pmt_model) {
     DBLinkPtr model = DB::Get()->GetLink("PMTCHARGE",pmt_model);
-    info << "Setting up PDF PMTCharge model for " << pmt_model << endl;
     
     fCharge = model->GetDArray("charge");
     fChargeProb = model->GetDArray("charge_prob");
+    
+    info << "Setting up PDF PMTCharge model for ";
+    if (pmt_model == "") { 
+        info << "DEFAULT" << endl;
+    } else {
+        info << pmt_model << endl;
+    }
     
     if (fCharge.size() != fChargeProb.size()) 
         Log::Die("PDFPMTCharge: charge and probability arrays of different length");
@@ -20,7 +26,7 @@ PDFPMTCharge::PDFPMTCharge(string pmt_model) {
         Log::Die("PDFPMTCharge: cannot define a PDF with fewer than 2 points");
         
     double integral = 0.0;
-    fChargeProbCumu = vector<double>(fCharge.size()-1);
+    fChargeProbCumu = vector<double>(fCharge.size());
     fChargeProbCumu[0] = 0.0; 
     for (size_t i = 0; i < fCharge.size()-1; i++) {
         integral += (fCharge[i+1]-fCharge[i])*(fChargeProb[i]+fChargeProb[i+1])/2.0; //trapazoid integration
@@ -44,8 +50,8 @@ double PDFPMTCharge::PickCharge() const {
             return (rval - fChargeProbCumu[i-1])*(fCharge[i]-fCharge[i-1])/(fChargeProbCumu[i]-fChargeProbCumu[i-1]) + fCharge[i-1]; //linear interpolation
         }
     }
-    Log::Die("Sans cosmis ray bit flips, cannot get here");
-    return 0.0;
+    info << "PDFPMTCharge::PickCharge: impossible condition encountered - returning highest defined charge" << endl;
+    return fCharge[fCharge.size()-1];
 }
 
 /** Value of charge PDF at charge q */
