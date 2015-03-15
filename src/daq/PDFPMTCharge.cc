@@ -20,7 +20,7 @@ PDFPMTCharge::PDFPMTCharge(string pmt_model) {
         Log::Die("PDFPMTCharge: cannot define a PDF with fewer than 2 points");
         
     double integral = 0.0;
-    fChargeProbCumu = vector<double>(fCharge.size()-1);
+    fChargeProbCumu = vector<double>(fCharge.size());
     fChargeProbCumu[0] = 0.0; 
     for (size_t i = 0; i < fCharge.size()-1; i++) {
         integral += (fCharge[i+1]-fCharge[i])*(fChargeProb[i]+fChargeProb[i+1])/2.0; //trapazoid integration
@@ -44,7 +44,7 @@ double PDFPMTCharge::PickCharge() const {
             return (rval - fChargeProbCumu[i-1])*(fCharge[i]-fCharge[i-1])/(fChargeProbCumu[i]-fChargeProbCumu[i-1]) + fCharge[i-1]; //linear interpolation
         }
     }
-    Log::Die("Sans cosmis ray bit flips, cannot get here");
+    Log::Die("PDFPMTCharge::PickCharge: impossible condition encountered");
     return 0.0;
 }
 
