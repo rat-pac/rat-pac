@@ -11,9 +11,5 @@ valid_end: [0, 0],
    but can be loaded from macro. */
 //geo_file: "cylinder/cylinder.geo",
 
-/* PMT response model.  Use GEO[PMTs].pmt_type response model unless
-   the model is specified from a macro using the field below. */
-//pmt_type: "r1408",
-
 }
 

@@ -1,0 +1,100 @@
+{
+name: "MATERIAL",
+index: "C15H24_lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Carbon","Hydrogen"],
+elemprop: [0.8815d, 0.1185d,],
+formula: "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "C16H26_lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Carbon","Hydrogen"],
+elemprop: [0.8799d, 0.1201d,],
+formula: "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "C17H28_lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Carbon","Hydrogen"],
+elemprop: [0.8785d, 0.1215d,],
+formula: "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "C18H30_lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Carbon","Hydrogen"],
+elemprop: [0.8772d, 0.1228d,],
+formula: "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "C19H32_lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Carbon","Hydrogen"],
+elemprop: [0.8761d, 0.1239d,],
+formula: "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "lab",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 0.867d,
+nelements: 0,
+nmaterials: 5,
+materials: ["C15H24_lab","C16H26_lab","C17H28_lab","C18H30_lab","C19H32_lab"],
+matprop: [0.012d, 0.204d, 0.432d, 0.334d, 0.018d,],
+}
+
+{
+name: "MATERIAL",
+index: "wbls_5pct",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.0d,
+nelements: 0,
+nmaterials: 3,
+materials: ["lab", "ppo", "water"],
+matprop: [0.049835d, 0.000165d, 0.950000d],
+}
+
+{
+name: "MATERIAL",
+index: "wbls_10pct",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.0d,
+nelements: 0,
+nmaterials: 3,
+materials: ["lab", "ppo", "water"],
+matprop: [0.099670d, 0.000330d, 0.900000d],
+}

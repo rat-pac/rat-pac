@@ -3,6 +3,28 @@ PMT Simulation
 
 RAT uses a custom PMT simulation extracted from GLG4Sim.
 
+Q/T Response
+````````````
+Gsim checks the database for single photoelectron charge and transit time PDFs 
+automatically for PMT models that are added to the geometry. These PDFs are 
+stored in tables named ``PMTCHARGE`` and ``PMTTRANSIT`` respectively, where the 
+index corresponds to a ``pmt_model`` field used in ``GEO`` tables. These PDFs
+are sampled whenever a photon is absorbed by the photocathode to create a 
+realistic Q/T response automatically for PMTs independent of any DAQ processor.
+If no tables are defined for a ``pmt_model`` the time defaults to approximately
+zero spread from photoelectron absorption time and the charge defaults to a
+phenomenological model used by MiniCLEAN.
+
+``PMTCHARGE`` fields:
+ * ``charge`` - "x" values of the charge PDF (arbitrary units)
+ * ``charge_prob`` - "y" values of the charge PDF (will be normalized)
+ 
+ 
+``PMTTRANSIT`` fields:
+ * ``cable_delay`` - constant offset applied to all PMTs of this model (nanoseconds)
+ * ``time`` - "x" values of the time PDF (nanoseconds)
+ * ``time_prob`` - "y" values of the time PDF (will be normalized)
+
 Dark Current
 ````````````
 

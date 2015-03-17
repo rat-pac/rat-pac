@@ -1,11 +1,27 @@
 // Default is for zero cable delay, zero transit time
-// TODO: Index this by PMT type
 {
 name: "PMTTRANSIT",
 valid_begin : [0, 0],
 valid_end : [0, 0],
 cable_delay: 0.0d,
-x: [ -0.001, 0.0, 0.001, ],
-y: [ 0.0d, 1.0d, 0.0d, ],
+
+//need two points
+time: [ -0.001, 0.000, 0.001 ],
+//this will be integrated and normalized
+time_prob: [ 0.0, 1.0, 0.0 ]
+}
+
+// Placeholder for r11780_hqe data 
+{
+name: "PMTTRANSIT",
+index: "r11780_hqe", 
+valid_begin : [0, 0],
+valid_end : [0, 0],
+cable_delay: 0.0d,
+
+//need two points
+time: [ -0.001, 0.000, 0.001 ],
+//this will be integrated and normalized
+time_prob: [ 0.0, 1.0, 0.0 ]
 }
 
