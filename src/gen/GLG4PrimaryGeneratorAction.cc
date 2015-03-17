@@ -39,6 +39,9 @@
 #include <RAT/EventInfo.hh>
 #include <RAT/TimeUtil.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 GLG4PrimaryGeneratorAction*
 GLG4PrimaryGeneratorAction::theGLG4PrimaryGeneratorAction=0;
 

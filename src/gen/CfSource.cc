@@ -21,6 +21,8 @@
 #include <iomanip>   // format manipulation
 #include <cstring>
 #include <vector>
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 #undef DEBUG
 

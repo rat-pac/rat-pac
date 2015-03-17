@@ -24,6 +24,9 @@
 
 #include <cmath>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
   // WGS: Constants copied from various places to make the code work.

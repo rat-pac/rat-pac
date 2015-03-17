@@ -19,6 +19,9 @@ class G4UImessenger; // for G4ProcessTable.hh
 #include "G4ProcessTable.hh"
 #include "GLG4PrimaryGeneratorAction.hh"
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 ////////////////////////////////////////////////////////////////
 
 GLG4NeutronDiffusionAndCapture::GLG4NeutronDiffusionAndCapture(const G4String& aName)

@@ -14,7 +14,8 @@
 #include <G4OpticalSurface.hh>
 #include <G4LogicalVolume.hh>
 
-
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 using namespace std;
 

@@ -5,6 +5,9 @@
 #include <RAT/RadicalInverse.hh>
 #include <RAT/StringUtil.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
 

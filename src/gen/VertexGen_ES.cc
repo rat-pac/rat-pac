@@ -25,6 +25,9 @@
 #include <sstream>
 #include <cmath>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
   VertexGen_ES::VertexGen_ES(const char *arg_dbname)

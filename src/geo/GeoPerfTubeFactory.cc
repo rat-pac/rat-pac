@@ -8,6 +8,9 @@
 #include <G4Tubs.hh>
 #include <vector>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

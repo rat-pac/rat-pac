@@ -9,6 +9,9 @@
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalSkinSurface.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
   
   PMTConstruction::PMTConstruction(const PMTConstructionParams &params) : fParams(params)

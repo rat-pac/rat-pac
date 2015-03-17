@@ -7,6 +7,9 @@
 #include <G4PrimaryVertex.hh>
 #include <G4ThreeVector.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 #define G4std  std
 namespace RAT {
 	VertexGen_Spectrum::VertexGen_Spectrum(const char *arg_dbname)

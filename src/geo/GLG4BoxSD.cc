@@ -28,6 +28,9 @@
 
 #include <string.h>  // for memset
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 GLG4BoxSD::GLG4BoxSD(G4String name)
 :G4VSensitiveDetector(name)
 {

@@ -7,6 +7,9 @@
 #include <RAT/Materials.hh>
 #include <RAT/GeoFactory.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

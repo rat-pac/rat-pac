@@ -5,6 +5,9 @@
 #include <RAT/Log.hh>
 #include "G4IntersectionSolid.hh"
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

@@ -43,20 +43,29 @@
 #include "G4Version.hh"
 
 #include <RAT/DB.hh>
+#include <RAT/PhysicsListMessenger.hh>
+#include "G4RunManager.hh"
+
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
+#include "G4WLSbuilder.hh"
+#include "AltWLSbuilder.hh"
 
 #define MYNAME_PhysicsList  GLG4PhysicsList
 #define MYNAME_string       "GLG4"
 
-
-MYNAME_PhysicsList::MYNAME_PhysicsList():  G4VUserPhysicsList()
+MYNAME_PhysicsList::MYNAME_PhysicsList():  G4VModularPhysicsList()
 {
   G4LossTableManager::Instance();
   currentDefaultCut   = 0.010 * mm;
   cutForGamma         = currentDefaultCut;
   cutForElectron      = currentDefaultCut;
   cutForPositron      = currentDefaultCut;
-
+  useAltOpWLS = false;
   SetVerboseLevel(1);
+  RAT::PhysicsListMessenger* pMessenger = new RAT::PhysicsListMessenger(this);
+  WLSmodel = new G4WLSbuilder(); 
 }
 
 MYNAME_PhysicsList::~MYNAME_PhysicsList()
@@ -257,9 +266,9 @@ void MYNAME_PhysicsList::ConstructGeneral()
 }
 
 #include "G4AntiNeutronAnnihilationAtRest.hh"
-#include "G4AntiProtonAnnihilationAtRest.hh"
-#include "G4KaonMinusAbsorptionAtRest.hh"
-#include "G4PionMinusAbsorptionAtRest.hh"
+//#include "G4AntiProtonAnnihilationAtRest.hh"//no longer in G4
+//#include "G4KaonMinusAbsorptionAtRest.hh"
+//#include "G4PionMinusAbsorptionAtRest.hh"
 #include "G4MuonMinusCaptureAtRest.hh"
 // #include "G4NeutronCaptureAtRest.hh" // wrong physics, don't use! [GAHS]
 
@@ -281,17 +290,20 @@ void MYNAME_PhysicsList::ConstructGeneral()
 
 // generic models for 0 to infinite energy (used for E > 20 MeV)
 // (these may actually be "translations" of the GEANT3.21/GHEISHA models....)
-#include "G4LElastic.hh"
+//#include "G4LElastic.hh" //incompatible with Geant4.10
+#include "G4HadronElastic.hh"
 #include "G4LFission.hh"
-#include "G4LCapture.hh"
+//#include "G4NeutronRadCapture.hh" //incompatible with Geant4.10
+#include "G4NeutronRadCapture.hh"
 
 // Low energy (used for 20 MeV < E < 50 GeV)
-#include "G4LENeutronInelastic.hh"  // 0 to 55 GeV
+//#include "G4LENeutronInelastic.hh"  // 0 to 55 GeV, incompatible with G4.10
+#include "G4RPGNeutronInelastic.hh" //0 to 4 GeV
 
 // High energy (used for > 50 GeV)
-#include "G4HENeutronInelastic.hh"  // 45 GeV to 10 TeV
+//#include "G4HENeutronInelastic.hh"  // 45 GeV to 10 TeV, incompatible with G4.10
 
-#include "HadronPhysicsQGSP_BERT.hh"
+#include "G4HadronPhysicsQGSP_BERT.hh"
 // Muon Physics
 #include "G4MuIonisation.hh"
 #include "G4MuBremsstrahlung.hh"
@@ -339,17 +351,17 @@ void MYNAME_PhysicsList::ConstructHadronic()
       pmanager->AddRestProcess(new G4AntiNeutronAnnihilationAtRest());
     }
     
-    if ( particle == G4AntiProton::AntiProton() ) {
-      pmanager->AddRestProcess(new G4AntiProtonAnnihilationAtRest());
-    }
+    //if ( particle == G4AntiProton::AntiProton() ) {
+    //pmanager->AddRestProcess(new G4AntiProtonAnnihilationAtRest());
+    //}
     
-    if ( particle == G4KaonMinus::KaonMinus() ) {
-      pmanager->AddRestProcess(new G4KaonMinusAbsorptionAtRest());
-    }
+    //if ( particle == G4KaonMinus::KaonMinus() ) {
+    //pmanager->AddRestProcess(new G4KaonMinusAbsorptionAtRest());
+    //}
     
-    if ( particle == G4PionMinus::PionMinus() ) {
-      pmanager->AddRestProcess(new G4PionMinusAbsorptionAtRest());
-    }
+    //if ( particle == G4PionMinus::PionMinus() ) {
+    //pmanager->AddRestProcess(new G4PionMinusAbsorptionAtRest());
+    //}
     
     if ( particle == G4MuonMinus::MuonMinus() ) {
       pmanager->AddRestProcess(new G4MuonMinusCaptureAtRest(),ordLast);
@@ -359,8 +371,10 @@ void MYNAME_PhysicsList::ConstructHadronic()
       
       G4HadronElasticProcess*   theHadronElasticProcess
 	= new   G4HadronElasticProcess();
-      G4LElastic* theNeutronLElastic
-	= new   G4LElastic();
+      //G4LElastic* theNeutronLElastic
+      //= new   G4LElastic();
+      G4HadronElastic* theNeutronLElastic
+	= new   G4HadronElastic();
       if (omit_neutron_hp ) {
 	theHadronElasticProcess->RegisterMe( theNeutronLElastic );
       }
@@ -377,13 +391,15 @@ void MYNAME_PhysicsList::ConstructHadronic()
       
       G4NeutronInelasticProcess*   theNeutronInelasticProcess
 	= new   G4NeutronInelasticProcess();
-      G4LENeutronInelastic* theNeutronLENeutronInelastic
-	= new   G4LENeutronInelastic();
-      G4HENeutronInelastic* theNeutronHENeutronInelastic
-	= new   G4HENeutronInelastic();
+      //G4LENeutronInelastic* theNeutronLENeutronInelastic
+      //= new   G4LENeutronInelastic();
+      G4RPGNeutronInelastic* theNeutronLENeutronInelastic
+	= new   G4RPGNeutronInelastic();
+      //G4HENeutronInelastic* theNeutronHENeutronInelastic
+      //= new   G4HENeutronInelastic();
       if (omit_neutron_hp) {
 	theNeutronInelasticProcess->RegisterMe( theNeutronLENeutronInelastic );
-	theNeutronInelasticProcess->RegisterMe( theNeutronHENeutronInelastic );
+	//theNeutronInelasticProcess->RegisterMe( theNeutronHENeutronInelastic );
       }
       else {
 	G4NeutronHPInelastic* theNeutronHPInelastic
@@ -392,7 +408,7 @@ void MYNAME_PhysicsList::ConstructHadronic()
 	theNeutronLENeutronInelastic->SetMinEnergy( 20.*MeV );
 	theNeutronInelasticProcess->RegisterMe( theNeutronHPInelastic );
 	theNeutronInelasticProcess->RegisterMe( theNeutronLENeutronInelastic );
-	theNeutronInelasticProcess->RegisterMe( theNeutronHENeutronInelastic );
+	//theNeutronInelasticProcess->RegisterMe( theNeutronHENeutronInelastic );
 	AddDataSet(theNeutronInelasticProcess, new G4NeutronHPInelasticData() );
       }
       pmanager->AddDiscreteProcess( theNeutronInelasticProcess );
@@ -417,8 +433,10 @@ void MYNAME_PhysicsList::ConstructHadronic()
       
       G4HadronCaptureProcess*   theCaptureProcess
 	= new   G4HadronCaptureProcess();
-      G4LCapture* theNeutronLCapture
-	= new   G4LCapture();
+      //G4LCapture* theNeutronLCapture
+      //= new   G4LCapture();
+      G4NeutronRadCapture* theNeutronLCapture
+	= new   G4NeutronRadCapture();
       if (omit_neutron_hp) {
 	theCaptureProcess->RegisterMe( theNeutronLCapture );
       }
@@ -615,6 +633,25 @@ void MYNAME_PhysicsList::ConstructEM()
   //opt.SetSubCutoff(true);
 }
 
+bool MYNAME_PhysicsList::GetAltOpWLS(){return useAltOpWLS;}
+
+void MYNAME_PhysicsList::SetAltOpWLS(bool usrCmd){
+  //G4cout << "Changing the physics list!" << G4endl;
+  useAltOpWLS = usrCmd;
+
+  if(useAltOpWLS){
+    delete WLSmodel;
+    WLSmodel = new AltWLSbuilder();
+  }
+  else{
+    delete WLSmodel;
+    WLSmodel = new G4WLSbuilder(); 
+  }
+  G4RunManager::GetRunManager()-> PhysicsHasBeenModified();
+
+  return;
+}
+
 #include "RAT/Cerenkov.hh"
 #include "RAT/WlsScintillation.hh"
 #include "G4Scintillation.hh"
@@ -623,9 +660,12 @@ void MYNAME_PhysicsList::ConstructEM()
 #include "GLG4Scint.hh"
 #include "RAT/GLG4SteppingAction.hh"
 #include "RAT/G4S1Light.hh" // NEST
+#include "AltOpWLS.hh"
+
 
 void MYNAME_PhysicsList::ConstructOp()
 {
+
   RAT::Cerenkov* theCerenkovProcess = new RAT::Cerenkov("Cerenkov");
 
   GLG4OpAttenuation* theAttenuationProcess = new GLG4OpAttenuation();
@@ -633,8 +673,9 @@ void MYNAME_PhysicsList::ConstructOp()
   //  G4OpRayleigh is not used for the following two reasons:
   //    1) It doesn't even try to work for anything other than water.
   //    2) It doesn't actually work for water, either.
-
-  RAT::OpWLS* theWLSProcess = new RAT::OpWLS();
+  
+  //Register the WLS builder:
+  WLSmodel->ConstructProcess();
 
   RAT::DBLinkPtr lmc = RAT::DB::Get()->GetLink("MC");
 
@@ -720,12 +761,10 @@ void MYNAME_PhysicsList::ConstructOp()
   if (verboseLevel > 0) {
     theCerenkovProcess->DumpInfo();
     theAttenuationProcess->DumpInfo();
-    theWLSProcess->DumpInfo();
   }
 
   theCerenkovProcess->SetVerboseLevel(0);
   theAttenuationProcess->SetVerboseLevel(0);
-  theWLSProcess->SetVerboseLevel(0);
 
   // For more accurate multiple scattering
   G4int MaxNumPhotons = 4;
@@ -743,10 +782,6 @@ void MYNAME_PhysicsList::ConstructOp()
     }
     if (particleName == "opticalphoton") {
       pmanager->AddDiscreteProcess(theAttenuationProcess);
-
-      theWLSProcess->UseTimeProfile("exponential");
-      pmanager->AddDiscreteProcess(theWLSProcess);
-
     }
     if (theNestScintProcess)
       if (theNestScintProcess->IsApplicable(*particle)){

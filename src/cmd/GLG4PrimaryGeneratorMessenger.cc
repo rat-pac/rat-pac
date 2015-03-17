@@ -24,6 +24,8 @@
 #include "G4ios.hh"
 #include "G4Event.hh"
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 #include "fstream"  // for file streams
 #include <sstream>  // for string streams

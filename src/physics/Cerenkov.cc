@@ -73,6 +73,9 @@
 #include "RAT/Cerenkov.hh"
 #include "RAT/PhotonThinning.hh"
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 /////////////////////////
 // Class Implementation  
 /////////////////////////

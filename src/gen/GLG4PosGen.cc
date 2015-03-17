@@ -22,6 +22,8 @@
 #include "GLG4PosGen.hh"
 #include "GLG4VertexGen.hh" // for GLG4VertexGen_HEPEvt
 #include "GLG4StringUtil.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 
 // To support GEANT4.6 and up

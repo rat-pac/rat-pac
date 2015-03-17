@@ -28,10 +28,10 @@
 
 #include "G4VGraphicsScene.hh"
 #include "G4Polyhedron.hh"
-#include "G4NURBS.hh"
-#include "G4NURBStube.hh"
-#include "G4NURBScylinder.hh"
-#include "G4NURBStubesector.hh"
+//#include "G4NURBS.hh"
+//#include "G4NURBStube.hh"
+//#include "G4NURBScylinder.hh"
+//#include "G4NURBStubesector.hh"
 #include "G4VisExtent.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4Version.hh"
@@ -39,6 +39,9 @@
 #include "G4ios.hh" // for G4cerr
 
 #include "local_g4compat.hh"
+
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 // debugging
 #ifdef DEBUG_GLG4TorusStack
@@ -1333,11 +1336,11 @@ G4VisExtent GLG4TorusStack::GetExtent() const {
 		      z_edge[0], z_edge[n]);
 }
 
-G4NURBS* GLG4TorusStack::CreateNURBS () const {
-  G4NURBS* pNURBS;
-  pNURBS = new G4NURBScylinder (max_rho, G4std::max(fabs(z_edge[0]),fabs(z_edge[n])));
-  return pNURBS;
-}
+//G4NURBS* GLG4TorusStack::CreateNURBS () const {
+//G4NURBS* pNURBS;
+//pNURBS = new G4NURBScylinder (max_rho, G4std::max(fabs(z_edge[0]),fabs(z_edge[n])));
+//return pNURBS;
+//}
 
 // ================================================================
 

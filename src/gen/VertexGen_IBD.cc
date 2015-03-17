@@ -14,6 +14,9 @@
 #include <RAT/IBDgen.hh>
 #include <RAT/GLG4StringUtil.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
   

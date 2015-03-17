@@ -32,6 +32,9 @@
 #include <RAT/PhotonThinning.hh>
 #include <RAT/Log.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 G4UIdirectory* GLG4PMTOpticalModel::fgCmdDir = NULL;
 
 double GLG4PMTOpticalModel::surfaceTolerance = 0.0;

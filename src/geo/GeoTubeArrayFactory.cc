@@ -6,6 +6,9 @@
 #include <G4Orb.hh>
 #include <vector>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

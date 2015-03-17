@@ -25,6 +25,9 @@
 using std::vector;
 using std::string;
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 #define G4std  std
 
 //#undef DEBUG

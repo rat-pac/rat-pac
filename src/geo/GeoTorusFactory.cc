@@ -1,6 +1,9 @@
 #include <RAT/GeoTorusFactory.hh>
 #include <G4Torus.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

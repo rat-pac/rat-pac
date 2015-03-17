@@ -1,6 +1,9 @@
 #include <RAT/GeoTubeFactory.hh>
 #include <G4Tubs.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

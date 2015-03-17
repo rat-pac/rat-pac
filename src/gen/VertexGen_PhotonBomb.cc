@@ -8,6 +8,8 @@
 #include <G4PrimaryParticle.hh>
 #include <G4PrimaryVertex.hh>
 #include <G4ThreeVector.hh>
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 namespace RAT {
   VertexGen_PhotonBomb::VertexGen_PhotonBomb(const char *arg_dbname)
