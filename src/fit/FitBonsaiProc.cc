@@ -9,6 +9,7 @@
 
 using namespace RAT;
 using namespace std;
+using namespace BONSAI;
 
 FitBonsaiProc::FitBonsaiProc() : Processor::Processor("BONSAI"), bonsai_geometry(NULL), bonsai_likelihood(NULL), bonsai_fit(NULL) {
 
