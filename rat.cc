@@ -15,6 +15,7 @@
 #include <globals.hh>
 #include <G4VisExecutive.hh>
 #include <G4UIExecutive.hh>
+#include <G4DAEParser.hh> // provides option to dump geometry to DAE/Collada file
 
 // time.h must come after Randomize.hh on RedHat 7.3 
 #include <time.h>
@@ -131,6 +132,9 @@ int main(int argc, char** argv) {
 
     // Initialize the user interface
     G4UImanager* theUI = G4UImanager::GetUIpointer();
+
+    //Start up DAE exporter
+    G4DAEParser dae_parser;
 
     // Add any python processors specified on the command line
     for (unsigned i=0; i < options.python_processors.size(); i++) {
