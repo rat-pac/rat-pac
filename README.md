@@ -8,7 +8,7 @@ Simulation code for KPIPE.
 * in data/kpipe/kpipe.geo
 * also have COLLADA format file for chroma: data/kpipe/kpipe.dae
 
-![alt tag](https://github.com/twongjirad/ratpac-kpipe/tmw_addgeometry/data/kpipe/kpipe_daeview.png)
+![alt tag](https://raw.github.com/twongjirad/ratpac-kpipe/tmw_addgeometry/data/kpipe/kpipe_daeview.png)
 
 
 # RAT (is an Analysis Tool), Public Edition
