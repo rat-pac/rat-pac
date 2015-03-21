@@ -1,4 +1,17 @@
-RAT (is an Analysis Tool), Public Edition
+
+# KPIPE RAT Fork
+
+Simulation code for KPIPE.
+
+## Geometry
+
+* in data/kpipe/kpipe.geo
+* also have COLLADA format file for chroma: data/kpipe/kpipe.dae
+
+![alt tag](https://github.com/twongjirad/ratpac-kpipe/tmw_addgeometry/data/kpipe/kpipe_daeview.png "KPIPE Sim geometry")
+
+
+# RAT (is an Analysis Tool), Public Edition
 -----------------------------------------
 RAT is a simulation and analysis package built with GEANT4, ROOT, and C++,
 originally developed by S. Seibert for the Braidwood Collaboration. Versions
