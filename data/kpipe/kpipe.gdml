@@ -78,6 +78,10 @@
     <fraction n="0.001097" ref="ppo"/>
   </material>
 
+  <material formula=" " name="chipsilicon">
+    <D value="2.3" unit="g/cc"/>
+    <fraction n="1.0" ref="silicon"/>
+  </material>
 </materials>
 
 <solids>
@@ -120,15 +124,30 @@
 	z="100.00" 
 	deltaphi="360"
 	aunit="deg"/>
+
+  <box name="sipm_active"
+       lunit="mm"
+       x="6"
+       y="6"
+       z="2" />
 </solids>
 
 
 <structure>
   <!-- building the world inside-out -->
 
+  <volume name="volSiPM">
+    <materialref ref="chipsilicon"/>
+    <solidref ref="sipm_active"/>
+  </volume>
+
   <volume name="volTargetVolume">
     <materialref ref="scintillator"/>
     <solidref ref="targetvolume"/>
+    <physvol>
+      <volumeref ref="volSiPM"/>
+      <position name="posSiPM1" unit="cm" x="0" y="0" z="0"/>
+    </physvol>
   </volume>
 
   <volume name="volInnerPipe">
