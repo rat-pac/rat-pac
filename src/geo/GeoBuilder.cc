@@ -64,6 +64,8 @@ GeoBuilder::GeoBuilder()
   // Register standard waveguides
   GlobalFactory<WaveguideFactory>::Register("cone",
       new Alloc<WaveguideFactory, ConeWaveguideFactory>);
+
+  geo_source = RATGEOTABLES;
 }
 
 
@@ -81,6 +83,8 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
   //
   //       Also fail if you ever find a volume without an already built
   //       mother AND without a yet-to-be built mother.
+  // tmw: 3/21/2015. Adding the ability to load GDML instead. Different GEO.
+  //       gdmlfile: "filename.gdml"
   debug << "GeoBuilder: Starting ConstructAll()\n";
 
   while (geo.size() > 0) {
@@ -91,6 +95,29 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
       debug << "GeoBuilder: Checking " << name << newline;
 
       DBLinkPtr table = i_table->second;
+
+      // look for GDML entry
+      string gdmlfilename;
+      try {
+	// if found one, we use the GDML parser and skip the rest of this loop!
+	gdmlfilename = table->GetS("gdml_file");
+	std::cout << "Parsing GDML File: " << gdmlfilename << std::endl;
+	geo_source = GDMLFILE;
+	// we need the glg4data and expriment to get right folder
+	string glg4data = "";
+	if (getenv("GLG4DATA") != NULL) {
+	  glg4data = string(getenv("GLG4DATA")) + "/";
+	}
+	string experiment = DB::Get()->GetLink("DETECTOR")->GetS("experiment");
+	// parse the file
+	gdml_parser.Read( glg4data+"/"+experiment+"/"+gdmlfilename );
+	// return the world volume
+	return gdml_parser.GetWorldVolume();
+      }
+      catch (DBNotFoundError &e) {
+	// do nothing. keep going.
+      } 
+
       string mother;
       string type;
       try {

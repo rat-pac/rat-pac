@@ -20,27 +20,27 @@
   <element name="sodium" formula="Na" Z="11"> <atom value="22.99"/>    </element>
   <element name="titanium" formula="Ti" Z="22"> <atom value="47.867"/>   </element>
   <element name="argon" formula="Ar" Z="18"> <atom value="39.9480"/>  </element>
-
+  
   <material Z="1" formula=" " name="Vacuum">
     <D value="1.e-25" unit="g/cm3"/>
     <atom value="1.0079"/>
   </material>
 
   <material name="STEEL_STAINLESS_Fe7Cr2Ni" formula="STEEL_STAINLESS_Fe7Cr2Ni">
-   <D value="7.9300" unit="g/cm3"/>
-   <fraction n="0.0010" ref="carbon"/>
-   <fraction n="0.1792" ref="chromium"/>
-   <fraction n="0.7298" ref="iron"/>
-   <fraction n="0.0900" ref="nickel"/>
+    <D value="7.9300" unit="g/cm3"/>
+    <fraction n="0.0010" ref="carbon"/>
+    <fraction n="0.1792" ref="chromium"/>
+    <fraction n="0.7298" ref="iron"/>
+    <fraction n="0.0900" ref="nickel"/>
   </material>
-
+  
   <material formula=" " name="air">
     <D value="0.001205" unit="g/cc"/>
     <fraction n="0.781154" ref="nitrogen"/>
     <fraction n="0.209476" ref="oxygen"/>
     <fraction n="0.00937" ref="argon"/>
   </material>
-
+  
   <material formula=" " name="Dirt">
     <D value="1.7" unit="g/cc"/>
     <fraction n="0.438" ref="oxygen"/>
@@ -50,7 +50,7 @@
     <fraction n="0.019" ref="iron"/>
     <fraction n="0.015" ref="potassium"/>
   </material>
-
+  
   <material formula=" " name="mineral_oil">
     <D value="0.77" unit="g/cc"/>
     <fraction n="0.8563" ref="carbon"/>
@@ -62,7 +62,7 @@
     <fraction n="0.8994" ref="carbon"/>
     <fraction n="0.1006" ref="hydrogen"/>
   </material>
-
+  
   <material formula=" " name="ppo">
     <D value="1.06" unit="g/cc"/>
     <fraction n="0.8142" ref="carbon"/>
@@ -70,13 +70,14 @@
     <fraction n="0.0633" ref="nitrogen"/>
     <fraction n="0.0723" ref="oxygen"/>
   </material>
-
+  
   <material formula=" " name="scintillator">
     <D value="0.78" unit="g/cc"/>
     <fraction n="0.996984" ref="mineral_oil"/>
     <fraction n="0.001919" ref="pseudocumene"/>
     <fraction n="0.001097" ref="ppo"/>
   </material>
+
 </materials>
 
 <solids>
@@ -144,7 +145,7 @@
     <solidref ref="vetoregion"/>
     <physvol>
       <volumeref ref="volInnerPipe"/>
-      <position name="posInnerPipe" unit="m"x="0" y="0" z="0"/>
+      <position name="posInnerPipe" unit="m" x="0" y="0" z="0"/>
     </physvol>
   </volume>
 
@@ -153,7 +154,7 @@
     <solidref ref="outerpipe"/>
     <physvol>
       <volumeref ref="volVetoRegion"/>
-      <position ref="posVetoRegion" unit="m"x="0" y="0" z="0"/>
+      <position name="posVetoRegion" unit="m" x="0" y="0" z="0"/>
     </physvol>
   </volume>
 
@@ -171,7 +172,7 @@
     </physvol>
     <physvol>
       <volumeref ref="volOuterPipe"/>
-      <position ref="posOuterPipe" unit="m" x="0" y="0" z="0"/>
+      <position name="posOuterPipe" unit="m" x="0" y="0" z="0"/>
     </physvol>
   </volume>
 
