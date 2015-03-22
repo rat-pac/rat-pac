@@ -3,6 +3,34 @@
 
 Simulation code for KPIPE.
 
+## Checking out
+
+* using git flow pattern (more info: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+* git clone https://github.com/twongjirad/ratpac-kpipe.git
+* git checkout develop (this moves you to the develop branch)
+
+## Dependencies
+* ROOT 5
+* Geant4 (checked things worked with geant4.6.p04)
+* scons
+
+## building
+* instructions in doc/installation.rst
+* make sure ROOT and geant4 environment variables set
+* ./configure
+* scons
+
+## Running
+* rat
+* /control/execute mac/kpipe.mac (will bring up and initialize geometry)
+
+## Adding a feature
+* git checkout develop
+* git checkout -b [username]_[featurename]
+* do something awesome
+* to put your code onto develop: git checkout develop; git merge [username]_[featurename]
+* delete the branch
+
 ## Geometry
 
 * in data/kpipe/kpipe.geo
