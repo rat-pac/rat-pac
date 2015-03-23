@@ -38,6 +38,37 @@ Simulation code for KPIPE.
 
 ![alt tag](https://raw.github.com/twongjirad/ratpac-kpipe/develop/data/kpipe/kpipe_daeview.png)
 
+## Optical Detector
+
+* Needed to add new type of Sensitive Detector class for optical detectors
+* RAT optical detectors too tied to PMTs
+* Created GLG4SimpleOpDetSD.  No fancy physics. If opticalphoton hits it, then a hit gets made. (later we can maybe configure this.)
+* To add it, include opdet_lv_name in GEO RAT db table.
+* Also, in GDML give each physvol instance a name with a number. This number will be used to assign the opdet a channel number.
+* example:
+```
+[In GEO table]
+{
+name: "GEO",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+gdml_file: "kpipe.gdml",
+opdet_lv_name: "volSiPM",
+}
+
+[in GDML file]
+...
+    <physvol name="OpDet1">
+      <volumeref ref="volSiPM"/>
+      <position name="posSiPM1" unit="cm" x="0" y="0" z="0"/>
+    </physvol>
+    <physvol name="OpDet2">
+      <volumeref ref="volSiPM"/>
+      <position name="posSiPM2" unit="cm" x="0" y="0" z="10"/>
+    </physvol>
+...
+```
+
 
 # RAT (is an Analysis Tool), Public Edition
 -----------------------------------------
