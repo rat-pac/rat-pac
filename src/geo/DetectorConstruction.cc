@@ -122,12 +122,12 @@ void DetectorConstruction::SetupGDMLSD() {
     G4SDManager* sdman = G4SDManager::GetSDMpointer();
     GLG4SimpleOpDetSD* opdetsd = new GLG4SimpleOpDetSD( "opdet_lv_name" );
     sdman->AddNewDetector(opdetsd);
-
     G4PhysicalVolumeStore* pvolumes = G4PhysicalVolumeStore::GetInstance();
     for ( G4PhysicalVolumeStore::iterator it=pvolumes->begin(); it!=pvolumes->end(); it++) {
       G4VPhysicalVolume* volume = (*it);
       if ( volume->GetLogicalVolume()->GetName()==opdet_lv_name ) {
 	G4String pvname = volume->GetName();
+	volume->GetLogicalVolume()->SetSensitiveDetector( opdetsd );
 	int channelid;
 	size_t numstart,numend;
 	try {

@@ -23,6 +23,7 @@
 #include "GLG4Scint.hh"  // for doScintilllation and total energy deposition info
 #include "G4VSolid.hh" // for access to solid store
 #include "Randomize.hh"
+#include <RAT/Log.hh>
 
 #include <string.h>  // for memset
 
@@ -52,6 +53,8 @@ void GLG4SimpleOpDetSD::Initialize(G4HCofThisEvent*)
 
 G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
 {
+  RAT::info << "GLG4SimpleOpDetSD detects something!" << newline;
+
   if (aStep->GetTrack()->GetDefinition()->GetParticleName() != "opticalphoton")
     return false;
   // things to do:
@@ -59,6 +62,8 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   // (2) get track info
   // (3) call SimpleHit
   // (4) kill photon
+
+  RAT::info << "GLG4SimpleOpDetSD detects photon!" << newline;
 
   // get optical id
   G4StepPoint* prestep = aStep->GetPreStepPoint();
@@ -74,8 +79,9 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   G4bool prepulse = false;
   
   SimpleHit( channelid, time, ke, pos, mom, pol, N_pe, trackid, prepulse );
-
-  return false;
+  
+  aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+  return true;
 }
 
 

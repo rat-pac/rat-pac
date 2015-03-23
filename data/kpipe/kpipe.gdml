@@ -144,13 +144,13 @@
   <volume name="volTargetVolume">
     <materialref ref="scintillator"/>
     <solidref ref="targetvolume"/>
+    <physvol name="OpDet0">
+      <volumeref ref="volSiPM"/>
+      <position name="posSiPM0" unit="cm" x="0" y="0" z="0"/>
+    </physvol>
     <physvol name="OpDet1">
       <volumeref ref="volSiPM"/>
-      <position name="posSiPM1" unit="cm" x="0" y="0" z="0"/>
-    </physvol>
-    <physvol name="OpDet2">
-      <volumeref ref="volSiPM"/>
-      <position name="posSiPM2" unit="cm" x="0" y="0" z="10"/>
+      <position name="posSiPM1" unit="cm" x="0" y="0" z="10"/>
     </physvol>
   </volume>
 
