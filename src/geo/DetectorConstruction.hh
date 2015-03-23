@@ -30,6 +30,8 @@ public:
 protected:
   static DetectorConstruction* sDetectorConstruction;
   G4VPhysicalVolume* fWorldPhys;
+
+  void SetupGDMLSD();
 };
 
 }  // namespace RAT

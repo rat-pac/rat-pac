@@ -21,4 +21,4 @@
 /generator/vtx/set mu-  0 0 30.0
 /generator/pos/set 0 0 -100.0
 
-/run/beamOn 1
+#/run/beamOn 1

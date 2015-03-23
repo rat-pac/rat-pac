@@ -26,7 +26,7 @@
     <atom value="1.0079"/>
   </material>
 
-  <material name="STEEL_STAINLESS_Fe7Cr2Ni" formula="STEEL_STAINLESS_Fe7Cr2Ni">
+  <material name="stainless_steel" formula="stainless_steel">
     <D value="7.9300" unit="g/cm3"/>
     <fraction n="0.0010" ref="carbon"/>
     <fraction n="0.1792" ref="chromium"/>
@@ -144,14 +144,18 @@
   <volume name="volTargetVolume">
     <materialref ref="scintillator"/>
     <solidref ref="targetvolume"/>
-    <physvol>
+    <physvol name="OpDet1">
       <volumeref ref="volSiPM"/>
       <position name="posSiPM1" unit="cm" x="0" y="0" z="0"/>
+    </physvol>
+    <physvol name="OpDet2">
+      <volumeref ref="volSiPM"/>
+      <position name="posSiPM2" unit="cm" x="0" y="0" z="10"/>
     </physvol>
   </volume>
 
   <volume name="volInnerPipe">
-    <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+    <materialref ref="stainless_steel"/>
     <solidref ref="innerpipe"/>
     <physvol>
       <volumeref ref="volTargetVolume"/>
@@ -169,7 +173,7 @@
   </volume>
 
   <volume name="volOuterPipe">
-    <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+    <materialref ref="stainless_steel"/>
     <solidref ref="outerpipe"/>
     <physvol>
       <volumeref ref="volVetoRegion"/>

@@ -1,4 +1,5 @@
 #include <string>
+#include <cstdlib>
 #include <TVector3.h>
 #include <G4GeometryManager.hh>
 #include <G4PhysicalVolumeStore.hh>
@@ -13,6 +14,7 @@
 #include <RAT/Log.hh>
 #include <RAT/GeoBuilder.hh>
 #include <RAT/Materials.hh>
+#include <RAT/GLG4SimpleOpDetSD.hh>
 
 using namespace std;
 
@@ -69,6 +71,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   GeoBuilder geo;
   fWorldPhys = geo.ConstructAll();
 
+  if ( geo.GetBuilderSource()==GeoBuilder::GDMLFILE ) {
+    SetupGDMLSD();
+  }
+
   return fWorldPhys;
 }
 
@@ -86,5 +92,59 @@ DetectorConstruction* DetectorConstruction::GetDetectorConstruction() {
   return sDetectorConstruction;
 }
 
+void DetectorConstruction::SetupGDMLSD() {
+  DBLinkGroup lgeo = DB::Get()->GetLinkGroup("GEO");
+
+  // find GDML table
+  DBLinkGroup::iterator i_table;
+  for (i_table = lgeo.begin(); i_table != lgeo.end(); ++i_table) {
+    string name = i_table->first;
+    DBLinkPtr table = i_table->second;
+    string gdmlfilename;
+    try {
+      gdmlfilename = table->GetS("gdml_file");
+    }
+    catch (DBNotFoundError &e) {
+      continue;
+    }
+    info << "GeoBuilder used GDML file as source of geometry." << newline;
+
+    // opdet sd name
+    G4String opdet_lv_name;
+    try {
+      opdet_lv_name = table->GetS("opdet_lv_name");
+    }
+    catch (DBNotFoundError &e) {
+      // do nothing
+      info << "Did not find 'opdet_lv_name'. Proceeding without OpDetSD assignment." << newline;
+    }
+    info << "Creating GLG4SimpleOpDetSD. Adding volumes as opdet channels for LVs with name='" << opdet_lv_name << "'" << newline;
+    G4SDManager* sdman = G4SDManager::GetSDMpointer();
+    GLG4SimpleOpDetSD* opdetsd = new GLG4SimpleOpDetSD( "opdet_lv_name" );
+    sdman->AddNewDetector(opdetsd);
+
+    G4PhysicalVolumeStore* pvolumes = G4PhysicalVolumeStore::GetInstance();
+    for ( G4PhysicalVolumeStore::iterator it=pvolumes->begin(); it!=pvolumes->end(); it++) {
+      G4VPhysicalVolume* volume = (*it);
+      if ( volume->GetLogicalVolume()->GetName()==opdet_lv_name ) {
+	G4String pvname = volume->GetName();
+	int channelid;
+	size_t numstart,numend;
+	try {
+	  numstart = pvname.find_first_of("1234567890");
+	  numend = pvname.find_first_not_of("1234567890",numstart+1);
+	  channelid = atoi( pvname.substr(numstart, numend-numstart).c_str() );
+	}
+	catch (int e) {
+	  Log::Die( "Error parsing OpDet physical volume name for channel ID. Need to place a number in the name." );
+	}
+	opdetsd->AddOpDetChannel( channelid, volume );
+	info << "Found OpDet instance. PVname=" << volume->GetName() << " ChannelID=" << channelid << newline;
+      }
+    }
+    
+    break;
+  }
 }
 
+}
