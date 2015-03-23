@@ -60,6 +60,21 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   // (3) call SimpleHit
   // (4) kill photon
 
+  // get optical id
+  G4StepPoint* prestep = aStep->GetPreStepPoint();
+  G4VPhysicalVolume* pv = prestep->GetPhysicalVolume();
+  int channelid = pv_to_channelid_map[pv];
+  G4double time = aStep->GetTrack()->GetGlobalTime();
+  G4double ke = aStep->GetTrack()->GetKineticEnergy();
+  G4ThreeVector pos = aStep->GetTrack()->GetPosition();
+  G4ThreeVector mom = aStep->GetTrack()->GetMomentum();
+  G4ThreeVector pol = aStep->GetTrack()->GetPolarization();
+  G4int N_pe = 1;
+  G4int trackid = aStep->GetTrack()->GetTrackID();
+  G4bool prepulse = false;
+  
+  SimpleHit( channelid, time, ke, pos, mom, pol, N_pe, trackid, prepulse );
+
   return false;
 }
 
@@ -76,7 +91,7 @@ void GLG4SimpleOpDetSD::SimpleHit( G4int iopdet,
 			   G4int trackID,
 			   G4bool prepulse )
 {
-  G4int opdet_index = iopdet - opdet_no_offset;
+  G4int opdet_index = channelid_to_opdetindex[iopdet]-opdet_no_offset;
   if (opdet_index < 0 || opdet_index >= max_opdets)
     {
       G4cerr << "Error: GLG4SimpleOpDetSD::SimpleHit [" << GetName() << "] passed iopdet="
