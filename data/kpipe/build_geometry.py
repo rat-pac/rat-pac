@@ -277,7 +277,7 @@ def generate_gdml_file( ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nr
 
 
 if __name__=="__main__":
-    gdml = generate_gdml_file( 100, 100, 0, 0 )
+    gdml = generate_gdml_file( 100, 1000, 0, 0 )
     print gdml
         
 
