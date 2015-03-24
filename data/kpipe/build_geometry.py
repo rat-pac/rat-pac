@@ -1,5 +1,6 @@
 import os,sys
 from math import sin,cos,pi
+from build_pmtinfo import build_pmtinfo
 
 # This script generated GDML geometry files for KPIPE. It places the SiPMs parametrically.
 # the generated portion is sandwiched between two parts (part1 and part2) below.
@@ -226,7 +227,7 @@ part2 = """
 </gdml>
 """
 
-def generate_gdml_file( ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nrings, ip_radius_cm=135.0, op_radius_cm=155.0 ):
+def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nrings, ip_radius_cm=135.0, op_radius_cm=155.0 ):
     """ Generates KPipe GDML file. Populates detector with rings of SiPMs.
 
     For each SiPM, we lay down two components, the active and inactive SiPMs.
@@ -238,7 +239,7 @@ def generate_gdml_file( ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nr
     ip_sipmdict = {} # dict: key=(sipmid,ringid,ring_sipmindex), value=(x,y,z,phi), where x,y,z is position, phi is rotation around z axis.
     isipm = 0
     for iring in xrange(0,ip_nrings):
-        zpos = -pipelength + zdist_ring_gap*iring
+        zpos = -0.5*pipelength + zdist_ring_gap*iring
         for iring_sipm in xrange(0,ip_nsipms_per_ring):
             phi = iring_sipm*phi_sipm_gap
             x = (ip_radius_cm)*cos( phi*pi/180.0 )
@@ -246,7 +247,7 @@ def generate_gdml_file( ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nr
             x2 = (ip_radius_cm-0.1)*cos( phi*pi/180.0 )
             y2 = (ip_radius_cm-0.1)*sin( phi*pi/180.0 )
             rotphi = 90.0 + phi
-            ip_sipmdict[ (isipm, iring, iring_sipm ) ] = ( x, y, zpos, -rotphi, x2, y2 )
+            ip_sipmdict[ isipm ] = ( x, y, zpos, -rotphi, x2, y2, iring )
             isipm += 1
 
     targetvol = "  <volume name=\"volTarget\">\n"
@@ -257,28 +258,36 @@ def generate_gdml_file( ip_nsipms_per_ring, ip_nrings, op_nsipms_per_ring, op_nr
     for key in keys:
         transform = ip_sipmdict[key]
         # active
-        targetvol+="    <physvol name=\"SiPM%d\">\n"%(key[0])
+        targetvol+="    <physvol name=\"SiPM%d\">\n"%(key)
         targetvol+="      <volumeref ref=\"volActiveSiPM\"/>\n"
-        targetvol+="      <position name=\"posVolActiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key[0], 
+        targetvol+="      <position name=\"posVolActiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key, 
                                                                                                                    transform[4], 
                                                                                                                    transform[5], 
                                                                                                                    transform[2] )
-        targetvol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key[0],  transform[3]*pi/180.0)
+        targetvol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key,  transform[3]*pi/180.0)
         targetvol+="    </physvol>\n"
         # inactive
-        targetvol+="    <physvol name=\"InactiveSiPM%d\">\n"%(key[0])
+        targetvol+="    <physvol name=\"InactiveSiPM%d\">\n"%(key)
         targetvol+="      <volumeref ref=\"volInactiveSiPM\"/>\n"
-        targetvol+="      <position name=\"posVolInactiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key[0], transform[0], transform[1], transform[2] )
-        targetvol+="      <rotation name=\"rotVolInactiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key[0],  transform[3]*pi/180.0)
+        targetvol+="      <position name=\"posVolInactiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key, transform[0], transform[1], transform[2] )
+        targetvol+="      <rotation name=\"rotVolInactiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key,  transform[3]*pi/180.0)
         targetvol+="    </physvol>\n"
     targetvol+="  </volume>\n"
+    
+    fgdml = open( gdml_filename, 'w' )
+    print >> fgdml, part1+"\n"+targetvol+"\n"+part2+"\n"
+    fgdml.close()
+    
+    pmtinfo = build_pmtinfo( isipm, ip_sipmdict )
+    fpmtinfo = open( pmtinfo_filename, 'w' )
+    print >> fpmtinfo, pmtinfo+'\n'
+    fpmtinfo.close()
 
     return part1+"\n"+targetvol+"\n"+part2+"\n"
 
 
 if __name__=="__main__":
-    gdml = generate_gdml_file( 100, 1000, 0, 0 )
-    print gdml
+    generate_gdml_file( "kpipe.gdml", "PMTINFO.ratdb", 100, 1000, 0, 0 )
         
 
     

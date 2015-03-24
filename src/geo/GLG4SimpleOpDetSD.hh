@@ -44,7 +44,7 @@ class GLG4SimpleOpDetSD : public G4VSensitiveDetector
   public:
   // member functions
       GLG4SimpleOpDetSD(G4String name,
-			int max_opdets=1920,
+			int max_opdets=1000000,
 			int opdet_no_offset=0 );
       virtual ~GLG4SimpleOpDetSD();
 

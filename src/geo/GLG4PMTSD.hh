@@ -41,7 +41,7 @@ class GLG4PMTSD : public G4VSensitiveDetector
   public:
   // member functions
       GLG4PMTSD(G4String name,
-	      int max_pmts=1920,
+	      int max_pmts=1000000,
 	      int pmt_no_offset=0,
 	      int my_id_pmt_size= -1);
       virtual ~GLG4PMTSD();
