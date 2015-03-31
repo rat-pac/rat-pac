@@ -1,10 +1,14 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <vector>
 
 #include "TFile.h"
 #include "TChain.h"
 #include "TGeoManager.h"
+#include "TGeoNode.h"
+
+#include "tree3.h"
 
 // void output_event_to_rat( TTree* aStep ) {
   
@@ -21,7 +25,7 @@
 
 int main(int nargs, char** argv ) {
   
-  if ( nargs!=3 || nargs!=4 ) {
+  if ( nargs<3 || nargs>4 ) {
     std::cout << "usage: gen_kdar_event [source tree file path] [nevents] [offset]" << std::endl;
     return -1;
   }
@@ -52,43 +56,45 @@ int main(int nargs, char** argv ) {
     return -1;
 
   // gdml data
-  TGeoManager* gdml = TGeoManager::Import("~taritree/kpipe/ratpac-kpipe/kdar_muons/../data/kpipe/kpipe.gdml");
+  TGeoManager* gdml = TGeoManager::Import("/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/data/kpipe/kpipe.gdml");
+  int trackid = 0;
+  int ntracks = gdml->AddTrack( trackid, 14 );
+  double src_pos[3] = { 0.0, 0.0, -dist_src_2_frontface*0.0 };
+  double src_dir[3] = { 0.0, 0.0, 1.0 };
+
 
   // setup tree
-  const Int_t kMaxin = 2;
-  const Int_t kMaxtemp = 2;
-  const Int_t kMaxout = 3;
-  const Int_t kMaxpost = 8;
-  const Int_t kMaxall = 6;
-  
-  Bool_t          flag_cc;
-  Int_t           post_;
-  Double_t        post_t[kMaxpost];   //[post_]
-  tevents->SetBranchAddress( "flag_cc", &flag_cc );
-  tevents->SetBranchAddress( "post", &post_ );
-  tevents->SetBranchAddress( "post.t", post_t );
+  tree data( tevents );
 
   int ngen = 0;
   int ievent = offset;
-  long bytes = tevents->GetEntry(ievent);
+  long bytes = data.GetEntry(ievent);
 
   while ( bytes!=0 && ngen<nevents ) {
 
-    // first need to generate 
+    // first need to generate point in detector
+    gdml->SetCurrentTrack( trackid );
+    gdml->SetCurrentDirection( src_dir );
+    gdml->SetCurrentPoint( src_pos );
+    TGeoNode* next_node = gdml->FindNode(0,0,src_pos[2]);
+    std::cout << "start: " << src_pos[2] << ": " << next_node->GetVolume()->GetName() << std::endl;
+    while (next_node ) {
+      next_node = gdml->FindNextBoundaryAndStep();
+      if ( next_node) 
+	std::cout << "next node: " << next_node->GetVolume()->GetName() << std::endl;
+    }
 
     // out to RAT
-    for (int out = 0; out<post_; out++) {
-
-    }
     //the zeroth entry in the array always refers to the outgoing lepton
-
+    std::cout << "npost: " << data.post_ << " particles" << std::endl;
+    
     //output_event_to_rat( tevents );
     ievent++;
-    bytes = tevents->GetEntry(ievent);
+    bytes = data.GetEntry(ievent);
     if ( bytes==0 ) {
       // loop to beginning
       ievent = 0;
-      bytes = tevents->GetEntry(ievent);
+      bytes = data.GetEntry(ievent);
     }
     ngen++;
   }
