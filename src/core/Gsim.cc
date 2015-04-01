@@ -480,8 +480,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
-  // Map from PMT ID numbers to objects for use later in noise calculation
-  std::map<int, DS::MCPMT*> mcpmtObjects;
+  //Map ID-INDEX for later noise calculation
+  std::map<int, int> mcpmtObjects;
 
   for (int ipmt=0; ipmt<hitpmts->GetEntries(); ipmt++) {
     GLG4HitPMT* a_pmt= hitpmts->GetPMT(ipmt);
@@ -490,7 +490,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     // Create and initialize a RAT DS::MCPMT 
     // note that GLG4HitPMTs are given IDs which are their index
     DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
-    mcpmtObjects[a_pmt->GetID()] = rat_mcpmt;
+    mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //at this point the size represent the index
     rat_mcpmt->SetID(a_pmt->GetID());
     rat_mcpmt->SetType(fPMTInfo->GetType(a_pmt->GetID()));
 
@@ -544,11 +544,11 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     // Add the PMT if it did not register a "real" hit
     if (!mcpmtObjects.count(pmtid)) {
       DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
-      mcpmtObjects[pmtid] = rat_mcpmt;
+      mcpmtObjects[pmtid] = mc->GetMCPMTCount()-1; //at this point the size represent the index
       rat_mcpmt->SetID(pmtid);
       rat_mcpmt->SetType(fPMTInfo->GetType(pmtid));
     }
-    AddMCPhoton(mcpmtObjects[pmtid], hit, true, (StoreOpticalTrackID ? exinfo : NULL));
+    AddMCPhoton(mc->GetMCPMT(mcpmtObjects[pmtid]), hit, true, (StoreOpticalTrackID ? exinfo : NULL));
   }
 }
 
