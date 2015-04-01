@@ -15,13 +15,16 @@ LDLIBS = $(ROOT_LIBS) -lstdc++
 
 all: gen_kdar_event
 
+GenGeomDAR.o: GenGeomDAR.cc GenGeomDAR.h
+	$(CC) $(CFLAGS) -c -o GenGeomDAR.o GenGeomDAR.cc
+
 tree3.o: tree3.cc tree3.h
-	g++ $(CFLAGS) -c -o tree3.o tree3.cc
+	$(CC) $(CFLAGS) -c -o tree3.o tree3.cc
 
 gen_kdar_event.o: gen_kdar_event.cc
 	$(CC) $(CFLAGS) -c -o gen_kdar_event.o gen_kdar_event.cc
 
-gen_kdar_event: gen_kdar_event.o tree3.o
-	g++ $(LDFLAGS) -o gen_kdar_event $^ $(LDLIBS)
+gen_kdar_event: gen_kdar_event.o tree3.o GenGeomDAR.o
+	$(CC) $(LDFLAGS) -o gen_kdar_event $^ $(LDLIBS)
 clean: 
 	rm *.o gen_kdar_event

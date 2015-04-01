@@ -2,25 +2,16 @@
 #include <string>
 #include <cstdlib>
 #include <vector>
+#include <ctime>
 
 #include "TFile.h"
 #include "TChain.h"
 #include "TGeoManager.h"
 #include "TGeoNode.h"
+#include "TRandom3.h"
 
 #include "tree3.h"
-
-// void output_event_to_rat( TTree* aStep ) {
-  
-//   double Eproton, Elepton, Ehadron, anglelep, Eall, Eleptrue, Elepkin, Elep_mev, Elepton_nosmear, Plep_mev;
-//   double MNminusV=939.56536-34.;
-//   double Mmuon=105.658;
-//   double bindingE=34.;
-//   double deltaM2=pow(939.56536,2)-pow(938.27203,2);
-
-  
-
-// };
+#include "GenGeomDAR.h"
 
 
 int main(int nargs, char** argv ) {
@@ -38,29 +29,36 @@ int main(int nargs, char** argv ) {
   if (nargs==4)
     offset = std::atoi(argv[3]);
 
-
-
-
   TFile* finput = new TFile( inputfile.c_str(), "open");
   TTree* tevents = (TTree*)finput->Get( "treeout" );
-  if ( tevents==NULL ) {
-    return -1;
-  }
+//   if ( tevents==NULL ) {
+//     return -1;
+//   }
 
   // geometry parameters (move to config file at some point)
   double baseline = 20000.0; // cm [200 m]. distance from center of tank to source
+  double source_pos[3] = { 0, 0, -baseline };
   double half_z_outerpipe = 10104.0/2.0; // cm
   double r_outerpipe = 192.0; // cm
-  double dist_src_2_frontface = baseline-half_z_outerpipe;
+  double half_z_dirt = 0.5*20000.0;
+  double dist_src_2_frontface = fabs(-half_z_outerpipe+baseline);
   if ( dist_src_2_frontface<0 )
     return -1;
 
-  // gdml data
-  TGeoManager* gdml = TGeoManager::Import("/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/data/kpipe/kpipe.gdml");
-  int trackid = 0;
-  int ntracks = gdml->AddTrack( trackid, 14 );
-  double src_pos[3] = { 0.0, 0.0, -dist_src_2_frontface*0.0 };
-  double src_dir[3] = { 0.0, 0.0, 1.0 };
+  // Vertex generator
+  std::string gdml_filename = "../data/kpipe/kpipe.gdml";
+  //std::string gdml_filename = "/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/data/kpipe/kpipe.gdml"
+  GenGeomDAR vtxgen( gdml_filename, source_pos, 0.8*dist_src_2_frontface, 1.1*(half_z_outerpipe-source_pos[2]), -1.1*half_z_outerpipe, 200.0, 200.0 );
+  vtxgen.MakeDiagnosticPlots();
+  double vertex[3];
+  double weight = 0;
+  for (int i=0; i<nevents; i++) {
+    if (i%1000==0)
+      std::cout << "vertex " << i << std::endl;
+    vtxgen.GetPosition( vertex, weight );
+  }
+  
+  return -1;
 
 
   // setup tree
@@ -73,16 +71,6 @@ int main(int nargs, char** argv ) {
   while ( bytes!=0 && ngen<nevents ) {
 
     // first need to generate point in detector
-    gdml->SetCurrentTrack( trackid );
-    gdml->SetCurrentDirection( src_dir );
-    gdml->SetCurrentPoint( src_pos );
-    TGeoNode* next_node = gdml->FindNode(0,0,src_pos[2]);
-    std::cout << "start: " << src_pos[2] << ": " << next_node->GetVolume()->GetName() << std::endl;
-    while (next_node ) {
-      next_node = gdml->FindNextBoundaryAndStep();
-      if ( next_node) 
-	std::cout << "next node: " << next_node->GetVolume()->GetName() << std::endl;
-    }
 
     // out to RAT
     //the zeroth entry in the array always refers to the outgoing lepton
