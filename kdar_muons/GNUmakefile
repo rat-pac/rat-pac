@@ -1,6 +1,7 @@
 # -*- mode: Makefile -*-
 
-CC = clang++
+#CC = clang++
+CC = g++
 
 ROOT_INCLUDES = `root-config --cflags`
 ROOT_LIBS = `root-config --glibs` -lGeom

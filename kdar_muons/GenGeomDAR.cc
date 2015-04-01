@@ -2,7 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#ifdef HAS_EXCEPTON
 #include <exception>
+#else
+#include <assert.h>
+#endif
 #include "TGeoManager.h"
 #include "TFile.h"
 #include "TH1D.h"
@@ -19,7 +23,11 @@ GenGeomDAR::GenGeomDAR( std::string gdml_file, double* source_pos, double rmin, 
 
   gdml = TGeoManager::Import( gdml_file.c_str() );
   if ( gdml==NULL ) {
+#ifdef HAS_EXCEPTON
     throw std::runtime_error( "Failed importing GDML geometry." );
+#else
+    assert(false);
+#endif
   }
   int trackid = 0;
   int ntracks = gdml->AddTrack( trackid, 14 ); // this values don't matter. just need track.
@@ -233,12 +241,12 @@ void GenGeomDAR::GenPosition( double dir[], double final_pos[], double& path_rat
 
 }
 
-void GenGeomDAR::GetPosition( double final_pos[], double& relative_weight ) {
+void GenGeomDAR::GetPosition( double dir[], double final_pos[], double& relative_weight ) {
 
   if ( fVerbose>=1 ) {
     std::cout << "GenGeomDAR::GetPosition -----------------------" << std::endl;
   }
-  double dir[3];
+
   double pathrate;
   // =================================================================
   // get valid direction

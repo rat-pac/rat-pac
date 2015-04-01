@@ -14,7 +14,7 @@ class GenGeomDAR {
  public:
   GenGeomDAR( std::string gdml_file, double* source_pos, double rmin, double rmax, double planez, double facex, double facey, int seed=-1 );
   ~GenGeomDAR();
-  void GetPosition( double pos[], double& relative_weight );
+  void GetPosition( double dir[], double pos[], double& relative_weight );
   void MakeDiagnosticPlots( std::string outfile="output_gengeomdarplots.root" );
   
  protected:
