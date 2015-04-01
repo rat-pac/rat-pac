@@ -490,7 +490,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     // Create and initialize a RAT DS::MCPMT 
     // note that GLG4HitPMTs are given IDs which are their index
     DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
-    mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //at this point the size represent the index
+    mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //the index of the last element represents the index of the PMT we just added
     rat_mcpmt->SetID(a_pmt->GetID());
     rat_mcpmt->SetType(fPMTInfo->GetType(a_pmt->GetID()));
 
