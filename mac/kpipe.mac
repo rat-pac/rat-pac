@@ -17,8 +17,10 @@
 /rat/proclast outroot
 #END EVENT LOOP
 
-/generator/add combo gun:point
-/generator/vtx/set e-  0 0 30.0
-/generator/pos/set 0 0 -1.3
+#/generator/add combo gun:point
+#/generator/vtx/set e-  0 0 30.0
+#/generator/pos/set 0 0 -1.3
+/generator/add external external:uniform:"/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 5 0 |"
+/generator/rate/set 10.0
 
 #/run/beamOn 1
