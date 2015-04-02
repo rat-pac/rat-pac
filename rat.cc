@@ -3,6 +3,8 @@
  * @author Stan Seibert <volsung@physics.utexas.edu>
  */
 
+#define HAS_G4DAE
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/time.h>

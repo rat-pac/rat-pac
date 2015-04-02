@@ -4,7 +4,7 @@
 /rat/db/set DETECTOR experiment "kpipe"
 #/rat/db/set DETECTOR geo_file "kpipe/kpipe.geo"
 /rat/db/set DETECTOR geo_file "kpipe/kpipe2.geo"
-/tracking/storeTrajectory 1
+#/tracking/storeTrajectory 1
 
 /run/initialize
 
@@ -23,4 +23,4 @@
 /generator/add external external:uniform:"/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 5 0 |"
 /generator/rate/set 10.0
 
-#/run/beamOn 1
+#/run/beamOn 100
