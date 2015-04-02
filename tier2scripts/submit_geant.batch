@@ -1,4 +1,5 @@
 Executable = /net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/tier2scripts/run_geant.sh 
+Arguments = $(Process)
 Universe = vanilla
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT

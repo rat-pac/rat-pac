@@ -1,4 +1,7 @@
 
+# GET JOBID FROM ARGUMENTS
+JOBID=$1
+
 SEED=$RANDOM$RANDOM
 
 if test -z "${_CONDOR_SCRATCH_DIR}"; then
@@ -15,11 +18,12 @@ source /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/env.sh
 
 #mkdir -p out
 
-# COPY EXE AND MACRO
+# COPY EXE
 cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/bin/rat ./
-cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/mac/kpipe.mac ./
+# GEN MACRO
+python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/gen_macro.py kpipe_job"$JOBID".mac
 
-./rat kpipe.mac -o output_kpipe_"$SEED".root
+./rat kpipe_job"$JOBID".mac -o output_kpipe_"$SEED".root
 
 i=`tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant|awk -F'[_]' '{print $2}'`
 tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant
