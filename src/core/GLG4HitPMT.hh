@@ -34,7 +34,7 @@
 
 class GLG4HitPMT {
 public:
-  GLG4HitPMT(int ID);
+  GLG4HitPMT(unsigned long ID);
   ~GLG4HitPMT();
 
   void Clear();
@@ -51,7 +51,7 @@ public:
   static const double kMergeTime;
   
 private:
-  int fID;
+  unsigned long fID;
   std::vector<GLG4HitPhoton*> fPhotons;
 };
 

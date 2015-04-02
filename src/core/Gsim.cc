@@ -491,7 +491,13 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     mcpmtObjects[a_pmt->GetID()] = rat_mcpmt;
     rat_mcpmt->SetID(a_pmt->GetID());
     DS::Run* run = DS::RunStore::GetRun(runID);
-    rat_mcpmt->SetType(run->GetPMTInfo()->GetType(a_pmt->GetID()));
+    try {
+      rat_mcpmt->SetType(run->GetPMTInfo()->GetType(a_pmt->GetID()));
+    }
+    catch (const std::out_of_range& e) {
+      info << "PMT Type out of range: " << a_pmt->GetID() << " min=0 max=" << run->GetPMTInfo()->GetPMTCount() << newline;
+      rat_mcpmt->SetType(0);
+    }
 
     numPE += a_pmt->GetEntries();
 

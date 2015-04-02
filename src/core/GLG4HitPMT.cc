@@ -26,7 +26,7 @@ const size_t GLG4HitPMT::kApproxMaxIndividualHitPhotonsPerPMT
 /// hit merging window in ns
 const double GLG4HitPMT::kMergeTime= 1.0;
 
-GLG4HitPMT::GLG4HitPMT(int ID)
+GLG4HitPMT::GLG4HitPMT(unsigned long ID)
 {
   fID= ID;
 }

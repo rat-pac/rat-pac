@@ -123,6 +123,7 @@ void DetectorConstruction::SetupGDMLSD() {
     GLG4SimpleOpDetSD* opdetsd = new GLG4SimpleOpDetSD( "opdet_lv_name" );
     sdman->AddNewDetector(opdetsd);
     G4PhysicalVolumeStore* pvolumes = G4PhysicalVolumeStore::GetInstance();
+    int nopdets = 0;
     for ( G4PhysicalVolumeStore::iterator it=pvolumes->begin(); it!=pvolumes->end(); it++) {
       G4VPhysicalVolume* volume = (*it);
       if ( volume->GetLogicalVolume()->GetName()==opdet_lv_name ) {
@@ -139,9 +140,11 @@ void DetectorConstruction::SetupGDMLSD() {
 	  Log::Die( "Error parsing OpDet physical volume name for channel ID. Need to place a number in the name." );
 	}
 	opdetsd->AddOpDetChannel( channelid, volume );
-	info << "Found OpDet instance. PVname=" << volume->GetName() << " ChannelID=" << channelid << newline;
+	nopdets += 1;
+	//info << "Found OpDet instance. PVname=" << volume->GetName() << " ChannelID=" << channelid << newline;
       }
     }
+    info << "Found OpDet " << nopdets << " instances." << newline;
     
     break;
   }

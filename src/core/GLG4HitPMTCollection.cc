@@ -44,7 +44,7 @@ void GLG4HitPMTCollection::DetectPhoton(GLG4HitPhoton* new_photon)
   }
   else {
     // make a HitPMT with this ID
-    fPMT.push_back( new GLG4HitPMT((short)new_photon->GetPMTID()) );
+    fPMT.push_back( new GLG4HitPMT((unsigned long)new_photon->GetPMTID()) );
     fPMT[fPMT.size()-1]->DetectPhoton(new_photon);
     fHitmap.insert(
 		   std::make_pair(

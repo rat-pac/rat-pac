@@ -53,7 +53,6 @@ void GLG4SimpleOpDetSD::Initialize(G4HCofThisEvent*)
 
 G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
 {
-  RAT::info << "GLG4SimpleOpDetSD detects something!" << newline;
 
   if (aStep->GetTrack()->GetDefinition()->GetParticleName() != "opticalphoton")
     return false;
@@ -62,8 +61,6 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   // (2) get track info
   // (3) call SimpleHit
   // (4) kill photon
-
-  RAT::info << "GLG4SimpleOpDetSD detects photon!" << newline;
 
   // get optical id
   G4StepPoint* prestep = aStep->GetPreStepPoint();
@@ -77,7 +74,8 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   G4int N_pe = 1;
   G4int trackid = aStep->GetTrack()->GetTrackID();
   G4bool prepulse = false;
-  
+  //RAT::info << "GLG4SimpleOpDetSD detects photon in OpDet Channel " << channelid << "!" << newline;
+
   SimpleHit( channelid, time, ke, pos, mom, pol, N_pe, trackid, prepulse );
   
   aStep->GetTrack()->SetTrackStatus(fStopAndKill);
