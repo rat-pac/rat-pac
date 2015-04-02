@@ -4,14 +4,14 @@
 /rat/db/set DETECTOR experiment "kpipe"
 #/rat/db/set DETECTOR geo_file "kpipe/kpipe.geo"
 /rat/db/set DETECTOR geo_file "kpipe/kpipe2.geo"
-/tracking/storeTrajectory 1
+#/tracking/storeTrajectory 1
 
 /run/initialize
 
 # BEGIN EVENT LOOP
 #/rat/proc simpledaq
 /rat/proc count
-/rat/procset update 10
+/rat/procset update 1
 
 # Use IO.default_output_filename
 /rat/proclast outroot
@@ -20,7 +20,7 @@
 #/generator/add combo gun:point
 #/generator/vtx/set e-  0 0 30.0
 #/generator/pos/set 0 0 -1.3
-/generator/add external external:uniform:"/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 5 0 |"
+/generator/add external external:uniform:"/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 100 0 |"
 /generator/rate/set 10.0
 
-#/run/beamOn 1
+/run/beamOn 100
