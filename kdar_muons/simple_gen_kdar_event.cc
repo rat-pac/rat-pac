@@ -47,11 +47,12 @@ int main(int nargs, char** argv ) {
   double rnorm = fabs( zrange[0] - source_pos[2] ); // event normalized to 1 at this radius
   bool save_diagnostic_plots = true;
 
-  std::string gdml_file = "/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/data/kpipe/kpipe.gdml";
+  std::string gdml_file = "/net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/data/kpipe/kpipe_nosipms.gdml";
   //std::string gdml_file = "../data/kpipe/kpipe.gdml";
   TGeoManager* gdml = TGeoManager::Import( gdml_file.c_str() );
-  TRandom3 rand( time(NULL) );
-
+  //TRandom3 rand( time(NULL) );
+  TRandom3 rand( 1 );
+  std::cerr << "Loaded GDML file." << std::endl;
   // setup tree
   tree data( tevents );
 
@@ -225,15 +226,15 @@ int main(int nargs, char** argv ) {
 
       //       ISTHEP IDHEP JDAHEP1 JDAHEP2 PHEP1 PHEP2 PHEP3 PHEP5 DT X Y Z PLX PLY PLZ 
       std::cout << "    ";
-      std::cout << 1 << " " << pdg[out] << " " << 0 << " " << 0 // ISTHEP IDHEP JDAHEP1 JDAHEP2
-		<< pmom[out]*pdir[out][0] << " " // PHEP1
-		<< pmom[out]*pdir[out][1] << " " // PHEP2
-		<< pmom[out]*pdir[out][2] << " " // PHEP3
-		<< data.post__mass[out] << " " // PHEP5
+      std::cout << 1 << " " << pdg[out] << " " << 0 << " " << 0 << " " // ISTHEP IDHEP JDAHEP1 JDAHEP2
+		<< pmom[out]*pdir[out][0] << " " // PHEP1 (GeV)
+		<< pmom[out]*pdir[out][1] << " " // PHEP2 (GeV)
+		<< pmom[out]*pdir[out][2] << " " // PHEP3 (GeV)
+		<< data.post__mass[out]*0.001 << " " // PHEP5 (GeV)
 		<< 0.0 << " " // DT
-		<< pos[0] << " " // X
-		<< pos[1] << " "  // Y
-		<< pos[2] << " " // Z
+		<< pos[0]*10.0 << " " // X (mm)
+		<< pos[1]*10.0 << " "  // Y (mm)
+		<< pos[2]*10.0 << " " // Z (mm)
 		<< std::endl;
 
     }//end of out loop
