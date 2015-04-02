@@ -21,7 +21,7 @@ source /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/env.sh
 # COPY EXE
 cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/bin/rat ./
 # GEN MACRO
-python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/gen_macro.py kpipe_job"$JOBID".mac
+python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/gen_macro.py kpipe_job"$JOBID".mac $JOBID
 
 ./rat kpipe_job"$JOBID".mac -o output_kpipe_"$SEED".root
 
