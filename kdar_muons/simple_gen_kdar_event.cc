@@ -51,7 +51,7 @@ int main(int nargs, char** argv ) {
   //std::string gdml_file = "../data/kpipe/kpipe.gdml";
   TGeoManager* gdml = TGeoManager::Import( gdml_file.c_str() );
   //TRandom3 rand( time(NULL) );
-  TRandom3 rand( 1 );
+  TRandom3 rand( offset );
   std::cerr << "Loaded GDML file." << std::endl;
   // setup tree
   tree data( tevents );

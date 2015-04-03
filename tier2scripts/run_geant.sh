@@ -1,6 +1,6 @@
 
 # GET JOBID FROM ARGUMENTS
-JOBID=$1
+JOBID=$(expr $1 + $2)
 
 SEED=$RANDOM$RANDOM
 
@@ -23,21 +23,21 @@ cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/bin/rat ./
 # GEN MACRO
 python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/gen_macro.py kpipe_job"$JOBID".mac $JOBID
 
-./rat kpipe_job"$JOBID".mac -o output_kpipe_"$SEED".root
+./rat kpipe_job"$JOBID".mac -o output_kpipe_"$JOBID".root
 
-i=`tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant|awk -F'[_]' '{print $2}'`
-tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant
-exit=`echo $?`
+#i=`tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant|awk -F'[_]' '{print $2}'`
+#tail -n 1 /net/hisrv0001/home/taritree/batch_runlist_geant
+#exit=`echo $?`
 
-if [ "$i" == ""  ];
-then
-i=10000
-fi
+#if [ "$i" == ""  ];
+#then
+#i=10000
+#fi
 
 let ii=$i+1
 
-mv output_kpipe_"$SEED".root output_kpipe_"$ii".root 
-echo run_"$ii"_seed_"$SEED">>/net/hisrv0001/home/taritree/batch_runlist_geant
+#mv output_kpipe_"$SEED".root output_kpipe_"$ii".root 
+#echo run_"$ii"_seed_"$SEED">>/net/hisrv0001/home/taritree/batch_runlist_geant
 
 
 scp ${_CONDOR_SCRATCH_DIR}/output_kpipe_* nudsk0001:/net/nudsk0001/d00/scratch/taritree/kpipe_out 2>> /net/hisrv0001/home/taritree/outlog
