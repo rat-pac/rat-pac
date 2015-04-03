@@ -17,11 +17,11 @@
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
-#include <RAT/InROOT_Gen.hh>
+#include <RAT/VertexFile_Gen.hh>
 #include <RAT/CfGen.hh>
 #include <RAT/EventInfo.hh>
 #include <RAT/TrackInfo.hh>
-#include <RAT/RATPrimaryVertexInformation.hh>
+#include <RAT/PrimaryVertexInformation.hh>
 
 #include <RAT/GLG4PrimaryGeneratorAction.hh>
 #include <RAT/GLG4Scint.hh>
@@ -111,8 +111,8 @@ void Gsim::Init() {
                                    new Alloc<GLG4Gen,Gen_LED>);
   GlobalFactory<GLG4Gen>::Register("coincidence",
                                    new Alloc<GLG4Gen,Coincidence_Gen>);
-  GlobalFactory<GLG4Gen>::Register("inroot",
-                                   new Alloc<GLG4Gen,InROOT_Gen>);
+  GlobalFactory<GLG4Gen>::Register("vertexfile",
+                                   new Alloc<GLG4Gen,VertexFile_Gen>);
 
   // An additional "messenger" class for user diagnostics
   theDebugMessenger = new GLG4DebugMessenger(theDetectorConstruction);
@@ -436,7 +436,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
       rat_mcpart->SetPolarization(TVector3(p->GetPolX(), p->GetPolY(), p->GetPolZ()));
     }
 
-    RATPrimaryVertexInformation *ratpvi = dynamic_cast<RATPrimaryVertexInformation*> (pv->GetUserInformation());
+    PrimaryVertexInformation *ratpvi = dynamic_cast<PrimaryVertexInformation*> (pv->GetUserInformation());
     if (ratpvi){
       for (int i=0;i<ratpvi->GetParentParticleCount();i++){
         G4PrimaryParticle *p = ratpvi->GetParentParticle(i);

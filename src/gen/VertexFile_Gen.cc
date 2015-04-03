@@ -1,11 +1,11 @@
-//  InROOT_Gen.cc
+//  VertexFile_Gen.cc
 // Contact person: R. Bonventre <rbonventre@lbl.gov>
-// See  InROOT_Gen.hh for more details
+// See  VertexFile_Gen.hh for more details
 //———————————————————————//
 
-#include <RAT/InROOT_Gen.hh>
+#include <RAT/VertexFile_Gen.hh>
 #include <RAT/Log.hh>
-#include <RAT/RATPrimaryVertexInformation.hh>
+#include <RAT/PrimaryVertexInformation.hh>
 #include <RAT/Factory.hh>
 #include <RAT/GLG4StringUtil.hh>
 #include <RAT/GLG4TimeGen.hh>
@@ -34,13 +34,13 @@ using namespace std;
 
 namespace RAT {
 
-void InROOT_Gen::GenerateEvent(G4Event *event)
+void VertexFile_Gen::GenerateEvent(G4Event *event)
 {
   fTTree->GetEntry(fCurrentEvent);
   DS::MC* mc = fDS->GetMC();
 
   G4PrimaryVertex *vertex;
-  RATPrimaryVertexInformation *vertinfo = new RATPrimaryVertexInformation();
+  PrimaryVertexInformation *vertinfo = new PrimaryVertexInformation();
 
   bool vertexset = false;
 
@@ -88,7 +88,7 @@ void InROOT_Gen::GenerateEvent(G4Event *event)
   }
 }
 
-void InROOT_Gen::ResetTime(double offset)
+void VertexFile_Gen::ResetTime(double offset)
 {
   if (fCurrentEvent < fNumEvents){
     if (fTimeGen){
@@ -104,7 +104,7 @@ void InROOT_Gen::ResetTime(double offset)
   }
 }
 
-void InROOT_Gen::SetState(G4String state)
+void VertexFile_Gen::SetState(G4String state)
 {
   // Break the argument to the this generator into sub-strings
   // separated by ":".
@@ -140,7 +140,7 @@ void InROOT_Gen::SetState(G4String state)
   if (nArgs >= 1){
     filename = parts[0];
   }else{
-    G4Exception(__FILE__, "Invalid Parameter", FatalException, ("inroot generator syntax error: '"+
+    G4Exception(__FILE__, "Invalid Parameter", FatalException, ("vertexfile generator syntax error: '"+
           state+"' does not have a filename").c_str());
   }
 
@@ -157,7 +157,7 @@ void InROOT_Gen::SetState(G4String state)
     G4Exception(__FILE__, "Invalid Parameter", FatalException, ("File '"+
           filename+"' is empty").c_str());
 
-  info << "InROOT_Gen: Reading from " << filename << newline;
+  info << "VertexFile_Gen: Reading from " << filename << newline;
 
   fDS = new DS::Root();
   fTTree->SetBranchAddress("ds", &fDS);
@@ -165,41 +165,41 @@ void InROOT_Gen::SetState(G4String state)
   fNumEvents = (int) fTTree->GetEntries();
 }
 
-G4String InROOT_Gen::GetState() const
+G4String VertexFile_Gen::GetState() const
 {
   return fStateStr;
 }
 
-void InROOT_Gen::SetTimeState(G4String state)
+void VertexFile_Gen::SetTimeState(G4String state)
 {
   if (fTimeGen)
       fTimeGen->SetState(state);
   else
-      warn << "InROOT_Gen error: Cannot set time state, no time generator selected\n";
+      warn << "VertexFile_Gen error: Cannot set time state, no time generator selected\n";
 }
 
-G4String InROOT_Gen::GetTimeState() const
+G4String VertexFile_Gen::GetTimeState() const
 {
   if (fTimeGen)
      return fTimeGen->GetState();
   else
-     return G4String("InROOT_Gen error: no time generator selected");
+     return G4String("VertexFile_Gen error: no time generator selected");
 }
 
-void InROOT_Gen::SetPosState(G4String state)
+void VertexFile_Gen::SetPosState(G4String state)
 {
   if (fPosGen)
      fPosGen->SetState(state);
   else
-     warn << "InROOT_Gen error: Cannot set position state, no position generator selected\n";
+     warn << "VertexFile_Gen error: Cannot set position state, no position generator selected\n";
 }
 
-G4String InROOT_Gen::GetPosState() const
+G4String VertexFile_Gen::GetPosState() const
 {
   if (fPosGen)
      return fPosGen->GetState();
   else
-     return G4String("InROOT_Gen error: no pos generator selected");
+     return G4String("VertexFile_Gen error: no pos generator selected");
 }
 
 

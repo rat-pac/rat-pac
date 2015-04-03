@@ -1,5 +1,5 @@
-#ifndef __RAT__RATPrimaryVertexInformation__
-#define __RAT__RATPrimaryVertexInformation__
+#ifndef __RAT__PrimaryVertexInformation__
+#define __RAT__PrimaryVertexInformation__
 
 #include <G4VUserPrimaryVertexInformation.hh>
 #include <G4PrimaryParticle.hh>
@@ -7,11 +7,11 @@
 
 namespace RAT {
 
-  class RATPrimaryVertexInformation : public G4VUserPrimaryVertexInformation
+  class PrimaryVertexInformation : public G4VUserPrimaryVertexInformation
   {
     public:
-      RATPrimaryVertexInformation() {};
-      ~RATPrimaryVertexInformation() {};
+      PrimaryVertexInformation() {};
+      ~PrimaryVertexInformation() {};
 
       void Print() const {}; // required for G4VUserPrimaryVertexInformation
 
