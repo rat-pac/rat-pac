@@ -1,5 +1,6 @@
-Executable = /net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/tier2scripts/run_geant.sh 
-Arguments = $(Process)
+#Executable = /net/hisrv0001/home/taritree/kpipe/ratpac-kpipe/tier2scripts/run_geant.sh 
+Executable = /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/run_geant.sh
+Arguments = $(Process) 100
 Universe = vanilla
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
