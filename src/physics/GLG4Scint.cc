@@ -221,8 +221,10 @@ GLG4Scint::PostPostStepDoIt(const G4Track& aTrack, const G4Step& aStep) {
     if (TotalEnergyDeposit <= 0.0 && !flagReemission)
       goto PostStepDoIt_DONE;
 
-    if (!physicsEntry)
+    if (!physicsEntry) {
+      G4cout << "physicsEntry empty for material=" << aMaterial->GetName() << G4endl;
       goto PostStepDoIt_DONE;
+    }
 
     // Finds E-dependent QF, unless the user provided an E-independent one
     if (!UserQF && physicsEntry->QuenchingArray != NULL) {
@@ -235,16 +237,15 @@ GLG4Scint::PostPostStepDoIt(const G4Track& aTrack, const G4Step& aStep) {
 
     // Retrieve the Light Yield or Scintillation Integral for this material  
     G4double ScintillationYield=physicsEntry->light_yield;
-    G4PhysicsOrderedFreeVector* ScintillationIntegral =
-      physicsEntry->spectrumIntegral;
-    G4PhysicsOrderedFreeVector* ReemissionIntegral =
-      physicsEntry->reemissionIntegral;
+    G4PhysicsOrderedFreeVector* ScintillationIntegral = physicsEntry->spectrumIntegral;
+    G4PhysicsOrderedFreeVector* ReemissionIntegral = physicsEntry->reemissionIntegral;
     
     if (!ScintillationIntegral) {
       if (ReemissionIntegral == NULL) { // If reemits, there's still work to do!
         goto PostStepDoIt_DONE;
       }
     }
+
     
     // If no LY defined Max Scintillation Integral == ScintillationYield
     if (!ScintillationYield) {
@@ -255,6 +256,7 @@ GLG4Scint::PostPostStepDoIt(const G4Track& aTrack, const G4Step& aStep) {
         ScintillationYield = ScintillationIntegral->GetMaxValue();
       }
     }
+
     
     // Set positions, directions, etc.
     G4StepPoint* pPreStepPoint = aStep.GetPreStepPoint();
@@ -550,17 +552,17 @@ GLG4Scint::PostPostStepDoIt(const G4Track& aTrack, const G4Step& aStep) {
     }
   }
 
-PostStepDoIt_DONE:
+ PostStepDoIt_DONE:
 #ifdef G4DEBUG    
   timer.Stop();
   GLG4Scint_tottime += timer.GetUserElapsed();
   GLG4Scint_num_phots += aParticleChange.GetNumberOfSecondaries();
 #endif
-
+  
 #ifdef G4VERBOSE
   if (verboseLevel > 1) {
     G4cout << "\n Exiting from GLG4Scint::DoIt -- NumberOfSecondaries = " 
-           << aParticleChange.GetNumberOfSecondaries() << G4endl;
+	   << aParticleChange.GetNumberOfSecondaries() << " produced by " << aTrack.GetDefinition()->GetParticleName() <<  G4endl;
   }
 #endif
 
@@ -793,8 +795,8 @@ void GLG4Scint::MyPhysicsTable::Entry::Build(
       G4cout << "\nI will assume that for this material this parameter is ";
       G4cout << "implicit in the scintillation integral..." << G4endl;
 
-      // If no light yield, it's no scintillator
-      theScintillationLightVector=NULL;
+      // If no light yield, it's no scintillator // THIS IS A BUG
+      //theScintillationLightVector=NULL;
     }
 
     // find the integral
