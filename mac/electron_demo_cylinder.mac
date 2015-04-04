@@ -19,4 +19,4 @@
 /generator/vtx/set e-  0 0 0 0 10.0 10.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 1000
+/run/beamOn 10
