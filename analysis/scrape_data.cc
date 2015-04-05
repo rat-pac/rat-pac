@@ -24,13 +24,13 @@ int main( int nargs, char** argv ) {
   DSReader* ds = new DSReader( inputfile.c_str() ); 
 
   TFile* tf_pmtinfo = new TFile( "/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/data/kpipe/PMTINFO.root", "open" );
-  TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
   float pmtpos[3];
   pmtinfo->SetBranchAddress("x",&pmtpos[0]);
   pmtinfo->SetBranchAddress("y",&pmtpos[1]);
   pmtinfo->SetBranchAddress("z",&pmtpos[2]);
 
   TFile* out = new TFile( outfile.c_str(), "RECREATE" );
+  
   // variables we want
   int npe;
   int npe_prompt;
@@ -83,7 +83,6 @@ int main( int nargs, char** argv ) {
 
   long ievent = 0;
   long nevents = ds->GetTotal();
-  nevents = 90000;
   
   while (ievent<nevents) {
     DS::Root* root = ds->NextEvent();
@@ -92,6 +91,8 @@ int main( int nargs, char** argv ) {
       std::cout << "Event " << ievent << std::endl;
 
     DS::MC* mc = root->GetMC();
+    if ( mc==NULL )
+      break;
     npe = mc->GetNumPE();
     npmts = mc->GetMCPMTCount();
 
