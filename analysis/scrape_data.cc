@@ -15,10 +15,15 @@ int main( int nargs, char** argv ) {
 
   //std::string inputfile = "../kpipeout_test.root";
   //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/first_set/run1_kpipe_output.root";
-  std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/run100_kpipe.root";
+  //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/run100_kpipe.root";
+  //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/kpipe_run00_partial.root";
+  std::string inputfile = argv[1];
+  std::string outfile = argv[2];
+
+
   DSReader* ds = new DSReader( inputfile.c_str() ); 
 
-  TFile* tf_pmtinfo = new TFile( "../data/kpipe/PMTINFO.root", "open" );
+  TFile* tf_pmtinfo = new TFile( outfile.c_str(), "open" );
   TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
   float pmtpos[3];
   pmtinfo->SetBranchAddress("x",&pmtpos[0]);
