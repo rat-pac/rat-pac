@@ -19,18 +19,18 @@ int main( int nargs, char** argv ) {
   //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/kpipe_run00_partial.root";
   std::string inputfile = argv[1];
   std::string outfile = argv[2];
-
+  std::cout << "analyze: " << inputfile << std::endl;
 
   DSReader* ds = new DSReader( inputfile.c_str() ); 
 
-  TFile* tf_pmtinfo = new TFile( outfile.c_str(), "open" );
+  TFile* tf_pmtinfo = new TFile( "/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/data/kpipe/PMTINFO.root", "open" );
   TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
   float pmtpos[3];
   pmtinfo->SetBranchAddress("x",&pmtpos[0]);
   pmtinfo->SetBranchAddress("y",&pmtpos[1]);
   pmtinfo->SetBranchAddress("z",&pmtpos[2]);
 
-  TFile* out = new TFile("output_scraped.root", "RECREATE" );
+  TFile* out = new TFile( outfile.c_str(), "RECREATE" );
   // variables we want
   int npe;
   int npe_prompt;
