@@ -24,6 +24,7 @@ int main( int nargs, char** argv ) {
   DSReader* ds = new DSReader( inputfile.c_str() ); 
 
   TFile* tf_pmtinfo = new TFile( "/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/data/kpipe/PMTINFO.root", "open" );
+  TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
   float pmtpos[3];
   pmtinfo->SetBranchAddress("x",&pmtpos[0]);
   pmtinfo->SetBranchAddress("y",&pmtpos[1]);
