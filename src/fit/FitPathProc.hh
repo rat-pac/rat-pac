@@ -29,7 +29,7 @@ public:
 protected:
     //per-event hit data
     std::vector<hit> fHits;
-    
+    TVector3 fFitPos; double fFitTime;
     std::vector<double> fSeed;
     
     //whole-run constants

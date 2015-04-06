@@ -250,16 +250,17 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
     stage1.Anneal(fTemp1,fNumCycles,fNumEvals,fAlpha);
     stage1.GetBestPoint(point);
     
-    TVector3 pos(point[0],point[1],point[2]);
+    fFitPos = TVector3(point[0],point[1],point[2]);
+    fFitTime = point[5];
+    
     
     const double costheta = cos(point[3]);
     const double sintheta = sqrt(1-costheta*costheta);
     TVector3 dir(sintheta*cos(point[4]),sintheta*sin(point[4]),costheta);
     
-    fit->SetPosition(pos);
+    fit->SetPosition(fFitPos);
+    fit->SetTime(fFitTime);
     fit->SetDirection(dir);
-    fit->SetTime(point[5]);
-    
 
     return Processor::OK;
 }
