@@ -34,8 +34,10 @@ int main( int nargs, char** argv ) {
   
   // variables we want
   int npe;
-  int npe_prompt;
-  int npe_late;
+  int npe_prompt[4];
+  int npe_late[4];
+  int npe_prompt_tot;
+  int npe_late_tot;
   int npmts;
   int nhoops;
   double pos[3];
@@ -56,8 +58,10 @@ int main( int nargs, char** argv ) {
   TTree* tree = new TTree( "mcdata", "MC Data" );
   // recon
   tree->Branch( "npe", &npe, "npe/I" );
-  tree->Branch( "npe_prompt", &npe_prompt, "npe_prompt/I" );
-  tree->Branch( "npe_late", &npe_late, "npe_late/I" );
+  tree->Branch( "npe_prompt", npe_prompt, "npe_prompt[4]/I" );
+  tree->Branch( "npe_late", npe_late, "npe_late[4]/I" );
+  tree->Branch( "npe_prompt_tot", npe_prompt_tot, "npe_prompt_tot/I" );
+  tree->Branch( "npe_late_tot", npe_late_tot, "npe_late_tot/I" );
   tree->Branch( "npmts", &npmts, "npmts/I" );
   tree->Branch( "pos", pos, "pos[3]/D" );
   tree->Branch( "r", &r, "r/D" );
@@ -124,7 +128,9 @@ int main( int nargs, char** argv ) {
     // recon
     int hoop_hit[1000] = {0};
     nhoops = 0;
-    npe_prompt = npe_late = 0;
+    for (int i=0; i<4; i++)
+      npe_prompt[i] = npe_late[i] = 0;
+    npe_prompt_tot = npe_late_tot = 0;
     tstart = tave = 0.0;
     r = z = qhr = qhz = 0.0;
     r_prompt = z_prompt = r_late = z_late = 0.0;
@@ -181,8 +187,13 @@ int main( int nargs, char** argv ) {
 	  DS::MCPhoton* hit = pmt->GetMCPhoton(ihit);
 	  // earliest time
 	  double t = hit->GetHitTime();
+	  int origin = hit->GetOriginFlag();
 	  if ( t<prompt_cut ) {
-	    npe_prompt += 1;
+	    if ( origin>=0 && origin<=2 )
+	      npe_prompt[origin] += 1;
+	    else
+	      npe_prompt[3] += 1;
+	    npe_prompt_tot += 1;
 	    tave += t;
 	    if ( tstart>t ) 
 	      tstart = t;
@@ -190,13 +201,16 @@ int main( int nargs, char** argv ) {
 	      pos_prompt[v] += pmtpos[v];
 	  }
 	  else {
-	    npe_late += 1;
+	    if ( origin>=0 && origin<=2 )
+	      npe_late[origin] += 1;
+	    else
+	      npe_late[3] += 1;
+	    npe_late_tot += 1;
 	    tave_dcye += t;
 	    if ( tstart_dcye>t )
 	      tstart_dcye = t;
 	    for (int v=0; v<3; v++)
 	      pos_late[v] += pmtpos[v];
-
 	  }
 	}//end of hit loop
       
@@ -206,11 +220,11 @@ int main( int nargs, char** argv ) {
       for (int v=0; v<3; v++) {
 	pos[v] /= double(npe);
 	qhpos[v] /= double(npe);
-	pos_prompt[v] /= double(npe_prompt);
-	pos_late[v] /= double(npe_late);
+	pos_prompt[v] /= double(npe_prompt_tot);
+	pos_late[v] /= double(npe_late_tot);
       }
-      tave /= double(npe_prompt);
-      tave_dcye /= double(npe_late);
+      tave /= double(npe_prompt_tot);
+      tave_dcye /= double(npe_late_tot);
 
       // r,z
       r = sqrt(pos[0]*pos[0]+pos[1]*pos[1]);
