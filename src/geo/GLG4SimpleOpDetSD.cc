@@ -74,9 +74,23 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
   G4int N_pe = 1;
   G4int trackid = aStep->GetTrack()->GetTrackID();
   G4bool prepulse = false;
+
+//   RAT::info << "GLG4SimpleOpDetSD detects photon in OpDet Channel " << channelid << "!"
+// 	    << " Photon origin=" << aStep->GetTrack()->GetCreatorProcess()->GetProcessName()
+// 	    << newline; 
+  int origin_flag = -1;
+  if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Cerenkov" )
+    origin_flag = 0;
+  else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Scintillation" )
+    origin_flag = 1;
+  else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Reemission" )
+    origin_flag = 2;
+  else
+    origin_flag = -1;
+  
   //RAT::info << "GLG4SimpleOpDetSD detects photon in OpDet Channel " << channelid << "!" << newline;
 
-  SimpleHit( channelid, time, ke, pos, mom, pol, N_pe, trackid, prepulse );
+  SimpleHit( channelid, time, ke, pos, mom, pol, N_pe, trackid, origin_flag, prepulse );
   
   aStep->GetTrack()->SetTrackStatus(fStopAndKill);
   return true;
@@ -86,14 +100,15 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
 // Here is the real "hit" routine, used by GLG4SimpleOpDetOpticalModel and by ProcessHits
 // It is more efficient in some ways.
 void GLG4SimpleOpDetSD::SimpleHit( G4int iopdet,
-			   G4double time,
-			   G4double kineticEnergy,
-			   const G4ThreeVector &hit_position,
-			   const G4ThreeVector &hit_momentum,
-			   const G4ThreeVector &hit_polarization,
-			   G4int iHitPhotonCount,
-			   G4int trackID,
-			   G4bool prepulse )
+				   G4double time,
+				   G4double kineticEnergy,
+				   const G4ThreeVector &hit_position,
+				   const G4ThreeVector &hit_momentum,
+				   const G4ThreeVector &hit_polarization,
+				   G4int iHitPhotonCount,
+				   G4int trackID,
+				   G4int origin_flag,
+				   G4bool prepulse )
 {
   G4int opdet_index = channelid_to_opdetindex[iopdet]-opdet_no_offset;
   if (opdet_index < 0 || opdet_index >= max_opdets)
@@ -129,8 +144,8 @@ void GLG4SimpleOpDetSD::SimpleHit( G4int iopdet,
   hit_photon->SetCount( iHitPhotonCount );
   hit_photon->SetTrackID( trackID );
   hit_photon->SetPrepulse( prepulse );
+  hit_photon->SetOriginFlag( origin_flag );
     
-  //  GLG4VEventAction::GetTheHitPhotons()->AddHitPhoton(hit_photon);
   GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon); // we still use the PMT hit collection.
 }
 

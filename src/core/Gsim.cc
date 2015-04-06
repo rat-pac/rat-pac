@@ -574,6 +574,7 @@ void Gsim::AddMCPhoton(DS::MCPMT* rat_mcpmt, const GLG4HitPhoton* photon,
     rat_mcphoton->SetMomentum(TVector3(x,y,z));
     photon->GetPolarization(x,y,z);
     rat_mcphoton->SetPolarization(TVector3(x,y,z));
+    rat_mcphoton->SetOriginFlag( photon->GetOriginFlag() );
     rat_mcphoton->SetTrackID(photon->GetTrackID());
   }
   else {
