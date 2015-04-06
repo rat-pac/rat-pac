@@ -10,8 +10,8 @@ pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
 pmtinfo = pmtinfo.set_index('opdetid')
 
 #reader = DSReader('kpipeout_test.root')
-reader = DSReader('../test.root')
-#reader = DSReader("output_kpipe_10.root")
+#reader = DSReader('../test.root')
+reader = DSReader("output_kpipe_101.root")
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -155,6 +155,9 @@ for iev in xrange(0,nevents):
     markpos.SetMarkerColor( 6 )
     markz = ROOT.TLine( vertex.Z()*0.1, 0, vertex.Z()*0.1, hz.GetMaximum() )
     markz.SetLineColor(2)
+
+    if htprompt_ceren.Integral()<10:
+        continue
 
     c.cd(1)
     c.cd(1).cd(1)
