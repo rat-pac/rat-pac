@@ -29,7 +29,7 @@
 
 class GLG4HitPhoton {
 public:
-  GLG4HitPhoton() { fPrepulse=false;}
+  GLG4HitPhoton() { fPrepulse=false; fOriginFlag=-1; }
 
   void SetPMTID(int id) { fPMTID= id; }
   void SetTime(double t) { fTime= t; }
@@ -42,6 +42,7 @@ public:
   void AddCount(int dcount) { fCount+= dcount; }
   void SetTrackID(int trackID) { fTrackID = trackID; }
   void SetPrepulse(bool prepulse) { fPrepulse = prepulse; }
+  void SetOriginFlag(int origin_flag ) { fOriginFlag = origin_flag; };
 
   int GetPMTID() const { return fPMTID; }
   double GetTime() const { return fTime; }
@@ -52,6 +53,7 @@ public:
   template <class T> inline void GetPolarization(T &x, T &y, T &z) const;
   int GetCount() const { return fCount; }
   int GetTrackID() const { return fTrackID; }
+  int GetOriginFlag() const { return fOriginFlag; };
   bool GetPrepulse() const { return fPrepulse; }
   
   void Print(std::ostream &) const;
@@ -65,6 +67,7 @@ private:
   float fPolarization[3]; /// x,y,z components of polarization
   int fCount;          /// count of photons, often 1
   int fTrackID;        /// ID number of track which generated this photoelectron
+  int fOriginFlag;     /// 0=Cerenkov,1=Scintillation,2=Reemission (absorption/scatter)
   bool fPrepulse;       // if this photon was transmitted through the 
                         // the photocathode and a photoelectron was created
                         // at the first dynode, we will choose from the

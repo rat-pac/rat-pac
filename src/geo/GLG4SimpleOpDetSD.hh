@@ -61,6 +61,7 @@ class GLG4SimpleOpDetSD : public G4VSensitiveDetector
 		      const G4ThreeVector & momentum,
 		      const G4ThreeVector & polarization,
 		      G4int iHitPhotonCount,
+		      G4int origin_flag,
 		      G4int trackID=-1,
 		      G4bool prepulse=false );
   
