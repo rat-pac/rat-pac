@@ -49,11 +49,11 @@ double PDFPMTTime::PickTime(double time) const {
     double rval = G4UniformRand();
     for (size_t i = 1; i < fTime.size(); i++) {
         if (rval <= fTimeProbCumu[i]) {
-            return fCableDelay + (rval - fTimeProbCumu[i-1])*(fTime[i]-fTime[i-1])/(fTimeProbCumu[i]-fTimeProbCumu[i-1]) + fTime[i-1]; //linear interpolation
+            return time + fCableDelay + (rval - fTimeProbCumu[i-1])*(fTime[i]-fTime[i-1])/(fTimeProbCumu[i]-fTimeProbCumu[i-1]) + fTime[i-1]; //linear interpolation
         }
     }
     info << "PDFPMTTime::PickTime: impossible condition encountered - returning highest defined time" << endl;
-    return fTime[fTime.size()-1];
+    return time + fCableDelay + fTime[fTime.size()-1];
 }
   
 } // namespace RAT
