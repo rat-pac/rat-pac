@@ -32,6 +32,7 @@ protected:
   G4VPhysicalVolume* fWorldPhys;
 
   void SetupGDMLSD();
+  void SetupGDMLSurfaces();
 };
 
 }  // namespace RAT

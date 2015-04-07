@@ -402,7 +402,7 @@ Materials::LoadProperty(DBLinkPtr table, std::string name) {
   G4MaterialPropertyVector* pv = new G4MaterialPropertyVector();
   for (int i=start; i>=0 && i<(int)val1.size(); i+=direction) {
     double E_value= val1[i];
-    double p_value= val2[i];
+    G4double p_value= val2[i];
     if (wavelength_opt) {
       if (E_value != 0.0) {
         double lam = E_value;
@@ -414,7 +414,9 @@ Materials::LoadProperty(DBLinkPtr table, std::string name) {
         G4cerr << "Materials property vector zero wavelength!\n";
       }
     }
-    pv->InsertValues(E_value, p_value);
+    //pv->InsertValues(E_value, p_value);
+    G4double g4E_value = E_value;
+    pv->InsertValues(g4E_value, p_value);
   }
 
   return pv;
@@ -444,6 +446,7 @@ Materials::BuildMaterialPropertiesTable(G4Material* material, DBLinkPtr table) {
 
   // Loop over DB fields containing material (optical) properties
   for (vector<std::string>::iterator i=props.begin(); i!=props.end(); i++) {
+    G4cout << " storing material property " << name << "::" << *i << G4endl;
     // Handle const properties
     if (*i == "LIGHT_YIELD"           || *i == "dEdxCOEFF"            ||
         *i == "WLSTIMECONSTANT"       || *i == "WLSMEANNUMBERPHOTONS" ||

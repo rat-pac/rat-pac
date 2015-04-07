@@ -61,8 +61,9 @@ G4LogicalVolume *GeoFactory::FindMother(const std::string mother_name)
        i_volume != store->end(); ++i_volume) {
     G4LogicalVolume* testvolume = *i_volume;
     // Cast to G4String to avoid ambiguious overload
-    if (testvolume->GetName() == G4String(mother_name))
+    if (testvolume->GetName() == G4String(mother_name)) {
       return testvolume;
+    }
   }
 
   return 0;

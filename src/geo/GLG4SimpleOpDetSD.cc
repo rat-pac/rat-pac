@@ -79,14 +79,16 @@ G4bool GLG4SimpleOpDetSD::ProcessHits(G4Step* aStep, G4TouchableHistory* hist)
 // 	    << " Photon origin=" << aStep->GetTrack()->GetCreatorProcess()->GetProcessName()
 // 	    << newline; 
   int origin_flag = -1;
-  if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Cerenkov" )
-    origin_flag = 0;
-  else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Scintillation" )
-    origin_flag = 1;
-  else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Reemission" )
-    origin_flag = 2;
-  else
-    origin_flag = -1;
+  if ( aStep->GetTrack()->GetCreatorProcess() ) {
+    if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Cerenkov" )
+      origin_flag = 0;
+    else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Scintillation" )
+      origin_flag = 1;
+    else if ( aStep->GetTrack()->GetCreatorProcess()->GetProcessName()=="Reemission" )
+      origin_flag = 2;
+    else
+      origin_flag = -1;
+  }
   
   //RAT::info << "GLG4SimpleOpDetSD detects photon in OpDet Channel " << channelid << "!" << newline;
 
