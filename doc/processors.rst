@@ -17,6 +17,22 @@ Parameters
 ''''''''''
 None.
 
+watchmandaq
+```````````
+
+For now simply a clone of simpledaq, but takes into account transit-time spread on the first photon hit time.
+
+Command
+'''''''
+
+::
+
+    /rat/proc watchmandaq
+
+Parameters
+''''''''''
+None.
+
 count
 `````
 
