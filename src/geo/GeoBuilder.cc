@@ -164,8 +164,7 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
 
         if (LogVol1 != 0 && LogVol2 != 0) {
           try {
-	    info << "Building Border " << name << newline;
-              GeoFactory::ConstructWithFactory(type, table);
+	    GeoFactory::ConstructWithFactory(type, table);
           } catch (GeoFactoryNotFoundError &e) {
           Log::Die("GeoBuilder error: Cannot find factory for volume type "  + type);
           }

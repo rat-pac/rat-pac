@@ -88,18 +88,16 @@ G4VPhysicalVolume *GeoSurfaceFactory::Construct(DBLinkPtr table) {
       if (Materials::optical_surface.count(surface_name) == 0)
         Log::Die("GeoSurfaceFactory: Error building "+border_name+", surface "
                 + surface_name + " does not exist");
-      G4LogicalBorderSurface* surf_forward = new G4LogicalBorderSurface("interface"+volume1_name+"_"+volume2_name,
-									Phys1,Phys2,
-									Materials::optical_surface[surface_name]);
-      G4LogicalBorderSurface* surf_reverse = NULL;
+      new G4LogicalBorderSurface("interface"+volume1_name+"_"+volume2_name,
+				 Phys1,Phys2,
+				 Materials::optical_surface[surface_name]);
       int reverse=0;
       try {reverse=table->GetI("reverse");
       } catch (DBNotFoundError &e) {};
       if(reverse)
-        surf_reverse = new G4LogicalBorderSurface("interface"+volume2_name+"_"+volume1_name,
-						  Phys2,Phys1,
-						  Materials::optical_surface[surface_name]);
-      cout << "surfaces defined: " << surf_forward << " " << surf_reverse << endl;
+        new G4LogicalBorderSurface("interface"+volume2_name+"_"+volume1_name,
+				   Phys2,Phys1,
+				   Materials::optical_surface[surface_name]);
     } catch (DBNotFoundError &e) {
       Log::Die("No surface name defined");
     };

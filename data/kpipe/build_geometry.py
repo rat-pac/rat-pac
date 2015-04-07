@@ -90,7 +90,7 @@ part1="""<?xml version="1.0" encoding="UTF-8"?>
     <fraction n="0.001097" ref="ppo"/>
   </material>
 
-  <material formula=" " name="chipsilicon">
+  <material formula=" " name="chip_silicon">
     <D value="2.3" unit="g/cc"/>
     <fraction n="1.0" ref="silicon"/>
   </material>
@@ -163,11 +163,11 @@ part1="""<?xml version="1.0" encoding="UTF-8"?>
 <structure>
   <!-- building the world inside-out -->
   <volume name="volActiveSiPM">
-    <materialref ref="chipsilicon"/>
+    <materialref ref="scintillator"/>
     <solidref ref="sipm_active"/>
   </volume>
   <volume name="volInactiveSiPM">
-    <materialref ref="chipsilicon"/>
+    <materialref ref="chip_silicon"/>
     <solidref ref="sipm_inactive"/>
   </volume>
 """
@@ -176,7 +176,7 @@ part2 = """
   <volume name="volInnerPipe">
     <materialref ref="stainless_steel"/>
     <solidref ref="innerpipe"/>
-    <physvol>
+    <physvol name="pvTarget">
       <volumeref ref="volTarget"/>
       <position name="posTargetVolume" unit="m" x="0" y="0" z="0"/>
     </physvol>
@@ -185,7 +185,7 @@ part2 = """
   <volume name="volVetoRegion">
     <materialref ref="scintillator"/>
     <solidref ref="vetoregion"/>
-    <physvol>
+    <physvol name="pvInnerPipe">
       <volumeref ref="volInnerPipe"/>
       <position name="posInnerPipe" unit="m" x="0" y="0" z="0"/>
     </physvol>
@@ -194,7 +194,7 @@ part2 = """
   <volume name="volOuterPipe">
     <materialref ref="stainless_steel"/>
     <solidref ref="outerpipe"/>
-    <physvol>
+    <physvol name="pvVetoRegion">
       <volumeref ref="volVetoRegion"/>
       <position name="posVetoRegion" unit="m" x="0" y="0" z="0"/>
     </physvol>
@@ -212,7 +212,7 @@ part2 = """
       <volumeref ref="volDirt"/>
       <position name="posDirt" unit="m" x="0" y="-8.0-1.92" z="0"/>
     </physvol>
-    <physvol>
+    <physvol name="pvOuterPipe">
       <volumeref ref="volOuterPipe"/>
       <position name="posOuterPipe" unit="m" x="0" y="0" z="0"/>
     </physvol>
@@ -279,9 +279,9 @@ def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_
     targetvol_nosipms+= "    <solidref ref=\"targetvolume\"/>\n"
     targetvol_nosipms+= "  </volume>\n"
     
-    #fgdml = open( gdml_filename, 'w' )
-    #print >> fgdml, part1+"\n"+targetvol+"\n"+part2+"\n"
-    #fgdml.close()
+    fgdml = open( gdml_filename, 'w' )
+    print >> fgdml, part1+"\n"+targetvol+"\n"+part2+"\n"
+    fgdml.close()
 
     fgdml = open( gdml_filename.replace(".gdml","_nosipms.gdml"), 'w' )
     print >> fgdml, part1+"\n"+targetvol_nosipms+"\n"+part2+"\n"
