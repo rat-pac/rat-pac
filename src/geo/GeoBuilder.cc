@@ -112,7 +112,10 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
 	// parse the file
 	gdml_parser.Read( glg4data+"/"+experiment+"/"+gdmlfilename );
 	// return the world volume
-	return gdml_parser.GetWorldVolume();
+	//return gdml_parser.GetWorldVolume();
+	world = gdml_parser.GetWorldVolume();
+	geo.erase(i_table);
+	break;
       }
       catch (DBNotFoundError &e) {
 	// do nothing. keep going.
@@ -154,12 +157,14 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
         } catch (DBNotFoundError &e) {
         Log::Die("GeoBuilder error: border " + name + " has no volume2");
         }
-        G4LogicalVolume* LogVol1 = GeoFactory::FindMother(volume1);
-        G4LogicalVolume* LogVol2 = GeoFactory::FindMother(volume2);
+        //G4LogicalVolume* LogVol1 = GeoFactory::FindPhysMother(volume1);
+        //G4LogicalVolume* LogVol2 = GeoFactory::FindPhysMother(volume2);
+        G4VPhysicalVolume* LogVol1 = GeoFactory::FindPhysMother(volume1); // redundant
+        G4VPhysicalVolume* LogVol2 = GeoFactory::FindPhysMother(volume2); // redundant
 
         if (LogVol1 != 0 && LogVol2 != 0) {
           try {
-              GeoFactory::ConstructWithFactory(type, table);
+	    GeoFactory::ConstructWithFactory(type, table);
           } catch (GeoFactoryNotFoundError &e) {
           Log::Die("GeoBuilder error: Cannot find factory for volume type "  + type);
           }

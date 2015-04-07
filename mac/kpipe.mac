@@ -3,7 +3,8 @@
 
 /rat/db/set DETECTOR experiment "kpipe"
 #/rat/db/set DETECTOR geo_file "kpipe/kpipe.geo"
-/rat/db/set DETECTOR geo_file "kpipe/kpipe2.geo"
+#/rat/db/set DETECTOR geo_file "kpipe/kpipe2.geo"
+/rat/db/set DETECTOR geo_file "kpipe/kpipe_wsipms.geo"
 #/tracking/storeTrajectory 1
 
 /run/initialize
@@ -17,10 +18,10 @@
 /rat/proclast outroot
 #END EVENT LOOP
 
-/generator/add combo gun:point
-/generator/vtx/set mu-  0 0 50.0
-/generator/pos/set 0 0 -1.3
-#/generator/add external external:uniform:"/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 100 0 |"
-#/generator/rate/set 10.0
+#/generator/add combo gun:point
+#/generator/vtx/set e-  0 0 30.0
+#/generator/pos/set 0 0 0
+/generator/add external external:uniform:"/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 100 0 |"
+/generator/rate/set 10.0
 
-/run/beamOn 10
+/run/beamOn 1

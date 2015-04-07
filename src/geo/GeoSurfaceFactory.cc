@@ -5,6 +5,7 @@
 #include <G4LogicalBorderSurface.hh>
 #include <G4VisAttributes.hh>
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 
@@ -29,18 +30,30 @@ G4VPhysicalVolume *GeoSurfaceFactory::Construct(DBLinkPtr table) {
   } catch (DBNotFoundError &e) {
     Log::Die("Unable to find the first volume");
   };
-  RAT::DBLinkPtr table1=DB::Get()->GetLink("GEO",volume1_name);
-  string type1 = table1->GetS("type");
-  if (type1.find("array") !=string::npos) isArray1=true;
-  
+
+  RAT::DBLinkPtr table1;
+  string type1;
+  try {
+    table1=DB::Get()->GetLink("GEO",volume1_name);  
+    type1=table1->GetS("type");
+    if (type1.find("array") !=string::npos) isArray1=true;
+  } catch(DBNotFoundError &e) {
+  }
+
   try {
     volume2_name = table->GetS("volume2");
   } catch (DBNotFoundError &e) {
     Log::Die("Unable to find the second volume");
   };
-  DBLinkPtr table2=DB::Get()->GetLink("GEO",volume2_name);
-  string type2 = table2->GetS("type");
-  if (type2.find("array") !=string::npos) isArray2=true;
+
+  DBLinkPtr table2;
+  string type2;
+  try {
+    table2 =DB::Get()->GetLink("GEO",volume2_name);
+    type2 = table2->GetS("type");
+    if (type2.find("array") !=string::npos) isArray2=true;
+  }catch(DBNotFoundError &e) {
+  }
 
   G4VPhysicalVolume* Phys1, *Phys2;
   G4int counter =0;
@@ -48,9 +61,9 @@ G4VPhysicalVolume *GeoSurfaceFactory::Construct(DBLinkPtr table) {
     Phys1=NULL;
     Phys2=NULL;
     
-    
     /// looking for the first volume (FindPhysMother is misnamed)
-  Phys1 = FindPhysMother(volume1_name + ((isArray1)? "_"+ConvertIntToString(counter) : "") );
+    Phys1 = FindPhysMother(volume1_name + ((isArray1)? "_"+ConvertIntToString(counter) : "") );
+
     if (!Phys1){
       if (isArray1){ 
         if (counter==0) Log::Die(volume1_name+" not found");
@@ -58,9 +71,9 @@ G4VPhysicalVolume *GeoSurfaceFactory::Construct(DBLinkPtr table) {
       }
       else Log::Die(volume1_name+" not found");
     }
-
-  /// looking for the second volume (FindPhysMother is misnamed)
-  Phys2 = FindPhysMother(volume2_name + ((isArray2)? "_"+ConvertIntToString(counter) : ""));
+    
+    /// looking for the second volume (FindPhysMother is misnamed)
+    Phys2 = FindPhysMother(volume2_name + ((isArray2)? "_"+ConvertIntToString(counter) : ""));
     if (!Phys2){
       if (isArray2){ 
         if (counter==0) Log::Die(volume2_name+" not found");
@@ -76,15 +89,15 @@ G4VPhysicalVolume *GeoSurfaceFactory::Construct(DBLinkPtr table) {
         Log::Die("GeoSurfaceFactory: Error building "+border_name+", surface "
                 + surface_name + " does not exist");
       new G4LogicalBorderSurface("interface"+volume1_name+"_"+volume2_name,
-                                Phys1,Phys2,
-                                Materials::optical_surface[surface_name]);
+				 Phys1,Phys2,
+				 Materials::optical_surface[surface_name]);
       int reverse=0;
       try {reverse=table->GetI("reverse");
       } catch (DBNotFoundError &e) {};
       if(reverse)
         new G4LogicalBorderSurface("interface"+volume2_name+"_"+volume1_name,
-                                  Phys2,Phys1,
-                                  Materials::optical_surface[surface_name]);
+				   Phys2,Phys1,
+				   Materials::optical_surface[surface_name]);
     } catch (DBNotFoundError &e) {
       Log::Die("No surface name defined");
     };

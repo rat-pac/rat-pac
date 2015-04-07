@@ -618,6 +618,7 @@ void MYNAME_PhysicsList::ConstructEM()
 #include "RAT/Cerenkov.hh"
 #include "RAT/WlsScintillation.hh"
 #include "G4Scintillation.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "GLG4OpAttenuation.hh"
 #include "RAT/OpWLS.hh"
 #include "GLG4Scint.hh"
@@ -629,6 +630,8 @@ void MYNAME_PhysicsList::ConstructOp()
   RAT::Cerenkov* theCerenkovProcess = new RAT::Cerenkov("Cerenkov");
 
   GLG4OpAttenuation* theAttenuationProcess = new GLG4OpAttenuation();
+  G4OpBoundaryProcess* theBoundaryProcess  = new G4OpBoundaryProcess();
+
   //  GLG4OpAttenuation implements Rayleigh scattering.
   //  G4OpRayleigh is not used for the following two reasons:
   //    1) It doesn't even try to work for anything other than water.
@@ -743,6 +746,7 @@ void MYNAME_PhysicsList::ConstructOp()
     }
     if (particleName == "opticalphoton") {
       pmanager->AddDiscreteProcess(theAttenuationProcess);
+      pmanager->AddDiscreteProcess(theBoundaryProcess);
 
       theWLSProcess->UseTimeProfile("exponential");
       pmanager->AddDiscreteProcess(theWLSProcess);
