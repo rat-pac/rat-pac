@@ -52,8 +52,9 @@ int main( int argc, const char *argv[]) {
 
   int nEv=1000; //....default number of cosmic-ray events to produce
 
-  if ( argc < 2 ) {
-    std::cout << "usage " << argv[0] << " <setup file name> <N events>\n";
+  if ( argc < 3 ) {
+    std::cout << "usage " << argv[0] << " <setup file name> <output file> <N events>\n";
+    std::cout << "output file: ROOT file" << std::endl;
     std::cout << "N events = " << nEv << " by default\n";
     return 0;
   }

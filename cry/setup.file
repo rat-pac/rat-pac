@@ -2,6 +2,6 @@ returnNeutrons 1
 returnProtons 1
 returnGammas 1
 date 7-1-2012
-latitude 90.0
+latitude 35.0
 altitude 0
-subboxLength 100
+subboxLength 150
