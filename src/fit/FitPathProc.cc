@@ -14,6 +14,13 @@
 #include <RAT/DB.hh>
 #include <RAT/SimulatedAnnealing.hh>
 
+#include <Minuit2/MnMigrad.h>
+#include <Minuit2/MnMinimize.h>
+#include <Minuit2/MnSimplex.h>
+#include <Minuit2/MnUserParameters.h>
+#include <Minuit2/FunctionMinimum.h>
+using namespace ROOT::Minuit2;
+
 using namespace std;
 
 namespace RAT {
@@ -87,7 +94,7 @@ FitPathProc::FitPathProc() : Processor("fitpath") {
 
 ///Arguments are event {position},{direction unit},time
 ///Excuse my intentional use of basic types and explicit variables - optomization in progress
-double FitPathProc::FTPProbability(double x, double y, double z, double dx, double dy, double dz, double t) {
+double FitPathProc::FTPProbability(const double x, const double y, const double z, const double dx, const double dy, const double dz, const double t) const {
     const double c = fLightSpeed;
     const double prob_direct = fDirectProb;
     const double prob_other = fOtherProb;
@@ -143,6 +150,13 @@ double FitPathProc::AvgSquareTimeResid(double x, double y, double z, double t) {
     }
     //if (t < -10) cout << " = " << sum/nHits << endl;
     return sum/nHits;
+}
+
+
+double FitPathProc::operator()(const std::vector<double>& lParams ) const {
+    const double costheta = cos(lParams[3]);
+    const double sintheta = sqrt(1-costheta*costheta);
+    return -log(FTPProbability(lParams[0],lParams[1],lParams[2],sintheta*cos(lParams[4]),sintheta*sin(lParams[4]),costheta,lParams[5]));
 }
 
 
@@ -250,9 +264,28 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
     stage1.Anneal(fTemp1,fNumCycles,fNumEvals,fAlpha);
     stage1.GetBestPoint(point);
     
+    seed = point;
+    vector<double> errors(6);
+    errors[0] = errors[1] = errors[2] = 1000.0;
+    errors[3] = errors[4] = 2.0;
+    errors[5] = 10.0; 
+    
+    gErrorIgnoreLevel = 1001;
+    
+    MnUserParameters mnParams = MnUserParameters(seed,errors);
+    MnUserTransformation trafo;
+    MinimumState minState(seed.size());
+    MinimumSeed minSeed(minState, trafo);
+    FunctionMinimum theMin(minSeed, 1.);
+    MnMigrad migrad( *this, mnParams );
+    
+    theMin = migrad(0,0.1);
+    
+    MnUserParameters result = theMin.UserParameters();
+    point = result.Params();
+    
     fFitPos = TVector3(point[0],point[1],point[2]);
     fFitTime = point[5];
-    
     
     const double costheta = cos(point[3]);
     const double sintheta = sqrt(1-costheta*costheta);

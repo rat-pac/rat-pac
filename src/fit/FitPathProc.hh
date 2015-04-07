@@ -6,6 +6,11 @@
 #include <RAT/SimulatedAnnealing.hh>
 #include <RAT/Processor.hh>
 
+
+#include <Minuit2/FCNBase.h>
+
+using namespace ROOT::Minuit2;
+
 namespace RAT {
 
 namespace DS {
@@ -17,14 +22,16 @@ typedef struct {
     double x,y,z,px,py,pz,t;
 } hit;
   
-class FitPathProc : public Processor, public Minimizable {
+class FitPathProc : public Processor, public Minimizable, public FCNBase {
 public:
   FitPathProc();
   virtual ~FitPathProc() {}
 
   virtual Processor::Result Event(DS::Root* ds, DS::EV* ev);
   
-  double operator()(double *params);
+  double operator()(double *params); //Minimizable
+  double operator()(const std::vector<double>& lParams ) const; //FCNBase
+  double Up() const { return 0.5; } //FCNBase
 
 protected:
     //per-event hit data
@@ -46,25 +53,25 @@ protected:
     double fPosSigma0, fPosSigma1, fThetaSigma, fPhiSigma, fTimeSigma0, fTimeSigma1;
     double fTemp0, fTemp1, fAlpha;
     
-    inline double PDFDirectTime(double tresid) {
+    inline double PDFDirectTime(const double tresid) const {
         const int i = (int)((tresid - fDirectTime0)/fDirectTimeStep);
         if (i < 0 || i >= (int)fDirectTimeProb.size()) return 0.0;
         return fDirectTimeProb[i];
     }
 
-    inline double PDFOtherTime(double tresid) {
+    inline double PDFOtherTime(const double tresid) const {
         const int i = (int)((tresid - fOtherTime0)/fOtherTimeStep);
         if (i < 0 || i >= (int)fOtherTimeProb.size()) return 0.0;
         return fOtherTimeProb[i];
     }
 
-    inline double PDFCherenkovAngle(double cosalpha) {
+    inline double PDFCherenkovAngle(const double cosalpha) const {
         const int i = (int)((cosalpha - fCosAlpha0)/fCosAlphaStep);
         if (i < 0 || i >= (int)fCosAlphaProb.size()) return 0.0;
         return fCosAlphaProb[i];
     }
     
-    double FTPProbability(double x, double y, double z, double dx, double dy, double dz, double t);
+    double FTPProbability(const double x, const double y, const double z, const double dx, const double dy, const double dz, const double t) const;
     
     double AvgSquareTimeResid(double x, double y, double z, double t);
     
