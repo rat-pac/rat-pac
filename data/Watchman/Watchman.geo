@@ -6,7 +6,7 @@ valid_end: [0, 0],
 mother: "", // world volume has no mother
 type: "box",
 size: [10000.0, 10000.0, 10000.0], // mm, half-length
-material: "steel", //rock?
+material: "stainless_steel", //rock?
 invisible: 1,
 }
 
@@ -20,7 +20,7 @@ type: "tube",
 r_max: 8000.0,
 size_z: 8000.0,
 position: [0.0, 0.0, 0.0],
-material: "steel",
+material: "stainless_steel",
 color: [0.2,0.2,0.2,0.1],
 drawstyle: "solid"
 }
@@ -64,9 +64,9 @@ r_max: 9.525,
 size_z: 7984.125,
 pos_table: "cable_pos",
 orientation: "manual",
-material: "steel",
+material: "stainless_steel",
 drawstyle: "solid",
-color: [0.2,0.2,0.2,0.0],
+color: [0.2,0.2,0.2,0.1],
 }
 
 {
@@ -114,13 +114,13 @@ shield_thickness: 1600.0,
 steel_thickness: 1.5875,
 cols: 96,
 rows: 30,
-frame_material: "steel",
+frame_material: "stainless_steel",
 inside_surface: "black_water",
 outside_surface: "white_water",
 
 drawstyle: "solid",
 position: [0.0, 0.0, 0.0],
-color: [0.1, 0.1, 0.1, 0.1],
+color: [0.1, 0.8, 0.1, 0.01],
 }
 
 // Fiducial defined as separate geometry component a la baccarat
