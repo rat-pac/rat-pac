@@ -1,22 +1,22 @@
 # -*- mode: Makefile -*-
 
-CC = clang++
-#CC = g++
+#CC = clang++
+CC = g++
 
 ROOT_INCLUDES = `root-config --cflags`
 ROOT_LIBS = `root-config --libs` -lGeom -lMinuit
 RAT_INCLUDES = -I./../include
 RAT_LIBS = -L./../lib -lRATEvent -lrat
 LOCAL_INC = -I. 
-LOCAL_INC += -I/Users/twongjirad/software/gperftools-2.4/include
+#LOCAL_INC += -I/Users/twongjirad/software/gperftools-2.4/include
 
 
-CFLAGS = -g
-#CFLAGS = -O3
+#CFLAGS = -g -fPIC
+CFLAGS = -O3 -fPIC
 CFLAGS += $(ROOT_INCLUDES) $(RAT_INCLUDES) $(LOCAL_INC)
 LDFLAGS += `root-config --ldflags` 
 LDLIBS = $(RAT_LIBS) $(ROOT_LIBS) -lstdc++
-LDLIBS += -L/Users/twongjirad/software/gperftools-2.4/lib -lprofiler 
+#LDLIBS += -L/Users/twongjirad/software/gperftools-2.4/lib -lprofiler 
 
 all: libKPFit.so run_kpfit
 
