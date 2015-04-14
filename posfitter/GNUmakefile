@@ -29,6 +29,7 @@ kpfit.o: kpfit.hh kpfit.cc
 
 libKPFit.so: kpfit.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LDLIBS)
+	cp libKPFit.so ../lib/
 
 clean: 
 	rm *.o libKPFit.so run_kpfit
