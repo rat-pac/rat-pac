@@ -121,7 +121,7 @@ double FitPathProc::FTPProbability(const double x, const double y, const double 
         
         const double cosalpha = nx*dx+ny*dy+nz*dz; // cosine of angle formed by hit-event-direction
         
-        const double solidangle = sensitive_area/(dist*dist)*(nx*cur.px+ny*cur.py+nz*cur.pz); //solid angle correction to PMT hit probability
+        const double solidangle = -sensitive_area/(dist*dist)*(nx*cur.px+ny*cur.py+nz*cur.pz); //solid angle correction to PMT hit probability
         const double prob_directangle = nCherenkov*PDFCherenkovAngle(cosalpha)*solidangle/(2.0*M_PI); //probability of detecting direct light at this angle
         
         const double hitprob = prob_direct*prob_directtime*prob_directangle + prob_other*prob_othertime;
