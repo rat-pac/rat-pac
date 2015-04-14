@@ -469,7 +469,7 @@ void KPFit::getPMTInfo( int pmtid, float* pmtpos ) const {
   if ( pmtid>=0 && pmtid<100000 )
     memcpy( pmtpos, fpmtposdata + 3*pmtid, 3*sizeof(float) );
   else {
-    std::cout << "seeking position for pmtid=" << pmtid << std::endl;
+    std::cerr << "seeking position for pmtid=" << pmtid << std::endl;
     memset( pmtpos, 0, 3*sizeof(float) );
   }
 }
