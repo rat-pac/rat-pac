@@ -13,6 +13,7 @@
 */
 #include <map>
 #include <vector>
+#include <string>
 #include "Math/IFunction.h"
 #include "Math/IFunctionfwd.h"
 #include "RAT/DS/MC.hh"
@@ -23,7 +24,7 @@ class TChain;
 class KPFit : public ROOT::Math::IMultiGenFunction {
 
 public:
-  KPFit();
+  KPFit( std::string pmtinfofile );
   virtual ~KPFit();
 
   // methods to make concrete as a derived class of IMultiGenFunction
@@ -42,6 +43,7 @@ protected:
 
   // data
   RAT::DS::MC* fMCdata;
+  std::string fpmtinfofile;
   TChain* pmtinfo; // tree contaning pmt position info
   float fpmtpos[3];
   mutable std::map< int, std::vector<float>* > fpmtposmap;

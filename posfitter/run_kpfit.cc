@@ -36,7 +36,7 @@ int main( int narg, char** argv ) {
   tree->Branch( "fcn", &fcn, "fcn/D" );
 
   //ProfilerStart("kpfit.prof");
-  KPFit fitter;
+  KPFit fitter( pmtinfo );
   int event = 0;
   while ( root!=NULL ) {
     std::cout << "EVENT " << event << std::endl;

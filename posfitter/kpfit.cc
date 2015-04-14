@@ -6,7 +6,7 @@
 #include "RAT/DS/MCPMT.hh"
 #include "RAT/DS/MCPhoton.hh"
 
-KPFit::KPFit() {
+KPFit::KPFit( std::string pmtinfofile ) : ROOT::Math::IMultiGenFunction() {
   // setup minimizer
   minuit = new TMinuitMinimizer( ROOT::Minuit::kMigrad, NDim() );
   minuit->SetFunction( *this );
@@ -16,8 +16,9 @@ KPFit::KPFit() {
   minuit->SetLimitedVariable( 3, "evis", 100, 1.0, 0, 2000.0 );
   
   // setup PMT positon info
+  fpmtinfofile = pmtinfofile;
   pmtinfo = new TChain("pmtinfo");
-  pmtinfo->Add("../data/kpipe/PMTINFO.root");
+  pmtinfo->Add(fpmtinfofile.c_str());
   pmtinfo->SetBranchAddress("x",&fpmtpos[0]);
   pmtinfo->SetBranchAddress("y",&fpmtpos[1]);
   pmtinfo->SetBranchAddress("z",&fpmtpos[2]);
@@ -41,7 +42,7 @@ KPFit::~KPFit() {
 }
 
 ROOT::Math::IBaseFunctionMultiDim* KPFit::Clone() const {
-  KPFit* copy = new KPFit();
+  KPFit* copy = new KPFit( this->fpmtinfofile  );
   for (int i=0; i<4; i++) {
     copy->fSeedPos[i] = this->fSeedPos[i];
     copy->fSeedPos[i] = this->fPos[i];
