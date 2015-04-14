@@ -31,6 +31,7 @@ KPFit::KPFit() {
   fTimeWindow = 10e3; // 10 microseconds
   fAbsLength = 1000; // 10 m
   fLightYield = 9800.0; // photons/MeV
+  wasrun = false;
 }
 
 KPFit::~KPFit() {
@@ -211,15 +212,18 @@ void KPFit::calcSeedFromWeightedMean() {
 
 }
 
-void KPFit::fit( RAT::DS::MC* _mcdata, double* fitted_pos ) {
+bool KPFit::fit( RAT::DS::MC* _mcdata, double* fitted_pos ) {
   fMCdata = _mcdata;
 
   int npmts = fMCdata->GetMCPMTCount();
-  if ( npmts==0 )
-    return;
+  if ( npmts==0 ) {
+    wasrun = false;
+    return false;
+  }
+  wasrun = true;
 
   calcSeedFromWeightedMean();
-  minuit->Minimize();
+  bool converged = minuit->Minimize();
   minuit->PrintResults();
   fitted_pos[0] = minuit->X()[0];
   fitted_pos[1] = minuit->X()[1];
@@ -241,6 +245,7 @@ void KPFit::fit( RAT::DS::MC* _mcdata, double* fitted_pos ) {
   std::cout << "FIT: " << fitted_pos[0] << ", " << fitted_pos[1] << ", " << fitted_pos[2] << " evis=" << minuit->X()[3] << std::endl;
   std::cout << "TRUTH: " << posv[0] << ", " << posv[1] << ", " << posv[2] << " MeV=" << fMCdata->GetMCParticle(1)->GetKE() << std::endl;
   std::cout << "Error: " << err << " cm. dr = " << r-rv << " cm " << std::endl;
+  return converged;
 }
 
 void KPFit::getCorners( const float* sipmpos, std::vector< std::vector< float > >& corners ) const {

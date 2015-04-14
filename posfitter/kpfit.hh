@@ -35,7 +35,8 @@ private:
 
   // methods belonging to class
 public:
-  void fit( RAT::DS::MC* mcdata, double* fitted_pos );
+  bool fit( RAT::DS::MC* mcdata, double* fitted_pos );
+  bool getwasrun() { return wasrun; };
   
 protected:
 
@@ -56,6 +57,7 @@ protected:
   double fLightYield;   // light yield
   double fAbsLength;    // absorbtion length (cm)
   int fNPMTS;
+  bool wasrun;
 
   void calcSeedFromWeightedMean();
   void getApproxBounds( const float* sipmpos, const double* pos, double* cozbound, double* phibound ) const;
@@ -68,6 +70,7 @@ protected:
   void getPMTInfo( int pmtid, float* pmtpos ) const;
 
   // Minimizer
+public:
   TMinuitMinimizer* minuit;
   
 
