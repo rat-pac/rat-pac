@@ -135,8 +135,12 @@ double KPFit::DoEval( const double* x) const {
   double ll_q = 0.; 
   double sa_tot = 0.0;
   std::map< int, double >::iterator it;
-  int ipmt_start = brightest_pmt - brightest_pmt%100 - 300; // 10 hoops below
-  int ipmt_end = brightest_pmt - brightest_pmt%100 + 300;   // 10 hoops above
+  int ipmt_start = brightest_pmt - brightest_pmt%100 - 500; // 10 hoops below
+  int ipmt_end = brightest_pmt - brightest_pmt%100 + 500;   // 10 hoops above
+  if ( ipmt_start<0 )
+   ipmt_start = 0;
+  if ( ipmt_end>100000 )
+   ipmt_end = 100000;
   double totexp = fLightYield*x[3]; // x[3] = MeV
   for (int ipmt=ipmt_start; ipmt<ipmt_end; ipmt++) {
     getPMTInfo( ipmt, pmtpos );
@@ -461,7 +465,12 @@ void KPFit::getPMTInfo( int pmtid, float* pmtpos ) const {
 //     pmtpos[i] =it->second->at(i);
 //   }
   // use array
-  memcpy( pmtpos, fpmtposdata + 3*pmtid, 3*sizeof(float) );
+  if ( pmtid>=0 && pmtid<100000 )
+    memcpy( pmtpos, fpmtposdata + 3*pmtid, 3*sizeof(float) );
+  else {
+    std::cout << "seeking position for pmtid=" << pmtid << std::endl;
+    memset( pmtpos, 0, 3*sizeof(float) );
+  }
 }
 
 void KPFit::deletePMTInfo() {
