@@ -8,11 +8,11 @@
 
 KPFit::KPFit( std::string pmtinfofile ) : ROOT::Math::IMultiGenFunction() {
   // setup minimizer
-  minuit = new TMinuitMinimizer( ROOT::Minuit::kMigrad, NDim() );
+  minuit = new TMinuitMinimizer( ROOT::Minuit::kCombined, NDim() );
   minuit->SetFunction( *this );
-  minuit->SetLimitedVariable( 0, "x", 0, 10.0, -150.0, 150.0 );
-  minuit->SetLimitedVariable( 1, "y", 0, 10.0, -150.0, 150.0 );
-  minuit->SetLimitedVariable( 2, "z", 0, 100.0, -5000.0, 5000.0 );
+  minuit->SetLimitedVariable( 0, "x", 0, 1.0, -150.0, 150.0 );
+  minuit->SetLimitedVariable( 1, "y", 0, 1.0, -150.0, 150.0 );
+  minuit->SetLimitedVariable( 2, "z", 0, 1.0, -5000.0, 5000.0 );
   minuit->SetLimitedVariable( 3, "evis", 100, 1.0, 0, 2000.0 );
   
   // setup PMT positon info
@@ -28,10 +28,12 @@ KPFit::KPFit( std::string pmtinfofile ) : ROOT::Math::IMultiGenFunction() {
   fMCdata = NULL;
   fSigTime = 5.0; // ns timing width
   fNPMTS = 100000;
+  fNhoops = 2;
   fDarkRate = 10e3; // Hz
   fTimeWindow = 10e3; // 10 microseconds
   fAbsLength = 1000; // 10 m
   fLightYield = 9800.0; // photons/MeV
+  fPromptCut = 1000.0; // prompt cut
   wasrun = false;
 }
 
@@ -90,7 +92,7 @@ double KPFit::DoEval( const double* x) const {
       RAT::DS::MCPhoton* hit = pmt->GetMCPhoton(ihit);
       if ( tmin> hit->GetHitTime() )
 	tmin = hit->GetHitTime();
-      if ( hit->GetHitTime()<500 ) {
+      if ( hit->GetHitTime()<fPromptCut ) {
 	frac_promptQ += 1.0;
 	total_prompt += 1.0;
       }
@@ -136,8 +138,8 @@ double KPFit::DoEval( const double* x) const {
   double ll_q = 0.; 
   double sa_tot = 0.0;
   std::map< int, double >::iterator it;
-  int ipmt_start = brightest_pmt - brightest_pmt%100 - 500; // 10 hoops below
-  int ipmt_end = brightest_pmt - brightest_pmt%100 + 500;   // 10 hoops above
+  int ipmt_start = brightest_pmt - brightest_pmt%100 - fNhoops*100; // 10 hoops below
+  int ipmt_end = brightest_pmt - brightest_pmt%100 + fNhoops*100;   // 10 hoops above
   if ( ipmt_start<0 )
    ipmt_start = 0;
   if ( ipmt_end>100000 )
@@ -189,31 +191,47 @@ void KPFit::calcSeedFromWeightedMean() {
   // get the z position using this. It's pretty good!
   int npmts = fMCdata->GetMCPMTCount();
   double ntothits = 0.0;
+  int brightest = 0;
+  double maxhits = 0;
   float pmtpos[3];
   for (int ipmt=0; ipmt<npmts; ipmt++) {
     RAT::DS::MCPMT* pmt = fMCdata->GetMCPMT( ipmt );
     int pmtid = pmt->GetID();
-    getPMTInfo( pmtid, pmtpos );
-    //pmtinfo->GetEntry( pmtid );
     double pmt_pe = (double)pmt->GetMCPhotonCount();
-    fSeedPos[2] += pmtpos[2]*pmt_pe;
+    getPMTInfo( pmtid, pmtpos );
+    for (int i=0; i<3; i++) {
+      fSeedPos[i] += pmtpos[i]*pmt_pe;
+    }
     ntothits += pmt_pe;
+    if ( pmt_pe>maxhits ) {
+      maxhits = pmt_pe;
+      brightest = pmtid;
+    }
   }
-  fSeedPos[2] /= ntothits;
+  for (int i=0; i<3; i++) {
+    fSeedPos[i] /= ntothits;
+    minuit->SetVariableValue(i,fSeedPos[i]);
+  }
 
-  minuit->SetVariableValue(0,0);
-  minuit->SetVariableValue(1,0);
-  minuit->SetVariableValue(2,fSeedPos[2]);
-
+  // (cheating by seeding with truth)
   double posv[3];
   posv[0] = fMCdata->GetMCParticle(0)->GetPosition().X()/10.0; //change to cm
   posv[1] = fMCdata->GetMCParticle(0)->GetPosition().Y()/10.0; //change to cm
   posv[2] = fMCdata->GetMCParticle(0)->GetPosition().Z()/10.0; //change to cm
 
-  minuit->SetVariableValue(0, posv[0] );
-  minuit->SetVariableValue(1, posv[1] );
-  minuit->SetVariableValue(2, posv[2] );
-  minuit->SetVariableValue(3, 100.0 );
+  // use the brightest pmt hits to set the visible energy scale
+  float brightest_pos[3];
+  getPMTInfo( brightest, brightest_pos );
+  double brightest_sa = getSA( posv, brightest_pos );
+  double seed_mev = maxhits/fLightYield/(brightest_sa/(4*3.14159));
+  minuit->SetVariableValue(3, seed_mev );
+
+  minuit->FixVariable(2);
+
+//   minuit->SetVariableValue(0, posv[0] );
+//   minuit->SetVariableValue(1, posv[1] );
+//   minuit->SetVariableValue(2, posv[2] );
+
 
 }
 
@@ -247,6 +265,7 @@ bool KPFit::fit( RAT::DS::MC* _mcdata, double* fitted_pos ) {
   double rv = sqrt( posv[0]*posv[0] + posv[1]*posv[1] );
   double r  = sqrt( fitted_pos[0]*fitted_pos[0] + fitted_pos[1]*fitted_pos[1] );
 
+  std::cout << "NPE: " << fMCdata->GetNumPE() << std::endl;
   std::cout << "FIT: " << fitted_pos[0] << ", " << fitted_pos[1] << ", " << fitted_pos[2] << " evis=" << minuit->X()[3] << std::endl;
   std::cout << "TRUTH: " << posv[0] << ", " << posv[1] << ", " << posv[2] << " MeV=" << fMCdata->GetMCParticle(1)->GetKE() << std::endl;
   std::cout << "Error: " << err << " cm. dr = " << r-rv << " cm " << std::endl;

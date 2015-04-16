@@ -20,7 +20,7 @@ LDLIBS = $(RAT_LIBS) $(ROOT_LIBS) -lstdc++
 
 all: libKPFit.so run_kpfit
 
-run_kpfit: run_kpfit.cc
+run_kpfit: run_kpfit.cc libKPFit.so
 	$(CC) $(CFLAGS) -c -o run_kpfit.o run_kpfit.cc
 	$(CC) $(LDFLAGS) -o run_kpfit run_kpfit.o libKPFit.so $(LDLIBS)
 

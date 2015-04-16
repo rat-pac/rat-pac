@@ -57,8 +57,10 @@ protected:
   double fDarkRate;     // dark rate (Hz)
   double fTimeWindow;   // ns
   double fLightYield;   // light yield
+  double fPromptCut;    // light yield
   double fAbsLength;    // absorbtion length (cm)
   int fNPMTS;
+  int fNhoops;
   bool wasrun;
 
   void calcSeedFromWeightedMean();
