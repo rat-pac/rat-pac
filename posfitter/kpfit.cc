@@ -10,10 +10,10 @@ KPFit::KPFit( std::string pmtinfofile ) : ROOT::Math::IMultiGenFunction() {
   // setup minimizer
   minuit = new TMinuitMinimizer( ROOT::Minuit::kCombined, NDim() );
   minuit->SetFunction( *this );
-  minuit->SetLimitedVariable( 0, "x", 0, 1.0, -150.0, 150.0 );
-  minuit->SetLimitedVariable( 1, "y", 0, 1.0, -150.0, 150.0 );
-  minuit->SetLimitedVariable( 2, "z", 0, 1.0, -5000.0, 5000.0 );
-  minuit->SetLimitedVariable( 3, "evis", 100, 1.0, 0, 2000.0 );
+  minuit->SetLimitedVariable( 0, "x", 0, 10.0, -150.0, 150.0 );
+  minuit->SetLimitedVariable( 1, "y", 0, 10.0, -150.0, 150.0 );
+  minuit->SetLimitedVariable( 2, "z", 0, 100.0, -5000.0, 5000.0 );
+  //minuit->SetLimitedVariable( 3, "evis", 100, 1.0, 0, 2000.0 );
   
   // setup PMT positon info
   fpmtinfofile = pmtinfofile;
@@ -75,7 +75,7 @@ double KPFit::DoEval( const double* x) const {
   double ll_t = 0.0;
   double total_prompt = 0.0;
   int brightest_pmt = -1;
-  double maxq = 0.0;
+  double maxq = -1.0;
   float pmtpos[3];
   for (int ipmt=0; ipmt<npmts; ipmt++) {
     RAT::DS::MCPMT* pmt = fMCdata->GetMCPMT( ipmt );
@@ -137,19 +137,29 @@ double KPFit::DoEval( const double* x) const {
   // calc neg. log likelihood ratio: E-O + (O/E)*log(
   double ll_q = 0.; 
   double sa_tot = 0.0;
+  float brightest_pos[3];
+  getPMTInfo( brightest_pmt, brightest_pos );
+  double sa_brightest =  getSA( x, brightest_pos );
+  double dist_brightest = 0.;
+  for (int i=0; i<3; i++)
+    dist_brightest += (brightest_pos[i]-x[i])*(brightest_pos[i]-x[i]);
+  dist_brightest = sqrt( dist_brightest );
+  double nexp_brightest = sa_brightest*exp( -dist_brightest/fAbsLength );
+
   std::map< int, double >::iterator it;
   int ipmt_start = brightest_pmt - brightest_pmt%100 - fNhoops*100; // 10 hoops below
-  int ipmt_end = brightest_pmt - brightest_pmt%100 + fNhoops*100;   // 10 hoops above
+  int ipmt_end = brightest_pmt - brightest_pmt%100 + (fNhoops+1)*100;   // 10 hoops above
   if ( ipmt_start<0 )
    ipmt_start = 0;
   if ( ipmt_end>100000 )
    ipmt_end = 100000;
-  double totexp = fLightYield*x[3]; // x[3] = MeV
+  //double totexp = fLightYield*x[3]; // x[3] = MeV
+  double totdark = darkcounts*(ipmt_end-ipmt_start);
   for (int ipmt=ipmt_start; ipmt<ipmt_end; ipmt++) {
     getPMTInfo( ipmt, pmtpos );
     //pmtinfo->GetEntry( ipmt );
     it = obsHits.find(ipmt);
-    double sa2 = getApproxSA( x, pmtpos );
+    //double sa2 = getApproxSA( x, pmtpos );
     double sa = getSA( x, pmtpos );
     sa_tot += sa;
     
@@ -160,25 +170,31 @@ double KPFit::DoEval( const double* x) const {
     dist = sqrt(dist); // cm
     double absorb = exp( -dist/fAbsLength );
 
-    double nexp = sa/(4*3.14159)*totexp*absorb + darkcounts;
-    double nobs = darkcounts;
+    double nexp = sa*absorb/nexp_brightest;
+    double nobs = 0.0;
     if ( it!=obsHits.end() ) {
       nobs += it->second;
     }
-    double ll  = 2.0*( nobs*( log(nobs) - log(nexp) ) + ( nexp-nobs ) );
-//     if ( nobs>darkcounts ) {
+    nobs /= maxq;
+    double ll  = 0.0;
+    if ( nobs>0 )
+      ll += 2.0*( nobs*( log(nobs) - log(nexp) ) );
+    ll += 2.0*( nexp-nobs );
+//     if ( nobs*total_prompt>darkcounts ) {
 //       std::cout << "  sipm=" << ipmt << " pos=" << fpmtpos[0] << ", " << fpmtpos[1] << ", " << fpmtpos[2]  << " "
 // 		<< " SA=" << sa 
-// 		<< " SA(2)=" << sa2 << " "
+// 	//<< " SA(2)=" << sa2 << " "
 // 		<< " nexp=" << nexp << " nobs=" << nobs << "  abs=" << absorb << std::endl;
-//       std::cout << " pos=" << x[0] << ", " << x[1] << ", " << x[2] << ", mev=" << x[3] << std::endl;
+//       std::cout << " pos=" << x[0] << ", " << x[1] << ", " << x[2] 
+// 	//<< ", mev=" << x[3] 
+// 		<< std::endl;
 //     }
     ll_q += ll;
   }
 
-  //std::cout << " LL(t)=" << ll_t << " LL(q)=" << ll_q << " total=" << ll_t+ll_q << std::endl;
-  //std::cout << " totsa = " << sa_tot << " : " << sa_tot/(4*3.14159) << std::endl;
-  //std::cin.get();
+//   std::cout << " LL(t)=" << ll_t << " LL(q)=" << ll_q << " total=" << ll_t+ll_q << std::endl;
+//   std::cout << " totsa = " << sa_tot << " : " << sa_tot/(4*3.14159) << std::endl;
+//   std::cin.get();
 
   return ll_q;
 }
@@ -224,14 +240,14 @@ void KPFit::calcSeedFromWeightedMean() {
   getPMTInfo( brightest, brightest_pos );
   double brightest_sa = getSA( posv, brightest_pos );
   double seed_mev = maxhits/fLightYield/(brightest_sa/(4*3.14159));
-  minuit->SetVariableValue(3, seed_mev );
+  //minuit->SetVariableValue(3, seed_mev );
 
   minuit->FixVariable(2);
 
 //   minuit->SetVariableValue(0, posv[0] );
 //   minuit->SetVariableValue(1, posv[1] );
 //   minuit->SetVariableValue(2, posv[2] );
-
+  //minuit->SetVariableValue(3, 100.0 );
 
 }
 
@@ -265,8 +281,7 @@ bool KPFit::fit( RAT::DS::MC* _mcdata, double* fitted_pos ) {
   double rv = sqrt( posv[0]*posv[0] + posv[1]*posv[1] );
   double r  = sqrt( fitted_pos[0]*fitted_pos[0] + fitted_pos[1]*fitted_pos[1] );
 
-  std::cout << "NPE: " << fMCdata->GetNumPE() << std::endl;
-  std::cout << "FIT: " << fitted_pos[0] << ", " << fitted_pos[1] << ", " << fitted_pos[2] << " evis=" << minuit->X()[3] << std::endl;
+  std::cout << "FIT: " << fitted_pos[0] << ", " << fitted_pos[1] << ", " << fitted_pos[2] << std::endl; //<< " evis=" << minuit->X()[3] << std::endl;
   std::cout << "TRUTH: " << posv[0] << ", " << posv[1] << ", " << posv[2] << " MeV=" << fMCdata->GetMCParticle(1)->GetKE() << std::endl;
   std::cout << "Error: " << err << " cm. dr = " << r-rv << " cm " << std::endl;
   return converged;

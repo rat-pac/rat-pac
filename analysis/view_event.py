@@ -11,7 +11,8 @@ pmtinfo = pmtinfo.set_index('opdetid')
 
 #reader = DSReader('kpipeout_test.root')
 #reader = DSReader('../test.root')
-reader = DSReader("output_kpipe_101.root")
+#reader = DSReader("output_kpipe_200.root")
+reader = DSReader("output_kpipe_303.root") # scintillation+reflections
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -156,8 +157,8 @@ for iev in xrange(0,nevents):
     markz = ROOT.TLine( vertex.Z()*0.1, 0, vertex.Z()*0.1, hz.GetMaximum() )
     markz.SetLineColor(2)
 
-    if htprompt_ceren.Integral()<10:
-        continue
+    #if htprompt_ceren.Integral()<10:
+    #    continue
 
     c.cd(1)
     c.cd(1).cd(1)

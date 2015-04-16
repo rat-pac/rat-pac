@@ -47,7 +47,7 @@ int main( int narg, char** argv ) {
     if ( fitter.getwasrun() ) {
       wasrun = 1;
       fcn = fitter.minuit->MinValue();
-      evis = fitter.minuit->X()[3];
+      //evis = fitter.minuit->X()[3];
     }
     else {
       wasrun = 0;

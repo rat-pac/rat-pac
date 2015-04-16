@@ -29,7 +29,7 @@ public:
 
   // methods to make concrete as a derived class of IMultiGenFunction
   virtual ROOT::Math::IBaseFunctionMultiDim* Clone() const;
-  virtual unsigned int NDim() const { return 4; }; // function is loglikelihood( pos )
+  virtual unsigned int NDim() const { return 3; }; // function is loglikelihood( pos )
 
 private:
   virtual double DoEval(const double * x) const;
