@@ -58,6 +58,7 @@ int main( int narg, char** argv ) {
     event++;
     //if ( event==100 )
     //break;
+    tree->Fill();
   }
   //ProfilerStop();
 
