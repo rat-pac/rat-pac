@@ -28,7 +28,7 @@ KPFit::KPFit( std::string pmtinfofile ) : ROOT::Math::IMultiGenFunction() {
   fMCdata = NULL;
   fSigTime = 5.0; // ns timing width
   fNPMTS = 100000;
-  fNhoops = 2;
+  fNhoops = 3;
   fDarkRate = 10e3; // Hz
   fTimeWindow = 10e3; // 10 microseconds
   fAbsLength = 1000; // 10 m
@@ -213,10 +213,15 @@ void KPFit::calcSeedFromWeightedMean() {
   for (int ipmt=0; ipmt<npmts; ipmt++) {
     RAT::DS::MCPMT* pmt = fMCdata->GetMCPMT( ipmt );
     int pmtid = pmt->GetID();
-    double pmt_pe = (double)pmt->GetMCPhotonCount();
+    double pmt_pe = 0.0;
     getPMTInfo( pmtid, pmtpos );
-    for (int i=0; i<3; i++) {
-      fSeedPos[i] += pmtpos[i]*pmt_pe;
+    for ( int ihit=0; ihit<pmt->GetMCPhotonCount(); ihit++ ) {
+      if ( pmt->GetMCPhoton( ihit )->GetHitTime()<fPromptCut ) {
+	pmt_pe += 1.0;
+        for (int i=0; i<3; i++) {
+          fSeedPos[i] += pmtpos[i];
+        }
+      }
     }
     ntothits += pmt_pe;
     if ( pmt_pe>maxhits ) {
@@ -237,11 +242,9 @@ void KPFit::calcSeedFromWeightedMean() {
 
   // use the brightest pmt hits to set the visible energy scale
   float brightest_pos[3];
-  getPMTInfo( brightest, brightest_pos );
-  double brightest_sa = getSA( posv, brightest_pos );
-  double seed_mev = maxhits/fLightYield/(brightest_sa/(4*3.14159));
-  //minuit->SetVariableValue(3, seed_mev );
-
+  double brightest_sa = getSA( fSeedPos, brightest_pos );
+  //double seed_mev = maxhits/fLightYield/(brightest_sa/(4*3.14159));
+  //minuit->SetVariableValue(3, seed_mev ); 
   minuit->FixVariable(2);
 
 //   minuit->SetVariableValue(0, posv[0] );
