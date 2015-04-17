@@ -372,11 +372,6 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   
     string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
     
-    pmtinfo.AddPMT( //This goes to Gsim and hence into the DS
-        TVector3(pmt_x[idx],pmt_y[idx],pmt_z[idx]),
-        TVector3(dir_x[idx],dir_y[idx],dir_z[idx]),
-        pmt_type[idx],pmt_model); 
-        
     // position
     G4ThreeVector pmtpos(pmt_x[idx], pmt_y[idx], pmt_z[idx]);
     pmtpos += offset;
@@ -391,7 +386,15 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
       pmtdir = orient_point - pmtpos;
     pmtdir = pmtdir.unit();
     if (flip == 1) pmtdir = -pmtdir; 
-    
+
+    // Write the real (perhaps calculated) PMT positions and directions.
+    // This goes into the DS by way of Gsim
+    pmtinfo.AddPMT(
+        TVector3(pmtpos.x(), pmtpos.y(), pmtpos.z()),
+        TVector3(pmtdir.x(), pmtdir.y(), pmtdir.z()),
+        pmt_type[idx],
+        pmt_model);
+
     // if requested, generates the magnetic efficiency corrections as the PMTs are created
     if(BFieldOn){
       //finds the point of the B grid closest to the current PMT, and attributes it that Bfield
