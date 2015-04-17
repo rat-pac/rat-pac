@@ -2,6 +2,8 @@
 #include <Randomize.hh>
 #include "GLG4StringUtil.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 void GLG4TimeGen_Uniform::SetState(G4String state)
 {

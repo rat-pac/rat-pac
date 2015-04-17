@@ -9,6 +9,9 @@
 #include <G4PVPlacement.hh>
 #include <G4LogicalBorderSurface.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
 void ConeWaveguideFactory::SetTable(std::string table, std::string index)

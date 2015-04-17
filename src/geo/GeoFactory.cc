@@ -12,6 +12,9 @@
 #include <G4LogicalVolume.hh>
 #include <G4LogicalVolumeStore.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 

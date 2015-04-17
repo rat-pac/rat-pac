@@ -5,9 +5,9 @@
 #ifndef __GLG4PhysicsList_hh__
 #define __GLG4PhysicsList_hh__ 1
 
-#include "G4VUserPhysicsList.hh"
+#include "G4VModularPhysicsList.hh"
 
-class GLG4PhysicsList : public G4VUserPhysicsList
+class GLG4PhysicsList : public G4VModularPhysicsList
 {
 public:
   GLG4PhysicsList();  // constructor
@@ -19,11 +19,16 @@ public:
 
   void SetCuts();          // to set the default cut values for all particles
 
+  void SetAltOpWLS(bool);
+  bool GetAltOpWLS();
+
 private:
   G4double cutForGamma;
   G4double cutForElectron;
   G4double cutForPositron;
   G4double currentDefaultCut;
+  bool useAltOpWLS;
+  G4VPhysicsConstructor* WLSmodel;
 
   // these methods Construct physics processes and register them
     virtual void AddParameterisation();
@@ -31,6 +36,7 @@ private:
     virtual void ConstructHadronic();
     virtual void ConstructEM();
     virtual void ConstructOp();
+  //virtual void ConstructWLS();
 };
 
 #endif

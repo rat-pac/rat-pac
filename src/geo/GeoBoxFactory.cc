@@ -1,6 +1,9 @@
 #include <RAT/GeoBoxFactory.hh>
 #include <G4Box.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {

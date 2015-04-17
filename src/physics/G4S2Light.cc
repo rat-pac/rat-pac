@@ -50,6 +50,9 @@
 #include "G4S2Light.hh"
 #include "G4S1Light.hh"
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
 #define E_PURITY 2*m //the electron absorption z-length

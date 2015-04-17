@@ -8,6 +8,8 @@
 #include <G4SubtractionSolid.hh>
 #include <G4UnionSolid.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 using namespace std;
 

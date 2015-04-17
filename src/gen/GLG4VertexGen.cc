@@ -26,6 +26,9 @@
 
 #include <RAT/Log.hh>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 // To support GEANT4.6 and later
 #define G4std  std
 

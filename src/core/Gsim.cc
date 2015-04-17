@@ -42,6 +42,8 @@
 #include <vector>
 #include <cstdlib>
 #include <math.h>
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
 
 namespace RAT {
 

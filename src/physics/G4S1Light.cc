@@ -51,6 +51,9 @@
 
 #include "G4S1Light.hh"
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 namespace RAT {
 
 #define MIN_ENE -1*eV //lets you turn NEST off BELOW a certain energy

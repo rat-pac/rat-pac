@@ -9,6 +9,9 @@
 #include <G4PVPlacement.hh>
 #include <vector>
 
+#include "G4SystemOfUnits.hh"
+#include "G4PhysicalConstants.hh"
+
 using namespace std;
 
 namespace RAT {
