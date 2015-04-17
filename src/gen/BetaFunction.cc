@@ -458,8 +458,8 @@ namespace RAT {
       if (iString == dProbe) {
 	fscanf(inputFile, "%s", tName);
 	fscanf(inputFile, "%d %d %f", &Z, &A, &tau);
-	std::string iString(tName);
-	iFound = (dName == iString);
+	std::string iString2(tName);
+	iFound = (dName == iString2);
 	iFound = ((iFound) || ((iA == A) && (iZ == Z)));
 	if (iFound) {
 	  if (isVerbose)

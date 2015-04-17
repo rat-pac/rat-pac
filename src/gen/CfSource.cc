@@ -14,6 +14,7 @@
 #include <CLHEP/Random/RandFlat.h>
 #include <CLHEP/Random/RandGeneral.h>
 #include <CLHEP/Vector/LorentzVector.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <cmath>
 #include <iostream>
@@ -62,7 +63,7 @@ namespace RAT {
 
 	  // Initialize the G4 particle definitions.
 	  G4ParticleDefinition* neutron = G4Neutron::Neutron();
-	  massNeutron = neutron->GetPDGMass() * MeV;
+	  massNeutron = neutron->GetPDGMass() * CLHEP::MeV;
 
 	  // In the original code, the probability densities used the
 	  // funlxp and funlux routines in CERNLIB to generate random

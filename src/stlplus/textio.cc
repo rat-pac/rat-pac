@@ -137,9 +137,9 @@ void otext::clear_error (void)
   if (m_buffer) m_buffer->clear_error();
 }
 
-void otext::set_newline_mode(otext::newline_t newline)
+void otext::set_newline_mode(otext::newline_t _newline)
 {
-  if (m_buffer) m_buffer->set_newline_mode(newline);
+  if (m_buffer) m_buffer->set_newline_mode(_newline);
 }
 
 void otext::set_unix_mode(void)
@@ -1082,9 +1082,9 @@ void close (itext& it)
 ////////////////////////////////////////////////////////////////////////////////
 // obuff
 
-obuff::obuff (bool line_buffer, otext::newline_t newline) : 
+obuff::obuff (bool line_buffer, otext::newline_t _newline) : 
   m_line_buffer(line_buffer), 
-  m_newline(newline),
+  m_newline(_newline),
   m_bytes(0),
   m_line(1),
   m_column(0),
@@ -1103,10 +1103,10 @@ obuff::~obuff (void)
 {
 }
 
-void obuff::increment(bool newline)
+void obuff::increment(bool _newline)
 {
   m_bytes++;
-  if (newline)
+  if (_newline)
   {
     m_line++;
     m_column = 0;
@@ -1142,9 +1142,9 @@ void obuff::set_line_buffer(bool mode)
   m_line_buffer = mode;
 }
 
-void obuff::set_newline_mode(otext::newline_t newline)
+void obuff::set_newline_mode(otext::newline_t _newline)
 {
-  m_newline = newline;
+  m_newline = _newline;
 }
 
 otext::newline_t obuff::newline_mode(void) const
@@ -1239,8 +1239,8 @@ void obuff::flush (void)
 ////////////////////////////////////////////////////////////////////////////////
 // ibuff
 
-ibuff::ibuff (itext::newline_t newline) :
-  m_newline_mode(newline),
+ibuff::ibuff (itext::newline_t _newline) :
+  m_newline_mode(_newline),
   m_bytes(0),
   m_line(1),
   m_column(0),
@@ -1253,10 +1253,10 @@ ibuff::~ibuff (void)
 {
 }
 
-void ibuff::increment(bool newline)
+void ibuff::increment(bool _newline)
 {
   m_bytes++;
-  if (newline)
+  if (_newline)
   {
     m_line++;
     m_column = 0;
@@ -1282,9 +1282,9 @@ unsigned ibuff::column(void) const
   return m_column;
 }
 
-void ibuff::set_newline_mode(itext::newline_t newline)
+void ibuff::set_newline_mode(itext::newline_t _newline)
 {
-  m_newline_mode = newline;
+  m_newline_mode = _newline;
 }
 
 itext::newline_t ibuff::newline_mode(void) const

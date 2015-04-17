@@ -38,8 +38,8 @@ public:
   class ParticleNameEqualityFunctor {
   public:
     ParticleNameEqualityFunctor(std::string _name) : name(_name) {}
-    bool operator()(MCTrack& track) {
-      return track.GetParticleName() == this->name;
+    bool operator()(MCTrack& _track) {
+      return _track.GetParticleName() == this->name;
     }
   private:
     std::string name;

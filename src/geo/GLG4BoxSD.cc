@@ -23,6 +23,8 @@
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
 #include "G4SDManager.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 #include "local_g4compat.hh"
 
@@ -31,9 +33,9 @@
 GLG4BoxSD::GLG4BoxSD(G4String name)
 :G4VSensitiveDetector(name)
 {
-  eCut= 1.5*MeV;
-  gCut= 1.5*MeV;
-  radLength= 17.6*mm;
+  eCut= 1.5*CLHEP::MeV;
+  gCut= 1.5*CLHEP::MeV;
+  radLength= 17.6*CLHEP::mm;
   z0= 0.0;
 }
 
@@ -110,7 +112,7 @@ void GLG4BoxSD::EndOfEvent(G4HCofThisEvent*)
     G4cout << GetName() << ":\t"
 	   << sum_ng << " neutral-x0,\t"
            << sum_ne << " charged-x0,\t"
-	   << tot_edep/MeV << " MeV\n"
+	   << tot_edep/CLHEP::MeV << " MeV\n"
 	   << G4endl;
     G4cout.flush();
   }

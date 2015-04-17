@@ -6,6 +6,8 @@
 #include <RAT/GLG4PMTSD.hh>
 #include <RAT/Materials.hh>
 #include <RAT/GeoFactory.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -94,7 +96,7 @@ namespace RAT {
     string pmt_model = table->GetS("pmt_model");
     DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
     
-    fParam.faceGap = 0.1 * mm;
+    fParam.faceGap = 0.1 * CLHEP::mm;
     fParam.zEdge = lpmt->GetDArray("z_edge");
     fParam.rhoEdge = lpmt->GetDArray("rho_edge");
     fParam.zOrigin = lpmt->GetDArray("z_origin");

@@ -4,6 +4,8 @@
 
 #include <G4SDManager.hh>
 #include <G4PVPlacement.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <RAT/Materials.hh>
 #include <RAT/GLG4PMTSD.hh>
@@ -80,7 +82,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
 
   PMTConstructionParams pmtParam;
-  pmtParam.faceGap = 0.1 * mm;
+  pmtParam.faceGap = 0.1 * CLHEP::mm;
   pmtParam.zEdge = lpmt->GetDArray("z_edge");
   pmtParam.rhoEdge = lpmt->GetDArray("rho_edge");
   pmtParam.zOrigin = lpmt->GetDArray("z_origin");
@@ -372,11 +374,6 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   
     string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
     
-    pmtinfo.AddPMT( //This goes to Gsim and hence into the DS
-        TVector3(pmt_x[idx],pmt_y[idx],pmt_z[idx]),
-        TVector3(dir_x[idx],dir_y[idx],dir_z[idx]),
-        pmt_type[idx],pmt_model); 
-        
     // position
     G4ThreeVector pmtpos(pmt_x[idx], pmt_y[idx], pmt_z[idx]);
     pmtpos += offset;
@@ -391,7 +388,15 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
       pmtdir = orient_point - pmtpos;
     pmtdir = pmtdir.unit();
     if (flip == 1) pmtdir = -pmtdir; 
-    
+
+    // Write the real (perhaps calculated) PMT positions and directions.
+    // This goes into the DS by way of Gsim
+    pmtinfo.AddPMT(
+        TVector3(pmtpos.x(), pmtpos.y(), pmtpos.z()),
+        TVector3(pmtdir.x(), pmtdir.y(), pmtdir.z()),
+        pmt_type[idx],
+        pmt_model);
+
     // if requested, generates the magnetic efficiency corrections as the PMTs are created
     if(BFieldOn){
       //finds the point of the B grid closest to the current PMT, and attributes it that Bfield

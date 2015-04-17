@@ -247,7 +247,7 @@ SetState(G4String newValues)
   is >> x >> y >> z;
   if (is.fail())
     return;
-  _mom= G4ThreeVector(x*MeV,y*MeV,z*MeV);
+  _mom= G4ThreeVector(x*CLHEP::MeV,y*CLHEP::MeV,z*CLHEP::MeV);
   _ke= sqrt(_mom.mag2()+_pDef->GetPDGMass()*_pDef->GetPDGMass())
          - _pDef->GetPDGMass();
 
@@ -262,7 +262,7 @@ SetState(G4String newValues)
     _ke= 0.0;
   }
   else {
-    _ke= x*MeV;
+    _ke= x*CLHEP::MeV;
     if (_mom.mag2() <= 0.0)
       p_renorm= 0.0;
     else
@@ -364,7 +364,7 @@ GeneratePrimaryVertex(G4Event *argEvent, G4ThreeVector &dx, G4double dt)
     {
 	if (_mom_theta > 0.0)                 // emission into a cone of angle _mom_theta
 	{
-	    G4double phi= 2.*pi* G4UniformRand();
+	    G4double phi= 2.*CLHEP::pi* G4UniformRand();
 	    G4double cosTheta = 1.0 - (1.0 - cos(_mom_theta)) * G4UniformRand();
 	    G4double sinTheta = sqrt(1. - cosTheta * cosTheta);
 	    
@@ -392,7 +392,7 @@ GeneratePrimaryVertex(G4Event *argEvent, G4ThreeVector &dx, G4double dt)
     else {
       // isotropic direction
      
-      G4double phi= 2.*pi* G4UniformRand();
+      G4double phi= 2.*CLHEP::pi* G4UniformRand();
       G4double cosTheta = -1. + 2. * G4UniformRand();
       G4double sinTheta = sqrt(1. - cosTheta * cosTheta);
       
@@ -527,13 +527,13 @@ SetState(G4String newValues)
   is >> x;
   if (is.fail())
     return;
-  _mom_theta = x * deg;
+  _mom_theta = x * CLHEP::deg;
   
   is >> x >> y;
   if (is.fail()) 
     return;
-  _ke1= x * MeV;
-  _ke2= y * MeV;
+  _ke1= x * CLHEP::MeV;
+  _ke2= y * CLHEP::MeV;
  
 
    // set particle polarization
@@ -824,9 +824,9 @@ GeneratePrimaryVertex(G4Event *argEvent, G4ThreeVector &dx, G4double dt)
     G4double polx=0.0;  // x polarization
     G4double poly=0.0;  // y polarization
     G4double polz=0.0;  // z polarization
-    G4double energy_unit= GeV;
-    G4double position_unit= mm;
-    G4double time_unit= ns; /* used to be mm/c_light */
+    G4double energy_unit= CLHEP::GeV;
+    G4double position_unit= CLHEP::mm;
+    G4double time_unit= CLHEP::ns; /* used to be mm/c_light */
 
     GetDataLine(buffer, sizeof(buffer));
     if (_file == 0) {
