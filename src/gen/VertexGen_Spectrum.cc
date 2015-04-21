@@ -1,6 +1,7 @@
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/Log.hh>
 #include <Randomize.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 #include <G4Event.hh>
 #include <G4ParticleTable.hh>
 #include <G4PrimaryParticle.hh>
@@ -54,7 +55,7 @@ namespace RAT {
 		Elim_Thi = Elim_Uhi;
 
 		// isotropic direction
-		G4double phi= 2.*pi* G4UniformRand();
+		G4double phi= 2.*CLHEP::pi* G4UniformRand();
 		G4double cosTheta = -1. + 2. * G4UniformRand();
 		G4double sinTheta = sqrt(1. - cosTheta * cosTheta);
 		G4double ux = sinTheta * cos(phi);

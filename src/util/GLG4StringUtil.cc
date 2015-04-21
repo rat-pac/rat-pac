@@ -147,9 +147,9 @@ static std::string util_simage (T i, unsigned radix, radix_display_t display, un
         result.insert((std::string::size_type)0, 1, result[0]);
       // now convert to octal
       std::string octal_result;
-      for (unsigned i = 0; i < result.size()/3; i++)
+      for (unsigned ii = 0; ii < result.size()/3; ii++)
       {
-        std::string slice = result.substr(i*3, 3);
+        std::string slice = result.substr(ii*3, 3);
         unsigned value = util_to_uint(slice, 2);
         octal_result += util_to_char[value];
       }
@@ -174,9 +174,9 @@ static std::string util_simage (T i, unsigned radix, radix_display_t display, un
         result.insert((std::string::size_type)0, 1, result[0]);
       // now convert to hex
       std::string hex_result;
-      for (unsigned i = 0; i < result.size()/4; i++)
+      for (unsigned ii = 0; ii < result.size()/4; ii++)
       {
-        std::string slice = result.substr(i*4, 4);
+        std::string slice = result.substr(ii*4, 4);
         unsigned value = util_to_uint(slice, 2);
         hex_result += util_to_char[value];
       }
@@ -312,9 +312,9 @@ static std::string util_uimage (T i, unsigned radix, radix_display_t display, un
         result.insert((std::string::size_type)0, 1, '0');
       // now convert to octal
       std::string octal_result;
-      for (unsigned i = 0; i < result.size()/3; i++)
+      for (unsigned ii = 0; ii < result.size()/3; ii++)
       {
-        std::string slice = result.substr(i*3, 3);
+        std::string slice = result.substr(ii*3, 3);
         unsigned value = util_to_uint(slice, 2);
         octal_result += util_to_char[value];
       }
@@ -339,9 +339,9 @@ static std::string util_uimage (T i, unsigned radix, radix_display_t display, un
         result.insert((std::string::size_type)0, 1, '0');
       // now convert to hex
       std::string hex_result;
-      for (unsigned i = 0; i < result.size()/4; i++)
+      for (unsigned ii = 0; ii < result.size()/4; ii++)
       {
-        std::string slice = result.substr(i*4, 4);
+        std::string slice = result.substr(ii*4, 4);
         unsigned value = util_to_uint(slice, 2);
         hex_result += util_to_char[value];
       }

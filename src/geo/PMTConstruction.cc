@@ -8,6 +8,7 @@
 #include <G4VisAttributes.hh>
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalSkinSurface.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 namespace RAT {
   
@@ -55,7 +56,7 @@ namespace RAT {
     G4Tubs* dynode_solid = new G4Tubs(prefix+"_dynode_solid",
                                       0.0, fParams.dynodeRadius,// solid cylinder (FIXME?)
                                       hhDynode,                // half height of cylinder
-                                      0., twopi );            // cylinder complete in phi
+                                      0., CLHEP::twopi );            // cylinder complete in phi
     
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
     G4double hhgap = 0.5e-7 ;                                            // half the needed gap between the front and back of the PMT
@@ -65,7 +66,7 @@ namespace RAT {
     G4Tubs* central_gap_solid = new G4Tubs(prefix+"_central_gap_solid",
                                       0.0 , toleranceGapRadius,        // solid cylinder with same radius as PMT
                                       hhgap,                           // half height of cylinder
-                                      0., twopi );                   // cylinder complete in phi 
+                                      0., CLHEP::twopi );                   // cylinder complete in phi 
 
     // ------------ Logical Volumes -------------
     G4LogicalVolume *envelope_log=0, *body_log, *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
@@ -205,24 +206,24 @@ namespace RAT {
                            &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
     return body;
   }
-  void PMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *body_phys, const std::string &prefix)
+  void PMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *_body_phys, const std::string &prefix)
   { 
     /* Set the optical surfaces for a PMT. This must be called *after* the physical PMT has been placed  
        If this is not done, the mirror surface is not created.
     */
     //build the mirrored surface
     new G4LogicalBorderSurface(prefix+"_mirror_logsurf1",
-                                inner2_phys, body_phys,
+                                inner2_phys, _body_phys,
                                 fParams.mirror);
     new G4LogicalBorderSurface(prefix+"_mirror_logsurf2",
-                               body_phys, inner2_phys,
+                               _body_phys, inner2_phys,
                                fParams.mirror);
     // also include the tolerance gap
     new G4LogicalBorderSurface(prefix+"_central_gap_logsurf1",
-                               central_gap_phys, body_phys,
+                               central_gap_phys, _body_phys,
                                fParams.mirror);
     new G4LogicalBorderSurface(prefix+"_central_gap_logsurf2",
-                               body_phys,central_gap_phys,
+                               _body_phys,central_gap_phys,
                                fParams.mirror);
   }
   
@@ -242,9 +243,9 @@ namespace RAT {
     else subCylOffset = zBottom - subCylHalfHeight;
     
     G4Tubs *mainEnvelope = new G4Tubs(name+"_main", 0.0, rho, mainCylHalfHeight, 
-                                      0.0, twopi);
+                                      0.0, CLHEP::twopi);
     G4Tubs *subEnvelope  = new G4Tubs(name+"_sub", 0.0, rho*1.1, subCylHalfHeight, 
-                                      0.0, twopi);
+                                      0.0, CLHEP::twopi);
                                       
     return new G4SubtractionSolid(name, mainEnvelope, subEnvelope, 
                                   0, G4ThreeVector(0.0, 0.0, subCylOffset));

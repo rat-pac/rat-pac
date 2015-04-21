@@ -56,7 +56,7 @@ public:
 /** Exception: Base class of file errors in RATDB. */
 class FileError : public TextLoaderError {
 public: 
-  FileError(std::string filename) : filename(filename) { };
+  FileError(std::string _filename) : filename(_filename) { };
   bool operator== (const FileError &other) const {
     return filename == other.filename;
   };

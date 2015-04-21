@@ -442,7 +442,7 @@ bool hash<K,T,H,E>::present(const K& key) const
 }
 
 template<typename K, typename T, class H, class E>
-typename hash<K,T,H,E>::size_type hash<K,T,H,E>::count(const K& key) const
+typename hash<K,T,H,E>::size_type hash<K,T,H,E>::count(const K& /*key*/) const
 {
   return present() ? 1 : 0;
 }

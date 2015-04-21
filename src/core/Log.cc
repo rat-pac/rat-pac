@@ -65,7 +65,7 @@ Log::Log()
 //**** Member functions
 
   bool Log::Init(std::string _filename, Level display, Level log,
-		 bool use_buffer)
+		 bool _use_buffer)
 {
   // Redirect cout and cerr through Log
   cerr.rdbuf(&warn_streambuf);
@@ -75,7 +75,7 @@ Log::Log()
   logfile.open(filename, 0);
   display_level = display;
   log_level = log;
-  Log::use_buffer = use_buffer;
+  Log::use_buffer = _use_buffer;
   dbtrace = new TMap();
   dbtrace->SetOwner();
   enable_dbtrace = true;

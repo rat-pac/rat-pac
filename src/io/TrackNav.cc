@@ -141,8 +141,8 @@ void TrackNav::Load(DS::MC *mc, bool verbose) {
       bestParent->AddChild(trackHead);
     
     // Add this track's children to the available stack
-    pair<MMIter, MMIter> mmipair = idToDaughter.equal_range(track->GetID());
-    for (MMIter mmi = mmipair.first; mmi != mmipair.second; mmi++)
+    pair<MMIter, MMIter> mmipair2 = idToDaughter.equal_range(track->GetID());
+    for (MMIter mmi = mmipair2.first; mmi != mmipair2.second; mmi++)
       readyToAdd.push(mmi->second);
     
     // Finally, remove this track from the yet-to-load set (for checking at end)
