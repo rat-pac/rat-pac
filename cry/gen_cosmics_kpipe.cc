@@ -1,44 +1,3 @@
-/* 
-
-Copyright (c) 2007-2012, The Regents of the University of California. 
-Produced at the Lawrence Livermore National Laboratory 
-UCRL-CODE-227323. 
-All rights reserved. 
- 
-For details, see http://nuclear.llnl.gov/simulations
-Please also read this http://nuclear.llnl.gov/simulations/additional_bsd.html
- 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
- 
-1.  Redistributions of source code must retain the above copyright
-notice, this list of conditions and the disclaimer below.
-
-2. Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the disclaimer (as noted below) in
-the documentation and/or other materials provided with the
-distribution.
-
-3. Neither the name of the UC/LLNL nor the names of its contributors
-may be used to endorse or promote products derived from this software
-without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OF
-THE UNIVERSITY OF CALIFORNIA, THE U.S. DEPARTMENT OF ENERGY OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
-
 #include "CRYGenerator.h"
 #include "CRYSetup.h"
 
@@ -51,6 +10,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "TRandom3.h"
 #include "CRYParticle.h"
+
+/* ---------------------------------------------------
+   This program generates candidate CR events
+   using the CRY package. It filters out the events
+   based on which particles will pass through a box
+   surrounding the KPIPE geometry.
+   --------------------------------------------------- */
 
 TRandom3* __gRANDOM = new TRandom3();
 
@@ -87,6 +53,27 @@ double getCRParticleMass( CRYParticle::CRYId id ) {
     break;
   }
   return 0;
+}
+
+bool intersectKPIPEbox( double pos[], double dir[], double intesectpt[] ) {
+
+  // our box around the kpipe detector is a centered, axis-aligned bouning box, which reduces 
+  // the intersection test to a bunch of if-statements.
+  // we also are able to describe the box with 1 point, the max extent of the box.
+  // we assume that pos is in meters and that dir is in the coordinate frame of the kpipe world
+  double box[3] = { 2.0, 2.0, 5.0 }; // meters
+  
+  // first, check if rays point away from box
+  for (int i=0; i<3; i++) {
+    if ( pos[i]>box[i] && dir[i]>0 ) return false;
+    if ( pos[i]<-box[i] && dir[i]<0 ) return false;
+  }
+
+  // next, check if along axis
+  for (int i=0; i<3; i++) {
+    if ( dir[i]==1.0 )
+
+
 }
 
 int main( int argc, const char *argv[]) {
@@ -131,27 +118,23 @@ int main( int argc, const char *argv[]) {
   // Setup the CRY event generator
   CRYGenerator gen(setup);
 
+  // we need to rotate vectors to KPIPE geometry coordinates: detector along z-axis (source at negative end), dirt at -Y
+  // Need active rotation of -90 deg on x-axis
+  double rotX[3][3] = { {1.0, 0.0, 0.0},
+			{0.0, 0.0, 1.0},
+			{0.0, -1.0, 0.0} };
+  
+
   // Generate the events
   std::vector<CRYParticle*> *ev=new std::vector<CRYParticle*>;
   for ( int i=0; i<nEv; i++) {
     ev->clear();
     gen.genEvent(ev);
 
-    // Write the event information to standard output
-//     std::cout << "Event: " << i << std::endl;
-//     for ( unsigned j=0; j<ev->size(); j++) {
-//       CRYParticle* p = (*ev)[j];
-//       std::cout << "Secondary " << j << " of " << ev->size()
-//                 << " " << CRYUtils::partName(p->id()) 
-//                 << " ke=" << p->ke() 
-//                 << " (x,y,z)=" 
-//                 << " " << p->x()
-//                 << " " << p->y()
-//                 << " " << p->z()
-//                 << " (m)"
-//                 << "\n"; 
-//       delete (*ev)[j];
-//     }
+    // now we filter the events. we keep events that intersect kpipe box around detector:
+    // dx,dy,dz = ( 5.0 m, 5.0 m, 110 m )
+    
+    
 
     // ======================================================================
     // PRINT OUT KINEMATICS FOR RAT
