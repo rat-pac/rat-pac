@@ -126,8 +126,8 @@ is taken into account to fit the direction. All other light is considered "other
 and does not contribute to the direction fit.
 
 Minimization is done in three stages:
-0) Hit time residuals are minimized directly using SimulatedAnnealing from a static seed. 
-1) PathFitter likelihood is minimized with SimulatedAnnealing from stage 0's result.
+0) Hit time residuals are minimized directly using :ref:`simulated-annealing` from a static seed. 
+1) PathFitter likelihood is minimized with :ref:`simulated-annealing` from stage 0's result.
 2) PathFitter likelihood is minimized with Minuit2 from stage 1's result.
 
 Command
@@ -148,13 +148,13 @@ the following fields:
 =========================   ==========================  ===================
 ``num_cycles``              ``int``                     Number of annealing iterations (times to lower temp)
 ``num_evals``               ``int``                     Number of evaluations per iteration (evals per temp)
-``alpha``                   ``double``                  Controls the rate of cooling in SimulatedAnnealing
+``alpha``                   ``double``                  Controls the rate of cooling in :ref:`simulated-annealing`
 
 ``seed_pos``                ``double[3]``               Static position seed to stage 0
 ``pos_sigma0``              ``double``                  Size of initial stage 0 simplex in position coordinates
 ``seed_time``               ``double``                  Static time seed to stage 0
 ``time_sigma0``             ``double``                  Size of initial stage 0 simplex in time
-``temp0``                   ``double``                  Initial temperature of SimulatedAnnealing for stage 0
+``temp0``                   ``double``                  Initial temperature of :ref:`simulated-annealing` for stage 0
 
 ``seed_theta``              ``double``                  Static theta (detector coordinates) seed to stage 1
 ``theta_sigma``             ``double``                  Size of initial stage 1 simplex in theta
@@ -162,7 +162,7 @@ the following fields:
 ``phi_sigma``               ``double``                  Size of initial stage 1 simplex in phi
 ``pos_sigma1``              ``double``                  Size of initial stage 1 simplex in position coordinates
 ``time_sigma1``             ``double``                  Size of initial stage 1 simplex in time
-``temp1``                   ``double``                  Initial temperature of SimulatedAnnealing for stage 1
+``temp1``                   ``double``                  Initial temperature of :ref:`simulated-annealing` for stage 1
 
 ``cherenkov_multiplier``    ``double``                  Number of cherenkov photons generated per hits detected
 ``light_speed``             ``double``                  Speed of light in material in mm/ns 

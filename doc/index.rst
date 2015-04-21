@@ -45,6 +45,7 @@ Programmer's Guide
    programmer_log
    programmer_processors
    programmer_generators
+   programmer_utils
    programmer_style
 
 Authors
