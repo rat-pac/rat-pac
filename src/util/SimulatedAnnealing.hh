@@ -1,5 +1,5 @@
-#ifndef __SIMULATEDANNEALING__
-#define __SIMULATEDANNEALING__
+#ifndef __RAT_SimulatedAnnealing__
+#define __RAT_SimulatedAnnealing__
 
 #include <iostream>
 #include <vector>
