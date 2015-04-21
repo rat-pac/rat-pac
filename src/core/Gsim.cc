@@ -17,9 +17,11 @@
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
+#include <RAT/VertexFile_Gen.hh>
 #include <RAT/CfGen.hh>
 #include <RAT/EventInfo.hh>
 #include <RAT/TrackInfo.hh>
+#include <RAT/PrimaryVertexInformation.hh>
 
 #include <RAT/GLG4PrimaryGeneratorAction.hh>
 #include <RAT/GLG4Scint.hh>
@@ -109,6 +111,8 @@ void Gsim::Init() {
                                    new Alloc<GLG4Gen,Gen_LED>);
   GlobalFactory<GLG4Gen>::Register("coincidence",
                                    new Alloc<GLG4Gen,Coincidence_Gen>);
+  GlobalFactory<GLG4Gen>::Register("vertexfile",
+                                   new Alloc<GLG4Gen,VertexFile_Gen>);
 
   // An additional "messenger" class for user diagnostics
   theDebugMessenger = new GLG4DebugMessenger(theDetectorConstruction);
@@ -420,12 +424,35 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
       G4PrimaryParticle* p = pv->GetPrimary(ipart);
       rat_mcpart->SetPDGCode(get_pdgcode(p));
-      rat_mcpart->SetParticleName(p->GetG4code()->GetParticleName());
+      if (p->GetG4code()){
+        rat_mcpart->SetParticleName(p->GetG4code()->GetParticleName());
+      }else{
+        rat_mcpart->SetParticleName("NotDefined");
+      }
       rat_mcpart->SetMomentum(TVector3(p->GetPx(), p->GetPy(), p->GetPz()));
       rat_mcpart->SetKE(sqrt(p->GetMass()*p->GetMass()+p->GetMomentum().mag2()) - p->GetMass());
       rat_mcpart->SetTime(t);
       rat_mcpart->SetPosition(pos);
       rat_mcpart->SetPolarization(TVector3(p->GetPolX(), p->GetPolY(), p->GetPolZ()));
+    }
+
+    PrimaryVertexInformation *ratpvi = dynamic_cast<PrimaryVertexInformation*> (pv->GetUserInformation());
+    if (ratpvi){
+      for (int i=0;i<ratpvi->GetParentParticleCount();i++){
+        G4PrimaryParticle *p = ratpvi->GetParentParticle(i);
+        DS::MCParticle *rat_mcparent = mc->AddNewMCParent();
+        rat_mcparent->SetPDGCode(get_pdgcode(p));
+        if (p->GetG4code()){
+          rat_mcparent->SetParticleName(p->GetG4code()->GetParticleName());
+        }else{
+          rat_mcparent->SetParticleName("NotDefined");
+        }
+        rat_mcparent->SetMomentum(TVector3(p->GetPx(), p->GetPy(), p->GetPz()));
+        rat_mcparent->SetKE(sqrt(p->GetMass()*p->GetMass()+p->GetMomentum().mag2()) - p->GetMass());
+        rat_mcparent->SetTime(t);
+        rat_mcparent->SetPosition(pos);
+        rat_mcparent->SetPolarization(TVector3(p->GetPolX(), p->GetPolY(), p->GetPolZ()));
+      }
     }
   }
 
@@ -480,8 +507,8 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
   // Get the PMT type for IDPMTs. Then in the loop,
   // increment numPE only when the PE is in an IDPMT.
-  // Map from PMT ID numbers to objects for use later in noise calculation
-  std::map<int, DS::MCPMT*> mcpmtObjects;
+  //Map ID-INDEX for later noise calculation
+  std::map<int, int> mcpmtObjects;
 
   for (int ipmt=0; ipmt<hitpmts->GetEntries(); ipmt++) {
     GLG4HitPMT* a_pmt= hitpmts->GetPMT(ipmt);
@@ -490,7 +517,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     // Create and initialize a RAT DS::MCPMT 
     // note that GLG4HitPMTs are given IDs which are their index
     DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
-    mcpmtObjects[a_pmt->GetID()] = rat_mcpmt;
+    mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //the index of the last element represents the index of the PMT we just added
     rat_mcpmt->SetID(a_pmt->GetID());
     rat_mcpmt->SetType(fPMTInfo->GetType(a_pmt->GetID()));
 
@@ -544,11 +571,11 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     // Add the PMT if it did not register a "real" hit
     if (!mcpmtObjects.count(pmtid)) {
       DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
-      mcpmtObjects[pmtid] = rat_mcpmt;
+      mcpmtObjects[pmtid] = mc->GetMCPMTCount()-1; //at this point the size represent the index
       rat_mcpmt->SetID(pmtid);
       rat_mcpmt->SetType(fPMTInfo->GetType(pmtid));
     }
-    AddMCPhoton(mcpmtObjects[pmtid], hit, true, (StoreOpticalTrackID ? exinfo : NULL));
+    AddMCPhoton(mc->GetMCPMT(mcpmtObjects[pmtid]), hit, true, (StoreOpticalTrackID ? exinfo : NULL));
   }
 }
 

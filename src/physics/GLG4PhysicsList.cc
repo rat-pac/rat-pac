@@ -621,6 +621,7 @@ void MYNAME_PhysicsList::ConstructEM()
 #include "GLG4OpAttenuation.hh"
 #include "RAT/OpWLS.hh"
 #include "GLG4Scint.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "RAT/GLG4SteppingAction.hh"
 #include "RAT/G4S1Light.hh" // NEST
 
@@ -635,6 +636,9 @@ void MYNAME_PhysicsList::ConstructOp()
   //    2) It doesn't actually work for water, either.
 
   RAT::OpWLS* theWLSProcess = new RAT::OpWLS();
+
+  // Standard optical boundary process
+  G4OpBoundaryProcess* theOpBoundaryProcess = new G4OpBoundaryProcess();
 
   RAT::DBLinkPtr lmc = RAT::DB::Get()->GetLink("MC");
 
@@ -726,6 +730,7 @@ void MYNAME_PhysicsList::ConstructOp()
   theCerenkovProcess->SetVerboseLevel(0);
   theAttenuationProcess->SetVerboseLevel(0);
   theWLSProcess->SetVerboseLevel(0);
+  theOpBoundaryProcess->SetVerboseLevel(0);
 
   // For more accurate multiple scattering
   G4int MaxNumPhotons = 4;
@@ -743,6 +748,7 @@ void MYNAME_PhysicsList::ConstructOp()
     }
     if (particleName == "opticalphoton") {
       pmanager->AddDiscreteProcess(theAttenuationProcess);
+      pmanager->AddDiscreteProcess(theOpBoundaryProcess);
 
       theWLSProcess->UseTimeProfile("exponential");
       pmanager->AddDiscreteProcess(theWLSProcess);
