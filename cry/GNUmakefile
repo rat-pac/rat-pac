@@ -15,7 +15,7 @@ ROOT_INCLUDES = `root-config --cflags`
 ROOT_LIBS = `root-config --libs --glibs` -lGeom
 CXXFLAGS += ${ROOT_INCLUDES}
 
-all: testMain gen_cosmics_kpipe
+all: testMain gen_cosmics_kpipe cosmic_interface
 
 #....rule to make test executables
 test%: test%.cc ${CRYHOME}/lib/libCRY.a
@@ -23,6 +23,10 @@ test%: test%.cc ${CRYHOME}/lib/libCRY.a
 
 #....rule to make test executables
 gen_cosmics_kpipe: gen_cosmics_kpipe.cc ${CRYHOME}/lib/libCRY.a
+	$(CXX) $(CXXFLAGS) -o $@ $@.cc -L${CRYHOME}/lib -lCRY ${ROOT_LIBS}
+
+#....rule to make test executables
+cosmic_interface: cosmic_interface.cc ${CRYHOME}/lib/libCRY.a
 	$(CXX) $(CXXFLAGS) -o $@ $@.cc -L${CRYHOME}/lib -lCRY ${ROOT_LIBS}
  
 #....testRoot is different
