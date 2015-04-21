@@ -121,7 +121,8 @@ int main( int argc, const char *argv[]) {
 
   // Parse the contents of the setup file
   std::string datapath = std::string(getenv("CRYDATAPATH"));
-  CRYSetup *setup=new CRYSetup(setupString,-1,datapath.c_str());
+  //CRYSetup *setup=new CRYSetup(setupString,-1,datapath.c_str());
+  CRYSetup *setup=new CRYSetup(setupString,datapath.c_str());
   if ( seed>=0 ) {
     __gRANDOM->SetSeed( seed );
     setup->setRandomFunction( &myrandom );
