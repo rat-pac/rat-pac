@@ -1,7 +1,7 @@
 #-*-python-*-
 # ROOT configuration for SCons
 
-import os, os.path
+import os, os.path, SCons
 from buildhelp import ROOTARCH, RATROOT
 
 #### Builder: RootDict(dictionary_name, [list of header files])
@@ -21,6 +21,21 @@ def generate_action(source, target, env, for_signature):
 rootdict = Builder(generator = generate_action,
                    src_suffix = '.hh')
 ####
+
+import subprocess
+
+desired = ['python','minuit2']
+features = subprocess.check_output(['root-config','--features']).split(' ')
+missing = filter(lambda(x) : not x in features, desired)
+if (len(missing) > 0):
+    print 'scons: FATAL ERROR (ROOT.scons)'
+    print 'scons:             ROOT is missing required features: ' + ', '.join(missing)
+    error = SCons.Errors.BuildError()
+    error.errstr =  'ROOT is missing required features: ' + ', '.join(missing)
+    error.filename = "ROOT.scons"
+    error.status = 2
+    error.exitstatus = 2
+    raise error
 
 
 # Obtain ROOT build flags
