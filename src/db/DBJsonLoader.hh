@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <RAT/json_reader.hh>
+#include <RAT/json.hh>
 
 namespace RAT {
 
@@ -22,7 +22,7 @@ public:
   static std::vector<RAT::DBTable *> parseString(const std::string &data);
   
   /** Converts a JSON document to a RATDB table */
-  static RAT::DBTable *convertTable(const Json::Value &jsonDoc);
+  static RAT::DBTable *convertTable(json::Value &jsonDoc);
   
 };
 

@@ -132,7 +132,7 @@ public:
    *  @throws DBNotFoundException if field @p name
    *  does not exist.
    */  
-  Json::Value GetJSON(const std::string &name);
+  json::Value GetJSON(const std::string &name);
 
 
   // Used by DB class, do not use this yourself
