@@ -40,10 +40,11 @@ int main(int nargs, char** argv ) {
   TTree* tevents = (TTree*)finput->Get( "treeout" );
 
   // Vertex generator: uniform box
-  double source_pos[3] = { 0, 0, -20000.0 }; // cm
-  double xrange[2] = { -300, 300 };
-  double yrange[2] = { -300, 300 };
-  double zrange[2] = { -6000, 6000 };
+  double half_z_outerpipe = 9055.0/2.0; // cm
+  double source_pos[3] = { 0, 0, -3200-half_z_outerpipe }; // cm
+  double xrange[2] = { -250, 250 };
+  double yrange[2] = { -250, 250 };
+  double zrange[2] = { -5500, 5500 };
   double rnorm = fabs( zrange[0] - source_pos[2] ); // event normalized to 1 at this radius
   bool save_diagnostic_plots = true;
 
@@ -79,8 +80,8 @@ int main(int nargs, char** argv ) {
   
   if ( save_diagnostic_plots ) {
     out = new TFile( "output_simple_gen_plots.root", "recreate" );
-    hRdist = new TH1D("hRdist", "", 1000, 0, 1.1*zrange[1] );
-    hR2dist = new TH1D("hR2dist", "", 1000, 0, 1.1*zrange[2] );
+    hRdist = new TH1D("hRdist", "", 1000, 0, 1.1*zrange[0] );
+    hR2dist = new TH1D("hR2dist", "", 1000, 0, 1.1*zrange[1] );
     hCosz = new TH1D("hCosz", "", 1000, 0.95, 1.0 );
     hPhi = new TH1D("hPhi", "", 1000, -2.0*TMath::Pi(), 2.0*TMath::Pi() );
     hXY = new TH2D("hXY","",100, -1000, 1000, 100, -1000, 1000 );

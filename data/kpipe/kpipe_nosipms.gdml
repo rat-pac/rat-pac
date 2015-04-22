@@ -104,29 +104,29 @@
   <tube name="outerpipe"
 	lunit="m"
 	rmin="0.0"
-	rmax="1.920"
-	z="101.04"
+	rmax="1.925"
+	z="90.55"
 	deltaphi="360"
 	aunit="deg"/>
   <tube name="vetoregion"
 	lunit="m"
 	rmin="0.0"
 	rmax="1.900"
-	z="101.0" 
+	z="90.50" 
 	deltaphi="360"
 	aunit="deg"/>
   <tube name="innerpipe"
 	lunit="m"
 	rmin="0.0"
-	rmax="1.4200"
-	z="100.04" 
+	rmax="1.500"
+	z="90.05" 
 	deltaphi="360"
 	aunit="deg"/>
   <tube name="targetvolume"
 	lunit="m"
 	rmin="0.0"
-	rmax="1.400"
-	z="100.00" 
+	rmax="1.475"
+	z="90.00" 
 	deltaphi="360"
 	aunit="deg"/>
 
@@ -188,6 +188,7 @@
     </physvol>
   </volume>
 
+
   <volume name="volOuterPipe">
     <materialref ref="stainless_steel"/>
     <solidref ref="outerpipe"/>
@@ -207,7 +208,7 @@
     <solidref ref="world"/>
     <physvol>
       <volumeref ref="volDirt"/>
-      <position name="posDirt" unit="m" x="0" y="-8.0-1.92" z="0"/>
+      <position name="posDirt" unit="m" x="0" y="-8.0-1.925" z="0"/>
     </physvol>
     <physvol name="pvOuterPipe">
       <volumeref ref="volOuterPipe"/>
