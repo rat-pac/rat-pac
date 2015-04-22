@@ -323,7 +323,7 @@ int main( int argc, const char *argv[]) {
 //       ... [NHEP times]
 
     bool keep = false;
-    nparticles = ev->size();
+    nparticles = 0;
     status.clear();
     pdg.clear();
     momx_gev.clear();
@@ -369,29 +369,32 @@ int main( int argc, const char *argv[]) {
       pmomv[2] = pnorm*dir_rot[2];
 
       // store
-      status.push_back(1);
-      pdg.push_back( p->PDGid() );
-      momx_gev.push_back( pmomv[0] );
-      momy_gev.push_back( pmomv[1] );
-      momz_gev.push_back( pmomv[2] );
-      mass_gev.push_back( mass*0.001 );
-
       if ( intersect ) {
-	hitx_mm.push_back( hit[0]*1000.0 );
-	hity_mm.push_back( hit[1]*1000.0 );
-	hitz_mm.push_back( hit[2]*1000.0 );
-      }
-      else {
-	hitx_mm.push_back( 0.0 );
-        hity_mm.push_back( 0.0 );
-        hitz_mm.push_back( 0.0 );
-      }
+	nparticles++;
+	status.push_back(1);
+	pdg.push_back( p->PDGid() );
+	momx_gev.push_back( pmomv[0] );
+	momy_gev.push_back( pmomv[1] );
+	momz_gev.push_back( pmomv[2] );
+	mass_gev.push_back( mass*0.001 );
 
-      posx_mm.push_back( pos_rot[0]*1000 );
-      posy_mm.push_back( pos_rot[1]*1000 );
-      posz_mm.push_back( pos_rot[2]*1000 );
-      telapsed_sec.push_back( gen.timeSimulated() );
-      delta_time_sec.push_back( gen.timeSimulated()-t_last_keep );
+	if ( intersect ) {
+	  hitx_mm.push_back( hit[0]*1000.0 );
+	  hity_mm.push_back( hit[1]*1000.0 );
+	  hitz_mm.push_back( hit[2]*1000.0 );
+	}
+	else {
+	  hitx_mm.push_back( 0.0 );
+	  hity_mm.push_back( 0.0 );
+	  hitz_mm.push_back( 0.0 );
+	}
+
+	posx_mm.push_back( pos_rot[0]*1000 );
+	posy_mm.push_back( pos_rot[1]*1000 );
+	posz_mm.push_back( pos_rot[2]*1000 );
+	telapsed_sec.push_back( gen.timeSimulated() );
+	delta_time_sec.push_back( gen.timeSimulated()-t_last_keep );
+      }
 
       if (intersect) {
 #ifdef __DEBUG_ME__
