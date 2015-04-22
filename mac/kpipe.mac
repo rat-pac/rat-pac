@@ -21,8 +21,8 @@
 #END EVENT LOOP
 
 /generator/add combo gun:point
-/generator/vtx/set mu-  0 -1000.0 0.0
-/generator/pos/set 0 1900.0 0.0
+/generator/vtx/set mu-  0 0 1000.0
+/generator/pos/set 0 -50000 0.0
 #/generator/add external external:uniform:"/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 100 0 |"
 #/generator/rate/set 10.0
 
