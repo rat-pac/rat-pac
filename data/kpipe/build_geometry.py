@@ -135,7 +135,7 @@ if __name__=="__main__":
     ip_sipms_per_hoop = 100
     ip_hoops = 900
     op_sipms_per_string = 100
-    op_strings = 4
+    op_strings = 10
     pipelength = 8990.0 # cm
     generate_gdml_file( "kpipe.gdml", "PMTINFO.ratdb", ip_sipms_per_hoop, ip_hoops, op_sipms_per_string, op_strings, pipelength )
         
