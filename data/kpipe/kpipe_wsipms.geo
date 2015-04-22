@@ -29,7 +29,7 @@ mother:"border",
 type:"border",
 volume1:"pvVetoRegion",
 volume2:"pvInnerPipe",
-surface:"stainless_steel",
+surface:"tyvek",
 reverse: 1,
 }
 
@@ -42,7 +42,7 @@ mother:"border",
 type:"border",
 volume1:"pvVetoRegion",
 volume2:"pvOuterPipe",
-surface:"stainless_steel",
+surface:"tyvek",
 reverse: 1,
 }
 
