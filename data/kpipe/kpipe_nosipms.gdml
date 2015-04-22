@@ -208,7 +208,7 @@
     <solidref ref="world"/>
     <physvol>
       <volumeref ref="volDirt"/>
-      <position name="posDirt" unit="m" x="0" y="-8.0-1.92" z="0"/>
+      <position name="posDirt" unit="m" x="0" y="-8.0-1.925" z="0"/>
     </physvol>
     <physvol name="pvOuterPipe">
       <volumeref ref="volOuterPipe"/>

@@ -7,7 +7,7 @@ from build_pmtinfo import build_pmtinfo
 # the generated portion is sandwiched between two parts (part1 and part2) below.
 
 
-def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_nrings, op_nsipms_per_strings, op_nstrings, pipelength, ip_radius_cm=140.0, op_radius_cm=155.0 ):
+def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_nrings, op_nsipms_per_strings, op_nstrings, pipelength, ip_radius_cm=142.0, op_radius_cm=155.0 ):
     """ Generates KPipe GDML file. Populates detector with rings of SiPMs.
 
     For each SiPM, we lay down two components, the active and inactive SiPMs.

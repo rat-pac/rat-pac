@@ -89,14 +89,16 @@ for iev in xrange(0,nevents):
         h.Reset()
     for h in htprompts:
         h.Reset()
+
+    npe_tot = 0.0
+    nvetopmts = 0
+    nvetohits = 0
+
     if npes>0:
         weight_mean = [0.0,0.0]
         weight_mean1 = [0.0,0.0]
         weight_mean2 = [0.0,0.0]
         quad_pos = [0.0,0.0]
-        npe_tot = 0.0
-        nvetopmts = 0
-        nvetohits = 0
         for ipmt in xrange(0,npmts):
             pmt = mc.GetMCPMT( ipmt )
             npe_pmtid = pmt.GetMCPhotonCount()
