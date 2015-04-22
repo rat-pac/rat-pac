@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include "TFile.h"
 #include "TChain.h"
+#include "TTree.h"
 #include "TBranch.h"
 
 int main( int narg, char** argv ) {
@@ -15,36 +16,36 @@ int main( int narg, char** argv ) {
 
   std::string input = argv[1];
   long nevents = (long)atoi( argv[2] );
-  TChain* crytree = new TChain("crytree");
-  crytree->Add( input.c_str() );
+  //TChain* crytree = new TChain("crytree");
+  //crytree->Add( input.c_str() );
+  TFile* fin = new TFile( input.c_str(), "open" );
+  TTree* crytree = (TTree*)fin->Get("crytree");
+  //crytree->GetEntry(0);
   
-  long bytes = 0;
-  long ievent = 0;
-
   int nparticles;
-  std::vector< int >* status;
-  std::vector< int >* pdg;
-  std::vector< double >* momx_gev;
-  std::vector< double >* momy_gev;
-  std::vector< double >* momz_gev;
-  std::vector< double >* mass_gev;
-  std::vector< double >* posx_mm;
-  std::vector< double >* posy_mm;
-  std::vector< double >* posz_mm;
-  std::vector< double >* telapsed_sec;
-  std::vector< double >* delta_time_sec;
+  std::vector< int >* status = 0;
+  std::vector< int >* pdg = 0;
+  std::vector< double >* momx_gev = 0;
+  std::vector< double >* momy_gev = 0;
+  std::vector< double >* momz_gev = 0;
+  std::vector< double >* mass_gev = 0;
+  std::vector< double >* posx_mm = 0;
+  std::vector< double >* posy_mm = 0;
+  std::vector< double >* posz_mm = 0;
+  std::vector< double >* telapsed_sec = 0;
+  std::vector< double >* delta_time_sec = 0;
 
-  TBranch* b_status;
-  TBranch* b_pdg;
-  TBranch* b_momx_gev;
-  TBranch* b_momy_gev;
-  TBranch* b_momz_gev;
-  TBranch* b_mass_gev;
-  TBranch* b_posx_mm;
-  TBranch* b_posy_mm;
-  TBranch* b_posz_mm;
-  TBranch* b_telapsed_sec;
-  TBranch* b_delta_time_sec;
+  TBranch* b_status = 0;
+  TBranch* b_pdg = 0;
+  TBranch* b_momx_gev = 0;
+  TBranch* b_momy_gev = 0;
+  TBranch* b_momz_gev = 0;
+  TBranch* b_mass_gev = 0;
+  TBranch* b_posx_mm = 0;
+  TBranch* b_posy_mm = 0;
+  TBranch* b_posz_mm = 0;
+  TBranch* b_telapsed_sec = 0;
+  TBranch* b_delta_time_sec = 0;
 
   crytree->SetBranchAddress( "nparticles", &nparticles );
   crytree->SetBranchAddress( "pdg", &pdg, &b_pdg );
@@ -57,6 +58,9 @@ int main( int narg, char** argv ) {
   crytree->SetBranchAddress( "posz_mm", &posz_mm, &b_posz_mm );
   crytree->SetBranchAddress( "telapsed_sec", &telapsed_sec, &b_telapsed_sec );
   crytree->SetBranchAddress( "delta_time_sec", &delta_time_sec, &b_delta_time_sec );
+
+  long bytes = 0;
+  long ievent = 0;
 
   bytes = crytree->GetEntry(ievent);
   while ( bytes>0 && ievent<nevents ) {
