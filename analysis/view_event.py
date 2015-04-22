@@ -47,7 +47,7 @@ htprompt_tot.SetLineColor(ROOT.kBlack)
 htprompt_ceren.SetLineColor(ROOT.kViolet)
 htprompt_scint.SetLineColor(ROOT.kBlue)
 htprompt_reemit.SetLineColor(ROOT.kRed)
-hid = ROOT.TEllipse( 0, 0, 141, 141 );
+hid = ROOT.TEllipse( 0, 0, 148, 148 );
 hid.SetFillColor( 0 )
 hid.SetFillStyle( 0 )
 hid.SetLineWidth(2)
