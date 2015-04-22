@@ -20,7 +20,7 @@
    surrounding the KPIPE geometry.
    --------------------------------------------------- */
 
-//#define __DEBUG_GEN__ 1
+//#define __DEBUG_ME__ 1
 
 TRandom3* __gRANDOM = new TRandom3();
 
@@ -56,7 +56,7 @@ double getCRParticleMass( CRYParticle::CRYId id ) {
     assert(false);
     break;
   }
-  return 0;
+  return mass;
 }
 
 bool intersectKPIPEbox( double pos[], double dir[], double intersectpt[] ) {
@@ -243,8 +243,8 @@ int main( int argc, const char *argv[]) {
 
   // Parse the contents of the setup file
   std::string datapath = std::string(getenv("CRYDATAPATH"));
-  //CRYSetup *setup=new CRYSetup(setupString,-1,datapath.c_str());
   CRYSetup *setup=new CRYSetup(setupString,datapath.c_str());
+  //CRYSetup *setup=new CRYSetup(setupString,datapath.c_str());
   if ( seed>=0 ) {
     __gRANDOM->SetSeed( seed );
     setup->setRandomFunction( &myrandom );
@@ -275,6 +275,9 @@ int main( int argc, const char *argv[]) {
   std::vector< double > posx_mm;
   std::vector< double > posy_mm;
   std::vector< double > posz_mm;
+  std::vector< double > hitx_mm;
+  std::vector< double > hity_mm;
+  std::vector< double > hitz_mm;
   std::vector< double > telapsed_sec;
   std::vector< double > delta_time_sec;
   crytree->Branch( "nparticles", &nparticles, "nparticles/I" );
@@ -283,9 +286,13 @@ int main( int argc, const char *argv[]) {
   crytree->Branch( "momx_gev", &momx_gev );
   crytree->Branch( "momy_gev", &momy_gev );
   crytree->Branch( "momz_gev", &momz_gev );
+  crytree->Branch( "mass_gev", &mass_gev );
   crytree->Branch( "posx_mm", &posx_mm );
   crytree->Branch( "posy_mm", &posy_mm );
   crytree->Branch( "posz_mm", &posz_mm );
+  crytree->Branch( "hitx_mm", &hitx_mm );
+  crytree->Branch( "hity_mm", &hity_mm );
+  crytree->Branch( "hitz_mm", &hitz_mm );
   crytree->Branch( "telapsed_sec", &telapsed_sec);
   crytree->Branch( "delta_time_sec", &delta_time_sec );
 
@@ -322,17 +329,21 @@ int main( int argc, const char *argv[]) {
     momx_gev.clear();
     momy_gev.clear();
     momz_gev.clear();
+    mass_gev.clear();
     posx_mm.clear();
     posy_mm.clear();
     posz_mm.clear();
+    hitx_mm.clear();
+    hity_mm.clear();
+    hitz_mm.clear();
     telapsed_sec.clear();
     delta_time_sec.clear();
 
 
     for ( unsigned j=0; j<ev->size(); j++) {
       CRYParticle* p = (*ev)[j];
-      double mass = getCRParticleMass( p->id() );
-      double E = p->ke() + mass;
+      double mass = getCRParticleMass( p->id() ); // MeV
+      double E = p->ke() + mass; // MeV
       double pnorm = sqrt( E*E - mass*mass )*0.001; // GeV
       double pmomv[3] = { 0, 0, 0 };
 
@@ -352,6 +363,7 @@ int main( int argc, const char *argv[]) {
       double hit[3];
       bool intersect = intersectKPIPEbox( pos_rot, dir_rot, hit );
 
+
       pmomv[0] = pnorm*dir_rot[0];
       pmomv[1] = pnorm*dir_rot[1];
       pmomv[2] = pnorm*dir_rot[2];
@@ -362,13 +374,26 @@ int main( int argc, const char *argv[]) {
       momx_gev.push_back( pmomv[0] );
       momy_gev.push_back( pmomv[1] );
       momz_gev.push_back( pmomv[2] );
-      posx_mm.push_back( pos_rot[0] );
-      posy_mm.push_back( pos_rot[1] );
-      posz_mm.push_back( pos_rot[2] );
-      telapsed_sec.push_back( p->t() );
-      delta_time_sec.push_back( p->t()-t_last_keep );
+      mass_gev.push_back( mass*0.001 );
 
       if ( intersect ) {
+	hitx_mm.push_back( hit[0]*1000.0 );
+	hity_mm.push_back( hit[1]*1000.0 );
+	hitz_mm.push_back( hit[2]*1000.0 );
+      }
+      else {
+	hitx_mm.push_back( 0.0 );
+        hity_mm.push_back( 0.0 );
+        hitz_mm.push_back( 0.0 );
+      }
+
+      posx_mm.push_back( pos_rot[0]*1000 );
+      posy_mm.push_back( pos_rot[1]*1000 );
+      posz_mm.push_back( pos_rot[2]*1000 );
+      telapsed_sec.push_back( gen.timeSimulated() );
+      delta_time_sec.push_back( gen.timeSimulated()-t_last_keep );
+
+      if (intersect) {
 #ifdef __DEBUG_ME__
 	std::cout << "INTERSECTS KPIPE BOUNDING BOX: KEEP (" << nkeep+1 << ")" << std::endl;
 #endif
@@ -394,10 +419,11 @@ int main( int argc, const char *argv[]) {
 	std::cout << pos_rot[0] << " " << pos_rot[1] << " " << pos_rot[2] << " " //  X Y Z: position in mm
 		  << std::endl;
 #endif      
-    }
+    }//end of loop over all particles
 
+    // if one successful intersection
     if ( keep && nparticles>0) {
-      t_last_keep = telapsed_sec.at(0);
+      t_last_keep = gen.timeSimulated();
       crytree->Fill();
       nkeep++;
     }
