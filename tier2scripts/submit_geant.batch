@@ -1,5 +1,5 @@
 Executable = /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/tier2scripts/run_geant.sh
-Arguments = $(Process) 0
+Arguments = $(Process) 300
 Universe = vanilla
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT

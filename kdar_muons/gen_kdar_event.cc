@@ -63,11 +63,11 @@ int main(int nargs, char** argv ) {
 
 
   // geometry parameters (move to config file at some point)
-  double baseline = 20000.0; // cm [200 m]. distance from center of tank to source
-  double source_pos[3] = { 0, 0, -baseline };
-  double half_z_outerpipe = 10104.0/2.0; // cm
-  double r_outerpipe = 192.0; // cm
+  double half_z_outerpipe = 9055.0/2.0; // cm
+  double r_outerpipe = 192.5; // cm
   double half_z_dirt = 0.5*20000.0;
+  double baseline = 3200 + half_z_outerpipe; // cm [200 m]. distance from center of tank to source
+  double source_pos[3] = { 0, 0, -baseline };
   double dist_src_2_frontface = fabs(-half_z_outerpipe+baseline);
   if ( dist_src_2_frontface<0 )
     return -1;
