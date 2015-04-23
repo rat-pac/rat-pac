@@ -41,9 +41,9 @@ def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_
             z = -0.5*pipelength + istring_sipm*op_string_delta_z
             x = (op_radius_cm)*cos( phi*pi/180.0 )
             y = (op_radius_cm)*sin( phi*pi/180.0 )
-            x2 = (op_radius_cm-1.0)*cos( phi*pi/180.0 )
-            y2 = (op_radius_cm-1.0)*sin( phi*pi/180.0 )
-            rotphi = 180.0 + phi
+            x2 = x+(0.1)*cos( phi*pi/180.0 )
+            y2 = y+(0.1)*sin( phi*pi/180.0 )
+            rotphi = -90.0 + phi
             op_sipmdict[isipm] = ( x, y, z, -rotphi, x2, y2, istring )
             isipm += 1
             
@@ -57,16 +57,16 @@ def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_
         # active
         targetvol+="    <physvol name=\"SiPM%d\">\n"%(key)
         targetvol+="      <volumeref ref=\"volActiveSiPM\"/>\n"
-        targetvol+="      <position name=\"posVolActiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key, 
+        targetvol+="      <position name=\"posVolActiveSiPM%d\" unit=\"cm\" x=\"%.8f\" y=\"%.8f\" z=\"%.8f\"/>\n"%(key, 
                                                                                                                    transform[4], 
                                                                                                                    transform[5], 
                                                                                                                    transform[2] )
-        targetvol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key,  transform[3]*pi/180.0)
+        targetvol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.8f\"/>\n"%(key,  transform[3]*pi/180.0)
         targetvol+="    </physvol>\n"
         # inactive
         targetvol+="    <physvol name=\"InactiveSiPM%d\">\n"%(key)
         targetvol+="      <volumeref ref=\"volInactiveSiPM\"/>\n"
-        targetvol+="      <position name=\"posVolInactiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(key, transform[0], transform[1], transform[2] )
+        targetvol+="      <position name=\"posVolInactiveSiPM%d\" unit=\"cm\" x=\"%.8f\" y=\"%.8f\" z=\"%.8f\"/>\n"%(key, transform[0], transform[1], transform[2] )
         targetvol+="      <rotation name=\"rotVolInactiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(key,  transform[3]*pi/180.0)
         targetvol+="    </physvol>\n"
     targetvol+="  </volume>\n"
@@ -92,16 +92,16 @@ def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_
         vetovol+="    <physvol name=\"SiPM%d\">\n"%(okey)
         vetovol+="      <volumeref ref=\"volActiveSiPM\"/>\n"
         vetovol+="      <position name=\"posVolActiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(okey, 
-                                                                                                                   transform[4], 
-                                                                                                                   transform[5], 
-                                                                                                                   transform[2] )
-        vetovol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(okey,  transform[3]*pi/180.0)
+                                                                                                                 transform[4], 
+                                                                                                                 transform[5], 
+                                                                                                                 transform[2] )
+        vetovol+="      <rotation name=\"rotVolActiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.4f\"/>\n"%(okey,  transform[3]*pi/180.0)
         vetovol+="    </physvol>\n"
         # inactive
         vetovol+="    <physvol name=\"InactiveSiPM%d\">\n"%(okey)
         vetovol+="      <volumeref ref=\"volInactiveSiPM\"/>\n"
         vetovol+="      <position name=\"posVolInactiveSiPM%d\" unit=\"cm\" x=\"%.4f\" y=\"%.4f\" z=\"%.4f\"/>\n"%(okey, transform[0], transform[1], transform[2] )
-        vetovol+="      <rotation name=\"rotVolInactiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.2f\"/>\n"%(okey,  transform[3]*pi/180.0)
+        vetovol+="      <rotation name=\"rotVolInactiveSiPM%d\" x=\"0.0\" y=\"0.0\" z=\"%.4f\"/>\n"%(okey,  transform[3]*pi/180.0)
         vetovol+="    </physvol>\n"
     vetovol+="  </volume>\n"
         
