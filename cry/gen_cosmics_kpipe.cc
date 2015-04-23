@@ -378,22 +378,37 @@ int main( int argc, const char *argv[]) {
 	momz_gev.push_back( pmomv[2] );
 	mass_gev.push_back( mass*0.001 );
 
-	if ( intersect ) {
-	  hitx_mm.push_back( hit[0]*1000.0 );
-	  hity_mm.push_back( hit[1]*1000.0 );
-	  hitz_mm.push_back( hit[2]*1000.0 );
+	hitx_mm.push_back( hit[0]*1000.0 );
+	hity_mm.push_back( hit[1]*1000.0 );
+	hitz_mm.push_back( hit[2]*1000.0 );
+
+	if ( fabs(pos_rot[0])<20.0 && fabs(pos_rot[1])<20.0 && fabs(pos_rot[2])<100.0 ) {
+	  // use the original position
+	  posx_mm.push_back( pos_rot[0]*1000 );
+	  posy_mm.push_back( pos_rot[1]*1000 );
+	  posz_mm.push_back( pos_rot[2]*1000 );
+	  telapsed_sec.push_back( gen.timeSimulated() );	
+	  delta_time_sec.push_back( 0.0 );
 	}
 	else {
-	  hitx_mm.push_back( 0.0 );
-	  hity_mm.push_back( 0.0 );
-	  hitz_mm.push_back( 0.0 );
+	  // not bound in world volume! so we move the starting point up to the hit point
+	  posx_mm.push_back( hit[0]*1000 );
+          posy_mm.push_back( hit[1]*1000 );
+          posz_mm.push_back( hit[2]*1000 );
+	  telapsed_sec.push_back( gen.timeSimulated() );
+	  double beta = 1.0;
+	  if ( mass >0 ) {
+	    double gamma = sqrt( 1.0 + (pnorm/(0.001*mass))*(pnorm/(0.001*mass)) );
+	    beta = pnorm/(gamma*(0.001*mass));
+	  }
+	  double pos2hit = 0.;
+	  for (int i=0; i<3; i++)
+	    pos2hit += (hit[i]-pos_rot[i])*(hit[i]-pos_rot[i]);
+	  pos2hit = sqrt(pos2hit); // distance in meters
+	  double dt = pos2hit/(beta*3.0e8); // seconds
+	  delta_time_sec.push_back( dt*1.0e9 ); // ns
 	}
 
-	posx_mm.push_back( pos_rot[0]*1000 );
-	posy_mm.push_back( pos_rot[1]*1000 );
-	posz_mm.push_back( pos_rot[2]*1000 );
-	telapsed_sec.push_back( gen.timeSimulated() );
-	delta_time_sec.push_back( gen.timeSimulated()-t_last_keep );
       }
 
       if (intersect) {
