@@ -279,7 +279,7 @@ int main( int argc, const char *argv[]) {
   std::vector< double > hity_mm;
   std::vector< double > hitz_mm;
   std::vector< double > telapsed_sec;
-  std::vector< double > delta_time_sec;
+  std::vector< double > delta_time_ns;
   crytree->Branch( "nparticles", &nparticles, "nparticles/I" );
   crytree->Branch( "status", &status );
   crytree->Branch( "pdg", &pdg );
@@ -294,7 +294,7 @@ int main( int argc, const char *argv[]) {
   crytree->Branch( "hity_mm", &hity_mm );
   crytree->Branch( "hitz_mm", &hitz_mm );
   crytree->Branch( "telapsed_sec", &telapsed_sec);
-  crytree->Branch( "delta_time_sec", &delta_time_sec );
+  crytree->Branch( "delta_time_ns", &delta_time_ns );
 
 
 
@@ -337,7 +337,7 @@ int main( int argc, const char *argv[]) {
     hity_mm.clear();
     hitz_mm.clear();
     telapsed_sec.clear();
-    delta_time_sec.clear();
+    delta_time_ns.clear();
 
 
     for ( unsigned j=0; j<ev->size(); j++) {
@@ -388,7 +388,7 @@ int main( int argc, const char *argv[]) {
 	  posy_mm.push_back( pos_rot[1]*1000 );
 	  posz_mm.push_back( pos_rot[2]*1000 );
 	  telapsed_sec.push_back( gen.timeSimulated() );	
-	  delta_time_sec.push_back( 0.0 );
+	  delta_time_ns.push_back( 0.0 );
 	}
 	else {
 	  // not bound in world volume! so we move the starting point up to the hit point
@@ -406,7 +406,7 @@ int main( int argc, const char *argv[]) {
 	    pos2hit += (hit[i]-pos_rot[i])*(hit[i]-pos_rot[i]);
 	  pos2hit = sqrt(pos2hit); // distance in meters
 	  double dt = pos2hit/(beta*3.0e8); // seconds
-	  delta_time_sec.push_back( dt*1.0e9 ); // ns
+	  delta_time_ns.push_back( dt*1.0e9 ); // ns
 	}
 
       }
