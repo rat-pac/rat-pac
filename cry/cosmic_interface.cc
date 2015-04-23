@@ -33,7 +33,7 @@ int main( int narg, char** argv ) {
   std::vector< double >* posy_mm = 0;
   std::vector< double >* posz_mm = 0;
   std::vector< double >* telapsed_sec = 0;
-  std::vector< double >* delta_time_sec = 0;
+  std::vector< double >* delta_time_ns = 0;
 
   TBranch* b_status = 0;
   TBranch* b_pdg = 0;
@@ -45,7 +45,7 @@ int main( int narg, char** argv ) {
   TBranch* b_posy_mm = 0;
   TBranch* b_posz_mm = 0;
   TBranch* b_telapsed_sec = 0;
-  TBranch* b_delta_time_sec = 0;
+  TBranch* b_delta_time_ns = 0;
 
   crytree->SetBranchAddress( "nparticles", &nparticles );
   crytree->SetBranchAddress( "pdg", &pdg, &b_pdg );
@@ -57,7 +57,7 @@ int main( int narg, char** argv ) {
   crytree->SetBranchAddress( "posy_mm", &posy_mm, &b_posy_mm );
   crytree->SetBranchAddress( "posz_mm", &posz_mm, &b_posz_mm );
   crytree->SetBranchAddress( "telapsed_sec", &telapsed_sec, &b_telapsed_sec );
-  crytree->SetBranchAddress( "delta_time_sec", &delta_time_sec, &b_delta_time_sec );
+  crytree->SetBranchAddress( "delta_time_ns", &delta_time_ns, &b_delta_time_ns );
 
   long bytes = 0;
   long ievent = 0;
@@ -73,7 +73,8 @@ int main( int narg, char** argv ) {
 		<< 0 << " " << 0 << " " // JDAHEP1, JDAHEP2: first, last daughter
 		<< momx_gev->at(i) << " " << momy_gev->at(i) <<  " " << momz_gev->at(i) << " " //  PHEP1 PHEP2 PHEP3: momentum GeV
 		<< mass_gev->at(i) << " " // PHEP5: mass GeV
-		<< 0.0 << " " //delta_time_sec->at(i)*1.0e9 << " " // DT: delta time
+	//<< 0.0 << " " // DT: zero out delta
+		<< delta_time_ns->at(i)<< " " // DT: delta time
 		<< posx_mm->at(i) << " " << posy_mm->at(i) << " " << posz_mm->at(i) << " " 
 		<< std::endl;
     }
