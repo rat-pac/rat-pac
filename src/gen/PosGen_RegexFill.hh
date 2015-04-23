@@ -8,12 +8,17 @@
 #include <RAT/GLG4PosGen.hh>
 
 #include <G4VPhysicalVolume.hh>
+#include <G4VSolid.hh>
 #include <G4LogicalVolume.hh>
 #include <G4AffineTransform.hh>
 #include <G4ThreeVector.hh>
 
 #include <vector>
 #include <utility>
+#include <map>
+
+//C POSIX Regex library, switch to <regex> in c++11
+#include <regex.h> 
 
 class G4VPhysicalVolume;
 class G4VSolid;
@@ -47,10 +52,6 @@ class PosGen_RegexFill : public GLG4PosGen {
         PosGen_RegexFill(const char* dbname = "regexfill"): GLG4PosGen(dbname) { }
         virtual ~PosGen_RegexFill() { }
         
-        // Recursively traverses daughters of mother to find any volume names mathching the regex
-        // Adds found volumes to the `found` parameter and calculates all necessary fields of FillVolume
-        static void FindVolumes(G4LogicalVolume *mother, G4String &regex, std::vector<FillVolume> &found);
-        
         // Generates a random position in a volume that matched a regex
         // Positions are uniformly distributed (by volume) across all matches
         // Positions exclude daughters of mathched volumes unless the daughter also matches
@@ -63,7 +64,16 @@ class PosGen_RegexFill : public GLG4PosGen {
         virtual G4String GetState() const;
         
     protected:
-    
+        
+        // Recursively traverses daughters of mother to find any volume names mathching the regex
+        // Adds found volumes to the `found` parameter and calculates all necessary fields of FillVolume
+        static void FindVolumes(G4LogicalVolume *mother, regex_t *re, std::vector<FillVolume> &found);
+        
+        // Arbitrary volume calculations are terribly slow, so cache solids that
+        // have been calculated already. G4VSolid lifetime is the same as the 
+        // simulation so presumably this is safe.
+        static double GetVolume(G4VSolid *solid);
+        
         // Accumulates set regexes
         std::string fState;
         
@@ -72,6 +82,9 @@ class PosGen_RegexFill : public GLG4PosGen {
         
         // Stores the sum of the volume up to the requested index
         std::vector<double> fVolumeCumu;
+        
+        // Calculated volume cache
+        static std::map<G4VSolid*,double> fSolidVolumes;
 };
 
 } // namespace RAT
