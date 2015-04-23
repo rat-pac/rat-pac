@@ -26,10 +26,10 @@ cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/bin/rat ./
 cp ${INPUTFILE} ./
 
 # GEN MACRO
-python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/cry/gen_macro.py cry_events_"$JOBID".root cry_job"$JOBID".mac $JOBID
+python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/cry/gen_macro.py cry_events_"$JOBID".root cry_job"$JOBID".mac $JOBID 100
 
 # RUN JOB
-./rat cry_job"$JOBID".mac -o output_kpipe_cryevents_"$JOBID".root
+./rat cry_job"$JOBID".mac -o output_kpipe_cryevents_"$JOBID".root 2>> /net/hisrv0001/home/taritree/outlog
 
 # COPY OUTPUT
 scp ${_CONDOR_SCRATCH_DIR}/output_kpipe_cryevents_* nudsk0001:/net/nudsk0001/d00/scratch/taritree/cosmic_events 2>> /net/hisrv0001/home/taritree/outlog

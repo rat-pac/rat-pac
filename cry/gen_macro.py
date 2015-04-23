@@ -34,4 +34,4 @@ if __name__=="__main__":
     if len( sys.argv)==1:
         gen_macro( "test.mac", "cry_gen.root", 1, 10000 )
     else:
-        gen_macro( sys.argv[2], sys.argv[1], int(sys.argv[3]), 10000 )
+        gen_macro( sys.argv[2], sys.argv[1], int(sys.argv[3]), int(sys.argv[4]) )
