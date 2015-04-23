@@ -8,7 +8,7 @@
 include ${CRYHOME}/Makefile.common  #....define compiler and any other common settings
 
 #CXX = clang++
-EXE = testMain
+EXE = testMain gen_cosmics_kpipe cosmic_interface
 CXXFLAGS += -I${CRYHOME}/src
 
 ROOT_INCLUDES = `root-config --cflags`
