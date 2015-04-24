@@ -11,7 +11,7 @@
 int main( int nargs, char** argv ) {
 
   if ( nargs<3 ) {
-    std::cout << "usage: scrape_data <input RAT root file> <output rootfile> [optional: pmt info file]" << std::endl;
+    std::cout << "usage: scrape_data <input RAT root file> <output rootfile> [optional: pmt info file. default: ]" << std::endl;
     return 0;
   }
 
@@ -23,20 +23,25 @@ int main( int nargs, char** argv ) {
   //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/kpipe_run00_partial.root";
   std::string inputfile = argv[1];
   std::string outfile = argv[2];
-  std::string pmtinfofile = "../data/kpipe/PMTINFO.root";
+
+  std::cout << "analyze: " << inputfile << std::endl;
+
+  std::string pmtinfofile = "/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/data/kpipe/PMTINFO.root";
+  //std::string pmtinfofile = "../data/kpipe/PMTINFO.root";
   if (nargs==4) 
     pmtinfofile = argv[3];
 
   RAT::DSReader* ds = new RAT::DSReader( inputfile.c_str() ); 
-
   TFile* tf_pmtinfo = new TFile( pmtinfofile.c_str(), "open" );
+
   TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
   float pmtpos[3];
   pmtinfo->SetBranchAddress("x",&pmtpos[0]);
   pmtinfo->SetBranchAddress("y",&pmtpos[1]);
   pmtinfo->SetBranchAddress("z",&pmtpos[2]);
 
-  TFile* out = new TFile(outfile.c_str(), "RECREATE" );
+  TFile* out = new TFile( outfile.c_str(), "RECREATE" );
+  
   // variables we want
   int npe;
   int npe_prompt[4];

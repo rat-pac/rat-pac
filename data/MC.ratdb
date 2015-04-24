@@ -12,7 +12,7 @@ thin_factor: 3.0d,
 hadronic_processes: 0,
 
 // simulate muon physics processes
-muon_processes: 0,
+muon_processes: 1,
 
 }
 

@@ -9,9 +9,9 @@ from math import sqrt
 pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
 pmtinfo = pmtinfo.set_index('opdetid')
 
-#reader = DSReader('kpipeout_test.root')
-reader = DSReader('../cry/crkpipe.root')
+reader = DSReader("output_kpipe_303.root")
 #reader = DSReader("output_kpipe_101.root")
+
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -179,6 +179,8 @@ for iev in xrange(0,nevents):
     markz = ROOT.TLine( vertex.Z()*0.1, 0, vertex.Z()*0.1, hz.GetMaximum() )
     markz.SetLineColor(2)
 
+    #if htprompt_ceren.Integral()<10:
+    #    continue
     c.cd(1).cd(1)
     htprompt_tot.Draw()
     for h in htprompts:
