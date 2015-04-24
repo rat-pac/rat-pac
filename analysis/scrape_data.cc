@@ -6,10 +6,14 @@
 #include "RAT/DSReader.hh"
 #include "RAT/DS/MC.hh"
 
-using namespace RAT;
-using namespace std;
+#include "kptrigger.h"
 
 int main( int nargs, char** argv ) {
+
+  if ( nargs<3 ) {
+    std::cout << "usage: scrape_data <input RAT root file> <output rootfile> [optional: pmt info file]" << std::endl;
+    return 0;
+  }
 
   double prompt_cut = 500.0; // ns
 
@@ -19,9 +23,10 @@ int main( int nargs, char** argv ) {
   //std::string inputfile = "/net/nudsk0001/d00/scratch/taritree/kpipe_out/kpipe_run00_partial.root";
   std::string inputfile = argv[1];
   std::string outfile = argv[2];
+
   std::cout << "analyze: " << inputfile << std::endl;
 
-  DSReader* ds = new DSReader( inputfile.c_str() ); 
+  RAT::DSReader* ds = new RAT::DSReader( inputfile.c_str() ); 
 
   TFile* tf_pmtinfo = new TFile( "/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/data/kpipe/PMTINFO.root", "open" );
   TTree* pmtinfo = (TTree*)tf_pmtinfo->Get("pmtinfo");
@@ -54,6 +59,18 @@ int main( int nargs, char** argv ) {
   double rv, zv;  // from truth
   double tstart, tstart_dcye;
   double tave, tave_dcye;
+  // trigger info
+//   int npulses = 0;
+// //   std::vector<double> ttrig(4);
+// //   std::vector<double> tpeak(4);
+// //   std::vector<double> peakamp(4);
+// //   std::vector<double> tend(4);
+// //   std::vector<double> pulsepe(4);
+//   double ttrig[10];
+//   double tpeak[10];
+//   double peakamp[10];
+//   double tend[10];
+//   double pulsepe[10];
   
   TTree* tree = new TTree( "mcdata", "MC Data" );
   // recon
@@ -85,24 +102,45 @@ int main( int nargs, char** argv ) {
   tree->Branch( "mumomv", &mumomv, "mumomv/D" );
   tree->Branch( "rv", &rv, "rv/D" );  
   tree->Branch( "zv", &zv, "zv/D" );
+  // trigger vars
+//   tree->Branch( "npulses", &npulses, "npulses/I" );
+//   tree->Branch( "ttrig",  ttrig, "ttrig[10]/D" );
+//   tree->Branch( "tpeak",  tpeak, "tpeak[10]/D" );
+//   tree->Branch( "tend",  tend, "tend[10]/D" );
+//   tree->Branch( "peakamp",  peakamp, "peakamp[10]/D" );
+//   tree->Branch( "pulsepe",  pulsepe, "pulsepe[10]/D" );
 
-  long ievent = 0;
-  long nevents = ds->GetTotal();
+  int ievent = 0;
+  int nevents = ds->GetTotal();
+
+  //KPPulseList pulselist;
+
+  std::cout << "Number of events: " << nevents << std::endl;
+  nevents = 10;
   
   while (ievent<nevents) {
-    DS::Root* root = ds->NextEvent();
+    RAT::DS::Root* root = ds->NextEvent();
 
-    if ( ievent%1000==0 )
-      std::cout << "Event " << ievent << std::endl;
+//     npulses = 0;
+//     for (int i=0; i<10; i++){
+//       ttrig[i] = 0;
+//       tpeak[i] = 0;
+//       tend[i] = 0;
+//       peakamp[i] = 0;
+//       pulsepe[i] = 0;
+//     }
 
-    DS::MC* mc = root->GetMC();
+    //if ( ievent%1000==0 )
+    std::cout << "Event " << ievent << std::endl;
+
+    RAT::DS::MC* mc = root->GetMC();
     if ( mc==NULL )
       break;
     npe = mc->GetNumPE();
     npmts = mc->GetMCPMTCount();
 
-    if ( mc->GetMCParticleCount()==0 )
-      continue;
+//     if ( mc->GetMCParticleCount()==0 )
+//       continue;
 
     // true vertex
     posv[0] = mc->GetMCParticle(0)->GetPosition().X()/10.0; //change to cm
@@ -143,7 +181,7 @@ int main( int nargs, char** argv ) {
     if (npe>0) {
 
       for (int ipmt=0; ipmt<npmts; ipmt++) {
-	DS::MCPMT* pmt = mc->GetMCPMT( ipmt );
+	RAT::DS::MCPMT* pmt = mc->GetMCPMT( ipmt );
 	int pmtid = pmt->GetID();
 	pmtinfo->GetEntry( pmtid );
 
@@ -184,7 +222,7 @@ int main( int nargs, char** argv ) {
 
 	// timing
 	for (int ihit=0; ihit<pmt->GetMCPhotonCount(); ihit++) {
-	  DS::MCPhoton* hit = pmt->GetMCPhoton(ihit);
+	  RAT::DS::MCPhoton* hit = pmt->GetMCPhoton(ihit);
 	  // earliest time
 	  double t = hit->GetHitTime();
 	  int origin = hit->GetOriginFlag();
@@ -239,8 +277,31 @@ int main( int nargs, char** argv ) {
       nhoops = 0;
       for (int i=0; i<1000; i++)
 	nhoops += hoop_hit[i];
+
+      // TRIGGER
+//       find_trigger( mc, 5.0, 5.0, 10.0, 45.0, pulselist, 90000, false );
+//       npulses = 0;
+//       for ( KPPulseListIter it=pulselist.begin(); it!=pulselist.end(); it++ ) {
+// // 	ttrig.push_back( (*it)->tstart );
+// // 	tpeak.push_back( (*it)->tpeak );
+// // 	tend.push_back( (*it)->tend );
+// // 	peakamp.push_back( (*it)->peakamp );
+// // 	pulsepe.push_back( 0 ); // not yet calculated
+// // 	ttrig[npulses] = (*it)->tstart;
+// // 	tpeak[npulses] = (*it)->tpeak;
+// // 	tend[npulses] = (*it)->tend;
+// // 	peakamp[npulses] = (*it)->peakamp;
+// // 	pulsepe[npulses] = 0.0;
+// 	npulses++;
+// 	delete *it;
+// 	*it = NULL;
+// 	if ( npulses==10 )
+// 	  break;
+//       }
+
     }//end of if pe
     ievent++;
+   
     tree->Fill();
   }//end of while loop
 

@@ -107,11 +107,12 @@ for iev in xrange(0,nevents):
 
             # look for secondary peak
             mod_thresh = 0
-            onefall = False
+            onerising = False
             for pulse in active_pulses:
                 if "peak" not in pulses[pulse]:
                     # we still have a rising peak. make threshold impossble
                     mod_thresh += 2.0*hits_window
+                    onerising = True
                 else:
                     expecthits = pulses[pulse]["peak"]*exp( -( ibin-pulses[pulse]["tpeak"] )/45.0 )
                     mod_thresh += expecthits + 3.0*sqrt(expecthits)
@@ -119,7 +120,7 @@ for iev in xrange(0,nevents):
             hthresh.SetBinContent( ibin, mod_thresh )
             # second pulse thresh
             #if hits_window/float(window)>mod_thresh:
-            if ave_window>mod_thresh:
+            if onerising==False and ave_window>mod_thresh:
                 # start new pulse
                 active_pulses.append( npulses )
                 pulses[ npulses ] = { "tstart":ibin, "nhits":hits_window, "end":False, "last_level":float(hits_window)/float(window), "nfalling":0 }
@@ -153,7 +154,8 @@ for iev in xrange(0,nevents):
                 print "Remove pulse=",ipulse
                 active_pulses.remove(ipulse)
                 
-                    
+    if len(pulses)<3:
+        continue
 
     c.cd(1)
     ht.Draw()

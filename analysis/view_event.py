@@ -9,12 +9,7 @@ from math import sqrt
 pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
 pmtinfo = pmtinfo.set_index('opdetid')
 
-#reader = DSReader('kpipeout_test.root')
-
-#reader = DSReader('../test.root')
-#reader = DSReader("output_kpipe_200.root")
 reader = DSReader("output_kpipe_303.root")
-#reader = DSReader("output_kpipe_101.root")
 
 nevents = reader.GetTotal()
 
