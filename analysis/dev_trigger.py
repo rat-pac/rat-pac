@@ -154,8 +154,8 @@ for iev in xrange(0,nevents):
                 print "Remove pulse=",ipulse
                 active_pulses.remove(ipulse)
                 
-    if len(pulses)<3:
-        continue
+    #if len(pulses)<3:
+    #    continue
 
     c.cd(1)
     ht.Draw()
