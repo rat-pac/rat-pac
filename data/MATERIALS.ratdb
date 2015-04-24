@@ -516,7 +516,7 @@ density: 0.749,
 nelements: 2,
 nmaterials: 0,
 elements: ["Carbon","Hydrogen"],
-elemprop: [.8563.0, .1437.0],
+elemprop: [0.8563, 0.1437],
 formula: "OIL",
 mol: 1.0631e24,
 }
@@ -530,7 +530,7 @@ density: 1.06,
 nelements: 4,
 nmaterials: 0,
 elements: ["Carbon","Hydrogen","Nitrogen", "Oxygen",],
-elemprop: [.8142.0, .0501.0, .0633.0, .0723.0],
+elemprop: [0.8142, 0.0501, 0.0633, 0.0723],
 formula: "FLUOR",
 mol: 1.38092e24
 }
@@ -544,7 +544,7 @@ density: 0.846,
 nelements: 0,
 nmaterials: 4,
 materials: ["G4_Gd","mineral_oil","pseudocumene", "ppo",],
-matprop: [.00199646.0, .798584.0, 0.19765, 0.00176991],
+matprop: [0.00199646, 0.798584, 0.19765, 0.00176991],
 }
 
 // --------------------- Plastics ----------------------------
@@ -738,7 +738,7 @@ density: 0.855,
 nelements: 2,
 nmaterials: 0,
 elements: ["Hydrogen", "Carbon"],
-elemprop: [0.1437, .8563.0],  // chemical formula is C3H6, fractional weight same as polyethylene 
+elemprop: [0.1437, 0.8563],  // chemical formula is C3H6, fractional weight same as polyethylene 
 }
 
 {
