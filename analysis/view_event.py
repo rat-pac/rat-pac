@@ -10,7 +10,6 @@ pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
 pmtinfo = pmtinfo.set_index('opdetid')
 
 reader = DSReader("output_kpipe_303.root")
-#reader = DSReader("output_kpipe_101.root")
 
 nevents = reader.GetTotal()
 
