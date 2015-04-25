@@ -78,9 +78,9 @@ std::vector<std::string> DBLink::GetSArray(const std::string &name)
   return Pick< std::vector<std::string> >(name, DBTable::STRING_ARRAY);
 }
 
-Json::Value DBLink::GetJSON(const std::string &name)
+json::Value DBLink::GetJSON(const std::string &name)
 {
-  return Pick< Json::Value >(name, DBTable::JSON);
+  return Pick< json::Value >(name, DBTable::JSON);
 }
 
 // Helper function to make Pick() easier to read

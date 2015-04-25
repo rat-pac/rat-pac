@@ -15,7 +15,7 @@
 #include <RAT/hash.hpp>
 #include <RAT/DBFieldCallback.hh>
 #include <RAT/HashFunc.hh>
-#include <RAT/json_value.hh>
+#include <RAT/json.hh>
 
 namespace RAT {
 
@@ -24,6 +24,9 @@ public:
 
   /** Create new empty table. */
   DBTable();
+  
+  /** Create new table from json object. */
+  DBTable(json::Value &jsonDoc);
 
   /** Create new table with specific name and index. */
   DBTable(std::string tblname, std::string index="");
@@ -135,11 +138,11 @@ public:
 
   /** Get a JSON value for any field.
   
-      This returns a Json::Value for any field.  This includes
+      This returns a json::Value for any field.  This includes
       arbitrary JSON values that cannot be parsed by RATDB into
       standard C++ types.
   */
-  Json::Value GetJSON(const std::string &name) const;
+  json::Value GetJSON(const std::string &name) const;
 
   /** Template version of the Get method.
    *
@@ -152,14 +155,14 @@ public:
   inline void SetI(std::string name, int val) { 
     if (GetFieldType(name) == NOTFOUND)
       bytes += 4;
-    table[name] = Json::Value(val);
+    table[name] = json::Value(val);
   };
 
   /** Create double field if does not already exist, and set value. */
   inline void SetD(std::string name, double val) { 
     if (GetFieldType(name) == NOTFOUND)
       bytes += 8;
-    table[name] = Json::Value(val);
+    table[name] = json::Value(val);
   };
   
   /** Create string field if does not already exist, and set value. */
@@ -167,7 +170,7 @@ public:
     if (GetFieldType(name) == STRING)
       bytes -= GetS(name).size();
     bytes += val.size();
-    table[name] = Json::Value(val);
+    table[name] = json::Value(val);
   };
 
   /** Create integer array field if does not already exist, and set value. 
@@ -178,10 +181,7 @@ public:
       bytes -= 4 * GetIArray(name).size();
     bytes += 4 * val.size();
 
-    Json::Value tmpArray;
-    for (unsigned int i=0; i < val.size(); i++)
-      tmpArray[i] = val[i];
-      
+    json::Value tmpArray(val);
     table[name] = tmpArray;
     arrayTypeCache[name] = INTEGER_ARRAY;
   };
@@ -199,9 +199,7 @@ public:
       bytes -= 8 * GetIArray(name).size();
     bytes += 8 * val.size();
     
-    Json::Value tmpArray;
-    for (unsigned int i=0; i < val.size(); i++)
-      tmpArray[i] = val[i];
+    json::Value tmpArray(val);
     table[name] = tmpArray;
     arrayTypeCache[name] = DOUBLE_ARRAY;
   };
@@ -224,9 +222,7 @@ public:
     for (unsigned i=0; i < val.size(); i++)
       bytes += val[i].size();
         
-    Json::Value tmpArray;
-    for (unsigned int i=0; i < val.size(); i++)
-      tmpArray[i] = val[i];
+    json::Value tmpArray(val);
     table[name] = tmpArray;
     arrayTypeCache[name] = STRING_ARRAY;
   };
@@ -234,7 +230,7 @@ public:
   /** Add a raw JSON value to the database.  Homogeneous arrays should be 
       added using one of the SetIArray/SetDArray/SetSArray methods or they
       will not be fetchable via GetIArray/GetDArray/GetSArray later. */
-  inline void SetJSON(const std::string &name, const Json::Value &value) {
+  inline void SetJSON(const std::string &name, const json::Value &value) {
     // For now JSON values are exempt from size accounting
     table[name] = value; 
   }
@@ -251,7 +247,7 @@ protected:
   int bytes;           /**< Number of bytes required by values.  Approximate */
   
   /** JSON object storage of all fields, except callbacks */
-  Json::Value table;
+  json::Value table;
 
   /** Stores the data type of homogeneous arrays to make GetFieldType easier */
   stlplus::hash< std::string, FieldType, pyhash> arrayTypeCache;
@@ -305,8 +301,8 @@ RAT::DBTable::Get<std::vector<std::string> >(const std::string &name) const
 }
 
 template <>
-inline Json::Value
-RAT::DBTable::Get<Json::Value>(const std::string &name) const
+inline json::Value
+RAT::DBTable::Get<json::Value>(const std::string &name) const
 {
   return GetJSON(name); 
 }

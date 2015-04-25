@@ -71,6 +71,7 @@ Log::Die("Could not open " + filename + " for input.");
 #define __RAT_Log__
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <utility>
 
@@ -83,8 +84,7 @@ Log::Die("Could not open " + filename + " for input.");
 #include <TObject.h>
 #include <TMap.h>
 #include <TObjString.h>
-#include <RAT/json_value.hh>
-#include <RAT/json_writer.hh>
+#include <RAT/json.hh>
 
 namespace RAT {
 
@@ -196,7 +196,7 @@ public:
   inline static void TraceDBAccess(const std::string &table,
 				   const std::string &index,
 				   const std::string &field,
-				   const Json::Value &value);
+				   const json::Value &value);
 
   static TMap *GetDBTraceMap() { return dbtrace; };
 
@@ -347,15 +347,17 @@ void Log::TraceDBAccess(const std::string &table, const std::string &index,
 
 void Log::TraceDBAccess(const std::string &table, const std::string &index,
 			const std::string &field,
-			const Json::Value &value)
+			const json::Value &value)
 {
   std::string key = table + "[" + index + "]."+field;
   if (!enable_dbtrace || dbtrace->FindObject(key.c_str()))
     return;
+    
+  std::stringstream ss;
+  json::Writer writer(ss);
+  writer.putValue(value);
   
-  std::string str_value = Json::FastWriter().write(value);
-  
-  AddDBEntry(key, str_value);  
+  AddDBEntry(key, ss.str());  
 }
 
 } // namespace RAT

@@ -8,11 +8,26 @@ DBTable::DBTable()
 {
   this->tblname = "";
   this->index = "";
+  table.reset(json::TOBJECT);
+}
+
+DBTable::DBTable(json::Value &jsonDoc)
+  : tblname(""), index(""), run_begin(0), run_end(0), bytes(0)
+{
+  tblname = jsonDoc["name"].cast<std::string>();
+  if (jsonDoc.isMember("index"))
+    index = jsonDoc["index"].cast<std::string>();
+  
+  if (jsonDoc.isMember("run_range"))
+    SetRunRange(jsonDoc["run_range"][(unsigned) 0].cast<int>(), jsonDoc["run_range"][(unsigned) 1].cast<int>());
+    
+  table = jsonDoc;
 }
 
 DBTable::DBTable(std::string _tblname, std::string _index)  
   : tblname(_tblname), index(_index), run_begin(0), run_end(0), bytes(0)
 {
+  table.reset(json::TOBJECT);
 }
 
 DBTable::~DBTable()
@@ -26,18 +41,42 @@ DBTable::FieldType DBTable::GetFieldType(std::string name) const
   else if (datbl_deferred.present(name)) return DBTable::DOUBLE_ARRAY;
   else if (arrayTypeCache.present(name)) return arrayTypeCache[name];
   else if (!table.isMember(name)) return DBTable::NOTFOUND;
-  // Have to handle this special way because json-cpp is quite
-  // free about pretending real values with no fractional part are integers
-  // which messes with our type system
-  else if (table[name].type() == Json::realValue) return DBTable::DOUBLE;
-  else if (table[name].isInt()) return DBTable::INTEGER;
-  else if (table[name].isString()) return DBTable::STRING;
-  else return DBTable::JSON;
+  else {
+    json::Value val = table[name];
+    switch (val.getType()) {
+        case json::TINTEGER:
+        case json::TUINTEGER:
+        case json::TBOOL:
+            return DBTable::INTEGER;
+        case json::TREAL:
+            return DBTable::DOUBLE;
+        case json::TSTRING:
+            return DBTable::STRING;
+        case json::TARRAY:
+            if (val.getArraySize() > 0) {
+                switch (val[0].getType()) {
+                    case json::TINTEGER:
+                    case json::TUINTEGER:
+                    case json::TBOOL:
+                        return DBTable::INTEGER_ARRAY;
+                    case json::TREAL:
+                        return DBTable::DOUBLE_ARRAY;
+                    case json::TSTRING:
+                        return DBTable::STRING_ARRAY;
+                    default: 
+                        return DBTable::JSON;
+                }
+            }
+            return DBTable::JSON;
+        default:
+            return DBTable::JSON;
+    }
+  }
 }
 
 std::vector<std::string> DBTable::GetFieldList() const
 {
-  std::vector<std::string> fields = table.getMemberNames();
+  std::vector<std::string> fields = table.getMembers();
 
   stlplus::hash< std::string, DBFieldCallback*, pyhash>::const_iterator ia_deferred_iter = iatbl_deferred.begin();
   while (ia_deferred_iter != iatbl_deferred.end()) {
@@ -54,56 +93,50 @@ std::vector<std::string> DBTable::GetFieldList() const
   return fields;
 }
 
-int DBTable::GetI(const std::string &name) const
-{
-  if (!table.isMember(name))
-    throw DBNotFoundError(tblname, index, name);
-  else if (!table[name].isInt())
-    throw DBWrongTypeError(tblname, index, name, INTEGER, GetFieldType(name));
-  else
-    return table[name].asInt();
+int DBTable::GetI(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    try {
+        return table[name].cast<int>();
+    } catch (...) {   
+        throw DBWrongTypeError(tblname, index, name, INTEGER, GetFieldType(name));
+    }
 }
 
-double DBTable::GetD(const std::string &name) const
-{
-  if (!table.isMember(name))
-    throw DBNotFoundError(tblname, index, name);
-  else if (!table[name].isDouble())
-    throw DBWrongTypeError(tblname, index, name, DOUBLE, GetFieldType(name));
-  else
-    return table[name].asDouble();  
+double DBTable::GetD(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    try {
+        return table[name].cast<double>();
+    } catch (...) {   
+        throw DBWrongTypeError(tblname, index, name, INTEGER, GetFieldType(name));
+    }
 }
 
-std::string DBTable::GetS(const std::string &name) const
-{
-  if (!table.isMember(name))
-    throw DBNotFoundError(tblname, index, name);
-  else if (!table[name].isString())
-    throw DBWrongTypeError(tblname, index, name, STRING, GetFieldType(name));
-  else
-    return table[name].asString();
+std::string DBTable::GetS(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else if (table[name].getType() != json::TSTRING)
+        throw DBWrongTypeError(tblname, index, name, STRING, GetFieldType(name));
+    else
+        return table[name].cast<std::string>();
 }
 
-std::vector<std::string> DBTable::GetSArray(const std::string &name) const
-{
-  if (!table.isMember(name))
-    throw DBNotFoundError(tblname, index, name);
-  else if (GetFieldType(name) != STRING_ARRAY)
-    throw DBWrongTypeError(tblname, index, name, STRING_ARRAY, GetFieldType(name));
-  else {
-    const Json::Value &json_array = table[name];
-    return json_array.asStringArray();
-  }
+std::vector<std::string> DBTable::GetSArray(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else if (GetFieldType(name) != STRING_ARRAY)
+        throw DBWrongTypeError(tblname, index, name, STRING_ARRAY, GetFieldType(name));
+    else
+        return table[name].toVector<std::string>();
 }
 
-Json::Value DBTable::GetJSON(const std::string &name) const
-{
-  if (!table.isMember(name))
-    throw DBNotFoundError(tblname, index, name);
-  else
-    return table[name];
+json::Value DBTable::GetJSON(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else
+        return table[name];
 }
-
 
 std::vector<int> DBTable::GetIArray(const std::string &name) const {
   // Fetch if deferred
@@ -118,8 +151,8 @@ std::vector<int> DBTable::GetIArray(const std::string &name) const {
   else if (GetFieldType(name) != INTEGER_ARRAY)
     throw DBWrongTypeError(tblname, index, name, INTEGER_ARRAY, GetFieldType(name));
   else {
-    const Json::Value &json_array = table[name];
-    return json_array.asIntArray();
+    const json::Value &json_array = table[name];
+    return json_array.toVector<int>();
   }
 }
 
@@ -136,8 +169,8 @@ std::vector<double> DBTable::GetDArray(const std::string &name) const {
   else if (GetFieldType(name) != DOUBLE_ARRAY)
     throw DBWrongTypeError(tblname, index, name, DOUBLE_ARRAY, GetFieldType(name));
   else {
-    const Json::Value &json_array = table[name];
-    return json_array.asDoubleArray();
+    const json::Value &json_array = table[name];
+    return json_array.toVector<double>();
   }    
 }
 
