@@ -115,13 +115,13 @@ def generate_gdml_file( gdml_filename, pmtinfo_filename, ip_nsipms_per_ring, ip_
     vetovol_nosipms += "  </volume>\n"
 
 
-    #fgdml = open( gdml_filename, 'w' )
-    #print >> fgdml, part1+"\n"+targetvol+"\n"+part2+"\n"+vetovol+"\n"+part3+"\n"
-    #fgdml.close()
+    fgdml = open( gdml_filename, 'w' )
+    print >> fgdml, part1+"\n"+targetvol+"\n"+part2+"\n"+vetovol+"\n"+part3+"\n"
+    fgdml.close()
 
-    #fgdml = open( gdml_filename.replace(".gdml","_nosipms.gdml"), 'w' )
-    #print >> fgdml, part1+"\n"+targetvol_nosipms+"\n"+part2+"\n"+vetovol_nosipms+"\n"+part3+"\n"
-    #fgdml.close()
+    fgdml = open( gdml_filename.replace(".gdml","_nosipms.gdml"), 'w' )
+    print >> fgdml, part1+"\n"+targetvol_nosipms+"\n"+part2+"\n"+vetovol_nosipms+"\n"+part3+"\n"
+    fgdml.close()
 
     pmtinfo = build_pmtinfo( isipm, ip_sipmdict, op_sipmdict )
     fpmtinfo = open( pmtinfo_filename, 'w' )
