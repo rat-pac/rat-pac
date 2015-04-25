@@ -1,6 +1,6 @@
 #include "kptrigger.h"
 #include <iostream>
-#include "PMTinfo.hh"
+#include "pmtinfo.hh"
 
 KPPulse::KPPulse() {
   nfallingbins = 0;
