@@ -24,7 +24,10 @@ scrape_data.o: scrape_data.cc
 kptrigger.o: kptrigger.cc kptrigger.h
 	$(CC) $(CFLAGS) -c -o $@ kptrigger.cc
 
-libkptrigger.so: kptrigger.o
+pmtinfo.o: pmtinfo.cc pmtinfo.hh
+	$(CC) $(CFLAGS) -c -o $@ pmtinfo.cc
+
+libkptrigger.so: kptrigger.o pmtinfo.o
 	$(CC) $(LDFLAGS) -shared -o $@ $^ $(LDLIBS)
 	cp $@ ../lib/
 

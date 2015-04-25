@@ -1,17 +1,23 @@
 #include "kptrigger.h"
 #include <iostream>
+#include "PMTinfo.hh"
 
 KPPulse::KPPulse() {
   nfallingbins = 0;
   last_max = 0.0;
   tpeak = tstart = tend = peakamp = 0.0;
+  pe = 0.0;
+  z = 0.0;
+  hits_assigned = 0;
   fStatus = kRising;
 }
 
 KPPulse::~KPPulse() {}; 
 
 
-int find_trigger( RAT::DS::MC* mc, double threshold, double window_ns, double tave_ns, double decay_constant, KPPulseList& pulses, int first_od_sipmid, bool veto ) {
+int find_trigger( RAT::DS::MC* mc, 
+		  double threshold, double window_ns, double tave_ns, double decay_constant, 
+		  KPPulseList& pulses, int first_od_sipmid, bool veto ) {
 
   // (1) bin hits out to 20 microseconds.
   // (2) scan until a bin over threshold
@@ -90,7 +96,7 @@ int find_trigger( RAT::DS::MC* mc, double threshold, double window_ns, double ta
       if ( nhits_window>(int)threshold ) {
 	// make a new pulse!
 	KPPulse* apulse = new KPPulse;
-	apulse->tstart = ibin*nspertic;
+	apulse->tstart = (ibin-windowbins)*nspertic;
 	apulse->fStatus = KPPulse::kRising; // start of rising edge (until we find max)
 	pulses.push_back( apulse );
 	npulses++;
@@ -104,8 +110,7 @@ int find_trigger( RAT::DS::MC* mc, double threshold, double window_ns, double ta
       bool allfalling = true;
       for ( KPPulseListIter it=pulses.begin(); it!=pulses.end(); it++ ) {
 	if ( (*it)->fStatus==KPPulse::kRising ) {
-	  // have a rising peak. going to make threshold impossible to satisfy
-	  modthresh += 2.0*nhits_window;
+	  // have a rising peak. will block creation of new pulse.
 	  allfalling = false;
 	}
 	else {
@@ -159,4 +164,92 @@ int find_trigger( RAT::DS::MC* mc, double threshold, double window_ns, double ta
   }//end of scan over timing histogram
   
   return npulses;
+}
+
+void assign_pulse_charge( RAT::DS::MC* mc, std::string pmtinfofile, KPPulseList& pulselist, double decay_const_ns, int first_od_sipmid, bool veto ) {
+  // get pulse info: assigned charge
+  if ( pulselist.size()==0 )
+    return;
+
+  PMTinfo* pmtinfo = PMTinfo::GetPMTinfo( pmtinfofile );
+
+  const int npulses = pulselist.size();
+  double heights[ npulses ];
+  double height_tot;
+
+  // clear pe, z
+  for ( int ipulse=0; ipulse<npulses; ipulse++ ) {
+    KPPulse* apulse = pulselist.at(ipulse);
+    apulse->pe = 0.0;
+    apulse->z  = 0.0;
+    apulse->hits_assigned = 0;
+  }
+  
+  // Fill time bins
+  int npmts = mc->GetMCPMTCount();
+
+  for ( int ipmt=0; ipmt<npmts; ipmt++ ) {
+    RAT::DS::MCPMT* pmt = mc->GetMCPMT( ipmt );
+    int nhits = pmt->GetMCPhotonCount();
+    int pmtid = pmt->GetID();
+    float pmtpos[3];
+    pmtinfo->getposition( pmtid, pmtpos );
+
+    if ( veto && pmtid<first_od_sipmid )
+      continue;
+    else if ( !veto && pmtid>=first_od_sipmid )
+      continue;
+
+
+
+    for (int ihit=0; ihit<nhits; ihit++) {
+      RAT::DS::MCPhoton* hit = pmt->GetMCPhoton( ihit );
+      double thit = hit->GetHitTime();
+
+      height_tot = 0;
+      memset( heights, 0, sizeof(double)*npulses );
+
+      // make claims on hits based on pulse height
+      for ( int ipulse=0; ipulse<npulses; ipulse++ ) {
+	KPPulse* apulse = pulselist.at(ipulse);
+	if ( apulse->tstart<= thit && thit<= apulse->tend ) {
+	  double pheight;
+	  if ( thit<apulse->tpeak ) {
+	    pheight = (apulse->peakamp)/( apulse->tpeak-apulse->tstart )*( thit-apulse->tstart );
+	  }
+	  else {
+	    double dt = thit-apulse->tpeak;
+	    pheight = apulse->peakamp*exp( -dt/decay_const_ns );
+	  }
+	  heights[ipulse] = pheight;
+	  height_tot += pheight;
+	}
+	else {
+	  heights[ipulse] = 0.0;
+	}
+      }//end of kppulse list
+      
+      // assign
+      if ( height_tot>0 ) {
+	for ( int ipulse=0; ipulse<npulses; ipulse++ ) {
+	  KPPulse* apulse = pulselist.at(ipulse);
+	  apulse->pe += heights[ipulse]/height_tot;
+	  if (  heights[ipulse]>0.0 ) {
+	    apulse->hits_assigned++;
+	    apulse->z += (double)pmtpos[2];
+// 	    if ( ipulse==0 ) {
+// 	      std::cout << " pulse 1: pmtid=" << pmtid << "  pe=" << heights[ipulse] << ", z=" << pmtpos[2] << std::endl;
+// 	    }
+	  }
+	}
+      }
+    }
+  }//end of pmt loop
+
+  // take care of averages
+  for ( int ipulse=0; ipulse<npulses; ipulse++ ) {
+    KPPulse* apulse = pulselist.at(ipulse);
+    if ( apulse->hits_assigned>0 ) 
+      apulse->z /= double(apulse->hits_assigned);
+  }
 }

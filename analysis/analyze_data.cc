@@ -10,16 +10,15 @@
 
 int main( int nargs, char** argv ) {
 
-  if ( nargs<3 ) {
-    std::cout << "usage: scrape_data <input RAT root file> <output rootfile> [optional: pmt info file]" << std::endl;
+  if ( nargs<4 ) {
+    std::cout << "usage: scrape_data <input RAT root file> <output rootfile> <pmt info file>" << std::endl;
     return 0;
   }
 
   std::string inputfile = argv[1];
   std::string outfile = argv[2];
   std::string pmtinfofile = "../data/kpipe/PMTINFO.root";
-  if (nargs==4) 
-    pmtinfofile = argv[3];
+  pmtinfofile = argv[3];
 
   RAT::DSReader* ds = new RAT::DSReader( inputfile.c_str() ); 
   int first_od_sipmid = 90000;
@@ -43,6 +42,7 @@ int main( int nargs, char** argv ) {
   std::vector<double> peakamp;
   std::vector<double> tend;
   std::vector<double> pulsepe;
+  std::vector<double> pulsez;
 //   double ttrig[10];
 //   double tpeak[10];
 //   double peakamp[10];
@@ -73,6 +73,7 @@ int main( int nargs, char** argv ) {
   tree->Branch( "tend",  &tend );
   tree->Branch( "peakamp",  &peakamp );
   tree->Branch( "pulsepe",  &pulsepe );
+  tree->Branch( "pulsez",  &pulsez );
 //   tree->Branch( "npulses", &npulses, "npulses/I" );
 //   tree->Branch( "ttrig",  ttrig, "ttrig[10]/D" );
 //   tree->Branch( "tpeak",  tpeak, "tpeak[10]/D" );
@@ -96,6 +97,7 @@ int main( int nargs, char** argv ) {
     tend.clear();
     peakamp.clear();
     pulsepe.clear();
+    pulsez.clear();
 
     if ( ievent%1000==0 )
       std::cout << "Event " << ievent << std::endl;
@@ -168,25 +170,29 @@ int main( int nargs, char** argv ) {
 
     // TRIGGER
     npulses = find_trigger( mc, 5.0, 5.0, 10.0, 45.0, pulselist, 90000, false );
+
+    assign_pulse_charge( mc, pmtinfofile, pulselist, 45.0, 90000, false );
+    std::cout << "  posv: " << posv[0] << ", " << posv[1] << ", " << posv[2] << std::endl;
+    std::cout << "  npulses=" << npulses << std::endl;
+    for ( KPPulseListIter it=pulselist.begin(); it!=pulselist.end(); it++ )
+      std::cout << "    - tstart=" << (*it)->tstart << " tpeak=" << (*it)->tpeak << " pe=" << (*it)->pe << " z=" << (*it)->z << std::endl;
+
     for ( KPPulseListIter it=pulselist.begin(); it!=pulselist.end(); it++ ) {
       ttrig.push_back( (*it)->tstart );
       tpeak.push_back( (*it)->tpeak );
       tend.push_back( (*it)->tend );
       peakamp.push_back( (*it)->peakamp );
-      pulsepe.push_back( 0 ); // not yet calculated
-// 	ttrig[npulses] = (*it)->tstart;
-// 	tpeak[npulses] = (*it)->tpeak;
-// 	tend[npulses] = (*it)->tend;
-// 	peakamp[npulses] = (*it)->peakamp;
-// 	pulsepe[npulses] = 0.0;
+      pulsepe.push_back( (*it)->pe ); // not yet calculated
+      pulsez.push_back( (*it)->z ); // not yet calculated
       delete *it;
       *it = NULL;
     }
+
     pulselist.clear();
-    std::cout << "  npulses=" << npulses << std::endl;
     ievent++;
    
     tree->Fill();
+    //std::cin.get();
   }//end of while loop
 
   std::cout << "write." << std::endl;
