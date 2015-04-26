@@ -1,3 +1,4 @@
+import sys
 import ROOT
 ROOT.gSystem.Load('libRATEvent')
 from ROOT.RAT import DSReader
@@ -6,10 +7,12 @@ import numpy as np
 import pandas as pd
 from math import sqrt
 
+input = sys.argv[1]
+
 pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
 pmtinfo = pmtinfo.set_index('opdetid')
 
-reader = DSReader("output_kpipe_303.root")
+reader = DSReader(input)
 
 nevents = reader.GetTotal()
 
@@ -65,6 +68,9 @@ for iev in xrange(0,nevents):
     npe_late = 0
 
     print "EVENT ",iev
+    if iev<80:
+        continue
+
     for ipart in xrange(0,mc.GetMCParticleCount()):
         pmom = 0.
         mom = mc.GetMCParticle(ipart).GetMomentum()
