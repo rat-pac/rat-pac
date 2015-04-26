@@ -16,7 +16,8 @@ KPPulse::~KPPulse() {};
 
 
 int find_trigger( RAT::DS::MC* mc, 
-		  double threshold, double window_ns, double tave_ns, double decay_constant, 
+		  double threshold, double window_ns, double tave_ns, 
+		  int n_decay_constants, double decay_weights[], double decay_constants_ns[], 
 		  KPPulseList& pulses, int first_od_sipmid, bool veto ) {
 
   // (1) bin hits out to 20 microseconds.
@@ -115,7 +116,13 @@ int find_trigger( RAT::DS::MC* mc,
 	}
 	else {
 	  // for pulses considered falling, we modify the threshold to be 3 sigma (roughly) above
-	  double expectation = ((*it)->peakamp)*exp( -( ibin*nspertic - (*it)->tpeak )/decay_constant ); // later can expand to multiple components
+	  //double expectation = ((*it)->peakamp)*exp( -( ibin*nspertic - (*it)->tpeak )/decay_constant ); // later can expand to multiple components
+	  double arg = 0.0;
+	  for (int idcy=0; idcy<n_decay_constants; idcy++) {
+	    arg += decay_weights[idcy]*( ibin*nspertic - (*it)->tpeak )/decay_constants_ns[idcy];
+	  }
+	  double expectation = ((*it)->peakamp)*exp( -arg );
+	  //double expectation = ((*it)->peakamp)*exp( -( ibin*nspertic - (*it)->tpeak )/decay_constant ); // later can expand to multiple components
 	  modthresh += expectation + 3.0*sqrt(expectation);
 	}
       }//end of loop over pulses
@@ -153,6 +160,9 @@ int find_trigger( RAT::DS::MC* mc,
 	  }
 	}//end of if rising
 	else if ( apulse->fStatus==KPPulse::kFalling ) {
+	  double decay_constant = 0.0;
+	  for (int idcy=0; idcy<n_decay_constants; idcy++)
+	    decay_constant += decay_weights[idcy]*decay_constants_ns[idcy];
 	  if ( ibin*nspertic > apulse->tpeak + 8*decay_constant ) {
 	    apulse->tend = ibin*nspertic;
 	    apulse->fStatus=KPPulse::kDefined;

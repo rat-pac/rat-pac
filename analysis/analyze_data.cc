@@ -22,6 +22,9 @@ int main( int nargs, char** argv ) {
 
   RAT::DSReader* ds = new RAT::DSReader( inputfile.c_str() ); 
   int first_od_sipmid = 90000;
+  int n_decay_constants = 2;
+  double decay_weights[2] = { 0.6, 0.4 };
+  double decay_constants_ns[2] = { 45.0, 67.6 };
 
   TFile* out = new TFile(outfile.c_str(), "RECREATE" );
   // variables we want
@@ -166,7 +169,9 @@ int main( int nargs, char** argv ) {
     std::cout << "  OD PEs: " << odpe << " PMTs: " << odpmts << std::endl;
 
     // TRIGGER
-    npulses = find_trigger( mc, 5.0, 5.0, 10.0, 45.0, pulselist, 90000, false );
+    npulses = find_trigger( mc, 5.0, 5.0, 10.0, 
+			    n_decay_constants, decay_weights, decay_constants_ns,
+			    pulselist, 90000, false );
 
     assign_pulse_charge( mc, pmtinfofile, pulselist, 45.0, 90000, false );
     std::cout << "  posv: " << posv[0] << ", " << posv[1] << ", " << posv[2] << std::endl;

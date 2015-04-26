@@ -11,8 +11,8 @@ pmtinfo = pmtinfo.set_index('opdetid')
 
 #reader = DSReader('kpipeout_test.root')
 #reader = DSReader('../cry/crkpipe.root')
-#reader = DSReader("output_kpipe_0.root")
-reader = DSReader("output_kpipe_cryevents_2.root")
+reader = DSReader("output_kpipe_0.root")
+#reader = DSReader("output_kpipe_cryevents_2.root")
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -119,7 +119,7 @@ for iev in xrange(0,nevents):
                     mod_thresh += 2.0*hits_window
                     onerising = True
                 else:
-                    expecthits = pulses[pulse]["peak"]*exp( -( ibin-pulses[pulse]["tpeak"] )/45.0 )
+                    expecthits = pulses[pulse]["peak"]*exp( -0.6*( ibin-pulses[pulse]["tpeak"] )/45.5 - 0.4*( ibin-pulses[pulse]["tpeak"] )/120.0 )
                     mod_thresh += expecthits + 3.0*sqrt(expecthits)
                     onefall = True
             hthresh.SetBinContent( ibin, mod_thresh )
