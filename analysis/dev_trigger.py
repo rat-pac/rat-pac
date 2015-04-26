@@ -11,7 +11,8 @@ pmtinfo = pmtinfo.set_index('opdetid')
 
 #reader = DSReader('kpipeout_test.root')
 #reader = DSReader('../cry/crkpipe.root')
-reader = DSReader("output_kpipe_0.root")
+#reader = DSReader("output_kpipe_0.root")
+reader = DSReader("output_kpipe_cryevents_2.root")
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -37,6 +38,9 @@ for iev in xrange(0,nevents):
     npes = mc.GetNumPE()
     npmts = mc.GetMCPMTCount()
 
+    #if iev not in [83,90,137,274,335,472,724,742,778,943]:
+    #    continue
+
     npe_prompt = 0
     npe_late = 0
     print "============================================================"
@@ -48,7 +52,8 @@ for iev in xrange(0,nevents):
         pmom = mom.X()*mom.X()  + mom.Y()*mom.Y() + mom.Z()*mom.Z()
         pmom = sqrt(pmom)
         pos = mc.GetMCParticle(ipart).GetPosition()
-        print "  ",ipart,") pdg=",mc.GetMCParticle(ipart).GetPDGCode()," Mom=",pmom,"=",mom.X(),",",mom.Y(),",",mom.Z()," ke=",ke," pos=",pos.X(),pos.Y(),pos.Z()
+        posr = sqrt( pos.X()*pos.X()  + pos.Y()*pos.Y() )*0.1
+        print "  ",ipart,") pdg=",mc.GetMCParticle(ipart).GetPDGCode()," Mom=",pmom,"=",mom.X(),",",mom.Y(),",",mom.Z()," ke=",ke," pos=",pos.X()*0.1,pos.Y()*0.1,pos.Z()*0.1," cm, r=",posr," cm"
     vertex = mc.GetMCParticle(0).GetPosition()
     print "  TOTAL NPEs in event: ",npes
     print "  TOTAL NPMTs hit: " ,npmts

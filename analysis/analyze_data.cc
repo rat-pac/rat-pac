@@ -108,9 +108,6 @@ int main( int nargs, char** argv ) {
     npe = mc->GetNumPE();
     npmts = mc->GetMCPMTCount();
 
-    if ( mc->GetMCParticleCount()==0 )
-      continue;
-
     // true vertex
     posv[0] = mc->GetMCParticle(0)->GetPosition().X()/10.0; //change to cm
     posv[1] = mc->GetMCParticle(0)->GetPosition().Y()/10.0; //change to cm
