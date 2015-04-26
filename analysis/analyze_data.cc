@@ -124,13 +124,14 @@ int main( int nargs, char** argv ) {
     npe = mc->GetNumPE();
     npmts = mc->GetMCPMTCount();
 
-    if ( mc->GetMCParticle(0)==NULL ) {
+    if ( mc->GetMCParticleCount()==0 ) {
       tree->Fill();
       ievent++;
       continue;
     }
 
     // true vertex
+    //std::cout << "mc part: " << mc->GetMCParticleCount() << " " <<  mc->GetMCParticle(0) << std::endl;
     posv[0] = mc->GetMCParticle(0)->GetPosition().X()/10.0; //change to cm
     posv[1] = mc->GetMCParticle(0)->GetPosition().Y()/10.0; //change to cm
     posv[2] = mc->GetMCParticle(0)->GetPosition().Z()/10.0; //change to cm
