@@ -94,6 +94,18 @@ int main( int nargs, char** argv ) {
   while (ievent<nevents) {
     RAT::DS::Root* root = ds->NextEvent();
 
+    // --------------------------------
+    // Clear Variables
+    npe = idpe = odpe = 0;
+    npmts = idpmts = odpmts = 0;
+    for (int i=0; i<3; i++)
+      posv[i] = 0.0;
+    rv = zv = 0.0;
+    mumomv = 0;
+    totkeprotonv = 0.;
+    mudirv[0] = mudirv[1] = mudirv[2] = 0.0;
+    muendv[0] = muendv[1] = muendv[2] = 0.0;
+    muendr = 0;
     npulses = 0;
     ttrig.clear();
     tpeak.clear();
@@ -101,6 +113,7 @@ int main( int nargs, char** argv ) {
     peakamp.clear();
     pulsepe.clear();
     pulsez.clear();
+    // --------------------------------
 
     if ( ievent%1000==0 )
       std::cout << "Event " << ievent << std::endl;
@@ -111,7 +124,14 @@ int main( int nargs, char** argv ) {
     npe = mc->GetNumPE();
     npmts = mc->GetMCPMTCount();
 
+    if ( mc->GetMCParticleCount()==0 ) {
+      tree->Fill();
+      ievent++;
+      continue;
+    }
+
     // true vertex
+    //std::cout << "mc part: " << mc->GetMCParticleCount() << " " <<  mc->GetMCParticle(0) << std::endl;
     posv[0] = mc->GetMCParticle(0)->GetPosition().X()/10.0; //change to cm
     posv[1] = mc->GetMCParticle(0)->GetPosition().Y()/10.0; //change to cm
     posv[2] = mc->GetMCParticle(0)->GetPosition().Z()/10.0; //change to cm
@@ -119,11 +139,6 @@ int main( int nargs, char** argv ) {
     zv = posv[2];
 
     // true muon momentum
-    mumomv = 0;
-    totkeprotonv = 0.;
-    mudirv[0] = mudirv[1] = mudirv[2] = 0.0;
-    muendv[0] = muendv[1] = muendv[2] = 0.0;
-    muendr = 0;
     for (int ipart=0; ipart<mc->GetMCParticleCount(); ipart++) {
       if ( mc->GetMCParticle(ipart)->GetPDGCode()==13 ) {
 	TVector3 mom( mc->GetMCParticle(ipart)->GetMomentum() );
