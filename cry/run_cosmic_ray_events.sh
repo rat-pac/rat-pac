@@ -26,7 +26,7 @@ cp /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/bin/rat ./
 cp ${INPUTFILE} ./
 
 # GEN MACRO
-python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/cry/gen_macro.py cry_events_"$JOBID".root cry_job"$JOBID".mac $JOBID 100
+python /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/cry/gen_macro.py cry_events_"$JOBID".root cry_job"$JOBID".mac $JOBID 500
 
 # RUN JOB
 ./rat cry_job"$JOBID".mac -o output_kpipe_cryevents_"$JOBID".root 2>> /net/hisrv0001/home/taritree/outlog
