@@ -90,7 +90,7 @@ REFLECTIVITY_value2: [0.35d, 0.35d, 0.45d, 0.55d,  0.65d, 0.67d, ],
 //REFLECTIVITY_value2: [0.0d, 0.0d, 0.0d, 0.0d,  0.0d, 0.0d, ],
 ABSLENGTH_option: "wavelength",
 ABSLENGTH_value1: [60d,  800d, ],
-ABSLENGTH_value2: [1.0d, 1.0d, ],
+ABSLENGTH_value2: [0.00001d, 0.00001d, ],
 PROPERTY_LIST: ["REFLECTIVITY", "ABSLENGTH", ]
 }
 

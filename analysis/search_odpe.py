@@ -4,7 +4,7 @@ from ROOT import *
 def search_for_odpe( input ):
     f = TFile( input, "open" )
     mcdata = f.Get("mcdata")
-    events = mcdata.GetEntries( "mumomv>0 && rv<147.0 && npulses==2 && odpe>0.0" )
+    events = mcdata.GetEntries( "mumomv>0 && rv<140.0 && npulses==2 && odpe>0.0" )
     return events
 
 for n in xrange(0,100):
