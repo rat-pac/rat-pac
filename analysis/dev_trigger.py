@@ -1,18 +1,24 @@
+import os,sys
 import ROOT
 ROOT.gSystem.Load('libRATEvent')
 from ROOT.RAT import DSReader
-from root_numpy import root2array
-import numpy as np
-import pandas as pd
+#from root_numpy import root2array
+#import numpy as np
+#import pandas as pd
 from math import sqrt,exp
 
-pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
-pmtinfo = pmtinfo.set_index('opdetid')
+#pmtinfo = pd.DataFrame( root2array('../data/kpipe/PMTINFO.root', 'pmtinfo' ) )
+#pmtinfo = pmtinfo.set_index('opdetid')
 
+inputfile = "output_kpipe_0.root"
 #reader = DSReader('kpipeout_test.root')
 #reader = DSReader('../cry/crkpipe.root')
-reader = DSReader("output_kpipe_0.root")
 #reader = DSReader("output_kpipe_cryevents_2.root")
+
+if len(sys.argv)==2:
+    inputfile = sys.argv[1]
+    
+reader = DSReader(inputfile)
 nevents = reader.GetTotal()
 
 out = ROOT.TFile('output_test.root','recreate')
@@ -159,8 +165,8 @@ for iev in xrange(0,nevents):
                 print "Remove pulse=",ipulse
                 active_pulses.remove(ipulse)
                 
-    #if len(pulses)<3:
-    #    continue
+    if len(pulses)<2:
+        continue
 
     c.cd(1)
     ht.Draw()
