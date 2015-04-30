@@ -2,6 +2,8 @@
 #include <RAT/Log.hh>
 #include <RAT/DB.hh>
 #include <Randomize.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 #include <G4Event.hh>
 #include <G4ParticleTable.hh>
 #include <G4PrimaryParticle.hh>
@@ -36,7 +38,7 @@ namespace RAT {
     // Pick direction isotropically
     G4ThreeVector mom;
     double theta = acos(2.0 * G4UniformRand() - 1.0);
-    double phi = 2.0 * G4UniformRand() * pi;
+    double phi = 2.0 * G4UniformRand() * CLHEP::pi;
     mom.setRThetaPhi(energy, theta, phi); // Momentum == energy units in GEANT4
     G4ThreeVector dir = mom.unit();
     
@@ -77,7 +79,7 @@ namespace RAT {
     else
       Log::Die("VertexGen_WIMP: Unknown nucleus " + fNucleusName);
 
-    fWIMPMass = fWIMPMass * GeV; // Convert to GEANT4 units
+    fWIMPMass = fWIMPMass * CLHEP::GeV; // Convert to GEANT4 units
 
     Setup(); // Configures energy distribution
   }
@@ -123,12 +125,12 @@ double VertexGen_WIMP::VelIntegral(double vmin,double v0,double vE, double vesc)
     if(xesc<=xE)
       return 1/vE;
     if(xesc>xE)
-      return (0.25*sqrt(pi)/xE*(erf(xmin+xE)-erf(xmin-xE))-exp(-xesc*xesc))/
-        (0.5*sqrt(pi)*erf(xesc)-xesc*exp(-xesc*xesc))/v0;
+      return (0.25*sqrt(CLHEP::pi)/xE*(erf(xmin+xE)-erf(xmin-xE))-exp(-xesc*xesc))/
+        (0.5*sqrt(CLHEP::pi)*erf(xesc)-xesc*exp(-xesc*xesc))/v0;
   }
   //this in case the tail is the best we can get
-  return (0.25*sqrt(pi)*(erf(xesc)-erf(xmin-xE))-.5*(xesc+xE-xmin)*exp(-xesc*xesc))/xE/
-    (0.5*sqrt(pi)*erf(xesc)-xesc*exp(-xesc*xesc))/v0;
+  return (0.25*sqrt(CLHEP::pi)*(erf(xesc)-erf(xmin-xE))-.5*(xesc+xE-xmin)*exp(-xesc*xesc))/xE/
+    (0.5*sqrt(CLHEP::pi)*erf(xesc)-xesc*exp(-xesc*xesc))/v0;
 }
 
   void VertexGen_WIMP::Setup()
@@ -138,20 +140,20 @@ double VertexGen_WIMP::VelIntegral(double vmin,double v0,double vE, double vesc)
     const int nsamples = 10000;
     double dRdQ[nsamples];
 
-    fEnergyDistLo = lwimp->GetD("energy_lo") * keV;
-//    fEnergyDistHi = lwimp->GetD("energy_hi") * keV;
+    fEnergyDistLo = lwimp->GetD("energy_lo") * CLHEP::keV;
+//    fEnergyDistHi = lwimp->GetD("energy_hi") * CLHEP::keV;
 
     // Useful constants
-    const double v_esc = lwimp->GetD("v_esc") * km / s; // Local galactic escape velocity
-    const double v_0 = lwimp->GetD("v_0") * km / s; // Mean galactic WIMP velocity
-    const double v_SunGal = lwimp->GetD("v_SunGal") * km / s; // Sun's velocity around galactic center
-    const double v_EarthSun = lwimp->GetD("v_EarthSun") * km / s; // Earth's velocity around sun in direction of Sun's velocity around galactic center
+    const double v_esc = lwimp->GetD("v_esc") * CLHEP::km / CLHEP::s; // Local galactic escape velocity
+    const double v_0 = lwimp->GetD("v_0") * CLHEP::km / CLHEP::s; // Mean galactic WIMP velocity
+    const double v_SunGal = lwimp->GetD("v_SunGal") * CLHEP::km / CLHEP::s; // Sun's velocity around galactic center
+    const double v_EarthSun = lwimp->GetD("v_EarthSun") * CLHEP::km / CLHEP::s; // Earth's velocity around sun in direction of Sun's velocity around galactic center
 
     //const double rho_wimp = lwimp->GetD("rho") * GeV / cm3; // Local dark matter halo density
 
     const double date = lwimp->GetD("date"); // time since January 1 in days
     // Net velocity of Earth through halo, from R.W.Schnee, http://arxiv.org/abs/1101.5205
-    const double v_E = v_SunGal + v_EarthSun * cos(2 * pi/365.25 * (date-152.5));
+    const double v_E = v_SunGal + v_EarthSun * cos(2 * CLHEP::pi/365.25 * (date-152.5));
     
     // Target properties
     const double m_nucleus = fNucleus->GetPDGMass();
@@ -159,9 +161,9 @@ double VertexGen_WIMP::VelIntegral(double vmin,double v0,double vE, double vesc)
     
     const double r = 4 * (fWIMPMass * m_nucleus) / pow( fWIMPMass + m_nucleus, 2.0 );
     //ignore annual and diurnal modulations for now
-    fEnergyDistHi=.5*fWIMPMass*r*pow((v_esc+v_E)/c_light,2);
+    fEnergyDistHi=.5*fWIMPMass*r*pow((v_esc+v_E)/CLHEP::c_light,2);
     double step = (fEnergyDistHi - fEnergyDistLo) / nsamples;
-    const double E_0 = 0.5 * fWIMPMass * pow(v_0 / c_light, 2.0);
+    const double E_0 = 0.5 * fWIMPMass * pow(v_0 / CLHEP::c_light, 2.0);
     const double R_0 = 1.0; // Wrong, but we don't care about absolute rate here
 
     double normal=0;
@@ -175,7 +177,7 @@ double VertexGen_WIMP::VelIntegral(double vmin,double v0,double vE, double vesc)
 
       // Relative rate (constant coefficients may be dropped)
       dRdQ[i] = rate;
-      //warn << ke / keV << " " << rate << newline;
+      //warn << ke / CLHEP::keV << " " << rate << newline;
       //distribution integral
       normal+=dRdQ[i]*step;
     }

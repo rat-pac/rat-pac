@@ -1,3 +1,4 @@
+# RAT configuration files
 build
 env.sh
 env.csh
@@ -8,5 +9,13 @@ include/local_g4version.hh
 .sconsign.dblite
 .sconf_temp
 lib
+bin
+config.log
+src/core/config.hh
+# Eclipse aux files
+.cproject
+.project
+.pydevproject
+.settings
 
 *~

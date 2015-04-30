@@ -48,7 +48,7 @@ void GLG4HitPMTCollection::DetectPhoton(GLG4HitPhoton* new_photon)
     fPMT[fPMT.size()-1]->DetectPhoton(new_photon);
     fHitmap.insert(
 		   std::make_pair(
-				  (short)new_photon->GetPMTID(),
+				  new_photon->GetPMTID(),
 				  (GLG4HitPMT*)fPMT[fPMT.size()-1]
 				  )
 		   );
@@ -78,7 +78,7 @@ GLG4HitPMT* GLG4HitPMTCollection::GetPMT(int i) const
     or NULL if no such HitPMT is in collection */
 GLG4HitPMT* GLG4HitPMTCollection::GetPMT_ByID(int id) const
 {
-  std::map<short, GLG4HitPMT*> :: const_iterator p = fHitmap.find((short)id);
+  std::map<int, GLG4HitPMT*> :: const_iterator p = fHitmap.find(id);
   if( p != fHitmap.end() ) {
     // found a HitPMT with this ID
     return p->second;

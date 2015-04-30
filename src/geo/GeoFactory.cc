@@ -12,6 +12,9 @@
 #include <G4LogicalVolume.hh>
 #include <G4LogicalVolumeStore.hh>
 
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
+
 using namespace std;
 
 
@@ -113,18 +116,18 @@ GeoFactory::ConstructPhysicalVolume(G4LogicalVolume *logi,
 
   try {
     const vector<double> &rotvector = table->GetDArray("rotation");
-    rotation->rotateX(rotvector[0] * deg);
-    rotation->rotateY(rotvector[1] * deg);
-    rotation->rotateZ(rotvector[2] * deg);
+    rotation->rotateX(rotvector[0] * CLHEP::deg);
+    rotation->rotateY(rotvector[1] * CLHEP::deg);
+    rotation->rotateZ(rotvector[2] * CLHEP::deg);
   } catch (DBNotFoundError &e) { };
 
   // optional, default is position at center
   G4ThreeVector position(0.0, 0.0, 0.0);
   try {
     const vector<double> &posvector = table->GetDArray("position");
-    position.setX(posvector[0] * mm);
-    position.setY(posvector[1] * mm);
-    position.setZ(posvector[2] * mm);
+    position.setX(posvector[0] * CLHEP::mm);
+    position.setY(posvector[1] * CLHEP::mm);
+    position.setZ(posvector[2] * CLHEP::mm);
   } catch (DBNotFoundError &e) { };
 
   pv = new G4PVPlacement(rotation, position, logi, volume_name,
@@ -158,7 +161,7 @@ GeoFactory::ConstructPhysicalReplica(G4LogicalVolume *logi,
   else
     Log::Die("GeoFactory error: Unknown replica axis " + axis_str);
 
-  G4double replica_spacing = table->GetD("replica_spacing") * mm;
+  G4double replica_spacing = table->GetD("replica_spacing") * CLHEP::mm;
 
   pv = new G4PVReplica(volume_name,
                        logi,

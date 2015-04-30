@@ -88,6 +88,29 @@ z_origin: [-84.00d, 0.00d, 0.00d, 0.00d, 84.00d, -127.5d, -285.0d],
 
 {
 name: "PMT",
+index: "r7081_hqe",
+valid_begin: [0,0],
+valid_end: [0,0],
+
+dynode_material: "stainless_steel",
+glass_material: "glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode_R11780", //FIXME: perhaps make a dedicated surface
+mirror_surface: "mirror",
+dynode_surface: "stainless_steel",
+
+dynode_radius: 27.5, // mm
+dynode_top:   -5.9, // mm
+wall_thickness: 3.0, // mm
+
+z_edge: [ 96.7d, 40.0d, 0.0d, -40.0d, -90.0d, -142.0d ],
+rho_edge: [ 0.0d, 111.0d, 130.0d, 111.0d, 42.25d, 42.25d ],
+z_origin: [ -40.0d, 0.0d, 0.0d, 40.0d, -142.0d ],
+
+}
+
+{
+name: "PMT",
 index: "et9390b",
 valid_begin: [0,0],
 valid_end: [0,0],
