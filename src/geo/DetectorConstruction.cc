@@ -18,11 +18,20 @@
 #include <RAT/GLG4SimpleOpDetSD.hh>
 #include <RAT/GeoFactory.hh>
 
+#include <RAT/DetectorFactory.hh>
+#include <RAT/WatchmanDetectorFactory.hh>
+#include <RAT/TheiaDetectorFactory.hh>
+
 using namespace std;
 
 namespace RAT {
 
 DetectorConstruction* DetectorConstruction::sDetectorConstruction = NULL;
+
+DetectorConstruction::DetectorConstruction() {
+    DetectorFactory::Register("Watchman",new WatchmanDetectorFactory());
+    DetectorFactory::Register("Theia",new TheiaDetectorFactory());
+}
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
   // Load the DETECTOR table
@@ -46,10 +55,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     info << "No experiment-specific tables loaded." << newline;
   }
 
-  string geo_file = ldetector->GetS("geo_file");
-  info << "Loading detector geometry from " << geo_file << newline;
-  if (db->Load(geo_file) == 0) {
-    Log::Die("DetectorConstruction: Could not open detector geometry");
+  try { 
+    string detector_factory = ldetector->GetS("detector_factory");
+    info << "Loading detector factory " << detector_factory << newline;
+    DetectorFactory::DefineWithFactory(detector_factory,ldetector);
+  } catch (DBNotFoundError &e) {
+    try {
+      string geo_file = ldetector->GetS("geo_file");
+      info << "Loading detector geometry from " << geo_file << newline;
+      if (db->Load(geo_file) == 0) {
+        Log::Die("DetectorConstruction: Could not open detector geometry");
+      }
+    } catch (DBNotFoundError &e) {
+        Log::Die("DetectorConstruction: Could not open geo_file or detector_factory");
+    }
   }
 
   info << "Constructing detector materials...\n";

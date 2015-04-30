@@ -5,6 +5,9 @@
 #include <G4SurfaceProperty.hh>
 #include <G4NistManager.hh>
 #include <RAT/Materials.hh>
+#include <RAT/Log.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 using namespace::std;
 
@@ -129,22 +132,22 @@ void Materials::ConstructMaterials() {
 
   DB* db = DB::Get();
 
-  DBLinkGroup elem = db->GetLinkGroup("ELEMENT");
+  DBLinkGroup lelem = db->GetLinkGroup("ELEMENT");
   DBLinkGroup::iterator i_table;
-  for (i_table=elem.begin(); i_table!=elem.end(); i_table++) {
+  for (i_table=lelem.begin(); i_table!=lelem.end(); i_table++) {
     std::string namedb = i_table->first;
     DBLinkPtr table = i_table->second;
     double adb;
     int zdb = 0;
-    string symbol;
+    string csymbol;
 
     // Get common fields
     try {
-      symbol= table->GetS("SYMBOL");
+      csymbol= table->GetS("SYMBOL");
       zdb = table->GetI("z");
     }
     catch (DBNotFoundError &e) {
-      G4cout << "Materials error: Could not construct elements" << G4endl;
+      warn << "Materials error: Could not construct elements" << newline;
     }
 
     // Check if this element has special isotope abundances
@@ -152,7 +155,7 @@ void Materials::ConstructMaterials() {
       const vector<int>& isotopes = table->GetIArray("isotopes");
       const vector<double>& isotopes_frac = table->GetDArray("isotopes_frac");
 
-      G4Element* elem = new G4Element(namedb, symbol, isotopes.size());
+      G4Element* elem = new G4Element(namedb, csymbol, isotopes.size());
       for (unsigned i_isotope=0; i_isotope<isotopes.size(); i_isotope++) {
         // Leave out last field of constructor so mass/mole of isotope
         // is pulled from NIST database.
@@ -169,7 +172,7 @@ void Materials::ConstructMaterials() {
 
     try {
       adb = table->GetD("a");
-      new G4Element(namedb, symbol, zdb, adb*g/mole);
+      new G4Element(namedb, csymbol, zdb, adb*CLHEP::g/CLHEP::mole);
     }
     catch (DBNotFoundError &e) {
       G4cout << "Materials error: Could not construct elements" << G4endl;
@@ -183,20 +186,58 @@ void Materials::ConstructMaterials() {
   DBLinkGroup mats = db->GetLinkGroup("MATERIAL");
   for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
     std::string namedb = iv->first;
-    G4cout << "Loaded material: " << namedb << G4endl;
+    info << "Loaded material: [" << namedb << "]" << newline;
 
     DBLinkPtr table = iv->second;
     if(!BuildMaterial(namedb, table)) {
       queue.push_back(namedb);
-      G4cout << namedb << " thrown on construction queue" << G4endl;
+      info << "[" << namedb << "] thrown on construction queue" << newline;
     }
   }
 
+  // Erasing an iterator to the vector implies re-shifting all the subsequent
+  // entries which can lead the code to crash.
+  // Therefore, the loop goes backwards, which ensures that
+  // consistency is maintained
+  for (vector<string>::iterator i=queue.begin(); i!=queue.end(); ++i) {
+    std::string namedb = *i;
+    DBLinkPtr table = DB::Get()->GetLink("MATERIAL", namedb);
+    info << "queue (pass1): [" << namedb << "]" << newline;
+    if(BuildMaterial(namedb, table)) {
+      queue.erase(i);
+      // Step backwards to make sure that the iterator will point to the right place
+      --i;
+      info << "[" << namedb << "] found and removed from construction queue" << newline;
+    }
+    // BuildMaterial(namedb,table);
+  }
+
+  /// if after the second pass it is not yet found, default to the NIST databse
+  if (!queue.empty()) {
+  	info << "Not all materials were found in the database. Trying to load them from NIST." << newline;
+  	G4NistManager* nist_db = G4NistManager::Instance();
+  	nist_db->SetVerbose(1);
+  	for (vector<string>::iterator i=queue.begin(); i!=queue.end(); i++) {
+  		std::string namedb = *i;
+  		G4Material *addmatptr = nist_db->FindOrBuildMaterial(namedb);
+  		if (addmatptr) {
+        info << "[" << namedb << "] found in NISTDB and removed from construction queue" << newline;
+  			queue.erase(i);
+  			--i;
+  		}
+  	}
+  }
+
+  // Now that loaded from the database do a final loop on the queue
   for (vector<string>::iterator i=queue.begin(); i!=queue.end(); i++) {
     std::string namedb = *i;
     DBLinkPtr table = DB::Get()->GetLink("MATERIAL", namedb);
-    G4cout << "queue: " << namedb << G4endl;
-    BuildMaterial(namedb,table);
+    info << "queue (pass2): [" << namedb << "]" << newline;
+    if(BuildMaterial(namedb, table)) {
+      queue.erase(i);
+      --i;
+      info << "[" << namedb << "] found and removed from construction queue" << newline;
+    }
   }
 
   for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
@@ -228,7 +269,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
   double pressure;
 
   try {
-    densitydb = table->GetD("density") * g / cm3;
+    densitydb = table->GetD("density") * CLHEP::g / CLHEP::cm3;
     nelementsdb = table->GetI("nelements");
     nmaterialsdb = table->GetI("nmaterials");
   }
@@ -254,14 +295,14 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     temperature = table->GetD("temperature");
   }
   catch (DBNotFoundError &e) {
-    temperature = STP_Temperature;
+    temperature = CLHEP::STP_Temperature;
   }
 
   try {
-    pressure = table->GetD("pressure") * STP_Pressure;
+    pressure = table->GetD("pressure") * CLHEP::STP_Pressure;
   }
   catch (DBNotFoundError &e) {
-    pressure = STP_Pressure;
+    pressure = CLHEP::STP_Pressure;
   }
 
   G4Material* tempptr = 
@@ -291,7 +332,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
 
   if (formula != "BAD") {
     MPT = new G4MaterialPropertiesTable();
-    MPT->AddConstProperty("MOL", mol/g);
+    MPT->AddConstProperty("MOL", mol/CLHEP::g);
     tempptr->SetMaterialPropertiesTable(MPT);
   }
 
@@ -323,11 +364,9 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     for (vector<string>::size_type i=0; i<elemname.size(); i++) {
       std::string addmatname = elemname[i];
       G4Material* addmatptr = NULL;
-      if (addmatname == "G4_Gd") {
-        G4NistManager* man = G4NistManager::Instance();
-        addmatptr = man->FindOrBuildMaterial("G4_Gd");
-      }
-      else{
+      G4NistManager* man = G4NistManager::Instance();
+      addmatptr = man->FindOrBuildMaterial(addmatname);
+      if (!addmatptr) {
         addmatptr = G4Material::GetMaterial(elemname[i]);
       }
 
@@ -406,7 +445,7 @@ Materials::LoadProperty(DBLinkPtr table, std::string name) {
     if (wavelength_opt) {
       if (E_value != 0.0) {
         double lam = E_value;
-        E_value = twopi * hbarc / (lam * nanometer);
+        E_value = CLHEP::twopi * CLHEP::hbarc / (lam * CLHEP::nanometer);
         if (wavelength_opt == 2)
           p_value *= lam / E_value;
       }
@@ -579,19 +618,19 @@ void Materials::LoadOptics() {
       std::map<G4String,
                G4MaterialPropertyVector*>::const_iterator it;
       for (it=cpm->begin(); it!=cpm->end(); it++) {
-        std::string name = it->first;
-        if (name.find("REEMITWAVEFORM") != std::string::npos    ||
-            name.find("SCINTILLATION_WLS") != std::string::npos ||
-            name.find("ABSLENGTH") != std::string::npos) {
-          Log::Assert(mpm->find(name) == mpm->end(),
+        std::string pname = it->first;
+        if (pname.find("REEMITWAVEFORM") != std::string::npos    ||
+            pname.find("SCINTILLATION_WLS") != std::string::npos ||
+            pname.find("ABSLENGTH") != std::string::npos) {
+          Log::Assert(mpm->find(pname) == mpm->end(),
                       "Materials: Composite material cannot contain the same properties as components");
-          G4cout << compname << " has " << name << "!" << G4endl;
-          std::stringstream ss;
-          ss << name << i + 1;
-          mpt->AddProperty(ss.str().c_str(), it->second);
+          G4cout << compname << " has " << pname << "!" << G4endl;
+          std::stringstream ss2;
+          ss << pname << i + 1;
+          mpt->AddProperty(ss2.str().c_str(), it->second);
 
           // Also compute total absorption length
-          if (name.find("ABSLENGTH") != std::string::npos) {
+          if (pname.find("ABSLENGTH") != std::string::npos) {
             if (!absorption_coeff_x) {
               G4MaterialPropertyVector* tempv = it->second;
               size_t entries = tempv->GetVectorLength();
@@ -612,8 +651,8 @@ void Materials::LoadOptics() {
         }
 
         // The scattering lengths are combined
-        else if (name.find("RSLENGTH") != std::string::npos) {
-          Log::Assert(mpm->find(name) == mpm->end(),
+        else if (pname.find("RSLENGTH") != std::string::npos) {
+          Log::Assert(mpm->find(pname) == mpm->end(),
                       "Materials: Composite material cannot contain the same properties as components");
           if (!rayleigh_coeff_x) {
             G4MaterialPropertyVector* tempv = it->second;
@@ -640,14 +679,14 @@ void Materials::LoadOptics() {
       std::map<G4String,
                G4double>::const_iterator itc;
       for (itc=cpmc->begin(); itc!=cpmc->end(); itc++) {
-        std::string name = itc->first;
-        if (name.find("REEMISSION_PROB") != std::string::npos) {
+        std::string cname = itc->first;
+        if (cname.find("REEMISSION_PROB") != std::string::npos) {
           Log::Assert(mpmc->find(name) == mpmc->end(),
                       "Materials: Composite material cannot contain the same properties as components");
-          G4cout << compname << " has " << name << G4endl;
-          std::stringstream ss;
-          ss << name << i + 1;
-          mpt->AddConstProperty(ss.str().c_str(), itc->second);
+          G4cout << compname << " has " << cname << G4endl;
+          std::stringstream ss2;
+          ss2 << cname << i + 1;
+          mpt->AddConstProperty(ss2.str().c_str(), itc->second);
         }
       }
     }

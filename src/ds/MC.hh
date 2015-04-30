@@ -38,8 +38,8 @@ public:
   class ParticleNameEqualityFunctor {
   public:
     ParticleNameEqualityFunctor(std::string _name) : name(_name) {}
-    bool operator()(MCTrack& track) {
-      return track.GetParticleName() == this->name;
+    bool operator()(MCTrack& _track) {
+      return _track.GetParticleName() == this->name;
     }
   private:
     std::string name;
@@ -61,6 +61,15 @@ public:
     return &particle.back();
   }
   virtual void PruneMCParticle() { particle.resize(0); }
+
+  /** Parent particles of interaction */
+  virtual MCParticle* GetMCParent(Int_t i) { return &parent[i]; }
+  virtual int GetMCParentCount() const { return parent.size(); }
+  virtual MCParticle* AddNewMCParent() {
+    parent.resize(parent.size() + 1);
+    return &parent.back();
+  }
+  virtual void PruneMCParent() { parent.resize(0); }
 
   /** Particle tracks in detector.
    *
@@ -120,6 +129,7 @@ protected:
   TTimeStamp utc;
   std::vector<MCSummary> summary;
   std::vector<MCParticle> particle;
+  std::vector<MCParticle> parent;
   std::vector<MCTrack> track;
   std::vector<MCPMT> pmt;
 };

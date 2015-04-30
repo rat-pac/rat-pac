@@ -38,8 +38,8 @@ using namespace std;
 static double Cos2ThetaTable[N_COSTHETA_ENTRIES]; 
 static int TableInitialized= 0;
 
-GLG4DummyProcess GLG4OpAttenuation::fgAttenuation("Attenuation");
-GLG4DummyProcess GLG4OpAttenuation::fgScattering("Scattering");
+DummyProcess GLG4OpAttenuation::fgAttenuation("Attenuation");
+DummyProcess GLG4OpAttenuation::fgScattering("Scattering");
 
 
 static void InitializeTable(void)

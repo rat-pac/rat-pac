@@ -225,9 +225,9 @@ namespace RAT {
 		
 		if (rot_manual) 
 		{
-		    solidrot->rotateZ(rot_z[solidID] * deg);
-		    solidrot->rotateY(rot_y[solidID] * deg);    
-		    solidrot->rotateX(rot_x[solidID] * deg);
+		    solidrot->rotateZ(rot_z[solidID] * CLHEP::deg);
+		    solidrot->rotateY(rot_y[solidID] * CLHEP::deg);    
+		    solidrot->rotateX(rot_x[solidID] * CLHEP::deg);
 		}
 		// ****************************************************************
 		// * Use the constructor that specifies the PHYSICAL mother, since
