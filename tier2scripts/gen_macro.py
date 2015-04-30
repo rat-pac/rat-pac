@@ -6,7 +6,8 @@ def gen_macro( outfile, jobid, nevents_per_job ):
 
 /rat/db/set DETECTOR experiment \"kpipe\"
 /rat/db/set DETECTOR geo_file \"kpipe/kpipe_wsipms.geo\"
-#/tracking/storeTrajectory 1
+/tracking/storeTrajectory 1
+/tracking/discardParticleTrajectory opticalphoton
 
 /run/initialize
 
