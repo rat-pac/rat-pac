@@ -55,10 +55,10 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
     const double pmt_space = sqrt(surface_area/required_pmts);
     const double veto_space = sqrt(veto_surface_area/required_vetos);
     
-    const size_t cols = round(2.0*M_PI*pmt_radius/(pmt_space*1.118));
-    const size_t rows = round(2.0*topbot_offset/(pmt_space/1.118));
-    const size_t veto_cols = round(2.0*M_PI*veto_radius/(veto_space*1.118));
-    const size_t veto_rows = round(2.0*topbot_veto_pmt_offset/(veto_space/1.118));
+    const size_t cols = (size_t)round(2.0*M_PI*pmt_radius/(pmt_space*1.118));
+    const size_t rows = (size_t)round(2.0*topbot_offset/(pmt_space/1.118));
+    const size_t veto_cols = (size_t)round(2.0*M_PI*veto_radius/(veto_space*1.118));
+    const size_t veto_rows = (size_t)round(2.0*topbot_veto_pmt_offset/(veto_space/1.118));
     
     info << "Generating new PMT positions for:\n";
     info << "\tdesired photocathode coverage " << photocathode_coverage << '\n';
@@ -71,7 +71,7 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
     //make the grid for top and bottom PMTs
     vector<pair<double,double> > topbot;
     vector<pair<double,double> > topbot_veto;
-    const int rdim = round(1.5*pmt_radius/pmt_space); 
+    const int rdim = (int)round(1.5*pmt_radius/pmt_space); 
     for (int i = -rdim; i <= rdim; i++) {
         for (int j = -rdim; j <= rdim; j++) {
             double x = i*pmt_space/1.118;
@@ -87,9 +87,9 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
         }
     }
     
-    size_t num_pmts = cols*rows + 2*topbot.size();
-    size_t num_vetos = veto_cols*veto_rows + 2*topbot_veto.size();
-    size_t total_pmts = num_pmts + num_vetos;
+    size_t num_pmts =(size_t)( cols*rows + 2*topbot.size());
+    size_t num_vetos = (size_t)(veto_cols*veto_rows + 2*topbot_veto.size());
+    size_t total_pmts =(size_t)( num_pmts + num_vetos );
     
     info << "Actual calculated values:\n"; 
     info << "\tactual photocathode coverage " << photocathode_area*num_pmts/surface_area << '\n';

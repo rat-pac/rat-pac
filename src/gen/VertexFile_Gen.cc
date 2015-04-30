@@ -39,7 +39,7 @@ void VertexFile_Gen::GenerateEvent(G4Event *event)
   fTTree->GetEntry(fCurrentEvent);
   DS::MC* mc = fDS->GetMC();
 
-  G4PrimaryVertex *vertex;
+  G4PrimaryVertex *vertex = NULL;
   PrimaryVertexInformation *vertinfo = new PrimaryVertexInformation();
 
   bool vertexset = false;
