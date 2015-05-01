@@ -1,17 +1,17 @@
 
-# KPIPE RAT Fork
+# NuDOT rat-pac fork
 
-Simulation code for KPIPE.
+Simulation code for NuDot
 
 ## Checking out
 
 * using git flow pattern (more info: https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
-* git clone https://github.com/twongjirad/ratpac-kpipe.git
+* git clone https://github.com/NuDot/ratpac-nudot.git
 * git checkout develop (this moves you to the develop branch)
 
 ## Dependencies
 * ROOT 5
-* Geant4 (checked things worked with geant4.6.p04)
+* Geant4 (checked things worked with geant4.9.6.p04)
 * scons
 
 ## building
@@ -22,7 +22,6 @@ Simulation code for KPIPE.
 
 ## Running
 * rat
-* /control/execute mac/kpipe.mac (will bring up and initialize geometry)
 
 ## Adding a feature
 * git checkout develop
@@ -32,11 +31,6 @@ Simulation code for KPIPE.
 * delete the branch
 
 ## Geometry
-
-* in data/kpipe/kpipe.geo
-* also have COLLADA format file for chroma: data/kpipe/kpipe.dae
-
-![alt tag](https://raw.github.com/twongjirad/ratpac-kpipe/develop/data/kpipe/kpipe_daeview.png)
 
 ## Optical Detector
 
