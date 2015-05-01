@@ -46,7 +46,7 @@ Simulation code for NuDot
 name: "GEO",
 valid_begin: [0, 0],
 valid_end: [0, 0],
-gdml_file: "kpipe.gdml",
+gdml_file: "nudot.gdml",
 opdet_lv_name: "volSiPM",
 }
 
