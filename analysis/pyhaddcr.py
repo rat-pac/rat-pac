@@ -25,10 +25,14 @@ for p in xrange(0,500):
 print "COMPLETE PAIRS: ",len(pair_list)
 
 cry_merge = "crygen_merged.root"
-ana_merge = "crana_merged.root"
+ana_merge = "crana_merged_0_499.root"
 cry_add = ""
 ana_add = ""
-for p in xrange(0,len(pair_list)/100+1):
+ntemp_files = len(pair_list)/100
+if len(pair_list)%100!=0:
+    ntemp_files+=1
+print "Number of temp files: ",ntemp_files
+for p in xrange(0,ntemp_files):
     ana_temp = "temp_cranalysis_f%d.root"%(p)
     cry_temp = "temp_crygen_f%d.root"%(p)
     cry_add += " "+cry_temp
@@ -43,8 +47,8 @@ for p in xrange(0,len(pair_list)/100+1):
             ana_addlist += " "+f
             cry_addlist += " "+g
     os.system("hadd %s %s"%(ana_temp,ana_addlist))
-    os.system("hadd %s %s"%(cry_temp,cry_addlist))
+    #os.system("hadd %s %s"%(cry_temp,cry_addlist))
 
-os.system( "hadd %s %s"%(cry_merge,cry_add))
+#os.system( "hadd %s %s"%(cry_merge,cry_add))
 os.system( "hadd %s %s"%(ana_merge,ana_add))
 
