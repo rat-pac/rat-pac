@@ -1,0 +1,29 @@
+/glg4debug/glg4param omit_muon_processes  0.0
+/glg4debug/glg4param omit_hadronic_processes  0.0
+
+/rat/db/set DETECTOR experiment "kpipe"
+#/rat/db/set DETECTOR geo_file "kpipe/kpipe.geo"
+#/rat/db/set DETECTOR geo_file "kpipe/kpipe2.geo"
+/rat/db/set DETECTOR geo_file "kpipe/kpipe_wsipms.geo"
+#/tracking/storeTrajectory 1
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+#/rat/proc simpledaq
+#/rat/proc prune
+#/rat/procset prune "mc.track:opticalphoton"
+/rat/proc count
+/rat/procset update 1
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+#END EVENT LOOP
+
+/generator/add combo gun:point
+/generator/vtx/set mu-  0 0.0 200.0
+/generator/pos/set 0 0 0
+#/generator/add external external:uniform:"/net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/kdar_muons/./simple_gen_kdar_event default 100 0 |"
+#/generator/rate/set 10.0
+
+/run/beamOn 1

@@ -1,5 +1,6 @@
 #include <RAT/PMTConcentrator.hh>
 #include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 #include <G4Box.hh>
 #include <G4Polycone.hh>
 #include <G4PVPlacement.hh>
@@ -16,22 +17,22 @@ namespace RAT {
 
 PMTConcentrator::PMTConcentrator
      (const G4String &name,
-      G4double upper_radius,
-      G4double lower_radius,
-      G4double a, // SEE Mike Lay's Thesis
-      G4double b,
-      G4double d,
+      G4double _upper_radius,
+      G4double _lower_radius,
+      G4double _a, // SEE Mike Lay's Thesis
+      G4double _b,
+      G4double _d,
       G4Material *outerMaterial,
       G4Material *bulkMaterial,
       G4OpticalSurface *reflective_surf
       ) : G4LogicalVolume(
                          new G4Box("temp",10,10,10), bulkMaterial, name)
 {
-  this->a=a;
-  this->b=b;
-  this->d=d;
-  this->upper_radius=upper_radius;
-  this->lower_radius=lower_radius;
+  this->a=_a;
+  this->b=_b;
+  this->d=_d;
+  this->upper_radius=_upper_radius;
+  this->lower_radius=_lower_radius;
   
   // Make Solid
   const int n = 20;
@@ -41,18 +42,18 @@ PMTConcentrator::PMTConcentrator
     z[i] = z_from_r(lower_radius) + i*(z_from_r(upper_radius) -
 		    z_from_r(lower_radius))/n;
     r_oil_plastic_boundary[i] = r_from_z(z[i]);
-    r_inner_oil[i] = r_oil_plastic_boundary[i] - 0.01*mm;
-    r_outer_plastic[i] = r_oil_plastic_boundary[i] + 1.0 * mm;
+    r_inner_oil[i] = r_oil_plastic_boundary[i] - 0.01*CLHEP::mm;
+    r_outer_plastic[i] = r_oil_plastic_boundary[i] + 1.0 * CLHEP::mm;
     z[i] = z[i] - z_from_r(lower_radius);
   }
   
-  G4Polycone *outer_solid = new G4Polycone(name, 0, twopi, n, z, r_inner_oil,
+  G4Polycone *outer_solid = new G4Polycone(name, 0, CLHEP::twopi, n, z, r_inner_oil,
 					   r_outer_plastic);
   SetSolid(outer_solid);
 
   // Split into plastic concentrator and oil layer so we can add reflective
   // surface in between
-  G4Polycone *conc_solid = new G4Polycone(name+"_plastic", 0, twopi, n, z, 
+  G4Polycone *conc_solid = new G4Polycone(name+"_plastic", 0, CLHEP::twopi, n, z, 
 					  r_oil_plastic_boundary,
 					  r_outer_plastic);
 
@@ -61,7 +62,7 @@ PMTConcentrator::PMTConcentrator
 				  name+"_plastic");
 
 
-  G4Polycone *oil_solid = new G4Polycone(name+"_oil", 0, twopi, n, z, r_inner_oil,
+  G4Polycone *oil_solid = new G4Polycone(name+"_oil", 0, CLHEP::twopi, n, z, r_inner_oil,
 					 r_oil_plastic_boundary);
   oil_logi = new G4LogicalVolume(oil_solid,
 				 outerMaterial,

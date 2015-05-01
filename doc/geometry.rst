@@ -41,13 +41,17 @@ Unfortunately, you cannot change array fields using the set command yet.
 GEO Table Fields
 ````````````````
 
-GEO tables can contain a wide variety of fields to control the properties of the volume.  The common fields shared by all tables are:
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| index || string || Name of the volume.  To conform with RATDB standards, it should follow identifier conventions (no spaces). ||
-|| mother || string || Name of the mother volume.  The mother volume should fully contain this volume.  The world volume has the mother "". ||
-|| enable || int (optional) || If set to zero, this volume is skipped and not constructed. ||
-|| type || string || Shape of this volume, see below for list. ||
-|| sensitive_detector || string (optional) || Name of sensitive detector if this volume should register hits.  Limited to /mydet/pmt/inner and /mydet/veto/genericchamber ||
+GEO tables can contain a wide variety of fields to control the properties of the volume.  The common fields shared by all tables:
+
+======================  ======================  ===================
+**Field**               **Type**                **Description**
+======================  ======================  ===================
+``index``               ``string``              Name of the volume.  To conform with RATDB standards, it should follow identifier conventions (no spaces).
+``mother``              ``string``              Name of the mother volume.  The mother volume should fully contain this volume.  The world volume has the mother "".
+``enable``              ``int`` (optional)      If set to zero, this volume is skipped and not constructed.
+``type``                ``string``              Shape of this volume, see below for list.
+``sensitive_detector``  ``string`` (optional)   Name of sensitive detector if this volume should register hits.  Limited to ''/mydet/pmt/inner'' and ''/mydet/veto/genericchamber''
+======================  ======================  ===================
 
 Allowed types:
  * box - Rectangular solid
@@ -65,52 +69,89 @@ Allowed types:
  * bubble - Collection of bubbles
 
 All types except "pmtarray", "waterboxarray", and "bubble"  have these additional fields:
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| material || string || Material filling this volume.  See the MaterialList for details. ||
-|| color || float[3 or 4] (optional) || Color to be used for this element in visualization.  Either RGB or RGBA (A=alpha transparancy) components ranging from 0.0 to 1.0. ||
-|| invisible || int || If set to 1, mark this volume as invisible during visualization ||
-|| position || float![3] (optional) || X, Y, Z (mm) components of the position of the volume center, 'in coordinate system of the mother volume'.  Default position is the center.||
-|| rotation || float![3] (optional) || X, Y, Z axis rotations (deg) of element about its center.  Rotations are applied in X, Y, Z order. Default is no rotation.||
-|| replicas || int (optional) || Replicate this volume N times inside the mother (position and rotation are ignored if this is set) ||
-|| replica_axis || string (optional) || Axis along which to replicate volume: x, y, z ||
-|| replica_spacing || float (optional) || Distance (mm) between replicas. ||
 
-=== Box Fields ===
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| size || float![3] || X, Y, Z half-lengths (mm) of box (perpendicular distance from center to each face)  ||
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``material``            ``string``                  Material filling this volume.  See the MaterialList for details.
+``color``               ``float[3|4]`` (optional)   Color to be used for this element in visualization.  Either RGB or RGBA (A=alpha transparancy) components ranging from 0.0 to 1.0.
+``invisible``           ``int``                     If set to 1, mark this volume as invisible during visualization
+``position``            ``float[3]`` (optional)     X, Y, Z (mm) components of the position of the volume center, 'in coordinate system of the mother volume'.  Default position is the center.
+``rotation``            ``float[3]`` (optional)     X, Y, Z axis rotations (deg) of element about its center.  Rotations are applied in X, Y, Z order. Default is no rotation.
+``replicas``            ``int`` (optional)          Replicate this volume N times inside the mother (position and rotation are ignored if this is set)
+``replica_axis``        ``string`` (optional)       Axis along which to replicate volume: x, y, z
+``replica_spacing``     ``float`` (optional)        Distance (mm) between replicas
+======================  ==========================  ===================
 
-=== Tube Fields ===
+Box Fields:
 
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| r_max || float || Outer radius of tube (mm). ||
-|| r_min || float (optional) || Inner radius of tube (mm).  Default is 0.0 (solid). ||
-|| size_z || float || Half-height of tube (mm). ||
-|| phi_start || float (optional) || Angle (deg) where tube segment starts.  Default is 0.0. ||
-|| phi_delta || float (optional) || Angle span (deg) of tube segment.  Default is 360.0. ||
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``size``                ``float[3]``                X, Y, Z half-lengths (mm) of box (perpendicular distance from center to each face) 
+======================  ==========================  ===================
 
-=== Sphere Fields ===
 
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| r_max || float || Outer radius of sphere (mm). ||
-|| r_min || float || Inner radius of sphere (mm). Default is 0.0 (solid). ||
-|| theta_start || float (optional) || Polar angle (deg) where sphere segment starts.  Default is 0.0. ||
-|| theta_delta || float (optional) || Polar angle span (deg) of sphere segment.  Default is 180.0. ||
-|| phi_start || float (optional) || Azimuthal angle (deg) where sphere segment starts.  Default is 0.0. ||
-|| phi_delta || float (optional) || Azimuthal angle span (deg) of sphere segment.  Default is 360.0. ||
+Tube Fields:
 
-=== PMT Array Fields ===
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``r_max``               ``float``                   Outer radius of tube (mm) 
+``r_min``               ``float`` (optional)        Inner radius of tube (mm) Default is 0.0 (solid)
+``size_z``              ``float``                   Half-height of tube (mm)
+``phi_start``           ``float`` (optional)        Angle (deg) where tube segment starts.  Default is 0.0
+``phi_delta``           ``float`` (optional)        Angle span (deg) of tube segment.  Default is 360.0
+======================  ==========================  ===================
 
-The PMT array type is designed to construct a large number of similar PMTs efficiently.
+Sphere Fields:
 
-|| '''Field''' || '''Type''' || '''Description''' ||
-|| pos_table || string || Name of RATDB table containing x, y, and z arrays of PMT positions ||
-|| max_pmts || int (optional) || Only read the first N PMTs from the position table. Default is to read them all. ||
-|| glass_material || string || Material for PMT glass envelope ||
-|| dynode_material || string || Material for internal PMT dynodes ||
-|| vacuum_material || string || Material for PMT vacuum region ||
-|| material_material || string (optional) || Material for photocathode mask. Default is no mask. ||
-|| photocathode_surface || string || Name of photocathode optical surface.  See OpticalSurface table for values. ||
-|| pmt_style || string (optional) || PMT geometry style, either "torus" or "ellipsoid".  Default is "torus". ||
-|| orientation || string || Method of determining PMT direction.  "point" will aim all PMTs at a point in space.  "manual" requires that the position table also contain dir_x, dir_y, and dir_z fields which define the direction vector for each PMT. ||
-|| orient_point || float![3] (optional) || Point (mm) in mother volume to aim all PMTs toward. ||
-|| rescale_radius || float (optional) || Assumes all PMTs are spherically arranged around the center of the mother volume and rescales their positions to a particular radius.  By default, no rescaling is done. ||
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``r_max``               ``float``                   Outer radius of sphere (mm)
+``r_min``               ``float``                   Inner radius of sphere (mm) Default is 0.0 (solid)
+``theta_start``         ``float`` (optional)        Polar angle (deg) where sphere segment starts.  Default is 0.0
+``theta_delta``         ``float`` (optional)        Polar angle span (deg) of sphere segment.  Default is 180.0
+``phi_start``           ``float`` (optional)        Azimuthal angle (deg) where sphere segment starts.  Default is 0.0
+``phi_delta``           ``float`` (optional)        Azimuthal angle span (deg) of sphere segment.  Default is 360.0
+======================  ==========================  ===================
+
+PMTArray Fields:
+
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``pmt_model``           ``string``                  Serves as the index for ``PMT``, ``PMTCHARGE``, and ``PMTTRANSIT`` tables giving the geometry, charge response, and time response models.
+``pos_table``           ``string``                  Specifies the table containing position (and direction) arrays specifying how to place PMTs
+``start_idx``           ``int`` (optional)          Index to start building PMTs in the ``PMTINFO`` table specified (inclusive, defaults to 0)
+``end_idx``             ``int`` (optional)          Index to stop building PMTs in the ``PMTINFO`` table specified (inclusive, defaults to length-1)
+``orientation``         ``string``                  Method of determining PMT direction.  "point" will aim all PMTs at a point in space.  "manual" requires that the position table also contain dir_x, dir_y, and dir_z fields which define the direction vector for each PMT.
+``orient_point``        ``float[3]`` (optional)     Point (mm) in mother volume to aim all PMTs toward.
+``rescale_radius``      ``float`` (optional)        Assumes all PMTs are spherically arranged around the center of the mother volume and rescales their positions to a particular radius.  By default, no rescaling is done.
+======================  ==========================  ===================
+
+Creating a parameterized geometry
+`````````````````````````````````		
+Using a ``DetectorFactory`` one can build a DB defined geometry on the fly (less useful),		
+or modify a normal DB defined geometry template (more useful) before the geometry itself is built. 		
+Using only ``.geo`` files there is no nice way to have a property of a geometry component defined 		
+as a formula (a function of other geometry parameters), and no nice way to algorithmically define 		
+components of a scalable geometry, e.g. PMT positions for various photocathode coverage fractions. 		
+		
+The DetectorFactory to use is specified by name in the `DETECTOR` table under the field ``detector_factory`` 		
+and supersedes the ``geo_file`` field if used. If no ``DetectorFactory`` is specified, the ``geo_file`` specified 		
+is loaded as described above. A DetectorFactory should define tables in the DB in the same way a ``.geo`` 		
+file would and make use of ``GeoFactory`` components. 		
+::	
+    /rat/db/set DETECTOR experiment "Watchman"		
+    /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"		
+		
+v.s.		
+::		
+    /rat/db/set DETECTOR experiment "Watchman"		
+    /rat/db/set DETECTOR detector_factory "Watchman"		
+		
+Example usage would be to load a normal (statically defined) ``.geo`` file into the DB and modify		
+it as necessary for the dynamic functionality. See the ``WatchmanDetectorFactor`` for example use.
+

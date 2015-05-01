@@ -1,6 +1,8 @@
 #include <RAT/GeoPMTCoverageFactory.hh>
 #include <vector>
 #include <RAT/Log.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -28,8 +30,8 @@ namespace RAT {
     int Ncosbins, Nphibins, Npmt;
 
     G4double num_pmt = 16*pmtRadius*pmtRadius*coverage/pmtDiameter/pmtDiameter;   
-    Ncosbins = int(sqrt(num_pmt/pi));
-    Nphibins = int(sqrt(num_pmt*pi));
+    Ncosbins = int(sqrt(num_pmt/CLHEP::pi));
+    Nphibins = int(sqrt(num_pmt*CLHEP::pi));
     Npmt = Ncosbins*Nphibins;
 
     info << "GeoPMTCoverageFactory: Generated " << Npmt << "PMTs" << endl;
@@ -38,7 +40,7 @@ namespace RAT {
     vector<double> ypmt(Npmt);
     vector<double> zpmt(Npmt);
 
-    G4double dphi = twopi / Nphibins;
+    G4double dphi = CLHEP::twopi / Nphibins;
     G4double dz = 2.0 / Ncosbins;
 
     for(int i=0;i<Ncosbins;i++){

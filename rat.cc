@@ -3,6 +3,8 @@
  * @author Stan Seibert <volsung@physics.utexas.edu>
  */
 
+//#define HAS_G4DAE
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -15,7 +17,7 @@
 #include <globals.hh>
 #include <G4VisExecutive.hh>
 #include <G4UIExecutive.hh>
-#ifdef HASE_G4DAE
+#ifdef HAS_G4DAE
 #include <G4DAEParser.hh> // provides option to dump geometry to DAE/Collada file
 #endif
 

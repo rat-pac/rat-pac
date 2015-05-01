@@ -29,6 +29,7 @@
 #include <RAT/GeoTubeIntersectionFactory.hh>
 #include <RAT/GeoPerfBoxFactory.hh>
 #include <RAT/GeoCutTubeFactory.hh>
+#include <RAT/GeoWatchmanShieldFactory.hh>
 
 using namespace std;
 
@@ -60,10 +61,13 @@ GeoBuilder::GeoBuilder()
   new GeoTubeIntersectionFactory();
   new GeoPerfBoxFactory();
   new GeoCutTubeFactory();
+  new GeoWatchmanShieldFactory();
 
   // Register standard waveguides
   GlobalFactory<WaveguideFactory>::Register("cone",
       new Alloc<WaveguideFactory, ConeWaveguideFactory>);
+
+  geo_source = RATGEOTABLES;
 }
 
 
@@ -81,6 +85,8 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
   //
   //       Also fail if you ever find a volume without an already built
   //       mother AND without a yet-to-be built mother.
+  // tmw: 3/21/2015. Adding the ability to load GDML instead. Different GEO.
+  //       gdmlfile: "filename.gdml"
   debug << "GeoBuilder: Starting ConstructAll()\n";
 
   while (geo.size() > 0) {
@@ -91,6 +97,32 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
       debug << "GeoBuilder: Checking " << name << newline;
 
       DBLinkPtr table = i_table->second;
+
+      // look for GDML entry
+      string gdmlfilename;
+      try {
+	// if found one, we use the GDML parser and skip the rest of this loop!
+	gdmlfilename = table->GetS("gdml_file");
+	std::cout << "Parsing GDML File: " << gdmlfilename << std::endl;
+	geo_source = GDMLFILE;
+	// we need the glg4data and expriment to get right folder
+	string glg4data = "";
+	if (getenv("GLG4DATA") != NULL) {
+	  glg4data = string(getenv("GLG4DATA")) + "/";
+	}
+	string experiment = DB::Get()->GetLink("DETECTOR")->GetS("experiment");
+	// parse the file
+	gdml_parser.Read( glg4data+"/"+experiment+"/"+gdmlfilename );
+	// return the world volume
+	//return gdml_parser.GetWorldVolume();
+	world = gdml_parser.GetWorldVolume();
+	geo.erase(i_table);
+	break;
+      }
+      catch (DBNotFoundError &e) {
+	// do nothing. keep going.
+      } 
+
       string mother;
       string type;
       try {
@@ -127,12 +159,14 @@ G4VPhysicalVolume *GeoBuilder::ConstructAll(std::string geo_tablename)
         } catch (DBNotFoundError &e) {
         Log::Die("GeoBuilder error: border " + name + " has no volume2");
         }
-        G4LogicalVolume* LogVol1 = GeoFactory::FindMother(volume1);
-        G4LogicalVolume* LogVol2 = GeoFactory::FindMother(volume2);
+        //G4LogicalVolume* LogVol1 = GeoFactory::FindPhysMother(volume1);
+        //G4LogicalVolume* LogVol2 = GeoFactory::FindPhysMother(volume2);
+        G4VPhysicalVolume* LogVol1 = GeoFactory::FindPhysMother(volume1); // redundant
+        G4VPhysicalVolume* LogVol2 = GeoFactory::FindPhysMother(volume2); // redundant
 
         if (LogVol1 != 0 && LogVol2 != 0) {
           try {
-              GeoFactory::ConstructWithFactory(type, table);
+	    GeoFactory::ConstructWithFactory(type, table);
           } catch (GeoFactoryNotFoundError &e) {
           Log::Die("GeoBuilder error: Cannot find factory for volume type "  + type);
           }

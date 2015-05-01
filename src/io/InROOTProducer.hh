@@ -26,7 +26,6 @@ public:
 
 protected:
   void Init();
-  std::string filename;
 
   G4UIcmdWithAString *readCmd;
   G4UIcommand *readDefaultCmd;

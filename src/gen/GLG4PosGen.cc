@@ -18,6 +18,7 @@
 #include "Randomize.hh"
 #include <sstream>
 #include "G4GeometryTolerance.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include "GLG4PosGen.hh"
 #include "GLG4VertexGen.hh" // for GLG4VertexGen_HEPEvt
@@ -531,9 +532,9 @@ void GLG4PosGen_Fill::SetState( G4String newValues )
       G4cout << "  ntried= " << _ntried << G4endl;
       G4cout << "  nfound= " << _nfound << G4endl;
       G4cout << "  bounding box volume: "
-	     << _boundingBoxVolume/meter3 << " m^3\n";
+	     << _boundingBoxVolume/CLHEP::meter3 << " m^3\n";
       G4cout << "  filled volume: "
-	     << _boundingBoxVolume*_nfound/(double)_ntried/meter3
+	     << _boundingBoxVolume*_nfound/(double)_ntried/CLHEP::meter3
 	     << " m^3\n";
       G4cout << "  est. fractional precision: "
 	     << sqrt((_ntried-_nfound)*(double)_nfound/_ntried)/_ntried

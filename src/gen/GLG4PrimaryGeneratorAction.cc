@@ -16,7 +16,8 @@
 #include "G4PrimaryVertex.hh"
 #include "G4Track.hh"
 #include "G4ios.hh"
-#include "CLHEP/Units/SystemOfUnits.h"
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 #include "Randomize.hh"
 
 #include "GLG4Gen.hh"
@@ -62,7 +63,7 @@ GLG4PrimaryGeneratorAction()
   myUniversalTime= 0.0;
   myUniversalTimeSincePriorEvent= 0.0;
   
-  myEventWindow= 0*ns;
+  myEventWindow= 0*CLHEP::ns;
 
   // load up factories with known generators
 

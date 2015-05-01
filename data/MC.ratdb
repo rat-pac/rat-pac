@@ -6,13 +6,16 @@ valid_end: [0, 0],
 
 // Reduce number of photons generated, but compensate with increased PMT
 // efficiency
-thin_factor: 1.0d,
+thin_factor: 3.0d,
 
 // simulate hadronic (i.e. neutron) physics processes
 hadronic_processes: 0,
 
 // simulate muon physics processes
-muon_processes: 0,
+muon_processes: 1,
+
+// pmt charge model to use - miniclean model if unspecified
+//pmt_charge_model: "r11780_hqe",
 
 }
 

@@ -1,0 +1,12 @@
+Executable = /net/t2srv0008/app/d-Chooz/Software/kpipe/ratpac-kpipe/cry/run_cry_gen.sh
+Arguments = $(Process) 500
+Universe = vanilla
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+getenv = True
+Requirements = (Arch == "X86_64" && OpSys == "LINUX")
+Error=/dev/null
+Output=/dev/null
+Log=/dev/null
++AccountingGroup = "group_mitlns.taritree"
+Queue 500

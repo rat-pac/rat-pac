@@ -114,6 +114,18 @@ elemprop:[
 
 {
 name: "MATERIAL",
+index: "dirt",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 1.5d,
+nelements: 2,
+nmaterials: 0,
+elements: ["Silicon", "Oxygen",],
+elemprop: [0.4675d, 0.5325d],
+}
+
+{
+name: "MATERIAL",
 index: "rock",
 valid_begin : [0, 0],
 valid_end : [0, 0],
@@ -123,6 +135,7 @@ nmaterials: 0,
 elements: ["Silicon", "Oxygen",],
 elemprop: [0.4675d, 0.5325d],
 }
+
 
 {
 name: "MATERIAL",
@@ -988,3 +1001,15 @@ elements: ["Lutetium", "Yttrium", "Silicon","Oxygen",],
 elemprop: [0.7143d,0.0408d,0.0635d,0.1814d],
 }
 
+{
+//for SiPMs
+name: "MATERIAL",
+index: "chip_silicon",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+density: 2.3d, 
+nelements: 1,
+nmaterials: 0,
+elements: ["Silicon",],
+elemprop: [1.0d,],
+}

@@ -61,6 +61,10 @@ public:
   virtual Float_t GetCharge() const { return charge; }
   virtual void SetCharge(Float_t _charge) { charge = _charge; }
 
+  /** what processs created this photon? **/
+  virtual void SetOriginFlag( int _origin ) { origin = _origin; };
+  virtual Int_t GetOriginFlag() const { return origin; };
+
   /** Is this photoelectron due to a dark hit? */
   virtual void SetDarkHit(Bool_t _isDarkHit){ isDarkHit = _isDarkHit;}
   virtual Bool_t IsDarkHit() const { return isDarkHit; }
@@ -80,6 +84,7 @@ protected:
   TVector3 pol;
 
   Float_t charge;
+  Int_t origin;
   Bool_t isDarkHit;
   Int_t trackID;
 };

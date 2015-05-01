@@ -19,6 +19,7 @@
 #include <G4ThreeVector.hh>
 
 #include <Randomize.hh> 
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <vector>
 #include <cstring>
@@ -151,9 +152,9 @@ namespace RAT {
 				vertexGen->GeneratePrimaryVertex(event, pos, times[0]);
 			}else{
 				// we will have to apply trial and error so generate temporary event and test it
-				G4double testE = -999*MeV;
+				G4double testE = -999*CLHEP::MeV;
 				int count=1;
-				while(count<100&&!(testE/MeV>lo&&testE/MeV<hi)){
+				while(count<100&&!(testE/CLHEP::MeV>lo&&testE/CLHEP::MeV<hi)){
 					etemp = new G4Event();		// need to reset the temporary event
 					vertexGen->GeneratePrimaryVertex(etemp, pos, times[0]);
 					vtemp = etemp->GetPrimaryVertex();
@@ -190,11 +191,11 @@ namespace RAT {
 			posGenExtra[iEx] -> GeneratePosition(pos);
 			if(fLoEnergy>0||fHiEnergy<99999){
 				if(iEx<nExtra-1){
-					lo = fLoEnergy-MaxE[iEx+1]-KEgen/MeV;
-					hi = fHiEnergy-MinE[iEx+1]-KEgen/MeV;
+					lo = fLoEnergy-MaxE[iEx+1]-KEgen/CLHEP::MeV;
+					hi = fHiEnergy-MinE[iEx+1]-KEgen/CLHEP::MeV;
 				}else{
-					lo = fLoEnergy-KEgen/MeV;
-					hi = fHiEnergy-KEgen/MeV;
+					lo = fLoEnergy-KEgen/CLHEP::MeV;
+					hi = fHiEnergy-KEgen/CLHEP::MeV;
 				}
 				if(vertexGenExtra[iEx]->ELimitable()){
 					// Set limits on energy and add the vertex
@@ -202,9 +203,9 @@ namespace RAT {
 					vertexGenExtra[iEx]->GeneratePrimaryVertex(event, pos, times[iEx+1]);				
 				}else{
 					// we will have to apply trial and error so generate temporary event and test it
-					G4double testE = -999*MeV;
+					G4double testE = -999*CLHEP::MeV;
 					int count=1;
-					while(count<100&&!(testE/MeV>lo&&testE/MeV<hi)){
+					while(count<100&&!(testE/CLHEP::MeV>lo&&testE/CLHEP::MeV<hi)){
 						etemp = new G4Event();		// need to reset the temporary event
 						vertexGenExtra[iEx]->GeneratePrimaryVertex(etemp, pos, times[iEx+1]);
 						vtemp = etemp->GetPrimaryVertex();
