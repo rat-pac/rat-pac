@@ -1,0 +1,79 @@
+{
+name: "BONSAI", //DEFAULTS - to override create and load your own table or use macro commands
+
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+data_path: "bonsai", //relative to $RATROOT/data/
+
+// N.B. -32767.0 signifies "none"
+
+//BONSAI and Clusfit Shared Parameters
+//-------------------------------------------------------
+
+tres:           1.00,       //ns PMT time resolution
+tcoin:          3.00,       //ns PMT coincidence time difference
+dlim:           0.1785,     //#PMT pair maximal distance fraction
+tlim:           0.1079,     //PMT pair maximal time difference fraction
+nselall:        12,         //Maximum # of hits to do all 4-hit combin.
+gcon0:          25.00,      //cm Initial grid constan
+dw4hit:         -300.00,    //cm Minimum wall distance for 4-hit vertices
+
+//Clusfit Parameters
+//-------------------------------------------------------
+
+cgrid:          200.00,                 //cm Clusfit grid constant
+dwfit:          -100.00,                //cm Minimum wall distance for Clusfit vertex
+clusgtheta0:    23.00,                  //deg Initial Clusfit Cherenkov cone opening angle
+clusgthetaplus: -32767.0,               //Initial Clusfit angle positive deviation
+clusgthetaminus:-32767.0,               //Initial Clusfit angle negative deviation
+clusgdirweight: 0.00,                   //Initial Clusfit angle goodness weight
+np:             3,                      //Number of Clusfit passes
+cdwall:         [-200.0,-200.0,-200.0], //cm Wall distance to invoke finer search
+gdiff:          [0.06,0.03,0.02],       // Minimum goodness difference to skim
+lastdiff:       0.01,                   //Final minimum goodness difference to skim
+gfrac:          [0.06,0.06,0.5],        //Goodness skim fraction
+lastfrac:       0.05,                   //Final goodness skim fraction
+tim0:           10.0,                   //ns Grid search goodness time window
+time:           [7.0,5.0,4.0],          //ns search goodness time window
+rmin:           [100.00,10.00,2.00],    //cm Clusfit minimum radius
+rstop:          [80.00,13.00,10.00],    //cm Clusfit stop radius
+clustheta0:     [45.17,45.17,45.17],    //deg Clusfit Cherenkov cone opening angle
+clusthetaplus:  [-32767.0,7.60,7.60],   //Clusfit angle positive deviation
+clusthetaminus: [-32767.0,5.08,5.08],   //Clusfit angle negative deviation
+clusdirweight:  [0.00,0.20,0.10],       //Clusfit angle goodness weight
+
+//BONSAI Parameters
+//-------------------------------------------------------
+
+bgrid:          100.00,     //cm BONSAI grid constant
+bdwfit:         -100.00,    //cm Minimum wall distance for BONSAI vertex
+bdwall:         -200.00,    //cm Wall distance to invoke fine search
+bc0:            44.75,      //deg Initial Cherenkov cone opening angle
+bpangle:        8.00,       //deg Initial Cherenkov angle positive deviation
+bmangle:        19.12,      //deg Initial Cherenkov angle negative deviation
+blastdiff:      0.01,       //Final minimum likelihood difference to skim
+blastfrac:      0.08,       //Final likelihood skim fraction
+
+//Coarse search parameters
+
+oc0:            45.00,      //deg Cherenkov cone opening angle
+opangle:        30.00,      //deg Positive angle deviation
+omangle:        30.12,      //deg Negative angle deviation
+obgdiff:        0.4,        //Minimum likelihood diff to skim
+obgfrac:        0.04,       //Likelihood skim fraction
+obrmin:         300.00,     //cm Start radius
+obrstop:        150.00,     //cm Stop radius
+
+//Fine search parameters
+
+cc0:            45.00,      //deg Cherenkov cone opening angle
+cpangle:        30.00,      //deg Positive angle deviation
+cmangle:        30.00,      //deg Negative angle deviation
+cbgdiff:        0.5,        //Minimum likelihood diff to skim
+cbgfrac:        0.06,       //Likelihood skim fraction
+cbrmin:         150.00,     //cm Start radius
+cbrstop:        40.00,      //cm Stop radius
+
+}
+

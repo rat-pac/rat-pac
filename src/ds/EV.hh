@@ -21,6 +21,7 @@
 #include <RAT/DS/PMT.hh>
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/PathFit.hh>
+#include <RAT/DS/BonsaiFit.hh>
 #include <vector>
 
 namespace RAT {
@@ -79,6 +80,16 @@ public:
   virtual bool ExistPathFit() const { return !pathfit.empty(); }
   virtual void PrunePathFit() { pathfit.resize(0); }
 
+  /** Centroid position fitter. */
+  virtual BonsaiFit* GetBonsaiFit() {
+    if (bonsaifits.empty()) {
+      bonsaifits.resize(1);
+    }
+    return &bonsaifits.back();
+  }
+  virtual bool ExistBonsaiFit() const { return !bonsaifits.empty(); }
+  virtual void PruneBonsaiFit() { bonsaifits.resize(0); }
+
   ClassDef(EV, 1)
 
 protected:
@@ -90,6 +101,7 @@ protected:
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;
   std::vector<PathFit> pathfit;
+  std::vector<BonsaiFit> bonsaifits;
 };
 
   } // namespace DS
