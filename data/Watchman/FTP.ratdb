@@ -9,18 +9,20 @@ seed_phi: 0.0,
 seed_time: 0.0,
 
 num_cycles: 50,                 // Number of annealing iterations (times to lower temp)
-num_evals: 150,                 // Number of evaluations per iteration (evals per temp)
+num_evals: 200,                 // Number of evaluations per iteration (evals per temp)
 pos_sigma0: 2000.0,             // Size of initial simplex in space
-pos_sigma1: 10.0,               // Size of initial simplex in space
+pos_sigma1: 100.0,               // Size of initial simplex in space
 theta_sigma: 0.5,               // Size of initial simplex in cosalpha
 phi_sigma: 1.0,                 // Size of initial simplex in phi
-time_sigma0: 1.0,               // Size of initial simplex in time
-time_sigma1: 0.5,               // Size of initial simplex in time
+time_sigma0: 10.0,               // Size of initial simplex in time
+time_sigma1: 10.0,               // Size of initial simplex in time
 temp0: 25.0,                    // Initial annealing temperature
-temp1: 10.0,                    // Initial annealing temperature
+temp1: 25.0,                    // Initial annealing temperature
 alpha: 4.0,                     // Temperature lowering coefficient
 
-cherenkov_multiplier: 2.0,      // nCherenkov/nHits
+migrad: 1,                     //whether to do a final pass of migrad2
+
+cherenkov_multiplier: 20.0,      // nCherenkov/nHits
 light_speed: 224.9,             // mm/ns 
 direct_prob: 0.944,             // fraction of direct detected light
 other_prob: 0.056,              // fraction of late detected light

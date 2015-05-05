@@ -48,6 +48,7 @@ protected:
     std::vector<double> fCosAlphaProb;
     
     //minimization parameters
+    bool fMigrad;
     int fStage;
     size_t fNumCycles, fNumEvals;
     double fPosSigma0, fPosSigma1, fThetaSigma, fPhiSigma, fTimeSigma0, fTimeSigma1;

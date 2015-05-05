@@ -46,6 +46,8 @@ FitPathProc::FitPathProc() : Processor("fitpath") {
     fTemp1 = ftp->GetD("temp1");
     fAlpha = ftp->GetD("alpha");
     
+    fMigrad = ftp->GetI("migrad") == 0 ? false : true;
+    
     fCherenkovMultiplier = ftp->GetD("cherenkov_multiplier");
     fLightSpeed = ftp->GetD("light_speed");
     fDirectProb = ftp->GetD("direct_prob");
@@ -264,25 +266,29 @@ Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
     stage1.Anneal(fTemp1,fNumCycles,fNumEvals,fAlpha);
     stage1.GetBestPoint(point);
     
-    seed = point;
-    vector<double> errors(6);
-    errors[0] = errors[1] = errors[2] = 1000.0;
-    errors[3] = errors[4] = 2.0;
-    errors[5] = 10.0; 
+    if (fMigrad) {
     
-    gErrorIgnoreLevel = 1001;
-    
-    MnUserParameters mnParams = MnUserParameters(seed,errors);
-    MnUserTransformation trafo;
-    MinimumState minState(seed.size());
-    MinimumSeed minSeed(minState, trafo);
-    FunctionMinimum theMin(minSeed, 1.);
-    MnMigrad migrad( *this, mnParams );
-    
-    theMin = migrad(0,0.1);
-    
-    MnUserParameters result = theMin.UserParameters();
-    point = result.Params();
+        seed = point;
+        vector<double> errors(6);
+        errors[0] = errors[1] = errors[2] = 1000.0;
+        errors[3] = errors[4] = 2.0;
+        errors[5] = 10.0; 
+        
+        gErrorIgnoreLevel = 1001;
+        
+        MnUserParameters mnParams = MnUserParameters(seed,errors);
+        MnUserTransformation trafo;
+        MinimumState minState(seed.size());
+        MinimumSeed minSeed(minState, trafo);
+        FunctionMinimum theMin(minSeed, 1.);
+        MnMigrad migrad( *this, mnParams );
+        
+        theMin = migrad(0,0.1);
+        
+        MnUserParameters result = theMin.UserParameters();
+        point = result.Params();
+        
+    }
     
     fFitPos = TVector3(point[0],point[1],point[2]);
     fFitTime = point[5];
