@@ -9,8 +9,6 @@
 
 #include <Minuit2/FCNBase.h>
 
-using namespace ROOT::Minuit2;
-
 namespace RAT {
 
 namespace DS {
@@ -22,7 +20,7 @@ typedef struct {
     double x,y,z,px,py,pz,t;
 } hit;
   
-class FitPathProc : public Processor, public Minimizable, public FCNBase {
+class FitPathProc : public Processor, public Minimizable, public ROOT::Minuit2::FCNBase {
 public:
   FitPathProc();
   virtual ~FitPathProc() {}
