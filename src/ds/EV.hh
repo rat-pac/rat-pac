@@ -20,6 +20,7 @@
 #include <TTimeStamp.h>
 #include <RAT/DS/PMT.hh>
 #include <RAT/DS/Centroid.hh>
+#include <RAT/DS/PathFit.hh>
 #include <vector>
 
 namespace RAT {
@@ -67,6 +68,16 @@ public:
   }
   virtual bool ExistCentroid() const { return !centroid.empty(); }
   virtual void PruneCentroid() { centroid.resize(0); }
+  
+  /** PathFit position, direction, time fitter. */
+  virtual PathFit* GetPathFit() {
+    if (pathfit.empty()) {
+      pathfit.resize(1);
+    }
+    return &pathfit.back();
+  }
+  virtual bool ExistPathFit() const { return !pathfit.empty(); }
+  virtual void PrunePathFit() { pathfit.resize(0); }
 
   ClassDef(EV, 1)
 
@@ -78,6 +89,7 @@ protected:
   TTimeStamp utc;
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;
+  std::vector<PathFit> pathfit;
 };
 
   } // namespace DS

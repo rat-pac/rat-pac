@@ -11,8 +11,8 @@ These software packages should be installed in the order presented before you at
     - on SUSE Linux: . . . ``sudo zypper install python-devel``
 
 
- * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).  RAT-PAC requires the python development libraries thus when configuring the root make use the ``--enable-python option`` i.e.
-    - ``./configure --enable-python``
+ * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).  RAT-PAC requires the python development libraries and Minuit2 minimization libraries thus when configuring the root make use the ``--enable-python --enable-minuit2`` options i.e.
+    - ``./configure --enable-python --enable-minuit2``
 
  * `GEANT4 9.6.p03 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ `tar file <http://geant4.cern.ch/support/source/geant4.9.6.p03.tar.gz>`_- Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=ON`` to download the interaction cross-section files (or download them manually).
 
