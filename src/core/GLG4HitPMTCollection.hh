@@ -46,7 +46,7 @@ public:
 
 private:
   std::vector<GLG4HitPMT*> fPMT;
-  std::map<short, GLG4HitPMT*> fHitmap;  
+  std::map<int, GLG4HitPMT*> fHitmap;  
 };
 
 

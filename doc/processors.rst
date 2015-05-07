@@ -4,7 +4,7 @@ Event Processors
 simpledaq
 `````````
 
-The SimpleDAQ processor simulates a minimal data acquisition system.  The time of each PMT hit is the time of the first photon hit, and the charge collected at each PMT is just the sum of all charge deposited at the anode, regardless of time.  All PMT hits are packed into a single event.
+The SimpleDAQ processor simulates a minimal data acquisition system.  The time of each PMT hit is the time of the first photon hit plus the timing distribution of the appropriate PMT, and the charge collected at each PMT is just the sum of all charge deposited at the anode, regardless of time.  All PMT hits are packed into a single event.
 
 Command
 '''''''
@@ -97,6 +97,93 @@ Position fit information in data structure
 
 * name - "centroid"
 * figures of merit - None
+
+fitpath
+```````
+
+The ``fitpath`` processor is an implementation (still a work in progress) of the 
+successful PathFitter algorithm used in SNO. It fits position, time, and direction 
+for cherenkov events using a maximum likelihood fit of hit time residuals while 
+taking into account different paths the hit could have taken. For "direct" light 
+(i.e. neither reflected nor scattered) an angular distribution of cherenkov light 
+is taken into account to fit the direction. All other light is considered "other"
+and does not contribute to the direction fit.
+
+Minimization is done in three stages:
+0) Hit time residuals are minimized directly using :ref:`simulated-annealing` from a static seed. 
+1) PathFitter likelihood is minimized with :ref:`simulated-annealing` from stage 0's result.
+2) PathFitter likelihood is minimized with Minuit2 from stage 1's result.
+
+Command
+'''''''
+
+::
+
+    /rat/proc fitpath
+
+Parameters
+''''''''''
+
+None required from macro. ``fitpath`` reads parameters from a table ``FTP`` containing
+the following fields:
+
+=========================   ==========================  ===================
+**Field**                   **Type**                    **Description**
+=========================   ==========================  ===================
+``num_cycles``              ``int``                     Number of annealing iterations (times to lower temp)
+``num_evals``               ``int``                     Number of evaluations per iteration (evals per temp)
+``alpha``                   ``double``                  Controls the rate of cooling in :ref:`simulated-annealing`
+
+``seed_pos``                ``double[3]``               Static position seed to stage 0
+``pos_sigma0``              ``double``                  Size of initial stage 0 simplex in position coordinates
+``seed_time``               ``double``                  Static time seed to stage 0
+``time_sigma0``             ``double``                  Size of initial stage 0 simplex in time
+``temp0``                   ``double``                  Initial temperature of :ref:`simulated-annealing` for stage 0
+
+``seed_theta``              ``double``                  Static theta (detector coordinates) seed to stage 1
+``theta_sigma``             ``double``                  Size of initial stage 1 simplex in theta
+``seed_phi``                ``double``                  Static phi (detector coordinates) seed to stage 1
+``phi_sigma``               ``double``                  Size of initial stage 1 simplex in phi
+``pos_sigma1``              ``double``                  Size of initial stage 1 simplex in position coordinates
+``time_sigma1``             ``double``                  Size of initial stage 1 simplex in time
+``temp1``                   ``double``                  Initial temperature of :ref:`simulated-annealing` for stage 1
+
+``cherenkov_multiplier``    ``double``                  Number of cherenkov photons generated per hits detected
+``light_speed``             ``double``                  Speed of light in material in mm/ns 
+``direct_prob``             ``double``                  Fraction of direct detected light
+``other_prob``              ``double``                  Fraction of late detected light
+``photocathode_area``       ``double``                  Area of photocathode mm^2
+
+``direct_time_first``       ``double``                  Time (ns) of first entry in ``direct_time_prob``
+``direct_time_step``        ``double``                  Time step (ns) between entries in ``direct_time_prob``
+``direct_time_prob``        ``double[]``                Probability (need not be normalized) of being "direct" light with a certain time residual
+
+``other_time_first``        ``double``                  Time (ns) of first entry in ``other_time_prob``
+``other_time_step``         ``double``                  Time step (ns) between entries in ``other_time_prob``
+``other_time_prob``         ``double[]``                Probability (need not be normalized) of being "other" light with a certain time residual
+
+``cosalpha_first``          ``double``                  Cos(alpha) of first entry in ``cosalpha_prob``
+``cosalpha_step``           ``double``                  Cos(alpha) step between entries in ``cosalpha_prob``
+``cosalpha_prob``           ``double[]``                Probability (need not be normalized) of Cherenkov light being emitted at a certain cos(alpha) w.r.t. particle direction
+=========================   ==========================  ===================
+
+
+Fit information in DS
+'''''''''''''''''''''
+
+In the ``EV`` branch the ``PathFit`` class contains Get/Set methods for the following data:
+
+======================  ==========================  ===================
+**Field**               **Type**                    **Description**
+======================  ==========================  ===================
+``Time0``               ``double``                  Time seed from simple hit time residual minimization
+``Pos0``                ``TVector3``                Position seed from simple hit time residual minimization
+``Time``                ``double``                  Time resulting from final stage of minimization
+``Position``            ``TVector3``                Position resulting from final stage of minimization
+``Direction``           ``TVector3``                Direction resulting from final stage of minimization
+======================  ==========================  ===================
+
+``PathFit`` implementes ``PosFit`` under the name ``fitpath``.
 
 outroot
 ```````
