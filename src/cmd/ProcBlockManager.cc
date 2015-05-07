@@ -18,7 +18,6 @@
 #include <RAT/FitPathProc.hh>
 #include <RAT/FitBonsaiProc.hh>
 #include <RAT/SimpleDAQProc.hh>
-#include <RAT/WatchmanDAQProc.hh>
 
 namespace RAT {
 
@@ -68,7 +67,6 @@ ProcBlockManager::ProcBlockManager(ProcBlock *theMainBlock)
 
   // DAQ
   procAllocators["simpledaq"]= new ProcAllocatorTmpl<SimpleDAQProc>;
-  procAllocators["watchmandaq"]= new ProcAllocatorTmpl<WatchmanDAQProc>;
 
   // Misc
   procAllocators["count"] = new ProcAllocatorTmpl<CountProc>;

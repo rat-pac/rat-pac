@@ -75,7 +75,7 @@ cint_source = Split('ds/Root io/DSReader io/TrackNav io/TrackCursor '
                     'stlplus/string_utilities stlplus/dprintf stlplus/textio '
                     'stlplus/stringio '
                     'stlplus/exceptions stlplus/debug stlplus/file_system '
-                    'db/json_reader db/json_writer db/json_value')
+                    'db/json')
 
 solib_obj = env.SharedObject([os.path.join(env['BUILDDIR'], clsname+'.cc')
                               for clsname in cint_source])

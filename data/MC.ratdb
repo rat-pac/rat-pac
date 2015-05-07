@@ -6,7 +6,7 @@ valid_end: [0, 0],
 
 // Reduce number of photons generated, but compensate with increased PMT
 // efficiency
-thin_factor: 1.0d,
+thin_factor: 1.0,
 
 // simulate hadronic (i.e. neutron) physics processes
 hadronic_processes: 0,
