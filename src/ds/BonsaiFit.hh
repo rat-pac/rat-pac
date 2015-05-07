@@ -7,7 +7,6 @@
 #define __RAT_DS_BonsaiFit__
 
 #include <RAT/DS/PosFit.hh>
-#include <TVector3.h>
 
 namespace RAT {
     

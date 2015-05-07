@@ -64,6 +64,7 @@ ProcBlockManager::ProcBlockManager(ProcBlock *theMainBlock)
   procAllocators["fitcentroid"] = new ProcAllocatorTmpl<FitCentroidProc>;
   procAllocators["fitbonsai"] = new ProcAllocatorTmpl<FitBonsaiProc>;
   procAllocators["fitpath"] = new ProcAllocatorTmpl<FitPathProc>;
+  procAllocators["fitbonsai"] = new ProcAllocatorTmpl<FitBonsaiProc>;
 
   // DAQ
   procAllocators["simpledaq"]= new ProcAllocatorTmpl<SimpleDAQProc>;

@@ -43,6 +43,7 @@ cint_cls= Split('DS/Root DS/MC DS/EV DS/MCParticle DS/MCPhoton '
                 'DS/PosFit DS/PMTInfo '
                 'DS/MCTrack DS/MCTrackStep DS/Calib '
                 'DS/Centroid DS/BonsaiFit DS/PathFit '
+                'DS/Centroid DS/PathFit DS/BonsaiFit '
                 'DSReader DSWriter TrackNav TrackNode TrackCursor DB DBLink '
                 'DBTextLoader DBJsonLoader HTTPDownloader Log ObjInt ObjDbl '
                 'DS/LinkDef')
