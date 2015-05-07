@@ -22,7 +22,6 @@
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/BonsaiFit.hh>
 #include <RAT/DS/PathFit.hh>
-#include <RAT/DS/BonsaiFit.hh>
 #include <vector>
 
 namespace RAT {
