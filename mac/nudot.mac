@@ -1,0 +1,23 @@
+/glg4debug/glg4param omit_muon_processes  10.0
+/glg4debug/glg4param omit_hadronic_processes  10.0
+
+/rat/db/set DETECTOR experiment "nudotv0"
+/rat/db/set DETECTOR geo_file "nudotv0/nudotv0.geo"
+#/tracking/storeTrajectory 1
+#/tracking/discardParticleTrajectory opticalphoton
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc count
+/rat/procset update 1
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+#END EVENT LOOP
+
+/generator/add combo gun:point
+/generator/vtx/set e-  0.0 0.0 -1.1
+/generator/pos/set 0 0 200.0
+
+/run/beamOn 10
