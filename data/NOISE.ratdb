@@ -2,6 +2,6 @@
 name: "NOISE",
 valid_begin: [0, 0],
 valid_end: [0, 0],
-noise_rate: 0d,
+noise_rate: 0.0,
 }
 

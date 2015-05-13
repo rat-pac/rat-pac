@@ -16,6 +16,9 @@
 #include <stdlib.h>
 #include "RAT/BONSAI/binfile.h"
 
+#include <RAT/DB.hh>
+#include <RAT/DBLink.hh>
+
 namespace BONSAI {
 
 // **********************************************
@@ -117,7 +120,9 @@ void timefit::load_dist(void)
 
   // ********************** load pdfs from file **********************
   printf("Loading pdfs...\n");
-  binfile      bf((char*)"like.bin",'r');
+  RAT::DB *db = RAT::DB::Get();
+  RAT::DBLinkPtr table = db->GetLink("BONSAI");
+  binfile bf((char*)table->GetS("likelihood_calibration").c_str(),'r');
 
   if (bf.read(sizes,numbers,starts)!=2)
     {

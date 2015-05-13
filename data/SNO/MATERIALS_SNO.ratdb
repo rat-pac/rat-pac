@@ -3,11 +3,11 @@ name: "MATERIAL",
 index: "glass_sno",
 valid_begin : [0, 0],
 valid_end : [0, 0],
-density: 2.2d,
+density: 2.2,
 nelements: 2,
 nmaterials: 0,
 elements: ["Silicon", "Oxygen",],
-elemprop: [0.4675d, 0.5325d],
+elemprop: [0.4675, 0.5325],
 }
 
 {
@@ -15,11 +15,11 @@ name: "MATERIAL",
 index: "lightwater_sno",
 valid_begin : [0, 0],
 valid_end : [0, 0],
-density: 1.0d,
+density: 1.0,
 nelements: 2,
 nmaterials: 0,
 elements: ["Hydrogen", "Oxygen",],
-elemprop: [0.1119d, 0.8881d],
+elemprop: [0.1119, 0.8881],
 }
 
 {
@@ -27,11 +27,11 @@ name: "MATERIAL",
 index: "acrylic_sno",
 valid_begin : [0, 0],
 valid_end : [0, 0],
-density: 1.14d,
+density: 1.14,
 nelements: 3,
 nmaterials: 0,
 elements: ["Hydrogen", "Carbon", "Oxygen"],
-elemprop: [0.0703d, 0.558d, 0.3717d],
+elemprop: [0.0703, 0.558, 0.3717],
 }
 
 {
@@ -39,10 +39,10 @@ name: "MATERIAL",
 index: "HeavyWater",
 valid_begin : [0, 0],
 valid_end : [0, 0],
-density: 1.1056d,
+density: 1.1056,
 nelements: 2,
 nmaterials: 0,
 elements: ["Deuterium", "Oxygen",],
-elemprop: [0.2011d, 0.7989d],
+elemprop: [0.2011, 0.7989],
 }
 

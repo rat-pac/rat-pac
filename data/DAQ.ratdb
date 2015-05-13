@@ -2,6 +2,6 @@
 name: "DAQ",
 valid_begin: [0, 0],
 valid_end: [0, 0],
-channel_efficiency: 1.0d,
+channel_efficiency: 1.0,
 }
 

@@ -32,22 +32,15 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
         vector<float> packedPos;
         packedPos.reserve(totalPMTs*3);
         size_t bonsai_idx = 0;
-	Double_t pmt_x_bonsai = 0.0;
-        Double_t pmt_y_bonsai = 0.0;
-        Double_t pmt_z_bonsai = 0.0;
-
         for (size_t i = 0; i < totalPMTs; i++) {
-            if (pmtinfo->GetType(i) == 1) { //is normal PMT
+            //if (pmtinfo->GetType(i) == 1) { //is normal PMT
                 TVector3 pos = pmtinfo->GetPosition(i);
-		pmt_x_bonsai = pos.X()/10.0;
- 		pmt_y_bonsai = pos.Y()/10.0;
- 		pmt_z_bonsai = pos.Z()/10.0;
-                packedPos.push_back(pmt_x_bonsai);
-                packedPos.push_back(pmt_y_bonsai);
-                packedPos.push_back(pmt_z_bonsai);
+                packedPos.push_back(pos.X()/10.0);
+                packedPos.push_back(pos.Y()/10.0);
+                packedPos.push_back(pos.Z()/10.0);
                 
                 pmtmap[i] = bonsai_idx++;
-            }
+            //}
         }
         bonsai_geometry = new BONSAI::pmt_geometry(packedPos.size()/3,&packedPos[0]);
         bonsai_likelihood = new BONSAI::likelihood(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height());
@@ -63,6 +56,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     for (size_t i = 0; i < nhit; i++) {
         DS::PMT *pmt = ev->GetPMT(i);
         hit_time[i] = pmt->GetTime();
+        hit_time[i] = pmt->GetTime()+400.0; //offset necessary because bonsai hates negative times
         hit_charge[i] = pmt->GetCharge();
         hit_pmtid[i] = pmtmap[pmt->GetID()];
     }
@@ -106,8 +100,6 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     //reset likelihood
     bonsai_likelihood->set_hits(NULL);
     
-    /* This time fit won't work properly until calibrated
-    
     //now fit the time
     bonsai_likelihood->set_hits(&hitselection);
     float dt; // called dt in bonsai / apparently related to loglikelihood of time fit
@@ -116,13 +108,14 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
     //reset likelihood
     bonsai_likelihood->set_hits(NULL);
     
-    */
-    
     DS::BonsaiFit *result = ev->GetBonsaiFit();
     
     TVector3 pos(vtx[0]*10.0,vtx[1]*10.0,vtx[2]*10.0);
     result->SetPosition(pos);
-    result->SetTime(vtx[3]);
+    result->SetTime(vtx[3]-400.0);
+    
+    TVector3 direct(dir[0],dir[1],dir[2]);
+    result->SetDirection(direct);
     
     return OK;
     

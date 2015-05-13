@@ -18,6 +18,7 @@
 #pragma link C++ class RAT::DS::PosFit+;
 #pragma link C++ class RAT::DS::Centroid+;
 #pragma link C++ class RAT::DS::BonsaiFit+;
+#pragma link C++ class RAT::DS::PathFit+;
 
 #pragma link C++ class RAT::DS::RunStore+;
 #pragma link C++ class RAT::DS::Run+;
@@ -34,7 +35,8 @@
 #pragma link C++ class RAT::DBLinkPtr+;
 #pragma link C++ class RAT::DBTable+;
 #pragma link C++ class RAT::DBTextLoader+;
-#pragma link C++ class Json::Value; 
+#pragma link C++ class RAT::DBJsonLoader+;
+#pragma link C++ class json::Value+; 
 
 #pragma link C++ class RAT::ObjInt+;
 #pragma link C++ class RAT::ObjDbl+;
