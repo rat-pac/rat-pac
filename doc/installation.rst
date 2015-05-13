@@ -4,9 +4,24 @@ Prerequisites
 `````````````
 These software packages should be installed in the order presented before you attempt to build RAT.  Take note of the version numbers as many of these packages make incompatible changes between releases.
 
- * `Python with development headers <https://www.python.org/>`_ - Using common package managers, type
+ * `Python 2.7.X with development headers <https://www.python.org/>`_ - 
 
-    - on Scientific Linux: ``sudo yum install python-devel``
+    - on Scientific Linux --   run the following commands in [InstallDir] where [InstallDir] is the location you are installing python::
+
+          # Python 2.7.6:
+          wget http://python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
+          tar xf Python-2.7.6.tar.xz
+          cd Python-2.7.6
+          ./configure --prefix=[InstallDir]/python --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath=[InstallDir]/python/lib"
+          make && make altinstall
+          
+          #you will need to add [InstallDir]/python/Python-2.7.6 to the PATH, this can be done on the command line, or in your .bashrc file
+          PATH=[InstallDir]/python/Python-2.7.6:$PATH
+          
+          #you will need to add [InstallDir]/python/lib to the LD_LIBRARY_PATH, this can be done on the command line, or in your .bashrc file
+          LD_LIBRARY_PATH=[InstallDir]/python/lib:$LD_LIBRARY_PATH
+
+      NOTE: The PATH and LD_LIBRARY_PATH will need to be set in this manner whenever you are using rat-pac
     - on Ubuntu: . . . . . . ``sudo apt-get install python-dev``
     - on SUSE Linux: . . . ``sudo zypper install python-devel``
 
