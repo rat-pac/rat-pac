@@ -44,17 +44,17 @@ void ReacIBDgen::GenEvent(const Hep3Vector &nu_dir,
   //double v0 = p0/E0;
 
   // First order correction for finite nucleon mass
-  //double Ysquared = (DELTA*DELTA - electron_mass_c2*electron_mass_c2)/2;
-  //double E1 = E0*(1 - Enu/proton_mass_c2*(1 - v0*CosThetaLab))
-  //             - Ysquared/proton_mass_c2;
-  //double p1 = sqrt(E1*E1 - electron_mass_c2*electron_mass_c2);
+  double Ysquared = (DELTA*DELTA - electron_mass_c2*electron_mass_c2)/2;
+  double E1 = E0*(1 - Enu/proton_mass_c2*(1 - v0*CosThetaLab))
+               - Ysquared/proton_mass_c2;
+  double p1 = sqrt(E1*E1 - electron_mass_c2*electron_mass_c2);
 
   // Compute nu 4-momentum
   neutrino.setVect(nu_dir * Enu); // MeV (divide by c if need real units)
   neutrino.setE(Enu);
   
   // Compute positron 4-momentum
-  Hep3Vector pos_momentum(p0*nu_dir);
+  Hep3Vector pos_momentum(p1*nu_dir);
 
   // Rotation from nu direction to pos direction.
   double theta = acos(CosThetaLab);
@@ -64,7 +64,7 @@ void ReacIBDgen::GenEvent(const Hep3Vector &nu_dir,
   pos_momentum.rotate(theta, rotation_axis);
 
   positron.setVect(pos_momentum);
-  positron.setE(E0);
+  positron.setE(E1);
   
   // Compute neutron 4-momentum
   neutron.setVect(neutrino.vect() - positron.vect());
