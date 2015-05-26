@@ -4,15 +4,30 @@ Prerequisites
 `````````````
 These software packages should be installed in the order presented before you attempt to build RAT.  Take note of the version numbers as many of these packages make incompatible changes between releases.
 
- * `Python with development headers <https://www.python.org/>`_ - Using common package managers, type
+ * `Python 2.7.X with development headers <https://www.python.org/>`_ - 
 
-    - on Scientific Linux: ``sudo yum install python-devel``
+    - on Scientific Linux --   run the following commands in [InstallDir] where [InstallDir] is the location you are installing python::
+
+          # Python 2.7.6:
+          wget http://python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz
+          tar xf Python-2.7.6.tar.xz
+          cd Python-2.7.6
+          ./configure --prefix=[InstallDir]/python --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath=[InstallDir]/python/lib"
+          make && make altinstall
+          
+          #you will need to add [InstallDir]/python/Python-2.7.6 to the PATH, this can be done on the command line, or in your .bashrc file
+          PATH=[InstallDir]/python/Python-2.7.6:$PATH
+          
+          #you will need to add [InstallDir]/python/lib to the LD_LIBRARY_PATH, this can be done on the command line, or in your .bashrc file
+          LD_LIBRARY_PATH=[InstallDir]/python/lib:$LD_LIBRARY_PATH
+
+      NOTE: The PATH and LD_LIBRARY_PATH will need to be set in this manner whenever you are using rat-pac
     - on Ubuntu: . . . . . . ``sudo apt-get install python-dev``
     - on SUSE Linux: . . . ``sudo zypper install python-devel``
 
 
- * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).  RAT-PAC requires the python development libraries thus when configuring the root make use the ``--enable-python option`` i.e.
-    - ``./configure --enable-python``
+ * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).  RAT-PAC requires the python development libraries and Minuit2 minimization libraries thus when configuring the root make use the ``--enable-python --enable-minuit2`` options i.e.
+    - ``./configure --enable-python --enable-minuit2``
 
  * `GEANT4 9.6.p03 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ `tar file <http://geant4.cern.ch/support/source/geant4.9.6.p03.tar.gz>`_- Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=ON`` to download the interaction cross-section files (or download them manually).
 

@@ -791,9 +791,6 @@ void GLG4Scint::MyPhysicsTable::Entry::Build(
       G4cout << "\nWarning! Found a scintillator without LIGHT_YIELD parameter.";
       G4cout << "\nI will assume that for this material this parameter is ";
       G4cout << "implicit in the scintillation integral..." << G4endl;
-
-      // If no light yield, it's no scintillator
-      theScintillationLightVector=NULL;
     }
 
     // find the integral

@@ -15,9 +15,9 @@ dynode_radius: 27.5, // mm
 dynode_top:   -30.0, // mm
 wall_thickness: 3.0, // mm
 
-z_edge:   [ 75.00d, 53.06d,   0.00d, -53.06d, -73.86d,  -85.00d, -215.00d],
-rho_edge: [  0.00d, 72.58d, 101.00d,  72.58d,  44.32d,   42.00d, 42.00d],
-z_origin: [-56.00d,  0.00d,   0.00d,  56.00d, -85.00d, -215.00d],
+z_edge:   [ 75.00, 53.06,   0.00, -53.06, -73.86,  -85.00, -215.00],
+rho_edge: [  0.00, 72.58, 101.00,  72.58,  44.32,   42.00, 42.00],
+z_origin: [-56.00,  0.00,   0.00,  56.00, -85.00, -215.00],
 }
 
 {
@@ -37,9 +37,9 @@ dynode_radius: 27.5, // mm
 dynode_top:   -30.0, // mm
 wall_thickness: 3.0, // mm
 
-z_edge:   [ 75.00d, 53.06d,   0.00d, -53.06d, -73.86d,  -85.00d, -215.00d],
-rho_edge: [  0.00d, 72.58d, 101.00d,  72.58d,  44.32d,   42.00d, 42.00d],
-z_origin: [-56.00d,  0.00d,   0.00d,  56.00d, -85.00d, -215.00d],
+z_edge:   [ 75.00, 53.06,   0.00, -53.06, -73.86,  -85.00, -215.00],
+rho_edge: [  0.00, 72.58, 101.00,  72.58,  44.32,   42.00, 42.00],
+z_origin: [-56.00,  0.00,   0.00,  56.00, -85.00, -215.00],
 }
 
 {
@@ -59,9 +59,9 @@ dynode_radius: 23.0, // mm
 dynode_top:   -30.0, // mm
 wall_thickness: 3.0, // mm
 
-z_edge:   [ 4.020d,  		1.00d,   0.00d, -16.75d,   -30.00d, -32.00d, -119.0d], // rough guess. Photocathode details are wrong
-rho_edge: [ 38.0d ,	 	       38.0d, 38.0d,  38.0d,     26.65d, 26.65d, 26.65d],   // this assumes that the photocathode covers the entire front face of the PMT
-z_origin: [ -1000000.00d,  	0.00d,   0.00d,  10000.00d,  31.00d, 0.00d],      // and wraps back another 1mm, in reality the photocathode diameter is ~64mm 
+z_edge:   [ 4.020,  		1.00,   0.00, -16.75,   -30.00, -32.00, -119.0], // rough guess. Photocathode details are wrong
+rho_edge: [ 38.0 ,	 	       38.0, 38.0,  38.0,     26.65, 26.65, 26.65],   // this assumes that the photocathode covers the entire front face of the PMT
+z_origin: [ -1000000.00,  	0.00,   0.00,  10000.00,  31.00, 0.00],      // and wraps back another 1mm, in reality the photocathode diameter is ~64mm 
 }
 
 {
@@ -81,9 +81,9 @@ dynode_radius: 41.5, // mm
 dynode_top: -46.0, // mm
 wall_thickness: 3.0, // mm
 
-z_edge:   [112.50d, 79.59d, 0.75d, 0.00d, -79.59d, -119.79d, -127.50d, -285.0d],
-rho_edge: [0.00d, 108.87d, 151.35d, 151.50d, 108.87d, 66.48d, 63.0d, 63.0d],
-z_origin: [-84.00d, 0.00d, 0.00d, 0.00d, 84.00d, -127.5d, -285.0d],
+z_edge:   [112.50, 79.59, 0.75, 0.00, -79.59, -119.79, -127.50, -285.0],
+rho_edge: [0.00, 108.87, 151.35, 151.50, 108.87, 66.48, 63.0, 63.0],
+z_origin: [-84.00, 0.00, 0.00, 0.00, 84.00, -127.5, -285.0],
 }
 
 {
@@ -95,7 +95,30 @@ valid_end: [0,0],
 dynode_material: "stainless_steel",
 glass_material: "glass",
 pmt_vacuum_material: "pmt_vacuum",
-photocathode_surface: "photocathode_R11780", //FIXME: perhaps make a dedicated surface
+photocathode_surface: "photocathode_R1408", //need to implement photocathode surface
+mirror_surface: "mirror",
+dynode_surface: "stainless_steel",
+
+dynode_radius: 27.5, // mm
+dynode_top:   -5.9, // mm
+wall_thickness: 3.0, // mm
+
+z_edge: [ 96.7, 40.0, 0.0, -40.0, -90.0, -142.0 ],
+rho_edge: [ 0.0, 111.0, 130.0, 111.0, 42.25, 42.25 ],
+z_origin: [ -40.0, 0.0, 0.0, 40.0, -142.0 ],
+
+}
+
+{
+name: "PMT",
+index: "r7081",
+valid_begin: [0,0],
+valid_end: [0,0],
+
+dynode_material: "stainless_steel",
+glass_material: "glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode_R1408", //used the 1408 photocathode in SNO+ rat 
 mirror_surface: "mirror",
 dynode_surface: "stainless_steel",
 
@@ -125,8 +148,8 @@ dynode_surface: "stainless_steel",
 dynode_radius: 2.0, // wild guess in mm
 dynode_top:   -100.375, // wild guess in mm was -20.625
 wall_thickness: 3.0, // wild guess in mm
-z_edge:   [ 4.020d,  		1.00d,   0.00d, -42.75d,   -84.00d, -85.00d, -150.00d], // taken from PMT documentation. Photocathode details are wrong
-rho_edge: [ 67.50d ,	 	67.50d, 67.50d,  67.50d,     25.75d, 25.75d, 25.75d],   // this assumes that the photocathode covers the entire front face of the PMT
-z_origin: [ -1000000.00d,  	0.00d,   0.00d,  10000.00d,  84.50d, 0.00d],      // and wraps back another 1mm, in reality the photocathode diameter is ~115mm 
+z_edge:   [ 4.020,  		1.00,   0.00, -42.75,   -84.00, -85.00, -150.00], // taken from PMT documentation. Photocathode details are wrong
+rho_edge: [ 67.50 ,	 	67.50, 67.50,  67.50,     25.75, 25.75, 25.75],   // this assumes that the photocathode covers the entire front face of the PMT
+z_origin: [ -1000000.00,  	0.00,   0.00,  10000.00,  84.50, 0.00],      // and wraps back another 1mm, in reality the photocathode diameter is ~115mm 
 }
 

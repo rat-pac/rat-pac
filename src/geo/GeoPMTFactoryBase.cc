@@ -138,6 +138,11 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     dir_y = lpos_table->GetDArray("dir_y");
     dir_z = lpos_table->GetDArray("dir_z");
   } else {
+    //fill with dummy values needed for pmtinfo.AddPMT. They will be redirected towards
+    //the proper point afterwards
+    dir_x.push_back(9999.);
+    dir_y.push_back(9999.);
+    dir_z.push_back(9999.);
     orient_point_array = table->GetDArray("orient_point");
     if (orient_point_array.size() != 3)
       Log::Die("GeoPMTFactoryBase error: orient_point must have 3 values");

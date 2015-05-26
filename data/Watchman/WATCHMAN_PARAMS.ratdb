@@ -1,0 +1,13 @@
+// WatchmanDetectorFactory recomputes Watchman.geo geometry components to match 
+// the values specified in this table
+
+{
+
+name: "WATCHMAN_PARAMS",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+photocathode_coverage: 0.30,
+veto_coverage: 0.02,
+
+}
