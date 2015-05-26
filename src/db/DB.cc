@@ -386,7 +386,7 @@ DBTable *DB::FindTable(std::string tblname, std::string index, int runNumber)
   
   // 4) Grab fields from attachments if present
   if (jsonDoc.isMember("_attachments")) {
-    std::string id = jsonDoc["_id"].cast<string>();
+    std::string table_id = jsonDoc["_id"].cast<string>();
     json::Value attachments = jsonDoc["_attachments"];
     std::vector<std::string> fieldnames = attachments.getMembers();
     for (unsigned idx=0; idx < fieldnames.size(); idx++) {

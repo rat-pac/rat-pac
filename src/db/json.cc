@@ -24,10 +24,10 @@
 
 namespace json {
     
-    void Value::reset(Type type) {
+    void Value::reset(Type _type) {
         decref();
-        this->type = type;
-        switch (type) {
+        this->type = _type;
+        switch (_type) {
             case TSTRING:
                 data._string = new TString();
                 refcount = new TUInteger(0);
@@ -109,9 +109,9 @@ namespace json {
     }
     
     parser_error::parser_error(const int line_, const int pos_, std::string desc_) : line(line_), pos(pos_), desc(desc_)  {
-        std::stringstream pretty;
-        pretty << '[' << line << ':' << pos << "] " << desc;
-        this->pretty = pretty.str();
+        std::stringstream prettyss;
+        prettyss << '[' << line << ':' << pos << "] " << desc;
+        this->pretty = prettyss.str();
     }
     
     parser_error::~parser_error() throw () { }

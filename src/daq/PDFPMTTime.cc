@@ -45,7 +45,7 @@ PDFPMTTime::PDFPMTTime(string pmt_model) {
 
 PDFPMTTime::~PDFPMTTime() {}
 
-double PDFPMTTime::PickTime(double /*time*/) const {
+double PDFPMTTime::PickTime(double time) const {
     double rval = G4UniformRand();
     for (size_t i = 1; i < fTime.size(); i++) {
         if (rval <= fTimeProbCumu[i]) {

@@ -4,6 +4,7 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <G4Event.hh>
 #include <G4ParticleTable.hh>
+#include <G4IonTable.hh>
 #include <G4PrimaryParticle.hh>
 #include <G4PrimaryVertex.hh>
 #include <G4ThreeVector.hh>
@@ -124,7 +125,7 @@ namespace RAT {
 				for (Z=1; Z<=GLG4VertexGen_Gun::numberOfElements; Z++){
 					if (elementName == GLG4VertexGen_Gun::theElementNames[Z-1]) break;
 					if (Z <= GLG4VertexGen_Gun::numberOfElements){
-						newTestGunG4Code=G4ParticleTable::GetParticleTable()->GetIon(Z, A, 0.0);
+						newTestGunG4Code=G4IonTable::GetIonTable()->GetIon(Z, A, 0.0);
 						G4cout << " Spectrum Vertex: Setting ion with A = " << A << " Z = " << Z << G4endl;
 					}
 				}
