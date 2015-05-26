@@ -41,7 +41,7 @@ void ReacIBDgen::GenEvent(const Hep3Vector &nu_dir,
   // Zero'th order approximation of positron quantities (infinite nucleon mass)
   double E0 = Enu - DELTA;
   double p0 = sqrt(E0*E0 - electron_mass_c2*electron_mass_c2); 
-  //double v0 = p0/E0;
+  double v0 = p0/E0;
 
   // First order correction for finite nucleon mass
   double Ysquared = (DELTA*DELTA - electron_mass_c2*electron_mass_c2)/2;
