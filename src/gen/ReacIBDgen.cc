@@ -22,21 +22,8 @@ ReacIBDgen::ReacIBDgen()
   // Get parameters from database
   DBLinkPtr libd = DB::Get()->GetLink("IBD");
 
-
-	//WATCH THIS: MAY NEED TO CHANGE TO MATCH THE ENERGY SPECTRUMS OR JUST REMOVE
-
   Emin = 1.806;  //CHANGED TO MATCH THE ENERGY RANGES IN MARC'S FILE FOR NOW
   Emax = 14.000;
-
-  // Flux function
-  // FIXME: For now, I just pull the energy and cross-section randomly from the
-  // spectrums given by Marc.  Flux not used anymore in calculating energy.
-
-  //rmpflux.Set(libd->GetDArray("spec_e"), libd->GetDArray("spec_flux"));
-  
-  // Other useful numbers
-  //XCmax = CrossSection(Emax,-1);
-  //FluxMax = rmpflux(Emin);
 
 }
 
@@ -191,10 +178,9 @@ double ReacIBDgen::IBDESpectrum(float x)
   double mElectron=0.511;  
   double XC=CrossSection(x);
   double EnergyVal = NuReacSpectrum(x)*XC*sqrt(XC*XC - mElectron*mElectron);
-  //EnergyVal= EnergyVal - (mNeutron - mProton); THIS IS DONE LATER, DUH
   std::cout << EnergyVal << " and " << XC << std::endl;
   return EnergyVal;
-  //According to Marc Bergevin's file, the final units output are in GeV and valid from 10 MeV 
+  //The final units output are in MeV and valid from 10 MeV 
 }
 
 
