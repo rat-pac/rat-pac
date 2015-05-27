@@ -1,0 +1,11 @@
+{ "job": {
+      	"script":"run_cr_analysis.sh",
+	"startjob":"0",
+	"njobs":"100",
+	"nargs":3,
+	"packagefiles":["/net/hisrv0001/home/taritree/kpipe/production/rat.tar.gz"],
+	"args":[ {"argname":"kpipe-cry-file","value":"/net/nudsk0001/d00/scratch/taritree/cosmic_events/output_kpipe_cryevents_%d.root","njobids":"1","transfer":"True","type":"input"},
+		 {"argname":"analysis-out","value":"output_cr_analysis_%04d.root","njobids":"1","transfer":"True","type":"output","dest":"/net/nudsk0001/d00/scratch/taritree/cosmic_events/cr_trg_out"},
+		 {"argname":"PMTINFO","value":"/net/hisrv0001/home/taritree/kpipe/production/ratpac-kpipe/data/kpipe/PMTINFO.root","njobids":"0","transfer":"True","type":"input"}
+	]}		
+}
