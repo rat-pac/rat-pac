@@ -33,6 +33,7 @@ User's Guide
    tracks
    rattest
    wired
+   tools
 
 Programmer's Guide
 ------------------
