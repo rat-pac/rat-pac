@@ -102,13 +102,22 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     fill(pmt_type.begin(),pmt_type.end(),-1); //defaults to type -1 if unspecified
   }
   
+  // Individual PMT efficiency correction
+  vector<double> pmt_effi_corr;
+  try {
+    pmt_effi_corr = lpos_table->GetDArray("efficiency"); // individual PMT efficiency corrections
+  } catch (DBNotFoundError &e) {
+    pmt_effi_corr.resize(pmt_x.size());
+    fill(pmt_effi_corr.begin(),pmt_effi_corr.end(),1.0); //defaults to 1.0
+  }
+  
   // Simplified PMT drawing for faster visualization
   bool vis_simple = false;
   try {
     vis_simple = table->GetI("vis_simple") != 0;
   } catch (DBNotFoundError &e) { }
 
-  // read pmt_detector_type
+  // pmt_detector_type
   string pmt_detector_type = table->GetS("pmt_detector_type");
   
   // sensitive detector
@@ -126,9 +135,6 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   G4VPhysicalVolume* phys_mother = FindPhysMother(mother_name);
   if (phys_mother == 0)
     Log::Die("GeoPMTFactoryBase error: PMT mother physical volume " + mother_name + " not found");
-    
-  // This will contain individual efficiency corrections for the placed PMTs
-  map<int,double> EfficiencyCorrection;
  
   // Get the model of PMT to build 
   string pmt_model = table->GetS("pmt_model"); // the form factor of the PMT (physical properties)
@@ -163,7 +169,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   if (pmtParam.photocathode == 0)
     Log::Die("GeoPMTFactoryBase error: Photocathode surface \"" + pc_surface_name + "\" not found");
     
-  // Set new efficiency correction if requested
+  // Set new overall correction if requested (not included in individual)
   try {
     float efficiency_correction = table->GetD("efficiency_correction");
     pmtParam.efficiencyCorrection = efficiency_correction;
@@ -364,12 +370,16 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
      parent_name = parent_table->GetS("mother");
   }
   
+  
+  // This will contain individual efficiency corrections for the placed PMTs
+  map<int,double> EfficiencyCorrection;
+  
   // Place physical PMTs
   // idx - the element of the particular set of arrays we are reading
   // id - the nth pmt that GeoPMTFactoryBase has built
   for (int idx = start_idx, id = pmtinfo.GetPMTCount(); idx <= end_idx; idx++, id++) {
   
-    EfficiencyCorrection[id] = 1.0; //Default individual efficiency correction to 1.0
+    EfficiencyCorrection[id] = pmt_effi_corr[idx];
   
     string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
     
