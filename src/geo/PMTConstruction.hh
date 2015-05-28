@@ -1,8 +1,9 @@
-#ifndef __RAT_PMTConstruction__
-#define __RAT_PMTConstruction__
+#ifndef __RAT_ToroidalPMTConstruction__
+#define __RAT_ToroidalPMTConstruction__
 
 #include <string>
 #include <vector>
+#include <RAT/DB.hh>
 #include <RAT/GLG4TorusStack.hh>
 #include <G4Material.hh>
 #include <G4OpticalSurface.hh>
@@ -13,10 +14,9 @@
 
 namespace RAT {
 
-struct PMTConstructionParams {
-  PMTConstructionParams () { 
-    efficiencyCorrection = 1.0; 
-    prepulseProb = 0.0;
+struct ToroidalPMTConstructionParams {
+  ToroidalPMTConstructionParams () { 
+    efficiencyCorrection = 1.0;
   };
   
   // Envelope control
@@ -45,13 +45,29 @@ struct PMTConstructionParams {
   G4VSensitiveDetector *detector;
   
   double efficiencyCorrection; // default to 1.0 for no correction
-  double prepulseProb;
 };
 
+class PMTConstruction;
+
+//FIXME implement this to handle different types of PMTs
 class PMTConstruction {
 public:
+    static PMTConstruction* GetConstruction(DBLinkPtr *params);
+    
+    //FIXME what methods does this need to be general
+    
+protected:
+    PMTConstruction(std::string _name) : name(_name) { }
+    virtual ~PMTConstruction() { }
+    
+
+    std::string name;
+};
+
+class ToroidalPMTConstruction /* : public PMTConstruction */ {
+public:
   
-  PMTConstruction (const PMTConstructionParams &params);
+  ToroidalPMTConstruction (const ToroidalPMTConstructionParams &params);
   G4LogicalVolume *NewPMT(const std::string &prefix, bool simpleVis=false);
   GLG4TorusStack *NewBodySolid(const std::string &name);
   void SetPMTOpticalSurfaces(G4PVPlacement *body_phys, const std::string &name_prefix);
@@ -68,7 +84,7 @@ protected:
   G4PVPlacement* central_gap_phys; 
   G4PVPlacement* dynode_phys;                  
   
-  PMTConstructionParams fParams;
+  ToroidalPMTConstructionParams fParams;
 };
 
 } // namespace RAT

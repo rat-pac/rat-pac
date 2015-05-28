@@ -121,7 +121,7 @@ GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
   _photon_energy= -1.0;
   
   //make sure the B efficiency table is initially empty
-  BEfficiencyCorrection.clear();
+  EfficiencyCorrection.clear();
 
   // add UI commands
   if ( fgCmdDir == NULL ) {
@@ -410,14 +410,14 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
     // "the track is absorbed", which is implemented correctly below for
     // the weight == 1 case, and as good as can be done for weight>1 case.
     G4double mean_N_pe= weight*A*collection_eff;
-    for(int i=0;i<int(BEfficiencyCorrection.size());i++)
-      if(BEfficiencyCorrection[i].first==ipmt){
-        if(BEfficiencyCorrection[i].second>=0)
-          mean_N_pe *=BEfficiencyCorrection[i].second;
-        else
-          G4cout<<"GLG4PMTOpticalModel["<<GetName()<<"] warning: magnetic efficiency correction for PMT "
-            <<ipmt<<" is "<<BEfficiencyCorrection[i].second<<", resetting to 1\n";
+    if (EfficiencyCorrection.count(ipmt)) {
+      if (EfficiencyCorrection[ipmt]>=0) {
+        mean_N_pe *= EfficiencyCorrection[ipmt];
+      } else {
+        G4cout<<"GLG4PMTOpticalModel["<<GetName()<<"] warning: individual efficiency correction for PMT "
+          <<ipmt<<" is "<<EfficiencyCorrection[ipmt]<<", resetting to 1\n";
       }
+    }
     G4double ranno_absorb= G4UniformRand();
     G4int N_pe= (G4int)( mean_N_pe + (1.0-ranno_absorb) );
     // if the photon was transmitted into the vacuum in the last step, check 
@@ -726,7 +726,7 @@ GLG4PMTOpticalModel::SetNewValue(G4UIcommand * command, G4String newValues)
      _luxlevel= strtol((const char *)newValues, NULL, 0);
    }
    else if(commandName=="BcorrTable")
-     DumpBEfficiencyCorrectionTable();
+     DumpEfficiencyCorrectionTable();
    else{
      G4cerr << "No PMTOpticalModel command named " << commandName << G4endl;
    }

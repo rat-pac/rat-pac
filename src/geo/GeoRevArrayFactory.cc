@@ -1,6 +1,5 @@
 #include <RAT/GeoRevArrayFactory.hh>
 #include <RAT/PMTConstruction.hh>
-#include <RAT/GeoPMTParser.hh>
 #include <RAT/Log.hh>
 
 #include <G4SubtractionSolid.hh>

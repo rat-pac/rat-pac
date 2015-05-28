@@ -44,18 +44,18 @@ namespace RAT {
     G4RotationMatrix GetPMTRotation(int i) const;
 
     /** Returns PMT parameter structure describing PMT geometry */
-    PMTConstructionParams GetPMTParams() const { return fParam; };
+    ToroidalPMTConstructionParams GetPMTParams() const { return fParam; };
 
-    /** Returns pointer to PMTConstruction object which can be used
+    /** Returns pointer to ToroidalPMTConstruction object which can be used
      *  to make PMTs.  GeoPMTParser owns this object, so do not delete! */
-    PMTConstruction *GetPMTConstruction() { return fConstruction; };
+    ToroidalPMTConstruction *GetToroidalPMTConstruction() { return fConstruction; };
 
   protected:
     DBLinkPtr fTable;
     std::vector<G4ThreeVector> fPos;
     std::vector<G4ThreeVector> fDir;
-    PMTConstructionParams fParam;
-    PMTConstruction *fConstruction;
+    ToroidalPMTConstructionParams fParam;
+    ToroidalPMTConstruction *fConstruction;
   };
 
 

@@ -20,6 +20,7 @@
 #include "G4UImessenger.hh"
 #include <utility>
 #include <vector>
+#include <map>
 
 class G4UIcommand;
 class G4UIdirectory;
@@ -61,12 +62,13 @@ public:
   void SetNewValue(G4UIcommand * command,G4String newValues);
   G4String GetCurrentValue(G4UIcommand * command);
   
-  void SetBEfficiencyCorrection(std::vector<std::pair<int,double> > _BEffiCorr){BEfficiencyCorrection=_BEffiCorr;G4cout<<GetName()<<": B correction table set\n";}
-  void DumpBEfficiencyCorrectionTable()
+  void SetEfficiencyCorrection(std::map<int,double> _EffiCorr){EfficiencyCorrection=_EffiCorr;G4cout<<GetName()<<": Individual efficiency correction table set\n";}
+  void DumpEfficiencyCorrectionTable()
   {
-    G4cout<<"Magnetic correction table for the PMT efficiencies of "<<GetName()<<":\nPMT ID  corr. factor\n";
-    for(int i=0;i<int(BEfficiencyCorrection.size());i++)
-      G4cout<<BEfficiencyCorrection[i].first<<","<<BEfficiencyCorrection[i].second<<"\n";
+    G4cout<<"Individual correction table for the PMT efficiencies of "<<GetName()<<":\nPMT ID  corr. factor\n";
+    for(std::map<int,double>::iterator iter = EfficiencyCorrection.begin(); iter != EfficiencyCorrection.end(); iter++) {
+      G4cout<<iter->first<<","<<iter->second<<"\n";
+    }
   }
   
 private:
@@ -128,7 +130,7 @@ private:
 
   static double surfaceTolerance;
   
-  std::vector<std::pair<int,double> > BEfficiencyCorrection;
+  std::map<int,double> EfficiencyCorrection;
 };
 
 #endif

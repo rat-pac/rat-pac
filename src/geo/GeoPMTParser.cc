@@ -101,12 +101,6 @@ namespace RAT {
     fParam.dynodeRadius = lpmt->GetD("dynode_radius");
     fParam.dynodeTop = lpmt->GetD("dynode_top");
     fParam.wallThickness = lpmt->GetD("wall_thickness");
-    try {
-      fParam.prepulseProb = lpmt->GetD("prepulse_prob");
-    }
-    catch (DBNotFoundError& e) {
-      fParam.prepulseProb = 0;
-    }
 
     //////////// PMT Materials
     fParam.exterior = mother->GetMaterial();
@@ -132,7 +126,7 @@ namespace RAT {
 
 
     fParam.useEnvelope = false; // disable the use of envelope volume for now
-    fConstruction = new PMTConstruction(fParam);
+    fConstruction = new ToroidalPMTConstruction(fParam);
   }
    
   G4RotationMatrix GeoPMTParser::GetPMTRotation(int i) const

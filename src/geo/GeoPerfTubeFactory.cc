@@ -62,8 +62,8 @@ G4VSolid *GeoPerfTubeFactory::ConstructSolid(DBLinkPtr table)
 	string pmt_table = table->GetS("pmt_table");
 	DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
 	GeoPMTParser pmt_parser(lgeo_pmt);
-	PMTConstructionParams params = pmt_parser.GetPMTParams();
-	PMTConstruction pmtConstruct(params);
+	ToroidalPMTConstructionParams params = pmt_parser.GetPMTParams();
+	ToroidalPMTConstruction pmtConstruct(params);
 	G4VSolid *pmtBody = pmtConstruct.NewBodySolid("dummy");
 	
 	vector<G4ThreeVector> pmtloc = pmt_parser.GetPMTLocations();

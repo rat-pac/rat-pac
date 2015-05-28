@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <RAT/Log.hh>
-#include <RAT/PMTConstruction.hh>
 #include <RAT/GLG4PMTOpticalModel.hh>
+#include <RAT/PMTConstruction.hh>
 #include <G4Tubs.hh>
 #include <G4SubtractionSolid.hh>
 #include <G4Region.hh>
@@ -11,7 +11,7 @@
 
 namespace RAT {
   
-  PMTConstruction::PMTConstruction(const PMTConstructionParams &params) : fParams(params)
+  ToroidalPMTConstruction::ToroidalPMTConstruction(const ToroidalPMTConstructionParams &params) : fParams(params)
   {
     assert(fParams.zEdge.size() == fParams.rhoEdge.size());
     assert(fParams.zEdge.size() == fParams.zOrigin.size()+1);
@@ -26,7 +26,7 @@ namespace RAT {
     //assert(fParams.detector);
   }
   
-  G4LogicalVolume *PMTConstruction::NewPMT(const std::string &prefix, bool simpleVis)
+  G4LogicalVolume *ToroidalPMTConstruction::NewPMT(const std::string &prefix, bool simpleVis)
   {
     // envelope cylinder
     G4VSolid *envelope_solid=0;
@@ -162,7 +162,7 @@ namespace RAT {
      new GLG4PMTOpticalModel(prefix+"_optical_model", body_region, body_log,
 			     pc_log_surface, fParams.efficiencyCorrection,
 			     fParams.dynodeTop, fParams.dynodeRadius,
-			     fParams.prepulseProb);
+			     0.0 /*prepusling handled after absorption*/);
     
     // ------------ Vis Attributes -------------
     G4VisAttributes * visAtt;
@@ -198,14 +198,14 @@ namespace RAT {
       return body_log;
   }
   
-  GLG4TorusStack *PMTConstruction::NewBodySolid(const std::string &name)
+  GLG4TorusStack *ToroidalPMTConstruction::NewBodySolid(const std::string &name)
   {
     GLG4TorusStack *body = new GLG4TorusStack(name);
     body->SetAllParameters(fParams.zOrigin.size(), 
                            &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
     return body;
   }
-  void PMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *body_phys, const std::string &prefix)
+  void ToroidalPMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *body_phys, const std::string &prefix)
   { 
     /* Set the optical surfaces for a PMT. This must be called *after* the physical PMT has been placed  
        If this is not done, the mirror surface is not created.
@@ -226,7 +226,7 @@ namespace RAT {
                                fParams.mirror);
   }
   
-  G4VSolid *PMTConstruction::NewEnvelopeSolid(const std::string &name)
+  G4VSolid *ToroidalPMTConstruction::NewEnvelopeSolid(const std::string &name)
   {
     G4double zTop = fParams.zEdge[0] + fParams.faceGap;
     G4double zBottom = fParams.zEdge[fParams.zEdge.size()-1];
@@ -250,7 +250,7 @@ namespace RAT {
                                   0, G4ThreeVector(0.0, 0.0, subCylOffset));
   }
   
-  void PMTConstruction::CalcInnerParams(GLG4TorusStack *body,
+  void ToroidalPMTConstruction::CalcInnerParams(GLG4TorusStack *body,
                                   std::vector<double> &innerZEdge,
                                   std::vector<double> &innerRhoEdge,
                                   int &equatorIndex,
@@ -294,10 +294,10 @@ namespace RAT {
       
     // sanity check equator index
     if (equatorIndex < 0)
-      Log::Die("PMTConstruction::CalcInnerParams: Pathological PMT shape with no equator edge");
+      Log::Die("ToroidalPMTConstruction::CalcInnerParams: Pathological PMT shape with no equator edge");
     // sanity check on dynode height
     if (fParams.dynodeTop > innerZEdge[equatorIndex])
-      Log::Die("PMTConstruction::CalcInnerParams: Top of PMT dynode cannot be higher than equator.");
+      Log::Die("ToroidalPMTConstruction::CalcInnerParams: Top of PMT dynode cannot be higher than equator.");
   }
   
   
