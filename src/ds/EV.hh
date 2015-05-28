@@ -19,6 +19,7 @@
 #include <TObject.h>
 #include <TTimeStamp.h>
 #include <RAT/DS/PMT.hh>
+#include <RAT/DS/PMTSubEvent.hh>
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/PathFit.hh>
 #include <vector>
@@ -86,6 +87,7 @@ protected:
   Float_t qTotal;
   Float_t calibratedTriggerTime;
   Float_t deltat;
+  Float_t globalTime;
   TTimeStamp utc;
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;

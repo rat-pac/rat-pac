@@ -51,9 +51,11 @@ Processor::Result EventSplitter::DSEvent(DS::Root *ds) {
         double charge = 0;
 
         for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
-          std::printf("%3d %4d %10.2f %10.2f %10.2f\n",i,pmtID,time,\
-                      mcpmt->GetMCPhoton(i)->GetHitTime(),
-                      time-mcpmt->GetMCPhoton(i)->GetHitTime());
+          std::printf("%3d %3d %4d %10.2f %10.2f %5.2f\n",fEventCounter,\
+                      i,pmtID,\
+                      time,\
+                      mcpmt->GetMCPhoton(i)->GetHitTime(),\
+                      time - mcpmt->GetMCPhoton(i)->GetHitTime());
             
           if (time > mcpmt->GetMCPhoton(i)->GetHitTime())
             time = mcpmt->GetMCPhoton(i)->GetHitTime();//end if
