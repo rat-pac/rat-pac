@@ -8,8 +8,14 @@
 
 # BEGIN EVENT LOOP
 /rat/proc eventsplitterdaq
+/rat/procset clockSpeedMHz 50
+/rat/procset slidingTimeWindowNanoSec 100
+/rat/procset collectionTimeWindowNanoSec 400
+/rat/procset nhitThreshold 15
+
+
 /rat/proc count
-/rat/procset update 1000
+/rat/procset update 1
 
 # Use IO.default_output_filename
 /rat/proclast outroot
