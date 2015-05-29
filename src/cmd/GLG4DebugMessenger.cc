@@ -337,9 +337,9 @@ SetNewValue(G4UIcommand * command,G4String newValues)
       int value = new_value != 0.0 ? 0 : 1; // invert meaning
 
       if (parameterName == "omit_muon_processes") {
-        db->SetI("MC", "", "muon_processes", value);
+        db->Set("MC", "", "muon_processes", value);
       } else if (parameterName == "omit_hadronic_processes") {
-        db->SetI("MC", "", "hadronic_processes", value);
+        db->Set("MC", "", "hadronic_processes", value);
       } else {
         RAT::Log::Die(dformat("/glg4debug/glg4param has been deprecated and '%s' is unsupported", parameterName.c_str()));
       }

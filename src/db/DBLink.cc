@@ -26,23 +26,29 @@ DBLink::~DBLink()
 
 int DBLink::GetI(const std::string &name)
 {
-  return Pick<int>(name, DBTable::INTEGER);
+  return Get<int>(name);
 }
 
 
 double DBLink::GetD(const std::string &name)
 {
-  return Pick<double>(name, DBTable::DOUBLE);
+  return Get<double>(name);
 }
 
 std::string DBLink::GetS(const std::string &name)
 {
-  return Pick<std::string>(name, DBTable::STRING);
+  return Get<std::string>(name);
 }
+
+bool DBLink::GetZ(const std::string &name)
+{
+  return Get<bool>(name);
+}
+
 
 std::vector<int> DBLink::GetIArray(const std::string &name)
 {
-  return Pick< std::vector<int> >(name, DBTable::INTEGER_ARRAY);
+  return Get<std::vector<int> >(name);
 }
 
 
@@ -70,55 +76,23 @@ std::vector<float> DBLink::DArrayToFArray(const std::vector<double> &input)
 
 std::vector<double> DBLink::GetDArray(const std::string &name)
 {
-  return Pick< std::vector<double> >(name, DBTable::DOUBLE_ARRAY);
+  return Get<std::vector<double> >(name);
 }
 
 std::vector<std::string> DBLink::GetSArray(const std::string &name)
 {
-  return Pick< std::vector<std::string> >(name, DBTable::STRING_ARRAY);
+  return Get<std::vector<std::string> >(name);
 }
+
+std::vector<bool> DBLink::GetZArray(const std::string &name)
+{
+  return Get<std::vector<bool> >(name);
+}
+
 
 json::Value DBLink::GetJSON(const std::string &name)
 {
-  return Pick< json::Value >(name, DBTable::JSON);
-}
-
-// Helper function to make Pick() easier to read
-// Type equality is as you would expect, but JSON equals everything except NOTFOUND
-inline bool equivalent(DBTable::FieldType a, DBTable::FieldType b)
-{
-  if (a == b) return true;
-  else if (a == DBTable::JSON && b != DBTable::NOTFOUND) return true;
-  else if (b == DBTable::JSON && a != DBTable::NOTFOUND) return true;
-  else return false;
-}
-
-template <class T>
-T DBLink::Pick(std::string fieldname, DBTable::FieldType ftype) const
-{
-  DBTable *tbl;
-  
-  // First try user plane
-  tbl = db->GetUserTable(tblname, index);
-  if (!tbl || !equivalent(tbl->GetFieldType(fieldname), ftype)) {
-    // Then try the run plane
-    tbl = db->GetRunTable(tblname, index, currentRun);
-    if(!tbl || !equivalent(tbl->GetFieldType(fieldname), ftype)) {
-      
-      // Finally try default plane
-      tbl = db->GetDefaultTable(tblname, index);
-      if (!tbl || !equivalent(tbl->GetFieldType(fieldname), ftype))
-        throw DBNotFoundError(tblname, index, fieldname);
-    }
-  }
-    
-  // Make class explicit to satisfy Sun CC 5.3
-  T value = tbl->DBTable::Get<T>(fieldname);
-
-  // Trace DB accesses
-  Log::TraceDBAccess(tblname, index, fieldname, value);
-  
-  return value;
+  return Get<json::Value>(name);
 }
 
 

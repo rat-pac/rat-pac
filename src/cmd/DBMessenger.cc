@@ -90,31 +90,51 @@ void DBMessenger::Load(std::string filename)
   db->Load(filename, true /*printPath*/);
 }
 
-void DBMessenger::Set(std::string tbl_descriptor, std::string field, 
-		       std::string val)
+void DBMessenger::Set(std::string tbl_descriptor, std::string field, std::string val)
 {
   string table;
   string index;
 
   if (DB::ParseTableName(tbl_descriptor, table, index)) {
     // Just need to figure out value now
-    Tokenizer t(val);
-    switch (t.Next()) {
-    case Tokenizer::TYPE_INTEGER: db->SetI(table, index, field, t.AsInt());
-      break;
-    case Tokenizer::TYPE_DOUBLE: db->SetD(table, index,  field, t.AsDouble()); 
-      break;
-    case Tokenizer::TYPE_STRING: db->SetS(table, index,  field, t.Token());
-      break;
-    default:
-      Log::Die("Error parsing value: " + val);
-      return;
+    json::Reader reader(val);
+    json::Value jval;
+    reader.getValue(jval); //will throw parser_error and abort if malformed
+    
+    if (field[field.length()-1] == ']') {
+        size_t idx = atoi(field.substr(field.rfind("[")+1).c_str());
+        switch (jval.getType()) {
+            case json::TINTEGER:
+            case json::TUINTEGER:
+            case json::TREAL:
+            case json::TBOOL:
+            case json::TSTRING:
+            case json::TOBJECT:
+            case json::TARRAY:
+                DB::Get()->SetArrayIndex(table,index,field,idx,jval);
+                break;
+            case json::TNULL:
+                Log::Die("DB: Null value not supported in RATDB");
+        }
+    } else {
+        switch (jval.getType()) {
+            case json::TINTEGER:
+            case json::TUINTEGER:
+            case json::TREAL:
+            case json::TBOOL:
+            case json::TSTRING:
+            case json::TOBJECT:
+            case json::TARRAY:
+                DB::Get()->Set(table,index,field,jval);
+                break;
+            case json::TNULL:
+                Log::Die("DB: Null value not supported in RATDB");
+        }
     }
-
-    info << "DB: Setting " << table << "[" << index << "]" << " " << field
-	 << " to " << t.Token() << newline;
-  } else
+    info << "DB: Setting " << table << "[" << index << "]" << " " << field << " to " << val << newline;
+  } else {
     Log::Die("Malformed table name: " + tbl_descriptor);
+  }
 }
 
 void DBMessenger::Server(std::string url)

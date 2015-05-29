@@ -4,7 +4,7 @@ namespace RAT {
 
 
 DBTable::DBTable()
-  : tblname(""), index(""), run_begin(0), run_end(0), bytes(0)
+  : tblname(""), index(""), run_begin(0), run_end(0)
 {
   this->tblname = "";
   this->index = "";
@@ -12,7 +12,7 @@ DBTable::DBTable()
 }
 
 DBTable::DBTable(json::Value &jsonDoc)
-  : tblname(""), index(""), run_begin(0), run_end(0), bytes(0)
+  : tblname(""), index(""), run_begin(0), run_end(0)
 {
   tblname = jsonDoc["name"].cast<std::string>();
   if (jsonDoc.isMember("index"))
@@ -25,7 +25,7 @@ DBTable::DBTable(json::Value &jsonDoc)
 }
 
 DBTable::DBTable(std::string _tblname, std::string _index)  
-  : tblname(_tblname), index(_index), run_begin(0), run_end(0), bytes(0)
+  : tblname(_tblname), index(_index), run_begin(0), run_end(0)
 {
   table.reset(json::TOBJECT);
 }
@@ -46,8 +46,9 @@ DBTable::FieldType DBTable::GetFieldType(std::string name) const
     switch (val.getType()) {
         case json::TINTEGER:
         case json::TUINTEGER:
-        case json::TBOOL:
             return DBTable::INTEGER;
+        case json::TBOOL:
+            return DBTable::BOOLEAN;
         case json::TREAL:
             return DBTable::DOUBLE;
         case json::TSTRING:
@@ -57,8 +58,9 @@ DBTable::FieldType DBTable::GetFieldType(std::string name) const
                 switch (val[0].getType()) {
                     case json::TINTEGER:
                     case json::TUINTEGER:
-                    case json::TBOOL:
                         return DBTable::INTEGER_ARRAY;
+                    case json::TBOOL:
+                        return DBTable::BOOLEAN_ARRAY;
                     case json::TREAL:
                         return DBTable::DOUBLE_ARRAY;
                     case json::TSTRING:
@@ -122,27 +124,20 @@ std::string DBTable::GetS(const std::string &name) const {
         return table[name].cast<std::string>();
 }
 
-std::vector<std::string> DBTable::GetSArray(const std::string &name) const {
+bool DBTable::GetZ(const std::string &name) const {
     if (!table.isMember(name))
         throw DBNotFoundError(tblname, index, name);
-    else if (GetFieldType(name) != STRING_ARRAY)
-        throw DBWrongTypeError(tblname, index, name, STRING_ARRAY, GetFieldType(name));
+    else if (table[name].getType() != json::TBOOL)
+        throw DBWrongTypeError(tblname, index, name, BOOLEAN, GetFieldType(name));
     else
-        return table[name].toVector<std::string>();
-}
-
-json::Value DBTable::GetJSON(const std::string &name) const {
-    if (!table.isMember(name))
-        throw DBNotFoundError(tblname, index, name);
-    else
-        return table[name];
+        return table[name].cast<bool>();
 }
 
 std::vector<int> DBTable::GetIArray(const std::string &name) const {
   // Fetch if deferred
   DBTable *me = const_cast<DBTable *>(this); // grumble, grumble
   if (me->iatbl_deferred.present(name)) {
-    me->SetIArray(name, me->iatbl_deferred[name]->FetchIArray(GetS("_id"), name));
+    me->Set(name, me->iatbl_deferred[name]->FetchIArray(GetS("_id"), name));
     me->iatbl_deferred.erase(name);
   }
   
@@ -160,7 +155,7 @@ std::vector<double> DBTable::GetDArray(const std::string &name) const {
   // Fetch if deferred
   DBTable *me = const_cast<DBTable *>(this); // grumble, grumble
   if (me->datbl_deferred.present(name)) {
-    me->SetDArray(name, me->datbl_deferred[name]->FetchDArray(GetS("_id"), name));
+    me->Set(name, me->datbl_deferred[name]->FetchDArray(GetS("_id"), name));
     me->datbl_deferred.erase(name);
   }
     
@@ -174,7 +169,30 @@ std::vector<double> DBTable::GetDArray(const std::string &name) const {
   }    
 }
 
+std::vector<std::string> DBTable::GetSArray(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else if (GetFieldType(name) != STRING_ARRAY)
+        throw DBWrongTypeError(tblname, index, name, STRING_ARRAY, GetFieldType(name));
+    else
+        return table[name].toVector<std::string>();
+}
 
+std::vector<bool> DBTable::GetZArray(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else if (GetFieldType(name) != BOOLEAN_ARRAY)
+        throw DBWrongTypeError(tblname, index, name, BOOLEAN_ARRAY, GetFieldType(name));
+    else
+        return table[name].toVector<bool>();
+}
+
+json::Value DBTable::GetJSON(const std::string &name) const {
+    if (!table.isMember(name))
+        throw DBNotFoundError(tblname, index, name);
+    else
+        return table[name];
+}
 
 
 } // namespace RAT

@@ -68,8 +68,8 @@ public:
 
   /** Data type of field. */
   enum FieldType { NOTFOUND, /**< Type for fields that don't exist */
-		   INTEGER, DOUBLE, STRING,
-		   INTEGER_ARRAY, DOUBLE_ARRAY, STRING_ARRAY,
+		   INTEGER, DOUBLE, BOOLEAN, STRING,
+		   INTEGER_ARRAY, DOUBLE_ARRAY, BOOLEAN_ARRAY, STRING_ARRAY,
 		   JSON };
   
   /** Get data type of field in this table.
@@ -108,6 +108,16 @@ public:
    */
   std::string GetS(const std::string &name) const;
 
+  /** Get value of bool field.
+   *
+   *  @warning Due to the hash table implementation used here, this
+   *  method raises an assertion error if @p name is not a valid field.
+   *  Always use GetFieldType() to check if field exists if you are
+   *  not sure!
+   */
+  bool GetZ(const std::string &name) const;
+
+
   /** Get value of integer array field.
    *
    *  @warning Due to the hash table implementation used here, this
@@ -135,6 +145,15 @@ public:
    */
   std::vector<std::string> GetSArray(const std::string &name) const;
 
+  /** Get value of bool array field.
+   *
+   *  @warning Due to the hash table implementation used here, this
+   *  method raises an assertion error if @p name is not a valid field.
+   *  Always use GetFieldType() to check if field exists if you are
+   *  not sure!
+   */
+  std::vector<bool> GetZArray(const std::string &name) const;
+
 
   /** Get a JSON value for any field.
   
@@ -149,59 +168,16 @@ public:
    *  Provided as a convenience to the DBLink implementation.  Fetches
    *  field based on type of @p T.
    */
-  template <class T> inline T Get(const std::string &name) const;
-
-  /** Create integer field if does not already exist, and set value. */
-  inline void SetI(std::string name, int val) { 
-    if (GetFieldType(name) == NOTFOUND)
-      bytes += 4;
-    table[name] = json::Value(val);
-  };
-
-  /** Create double field if does not already exist, and set value. */
-  inline void SetD(std::string name, double val) { 
-    if (GetFieldType(name) == NOTFOUND)
-      bytes += 8;
-    table[name] = json::Value(val);
-  };
+  template <typename T> inline T Get(const std::string &name) const;
   
-  /** Create string field if does not already exist, and set value. */
-  inline void SetS(std::string name, std::string val) {
-    if (GetFieldType(name) == STRING)
-      bytes -= GetS(name).size();
-    bytes += val.size();
-    table[name] = json::Value(val);
-  };
-
-  /** Create integer array field if does not already exist, and set value. 
-   *  The array is copied into new storage.
-   */
-  inline void SetIArray(std::string name, const std::vector<int> &val) {
-    if (GetFieldType(name) != NOTFOUND)
-      bytes -= 4 * GetIArray(name).size();
-    bytes += 4 * val.size();
-
-    json::Value tmpArray(val);
-    table[name] = tmpArray;
-    arrayTypeCache[name] = INTEGER_ARRAY;
-  };
+  /** Set any type that is convertable to a json::Value */ 
+  template <typename T> inline void Set(const std::string &name, const T &value) {
+    table[name] = value; 
+  } 
 
   /** Set a deferred integer array field that will be fetched on demand */
   void SetIArrayDeferred(std::string name, DBFieldCallback *callback) {
     iatbl_deferred[name] = callback;
-  };
-
-  /** Create double array field if does not already exist, and set value.
-   *  The array is copied into new storage.
-   */
-  inline void SetDArray(std::string name, const std::vector<double> &val) {
-    if (GetFieldType(name) != NOTFOUND)
-      bytes -= 8 * GetIArray(name).size();
-    bytes += 8 * val.size();
-    
-    json::Value tmpArray(val);
-    table[name] = tmpArray;
-    arrayTypeCache[name] = DOUBLE_ARRAY;
   };
 
   /** Set a deferred double array field that will be fetched on demand */
@@ -209,42 +185,11 @@ public:
     datbl_deferred[name] = callback;
   };
 
-  /** Create string array field if does not already exist, and set value.
-   *  The array is copied into new storage.
-   */
-  inline void SetSArray(std::string name, const std::vector<std::string> &val) { 
-    if (GetFieldType(name) == STRING_ARRAY) {
-      std::vector<std::string> sarray = GetSArray(name);
-      for (unsigned i=0; i < sarray.size(); i++)
-        bytes -= sarray[i].size();
-    }
-    
-    for (unsigned i=0; i < val.size(); i++)
-      bytes += val[i].size();
-        
-    json::Value tmpArray(val);
-    table[name] = tmpArray;
-    arrayTypeCache[name] = STRING_ARRAY;
-  };
-  
-  /** Add a raw JSON value to the database.  Homogeneous arrays should be 
-      added using one of the SetIArray/SetDArray/SetSArray methods or they
-      will not be fetchable via GetIArray/GetDArray/GetSArray later. */
-  inline void SetJSON(const std::string &name, const json::Value &value) {
-    // For now JSON values are exempt from size accounting
-    table[name] = value; 
-  }
-  
-  /** Approximate number of bytes used by this table.  Not very accurate, but should be
-      roughly proportional. */
-  int GetBytes() const { return bytes; };
-
 protected:
   std::string tblname; /**< Name of table */
   std::string index;   /**< Index of table */
   int run_begin;       /**< First run in which this table is valid */
   int run_end;         /**< Last run in which this table is valid */
-  int bytes;           /**< Number of bytes required by values.  Approximate */
   
   /** JSON object storage of all fields, except callbacks */
   json::Value table;
@@ -280,6 +225,12 @@ inline std::string DBTable::Get<std::string>(const std::string &name) const
 }
 
 template <>
+inline bool RAT::DBTable::Get<bool>(const std::string &name) const
+{
+  return GetZ(name);
+}
+
+template <>
 inline std::vector<int>
 RAT::DBTable::Get<std::vector<int> >(const std::string &name) const
 {
@@ -298,6 +249,13 @@ inline std::vector<std::string>
 RAT::DBTable::Get<std::vector<std::string> >(const std::string &name) const
 {
   return GetSArray(name); 
+}
+
+template <>
+inline std::vector<bool>
+RAT::DBTable::Get<std::vector<bool> >(const std::string &name) const
+{
+  return GetZArray(name); 
 }
 
 template <>

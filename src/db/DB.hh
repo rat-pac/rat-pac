@@ -88,15 +88,17 @@ double rindex = lmedia->GetD("index_of_refraction");
 #include <set>
 #include <deque>
 #include <RAT/HTTPDownloader.hh>
-#include <RAT/DBLink.hh>
 #include <RAT/DBFieldCallback.hh>
 #include <RAT/smart_ptr.hpp>
+#include <RAT/Log.hh>
+#include <RAT/DBTable.hh>
 
 namespace RAT {
 
 
 class DB; // Forward decl to allow for static DB member inside itself
 class DBTable;
+class DBLink;
 
 class DBTableKey {
 public:
@@ -247,45 +249,18 @@ public:
   // DO THIS AFTER loading files from disk, or your changes will be
   // stomped on later.
 
-  /** Set integer field in user plane, no table index. */
-  void SetI(std::string tblname, std::string fieldname, int val)
-  { SetI(tblname, "", fieldname, val); };
-
-  /** Set integer field in user plane, with table index. */
-  void SetI(std::string tblname, std::string index, std::string fieldname, int val);
-
-  /** Set double field in user plane, no table index. */
-  void SetD(std::string tblname, std::string fieldname, double val)
-  { SetD(tblname, "", fieldname, val); };
-  /** Set double field in user plane, with table index. */
-  void SetD(std::string tblname, std::string index, std::string fieldname, double val);
-
-  /** Set string field in user plane, no table index. */
-  void SetS(std::string tblname, std::string fieldname, std::string val)
-  { SetS(tblname, "", fieldname, val); };
-  /** Set string field in user plane, with table index. */
-  void SetS(std::string tblname, std::string index, std::string fieldname, std::string val);
+  /** Set field in user plane, no table index. */
+  template <typename T> void Set(const std::string &tblname, const std::string &fieldname, const T &val);
   
+  /** Set field in user plane, with table index. */
+  template <typename T> void Set(const std::string &tblname, const std::string &index, const std::string &fieldname, const T &val);
 
-  /** Set integer array field in user plane, no table index. */
-  void SetIArray(std::string tblname, std::string fieldname, const std::vector<int> &val)
-  { SetIArray(tblname, "", fieldname, val); };
-  /** Set integer array field in user plane, with table index. */
-  void SetIArray(std::string tblname, std::string index, std::string fieldname, const std::vector<int> &val);
-
-  /** Set double array field in user plane, no table index. */
-  void SetDArray(std::string tblname, std::string fieldname, const std::vector<double> &val)
-  { SetDArray(tblname, "", fieldname, val); };
-  /** Set double array field in user plane, with table index. */
-  void SetDArray(std::string tblname, std::string index, std::string fieldname, const std::vector<double> &val);
-
-  /** Set string array field in user plane, no table index. */
-  void SetSArray(std::string tblname, std::string fieldname, const std::vector<std::string> &val)
-  { SetSArray(tblname, "", fieldname, val); };
-  /** Set string array field in user plane, with table index. */
-  void SetSArray(std::string tblname, std::string index, std::string fieldname, const std::vector<std::string> &val);
+  /** Set array field index in user plane, no table index. */
+  template <typename T> void SetArrayIndex(const std::string &tblname, const std::string &fieldname, size_t idx, const T &val);
   
-
+  /** Set array field index in user plane, with table index. */
+  template <typename T> void SetArrayIndex(const std::string &tblname, const std::string &index, const std::string &fieldname, size_t idx, const T &val);
+  
   /************************DBLink interface********************/
   // This is the low level interface that DBLinks use.
   // You should not call these methods.
@@ -383,5 +358,35 @@ protected:
 };
 
 } // namespace RAT
+
+// Unfortunately necessary to include this after definition of DB to avoid circular references
+#include <RAT/DBLink.hh>
+
+  template <typename T> void RAT::DB::Set(const std::string &tblname, const std::string &fieldname, const T &val) {
+    Set(tblname, "", fieldname, val); 
+  }
+
+  /** Set field in user plane, with table index. */
+  template <typename T> void RAT::DB::Set(const std::string &tblname, const std::string &index, const std::string &fieldname, const T &val) {
+    DBTable *t = FindOrCreateTable(tblname, index, -1);
+    t->Set(fieldname, val);
+  }
+
+  /** Set array field index in user plane, no table index. */
+  template <typename T> void RAT::DB::SetArrayIndex(const std::string &tblname, const std::string &fieldname, size_t idx, const T &val) { 
+    SetArrayIndex(tblname, "", fieldname, idx, val); 
+  }
+  
+  /** Set array field index in user plane, with table index. */
+  template <typename T> void RAT::DB::SetArrayIndex(const std::string &tblname, const std::string &index, const std::string &fieldname, size_t idx, const T &val) {
+    DBTable *t = FindOrCreateTable(tblname, index, -1);
+    DBLinkPtr p = GetLink(tblname,index); //This ensures we always grab either the previously set or default plane array without keeping track explicitly
+    json::Value jval = p->Get<json::Value>(fieldname);
+    Log::Assert(jval.getType() == json::TARRAY,"RATDB: Cannot set an index for an item that is not an array!");
+    jval[index] = val;
+    t->Set(fieldname,jval);
+  }
+
+
 
 #endif

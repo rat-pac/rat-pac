@@ -193,28 +193,28 @@ void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
     vector<double> world_size(3);
     world_size[0] = world_size[1] = det_radius+10000.0;
     world_size[2] = det_halfheight+10000.0;
-    db->SetDArray("GEO","world","size",world_size);
-    db->SetD("GEO","tank","r_max",det_radius+tank_thickness);
-    db->SetD("GEO","tank","size_z",det_halfheight+tank_thickness);
-    db->SetD("GEO","detector","r_max",det_radius);
-    db->SetD("GEO","detector","size_z",det_halfheight);
+    db->Set("GEO","world","size",world_size);
+    db->Set("GEO","tank","r_max",det_radius+tank_thickness);
+    db->Set("GEO","tank","size_z",det_halfheight+tank_thickness);
+    db->Set("GEO","detector","r_max",det_radius);
+    db->Set("GEO","detector","size_z",det_halfheight);
 
     info << "Generating PMTINFO...\n";
-    db->SetDArray("PMTINFO","x",x);
-    db->SetDArray("PMTINFO","y",y);
-    db->SetDArray("PMTINFO","z",z);
-    db->SetDArray("PMTINFO","dir_x",dir_x);
-    db->SetDArray("PMTINFO","dir_y",dir_y);
-    db->SetDArray("PMTINFO","dir_z",dir_z);
-    db->SetIArray("PMTINFO","type",type);
+    db->Set("PMTINFO","x",x);
+    db->Set("PMTINFO","y",y);
+    db->Set("PMTINFO","z",z);
+    db->Set("PMTINFO","dir_x",dir_x);
+    db->Set("PMTINFO","dir_y",dir_y);
+    db->Set("PMTINFO","dir_z",dir_z);
+    db->Set("PMTINFO","type",type);
     
     info << "Update geometry fields related to veto PMTs...\n";
-    db->SetI("GEO","veto_pmts","start_idx",num_pmts);
-    db->SetI("GEO","veto_pmts","end_idx",total_pmts-1);
+    db->Set("GEO","veto_pmts","start_idx",num_pmts);
+    db->Set("GEO","veto_pmts","end_idx",total_pmts-1);
     
     info << "Update geometry fields related to normal PMTs...\n";
-    db->SetI("GEO","inner_pmts","start_idx",0);
-    db->SetI("GEO","inner_pmts","end_idx",num_pmts-1);
+    db->Set("GEO","inner_pmts","start_idx",0);
+    db->Set("GEO","inner_pmts","end_idx",num_pmts-1);
     
 }
 

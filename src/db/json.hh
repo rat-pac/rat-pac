@@ -80,6 +80,10 @@ namespace json {
             explicit inline Value(TReal real) : refcount(NULL), type(TREAL) { data.real = real; }
             explicit inline Value(TBool boolean) : refcount(NULL), type(TBOOL) { data.boolean = boolean; }
             
+            // All these integer types... force them to 32 bits
+            explicit inline Value(long unsigned int uinteger) : refcount(NULL), type(TUINTEGER) { data.uinteger = (unsigned int)uinteger; }
+            explicit inline Value(long int uinteger) : refcount(NULL), type(TINTEGER) { data.integer = (unsigned int)uinteger; }
+            
             // Construct structured types. These values are copied into the Value and subsequently passed by reference with refcount.
             explicit inline Value(TString string) : refcount(new TUInteger(0)), type(TSTRING) { data._string = new TString(string); }
             explicit inline Value(TObject object) : refcount(new TUInteger(0)), type(TOBJECT) { data.object = new TObject(object); }

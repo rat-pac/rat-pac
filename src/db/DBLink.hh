@@ -39,13 +39,13 @@
 
 #include <string>
 #include <vector>
+#include <RAT/DB.hh>
 #include <RAT/DBTable.hh>
 
 namespace RAT {
 
 
 class DB;
-
 
 class DBLink {
 public:
@@ -97,6 +97,13 @@ public:
    */
   std::string GetS(const std::string &name);
 
+  /** Retrieve bool field.
+   *
+   *  @throws DBNotFoundException if string field @p name does not
+   *  exist.
+   */
+  bool GetZ(const std::string &name);
+
   /** Retrieve integer array field.
    *
    *  @throws DBNotFoundException if integer array field @p name
@@ -127,31 +134,34 @@ public:
    */  
   std::vector<std::string> GetSArray(const std::string &name);
 
+  /** Retrieve bool array field.
+   *
+   *  @throws DBNotFoundException if string array field @p name
+   *  does not exist.
+   */  
+  std::vector<bool> GetZArray(const std::string &name);
+
   /** Retrieve raw JSON value.
    *
    *  @throws DBNotFoundException if field @p name
    *  does not exist.
    */  
   json::Value GetJSON(const std::string &name);
+  
 
-
+  /** Get the value of a field from the table, including plane
+   *  precedence rules.
+   *
+   *  @param  T          C++ data type for field
+   *  @param  fieldname  Name of field
+   */
+  template <class T> T Get(const std::string &fieldname);
+  
   // Used by DB class, do not use this yourself
   void Unlink() { db = 0; };
 
 protected:
 
-  /** Get the value of a field from the table, including plane
-   *  precedence rules.
-   *
-   *  This method is implemented as a template method to save having
-   *  to write 8 Pick methods.
-   *
-   *  @param  T          C++ data type for field
-   *  @param  fieldname  Name of field
-   *  @param  ftype      DB type for field 
-   */
-  template <class T> 
-  T Pick(std::string fieldname, DBTable::FieldType ftype) const;
 
   /** Pointer to DB which created this link. */
   DB *db;
@@ -165,6 +175,32 @@ protected:
   /** Current run number */
   int currentRun;
 };
+
+  template <class T> T DBLink::Get(const std::string &fieldname) {
+  
+    DBTable *tbl;
+    // First try user plane
+    tbl = db->GetUserTable(tblname, index);
+    if (!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {
+      // Then try the run plane
+      tbl = db->GetRunTable(tblname, index, currentRun);
+      if(!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {
+        // Finally try default plane
+        tbl = db->GetDefaultTable(tblname, index);
+        if (!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {
+          throw DBNotFoundError(tblname, index, fieldname);
+        }
+      }
+    }
+
+    // Make class explicit to satisfy Sun CC 5.3
+    T value = tbl->DBTable::Get<T>(fieldname);
+
+    // Trace DB accesses
+    Log::TraceDBAccess(tblname, index, fieldname, value);
+
+    return value;
+  }
 
 
 } // namespace RAT
