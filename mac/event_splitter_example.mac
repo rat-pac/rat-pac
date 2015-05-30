@@ -22,8 +22,7 @@
 #END EVENT LOOP
 
 /generator/add combo gun2:fill
-/generator/vtx/set neutron  0 0 0 0 1.0 1.0
-/generator/vtx/set neutron  0 0 0 0 1.0 1.0
+/generator/vtx/set pi-  0 0 0 0 100.0 300.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 1000
+/run/beamOn 100

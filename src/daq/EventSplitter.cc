@@ -25,53 +25,121 @@ namespace RAT {
             // in this physics event
             // we really should warn the user what is taking place
         }
-        DS::EV *ev = ds->AddNewEV();
         
-        ev->SetID(fEventCounter);
-        fEventCounter++;
-        
-        double totalQ = 0.0;
-        double calibQ = 0.0;
+        double totalQ    = 0.0;
+        double calibQ    = 0.0;
         double time, charge;
+        int    subevent  = 0;
+        double timeDiff;
+        bool subEventFound   = 0.0;
         
-        //Get min and max time in the event
+        Double_t chargeTmp[200];
+        Double_t timeTmp[200];
+//        Double_t timeMin[200];
+//        Double_t timeMax[200];
+        
+
+        //        Double_t pidTmp[200];
+        
+        
+        //Reset the container of the PMT information
         timeVec.erase   (timeVec.begin()  ,timeVec.end());
         chargeVec.erase (chargeVec.begin(),chargeVec.end());
         pmtIDVec.erase  (pmtIDVec.begin() ,pmtIDVec.end());
-
+        
+        //Fill the containers of the PMT information
         for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
             DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
             int pmtID = mcpmt->GetID();
-            
             if (mcpmt->GetMCPhotonCount() > 0) {
-                time = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                charge = 0;
+                time                = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                charge              = 0;
+                subevent            = 0;
+                timeTmp[subevent]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                chargeTmp[subevent] = mcpmt->GetMCPhoton(0)->GetCharge();
+
                 
                 if(mcpmt->GetMCPhotonCount()==1){
-                    time   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                    charge = mcpmt->GetMCPhoton(0)->GetCharge();
+                    time                = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                    charge              = mcpmt->GetMCPhoton(0)->GetCharge();
+                    timeTmp[subevent]   = time;
+                    chargeTmp[subevent] = charge;
+                    
+                    chargeVec.push_back(chargeTmp[subevent]);
+                    timeVec.push_back(timeTmp[subevent]);
+                    pmtIDVec.push_back(pmtID);
+                    chargeTmp[subevent] = timeTmp[subevent] = 0;
+                    
                 }
+                
                 if(mcpmt->GetMCPhotonCount()>1){
-                    for (int i=1; i < mcpmt->GetMCPhotonCount(); i++)  {
-                        if (time > mcpmt->GetMCPhoton(i)->GetFrontEndTime())
-                            time = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
-                        charge += mcpmt->GetMCPhoton(i)->GetCharge();
+                    for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
+                        
+                        subEventFound = 0;
+                        for (int k = 0; k<=subevent; k++) {
+                            timeDiff  = timeTmp[k] - mcpmt->GetMCPhoton(i)->GetFrontEndTime();
+                            if (    timeDiff > 0  &&  abs(timeDiff) < collectionWindow){
+                                timeTmp[k]   = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
+                                chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
+//                                if (timeTmp[k]<timeMin[k]) {
+//                                    timeMin[k] = timeTmp[k];
+//                                }
+//                                if (timeTmp[k]>timeMax[k]) {
+//                                    timeMax[k] = timeTmp[k];
+//                                }
+//                                std::printf("(1) a PMT hit %d %f!\n",pmtID,timeTmp[subevent]);
+                                subEventFound = 1;
+                                
+                            }else if(timeDiff < 0 && abs(timeDiff) < collectionWindow){
+                                timeTmp[k]   = timeTmp[k];//Wrong here
+                                chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
+//                                std::printf("(2) a PMT hit %d %f %f!\n",pmtID,timeTmp[subevent],mcpmt->GetMCPhoton(i)->GetFrontEndTime());
+
+                                subEventFound = 1;
+                            }
+                        }
+                        if(subEventFound == 0){
+                            subevent++;
+                            timeTmp[subevent]   = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
+                            chargeTmp[subevent] += mcpmt->GetMCPhoton(i)->GetCharge();
+//                            std::printf("(3) a PMT hit %d %f %f!\n",pmtID,timeTmp[subevent],timeTmp[subevent-1]);
+                        
+                        }
                     }
+                    for (int k = 0; k<=subevent; k++) {
+                        
+                        if (timeTmp[k]==0) {
+                            std::printf("What what what?????\n");
+                        }
+                        chargeVec.push_back(chargeTmp[k]);
+                        timeVec.push_back(timeTmp[k]);
+                        pmtIDVec.push_back(pmtID);
+                        chargeTmp[k] = timeTmp[k] = 0;
+                    }
+                    
                 }
-                
-                chargeVec.push_back(charge);
-                timeVec.push_back(time);
-                pmtIDVec.push_back(pmtID);
-                
             }
         }
-       // double maxTime = max_element(timeVec.begin(),timeVec.end());
         
-        std::printf("My events contains %lu distinct PMT hits\n",timeVec.size());
         
+        //
+        //                chargeVec.push_back(charge);
+        //                timeVec.push_back(time);
+        //                pmtIDVec.push_back(pmtID);
+        if(timeVec.size()>nhitThresh){
+            std::printf("My events contains %lu distinct PMT hits\n",timeVec.size());
+        }
+        std::cout << "myvector contains:";
+        for (std::vector<double>::iterator it=timeVec.begin(); it!=timeVec.end(); ++it)
+            std::cout << ' ' << *it;
+        std::cout << '\n';
+        
+        DS::EV *ev = ds->AddNewEV();
+        ev->SetID(fEventCounter);
+        fEventCounter++;
         
         //Dangerous here, adding new event
-        ev = ds->AddNewEV();
+        //ev = ds->AddNewEV();
         
         ev->SetID(fEventCounter);
         fEventCounter++;
@@ -142,21 +210,6 @@ namespace RAT {
             collectionWindow = value;
             std::printf("Collection window: %7.1f ns\n",collectionWindow);
         }
-        
-        
     }
-//    
-//    template <class ForwardIterator>
-//    ForwardIterator max_element ( ForwardIterator first, ForwardIterator last )
-//    {
-//        if (first==last) return last;
-//        ForwardIterator largest = first;
-//        
-//        while (++first!=last)
-//            if (*largest<*first)    // or: if (comp(*largest,*first)) for version (2)
-//                largest=first;
-//        return largest;
-//    }
-//    
 } // namespace RAT
 
