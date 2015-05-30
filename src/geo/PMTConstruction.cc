@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <RAT/Log.hh>
+#include <RAT/Materials.hh>
 #include <RAT/GLG4PMTOpticalModel.hh>
 #include <RAT/PMTConstruction.hh>
 #include <G4Tubs.hh>
@@ -9,24 +10,83 @@
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalSkinSurface.hh>
 
+using namespace std;
+
 namespace RAT {
+
+    PMTConstruction* PMTConstruction::NewConstruction(DBLinkPtr table, G4LogicalVolume *mother) {
+        std::string construction = table->Get<std::string>("construction");
+        if (construction == "toroidal") {
+            return new ToroidalPMTConstruction(table,mother);
+        } else if (construction == "revolution") {
+        
+        }
+        return NULL;
+    }
   
-  ToroidalPMTConstruction::ToroidalPMTConstruction(const ToroidalPMTConstructionParams &params) : fParams(params)
-  {
-    assert(fParams.zEdge.size() == fParams.rhoEdge.size());
-    assert(fParams.zEdge.size() == fParams.zOrigin.size()+1);
-    assert(fParams.exterior);
-    assert(fParams.glass);
-    assert(fParams.vacuum);
-    assert(fParams.dynode);
-    assert(fParams.photocathode);
-    assert(fParams.mirror);
-    // Do not assert fParams.detector.  If detector==0, then do not associate PMT
-    // with sensitive volume
-    //assert(fParams.detector);
-  }
+    ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolume *mother) : PMTConstruction("toroidal") {
+    
+        // Setup PMT parameters
+        fParams.faceGap = 0.1 * mm;
+        fParams.zEdge = table->GetDArray("z_edge");
+        fParams.rhoEdge = table->GetDArray("rho_edge");
+        fParams.zOrigin = table->GetDArray("z_origin");
+        fParams.dynodeRadius = table->GetD("dynode_radius");
+        fParams.dynodeTop = table->GetD("dynode_top");
+        fParams.wallThickness = table->GetD("wall_thickness");
+
+        // Materials
+        fParams.exterior = mother->GetMaterial();
+        fParams.glass = G4Material::GetMaterial(table->GetS("glass_material"));
+        fParams.dynode = G4Material::GetMaterial(table->GetS("dynode_material"));
+        fParams.vacuum = G4Material::GetMaterial(table->GetS("pmt_vacuum_material")); 
+        string pc_surface_name = table->GetS("photocathode_surface");
+        fParams.photocathode = Materials::optical_surface[pc_surface_name];
+        string mirror_surface_name = table->GetS("mirror_surface");
+        fParams.mirror = Materials::optical_surface[mirror_surface_name];
+        fParams.dynode_surface=Materials::optical_surface[table->GetS("dynode_surface")];
+
+        if (fParams.photocathode == 0)
+            Log::Die("GeoPMTFactoryBase error: Photocathode surface \"" + pc_surface_name + "\" not found");
+
+        // Set new overall correction if requested (not included in individual)
+        try {
+            float efficiency_correction = table->GetD("efficiency_correction");
+            fParams.efficiencyCorrection = efficiency_correction;
+        } catch (DBNotFoundError &e) { }
+
+
+        // --------------- Start building PMT geometry ------------------
+
+        // Setup for waveguide
+        fWaveguideFactory = 0;
+        try {
+            string waveguide = table->GetS("waveguide");
+            string waveguide_desc = table->GetS("waveguide_desc");
+            string waveguide_table, waveguide_index;
+            if (!DB::ParseTableName(waveguide_desc, waveguide_table, waveguide_index))
+                Log::Die("GeoPMTFactoryBase: Waveguide descriptor name is not a valid RATDB table: " +waveguide_desc);
+                       
+            fWaveguideFactory = GlobalFactory<WaveguideFactory>::New(waveguide);
+            fWaveguideFactory->SetTable(waveguide_table, waveguide_index);
+            fParams.faceGap = fWaveguideFactory->GetZTop();
+            fParams.minEnvelopeRadius = fWaveguideFactory->GetRadius();
+        } catch (DBNotFoundError &e) { }
+
+        // Build PMT
+        fParams.useEnvelope = false; // disable the use of envelope volume for now
+
+        assert(fParams.zEdge.size() == fParams.rhoEdge.size());
+        assert(fParams.zEdge.size() == fParams.zOrigin.size()+1);
+        assert(fParams.exterior);
+        assert(fParams.glass);
+        assert(fParams.vacuum);
+        assert(fParams.dynode);
+        assert(fParams.photocathode);
+        assert(fParams.mirror);
+    }
   
-  G4LogicalVolume *ToroidalPMTConstruction::NewPMT(const std::string &prefix, bool simpleVis)
+  G4LogicalVolume* ToroidalPMTConstruction::BuildVolume(const std::string &prefix)
   {
     // envelope cylinder
     G4VSolid *envelope_solid=0;
@@ -34,7 +94,7 @@ namespace RAT {
       envelope_solid = NewEnvelopeSolid(prefix+"_envelope_solid");
                                         
     // glass body
-    GLG4TorusStack *body_solid = NewBodySolid(prefix+"_body_solid");
+    GLG4TorusStack *body_solid = (GLG4TorusStack*)BuildSolid(prefix+"_body_solid");
     
     // inner vacuum
     GLG4TorusStack *inner1_solid= new GLG4TorusStack(prefix + "_inner1_solid");
@@ -74,11 +134,8 @@ namespace RAT {
       envelope_log = new G4LogicalVolume(envelope_solid, fParams.exterior, prefix+"envelope_log");
     
     body_log= new G4LogicalVolume(body_solid, fParams.glass, prefix+"_body_log");
-    if (fParams.detector)
-      body_log->SetSensitiveDetector(fParams.detector);
 
     inner1_log= new G4LogicalVolume(inner1_solid, fParams.vacuum, prefix+"_inner1_log");
-    inner1_log->SetSensitiveDetector(fParams.detector);
     
     inner2_log= new G4LogicalVolume(inner2_solid, fParams.vacuum, prefix+"_inner2_log");
 
@@ -145,7 +202,15 @@ namespace RAT {
     // set the optical surfaces, otherwise this must be done later once the physical volume
     // has been placed
     if (fParams.useEnvelope) {
-             SetPMTOpticalSurfaces(body_phys,prefix);
+    
+        //build the mirrored surface
+        new G4LogicalBorderSurface(prefix+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(prefix+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
+        
+        // also include the tolerance gap
+        new G4LogicalBorderSurface(prefix+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(prefix+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
+        
     } 
     
     // Go ahead and place the cathode optical surface---this can always be done at this point
@@ -166,7 +231,7 @@ namespace RAT {
     
     // ------------ Vis Attributes -------------
     G4VisAttributes * visAtt;
-    if (simpleVis) {
+    if (fParams.simpleVis) {
       visAtt = new G4VisAttributes(G4Color(0.0,1.0,1.0,0.05));
       if (fParams.useEnvelope) envelope_log->SetVisAttributes(visAtt);
       body_log->SetVisAttributes(  G4VisAttributes::Invisible );
@@ -191,39 +256,71 @@ namespace RAT {
     // central gap is invisible  
       central_gap_log->SetVisAttributes (G4VisAttributes::Invisible);
     }
-
+    
+    
+    G4LogicalVolume *logiPMT;
     if (fParams.useEnvelope)
-      return envelope_log;
+      logiPMT = envelope_log;
     else
-      return body_log;
+      logiPMT = body_log;
+    
+    // if using envelope place waveguide now
+    if (fParams.useEnvelope && fWaveguideFactory) {
+      fWaveguideFactory->SetPMTBodySolid(body_solid);
+      G4LogicalVolume *logiWg = fWaveguideFactory->Construct(prefix+"_waveguide_log", logiPMT, fParams.simpleVis);
+      G4ThreeVector offsetWg = fWaveguideFactory->GetPlacementOffset();
+      new G4PVPlacement
+            ( 0,                   // no rotation
+            offsetWg,     
+   	        logiWg,            // the logical volume
+            prefix+"_waveguide_phys", // a name for this physical volume
+            logiPMT,                // the mother volume
+            false,               // no boolean ops
+            0 );                 // copy number
+    }
+    
+    return logiPMT;
   }
   
-  GLG4TorusStack *ToroidalPMTConstruction::NewBodySolid(const std::string &name)
+  G4VSolid *ToroidalPMTConstruction::BuildSolid(const string &name)
   {
     GLG4TorusStack *body = new GLG4TorusStack(name);
-    body->SetAllParameters(fParams.zOrigin.size(), 
-                           &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
+    body->SetAllParameters(fParams.zOrigin.size(), &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
     return body;
   }
-  void ToroidalPMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *body_phys, const std::string &prefix)
-  { 
-    /* Set the optical surfaces for a PMT. This must be called *after* the physical PMT has been placed  
-       If this is not done, the mirror surface is not created.
-    */
-    //build the mirrored surface
-    new G4LogicalBorderSurface(prefix+"_mirror_logsurf1",
-                                inner2_phys, body_phys,
-                                fParams.mirror);
-    new G4LogicalBorderSurface(prefix+"_mirror_logsurf2",
-                               body_phys, inner2_phys,
-                               fParams.mirror);
-    // also include the tolerance gap
-    new G4LogicalBorderSurface(prefix+"_central_gap_logsurf1",
-                               central_gap_phys, body_phys,
-                               fParams.mirror);
-    new G4LogicalBorderSurface(prefix+"_central_gap_logsurf2",
-                               body_phys,central_gap_phys,
-                               fParams.mirror);
+  
+  void ToroidalPMTConstruction::PlacePMT(G4RotationMatrix *pmtrot, G4ThreeVector pmtpos, const std::string &pmtname, G4LogicalVolume *logi_pmt, G4VPhysicalVolume *mother_phys, bool booleanSolid, int copyNo) { 
+  
+    new G4PVPlacement(pmtrot, pmtpos, pmtname, logi_pmt, mother_phys,  booleanSolid, copyNo);
+
+    if (!fParams.useEnvelope) {
+
+        //build the mirrored surface
+        new G4LogicalBorderSurface(pmtname+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(pmtname+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
+        
+        // also include the tolerance gap
+        new G4LogicalBorderSurface(pmtname+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(pmtname+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
+
+        // if not using envelope place waveguide now
+        if (fWaveguideFactory) {
+            G4LogicalVolume *logiWg = fWaveguideFactory->Construct(pmtname+"_waveguide_log", logi_pmt, fParams.simpleVis);
+            // pmtrot is a passive rotation, but we need an active one to put offsetWg
+            // into coordinates of mother
+            G4ThreeVector offsetWg = fWaveguideFactory->GetPlacementOffset();
+            G4ThreeVector offsetWg_rot = pmtrot->inverse()(offsetWg);
+            G4ThreeVector waveguidepos = pmtpos + offsetWg_rot;
+            new G4PVPlacement(
+                pmtrot,               
+                waveguidepos,      
+                pmtname+"_waveguide", // a name for this physical volume
+                logiWg,               // the logical volume
+                mother_phys,          // the mother volume
+                false,                // no boolean ops
+                0);                   // copy number
+        }
+    }
   }
   
   G4VSolid *ToroidalPMTConstruction::NewEnvelopeSolid(const std::string &name)

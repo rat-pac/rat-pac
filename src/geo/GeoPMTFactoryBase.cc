@@ -11,8 +11,6 @@
 #include <RAT/GLG4PMTSD.hh>
 #include <RAT/DetectorConstruction.hh>
 #include <RAT/PMTConstruction.hh>
-#include <RAT/WaveguideFactory.hh>
-#include <RAT/Factory.hh>
 #include <vector>
 #include <algorithm>
 
@@ -31,8 +29,7 @@ namespace RAT {
 
 DS::PMTInfo GeoPMTFactoryBase::pmtinfo;
 
-G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, 
-                       std::vector<double> pmt_x, std::vector<double> pmt_y, std::vector<double> pmt_z)
+G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, std::vector<double> pmt_x, std::vector<double> pmt_y, std::vector<double> pmt_z)
 {
   
   int start_idx, end_idx;
@@ -111,20 +108,13 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     fill(pmt_effi_corr.begin(),pmt_effi_corr.end(),1.0); //defaults to 1.0
   }
   
+  /*
   // Simplified PMT drawing for faster visualization
   bool vis_simple = false;
   try {
     vis_simple = table->GetI("vis_simple") != 0;
   } catch (DBNotFoundError &e) { }
-
-  // pmt_detector_type
-  string pmt_detector_type = table->GetS("pmt_detector_type");
-  
-  // sensitive detector
-  string sensitive_detector_name = table->GetS("sensitive_detector");
-  G4SDManager* fSDman = G4SDManager::GetSDMpointer();  
-  GLG4PMTSD* pmtSDInner= new GLG4PMTSD(sensitive_detector_name, end_idx-start_idx+1, pmtinfo.GetPMTCount(), -1 /* evidently unused? */);
-  fSDman->AddNewDetector(pmtSDInner);
+  */
   
   // Find mother volume
   string volume_name = table->GetIndex();
@@ -140,86 +130,9 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   string pmt_model = table->GetS("pmt_model"); // the form factor of the PMT (physical properties)
   DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
   
-  //FIXME here we should call PTMConstruction::GetConstruction and then get the
-  //resulting logical volume, then place them one by one. I.E. move most of the
-  //remaining code to PMTConstruction sublcasses for different PMT types.
-  
-  // Setup PMT parameters
-  ToroidalPMTConstructionParams pmtParam;
-  pmtParam.detector = pmtSDInner;
-  pmtParam.faceGap = 0.1 * mm;
-  pmtParam.zEdge = lpmt->GetDArray("z_edge");
-  pmtParam.rhoEdge = lpmt->GetDArray("rho_edge");
-  pmtParam.zOrigin = lpmt->GetDArray("z_origin");
-  pmtParam.dynodeRadius = lpmt->GetD("dynode_radius");
-  pmtParam.dynodeTop = lpmt->GetD("dynode_top");
-  pmtParam.wallThickness = lpmt->GetD("wall_thickness");
-
-  // Materials
-  pmtParam.exterior = mother->GetMaterial();
-  pmtParam.glass = G4Material::GetMaterial(lpmt->GetS("glass_material"));
-  pmtParam.dynode = G4Material::GetMaterial(lpmt->GetS("dynode_material"));
-  pmtParam.vacuum = G4Material::GetMaterial(lpmt->GetS("pmt_vacuum_material")); 
-  string pc_surface_name = lpmt->GetS("photocathode_surface");
-  pmtParam.photocathode = Materials::optical_surface[pc_surface_name];
-  string mirror_surface_name = lpmt->GetS("mirror_surface");
-  pmtParam.mirror = Materials::optical_surface[mirror_surface_name];
-  pmtParam.dynode_surface=Materials::optical_surface[lpmt->GetS("dynode_surface")];
-  
-  if (pmtParam.photocathode == 0)
-    Log::Die("GeoPMTFactoryBase error: Photocathode surface \"" + pc_surface_name + "\" not found");
+  PMTConstruction *construction = PMTConstruction::NewConstruction(lpmt,mother);
     
-  // Set new overall correction if requested (not included in individual)
-  try {
-    float efficiency_correction = table->GetD("efficiency_correction");
-    pmtParam.efficiencyCorrection = efficiency_correction;
-  } catch (DBNotFoundError &e) { }
-
-
-  // --------------- Start building PMT geometry ------------------
-  
-  // Setup for waveguide
-  WaveguideFactory *waveguide_factory = 0;
-  try {
-    string waveguide = table->GetS("waveguide");
-    string waveguide_desc = table->GetS("waveguide_desc");
-    string waveguide_table, waveguide_index;
-    if (!DB::ParseTableName(waveguide_desc, waveguide_table, waveguide_index))
-      Log::Die("GeoPMTFactoryBase: Waveguide descriptor name is not a valid RATDB table: "
-               +waveguide_desc);
-               
-    waveguide_factory = GlobalFactory<WaveguideFactory>::New(waveguide);
-    waveguide_factory->SetTable(waveguide_table, waveguide_index);
-    pmtParam.faceGap = waveguide_factory->GetZTop();
-    pmtParam.minEnvelopeRadius = waveguide_factory->GetRadius();
-  } catch (DBNotFoundError &e) { }
-  
-  // Build PMT
-  pmtParam.useEnvelope = false; // disable the use of envelope volume for now
-  ToroidalPMTConstruction pmtConstruct(pmtParam);
-    
-  G4LogicalVolume *logiPMT = pmtConstruct.NewPMT(volume_name, vis_simple);
-  G4LogicalVolume *logiWg = 0;
-  G4ThreeVector offsetWg;
-  
-  // Add waveguide if needed
-  if (waveguide_factory) {
-    waveguide_factory->SetPMTBodySolid(pmtConstruct.NewBodySolid(volume_name+"_waveguide_sub"));
-    logiWg = waveguide_factory->Construct(volume_name+"_waveguide_log",
-                                                              logiPMT,
-                                                              vis_simple);
-    offsetWg = waveguide_factory->GetPlacementOffset();
-    if (pmtParam.useEnvelope) {
-        new G4PVPlacement
-    	      ( 0,                   // no rotation
-    	        offsetWg,     
-    	        logiWg,            // the logical volume
-    	        volume_name+"_waveguide_phys", // a name for this physical volume
-    	        logiPMT,                // the mother volume
-    	        false,               // no boolean ops
-    	        0 );                 // copy number
-    } 
-  }
+  G4LogicalVolume *logiPMT = construction->BuildVolume(volume_name);
      
 //preparing to calculate magnetic efficiency corrections for all PMTs, if requested
   int BFieldOn=0;
@@ -370,7 +283,6 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
      parent_name = parent_table->GetS("mother");
   }
   
-  
   // This will contain individual efficiency corrections for the placed PMTs
   map<int,double> EfficiencyCorrection;
   
@@ -484,47 +396,13 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     
     // rotation required to point in direction of pmtdir
     double angle_y = (-1.0)*atan2(pmtdir.x(), pmtdir.z());
-    double angle_x = atan2(pmtdir.y(),
-			   sqrt(pmtdir.x()*pmtdir.x()+pmtdir.z()*pmtdir.z()));
+    double angle_x = atan2(pmtdir.y(), sqrt(pmtdir.x()*pmtdir.x()+pmtdir.z()*pmtdir.z()));
     
     G4RotationMatrix* pmtrot = new G4RotationMatrix();
     pmtrot->rotateY(angle_y);
     pmtrot->rotateX(angle_x);
-    // ****************************************************************
-    // * Use the constructor that specifies the PHYSICAL mother, since
-    // * each PMT occurs only once in one physical volume.  This saves
-    // * the GeometryManager some work. -GHS.
-    // ****************************************************************
-    G4PVPlacement* thisPhysPMT = new G4PVPlacement(pmtrot,
-                      pmtpos,
-                      pmtname,
-                      logiPMT,
-                      phys_mother,
-                      false,
-                      id);
-    if (!pmtParam.useEnvelope) {
-      // If not using envelope volume, the PMT optical surfaces have NOT been set
-      // and we must do so NOW.
-      pmtConstruct.SetPMTOpticalSurfaces(thisPhysPMT,pmtname); 
-    }
     
-    if (!pmtParam.useEnvelope && logiWg) {
-      // If not using envelope volume, the waveguide must be placed in a separate
-      // operation
-      
-      // pmtrot is a passive rotation, but we need an active one to put offsetWg
-      // into coordinates of mother
-      G4ThreeVector offsetWg_rot = pmtrot->inverse()(offsetWg);
-      G4ThreeVector waveguidepos = pmtpos + offsetWg_rot;
-      new G4PVPlacement(
-        pmtrot,               
-        waveguidepos,      
-        pmtname+"_waveguide", // a name for this physical volume
-        logiWg,               // the logical volume
-        phys_mother,          // the mother volume
-        false,                // no boolean ops
-        id);  // copy number
-    }
+    construction->PlacePMT(pmtrot, pmtpos, pmtname, logiPMT, phys_mother, false, id);
     
   } // end loop over id
 

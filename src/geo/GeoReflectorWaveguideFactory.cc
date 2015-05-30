@@ -68,10 +68,10 @@ G4VPhysicalVolume *GeoReflectorWaveguideFactory::Construct(DBLinkPtr table)
 
   string pmt_table = table->GetS("pmt_table");
   DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-  GeoPMTParser pmt_parser(lgeo_pmt);
-  ToroidalPMTConstructionParams params = pmt_parser.GetPMTParams();
-  ToroidalPMTConstruction pmtConstruct(params);
-  G4VSolid *pmtBody = pmtConstruct.NewBodySolid("dummy");
+  GeoPMTParser pmt_parser(lgeo_pmt); //FIXME
+  DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
+  ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
+  G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");
 
   string waveguide = lgeo_pmt->GetS("waveguide");
   string waveguide_desc = lgeo_pmt->GetS("waveguide_desc");

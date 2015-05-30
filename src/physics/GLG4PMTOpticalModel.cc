@@ -11,7 +11,7 @@
 */
 
 #include "GLG4PMTOpticalModel.hh"
-#include "GLG4PMTSD.hh"
+#include "GLG4HitPhoton.hh"
 
 #include "G4LogicalBorderSurface.hh"
 #include "G4OpticalSurface.hh"
@@ -237,8 +237,6 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
   G4double energy;
   G4double n_glass;
   G4VSolid *envelope_solid = fastTrack.GetEnvelopeSolid();
-  G4VSensitiveDetector* detector=
-    fastTrack.GetEnvelopeLogicalVolume()->GetSensitiveDetector();
   enum EWhereAmI { kInGlass, kInVacuum } whereAmI;
   int ipmt= -1;
 
@@ -436,21 +434,21 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
     }
 
     if (N_pe > 0) {
-      if ( detector != NULL && detector->isActive() )
-	((GLG4PMTSD *)detector)->SimpleHit( ipmt,
-					    time,
-					    energy,
-					    pos,
-					    dir,
-					    pol,
-					    N_pe,
-					    fastTrack.GetPrimaryTrack()->GetTrackID(),
-					    prepulse);
+      //GLG4PMTSD was doing this and nothing else, so move code here
+      GLG4HitPhoton* hit_photon = new GLG4HitPhoton();
+      hit_photon->SetPMTID((int)ipmt);
+      hit_photon->SetTime((double)time);
+      hit_photon->SetKineticEnergy((double)energy);
+      hit_photon->SetPosition((double)pos.x(), (double)pos.y(), (double)pos.z());
+      hit_photon->SetMomentum((double)dir.x(), (double)dir.y(), (double)dir.z());
+      hit_photon->SetPolarization((double)pol.x(), (double)pol.y(), (double)pol.z());
+      hit_photon->SetCount(N_pe);
+      hit_photon->SetTrackID(fastTrack.GetPrimaryTrack()->GetTrackID());
+      hit_photon->SetPrepulse(prepulse);
       if(prepulse)
-	break;
-      if (_verbosity >= 2) {
-	G4cout << "GLG4PMTOpticalModel made " << N_pe << " pe\n";
-      }
+	    break;
+      if (_verbosity >= 2) 
+	    G4cout << "GLG4PMTOpticalModel made " << N_pe << " pe\n";
     }
     
     // Now maybe absorb the track.

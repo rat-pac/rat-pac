@@ -11,7 +11,7 @@ using namespace std;
 
 namespace RAT {
 
-  GeoPMTParser::GeoPMTParser(DBLinkPtr table, bool useSD)
+  GeoPMTParser::GeoPMTParser(DBLinkPtr table)
   {  
     string volume_name = table->GetIndex();
 
@@ -93,40 +93,7 @@ namespace RAT {
     //////////// Read PMT dimensions
     string pmt_model = table->GetS("pmt_model");
     DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
-    
-    fParam.faceGap = 0.1 * mm;
-    fParam.zEdge = lpmt->GetDArray("z_edge");
-    fParam.rhoEdge = lpmt->GetDArray("rho_edge");
-    fParam.zOrigin = lpmt->GetDArray("z_origin");
-    fParam.dynodeRadius = lpmt->GetD("dynode_radius");
-    fParam.dynodeTop = lpmt->GetD("dynode_top");
-    fParam.wallThickness = lpmt->GetD("wall_thickness");
-
-    //////////// PMT Materials
-    fParam.exterior = mother->GetMaterial();
-    fParam.glass = G4Material::GetMaterial(lpmt->GetS("glass_material"));
-    fParam.dynode = G4Material::GetMaterial(lpmt->GetS("dynode_material"));
-    fParam.vacuum = G4Material::GetMaterial(lpmt->GetS("pmt_vacuum_material"));
-    string pc_surface_name = lpmt->GetS("photocathode_surface");
-    fParam.photocathode = Materials::optical_surface[pc_surface_name];
-    string mirror_surface_name = lpmt->GetS("mirror_surface");
-    fParam.mirror = Materials::optical_surface[mirror_surface_name];
-    string dynode_surface_name=lpmt->GetS("dynode_surface");
-    fParam.dynode_surface=Materials::optical_surface[dynode_surface_name];
-    
-    // PMT sensitive detector
-    if (useSD) {
-      string sensitive_detector_name = table->GetS("sensitive_detector");
-      G4SDManager* sdman = G4SDManager::GetSDMpointer();
-      GLG4PMTSD* pmtSD = new GLG4PMTSD(sensitive_detector_name, max_pmts, 0, 10);
-      sdman->AddNewDetector(pmtSD);
-      fParam.detector = pmtSD;
-    } else
-      fParam.detector = 0;
-
-
-    fParam.useEnvelope = false; // disable the use of envelope volume for now
-    fConstruction = new ToroidalPMTConstruction(fParam);
+    fConstruction = new ToroidalPMTConstruction(lpmt, mother);
   }
    
   G4RotationMatrix GeoPMTParser::GetPMTRotation(int i) const

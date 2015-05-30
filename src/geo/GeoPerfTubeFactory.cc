@@ -15,6 +15,9 @@ namespace RAT {
 G4VSolid *GeoPerfTubeFactory::ConstructSolid(DBLinkPtr table)
 {
     string volume_name = table->GetIndex();
+    // Find mother
+    string mother_name = table->GetS("mother");
+    G4LogicalVolume *mother = FindMother(mother_name);
     G4double r_max = table->GetD("r_max") * mm;        // radius of main plate
     G4double size_z = table->GetD("size_z") * mm;      // half thickness of plate
     
@@ -59,12 +62,12 @@ G4VSolid *GeoPerfTubeFactory::ConstructSolid(DBLinkPtr table)
     }
     else
     {
-	string pmt_table = table->GetS("pmt_table");
-	DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-	GeoPMTParser pmt_parser(lgeo_pmt);
-	ToroidalPMTConstructionParams params = pmt_parser.GetPMTParams();
-	ToroidalPMTConstruction pmtConstruct(params);
-	G4VSolid *pmtBody = pmtConstruct.NewBodySolid("dummy");
+    string pmt_table = table->GetS("pmt_table");
+    DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
+    GeoPMTParser pmt_parser(lgeo_pmt); //FIXME
+    DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
+    ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
+    G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");
 	
 	vector<G4ThreeVector> pmtloc = pmt_parser.GetPMTLocations();
 	vector<G4ThreeVector> pmtdir = pmt_parser.GetPMTDirections();

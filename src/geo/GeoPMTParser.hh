@@ -11,12 +11,10 @@
 namespace RAT {
 
   /** Helper class which reads the attributes stored in a GEO table
-   *  describing PMT placement and construction.  Creates a PMT
-   *  "sensitive detector" if useSD is true.  Only set to true if this
-   *  GeoPMTParser will be used to construct real PMTs. */
+   *  describing PMT placement and construction.  */
   class GeoPMTParser {
   public:
-    GeoPMTParser(DBLinkPtr table, bool useSD=false);
+    GeoPMTParser(DBLinkPtr table);
     ~GeoPMTParser() { delete fConstruction; };
 
     /** Returns total number of PMTs described by the RATDB table. */
