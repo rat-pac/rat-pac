@@ -6,7 +6,7 @@ using namespace std;
 
 namespace RAT {
   
-  G4VPhysicalVolume *GeoPMTCoverageFactory::Construct(DBLinkPtr table){
+  G4VPhysicalVolume *GeoPMTCoverageFactory::Construct(DBLinkPtr table) {
     G4double coverage=0.0, pmtRadius=0.0, pmtDiameter; // coverage is percent solid angle
                                             // pmt radius is distance pmt to center
                                             // pmt geometry diameter
@@ -52,8 +52,16 @@ namespace RAT {
         //      cout << "z,phi  " << z << " " << phi << endl;
       }
     }
+    
+    vector<G4ThreeVector> pos(Npmt), dir(Npmt);
+    vector<int> type(Npmt,0); //FIXME make macro settable perhaps
+    vector<double> effi_corr(Npmt,1.0); //FIXME make macro settable perhaps
+    for (int i = 0; i < Npmt; i++) {
+        pos[i].set(xpmt[i],ypmt[i],zpmt[i]);
+        dir[i].set(-xpmt[i],-ypmt[i],zpmt[i]);
+    }
 
-    return ConstructPMTs(table, xpmt, ypmt, zpmt);
+    return ConstructPMTs(table, pos, dir, type, effi_corr);
 
   }
   

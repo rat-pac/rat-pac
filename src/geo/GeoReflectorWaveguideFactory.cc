@@ -5,7 +5,7 @@
 #include <G4SubtractionSolid.hh>
 #include <RAT/PMTConstruction.hh>
 #include <RAT/ConeWaveguideConstruction.hh>
-#include <RAT/GeoPMTParser.hh>
+#include <RAT/GeoPMTInfoParser.hh>
 #include <RAT/Log.hh>
 #include <G4PVPlacement.hh>
 #include <RAT/Materials.hh>
@@ -68,7 +68,7 @@ G4VPhysicalVolume *GeoReflectorWaveguideFactory::Construct(DBLinkPtr table)
 
   string pmt_table = table->GetS("pmt_table");
   DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-  GeoPMTParser pmt_parser(lgeo_pmt); //FIXME
+  GeoPMTInfoParser pmt_parser(lgeo_pmt,mother_name);
   DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
   ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
   G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");

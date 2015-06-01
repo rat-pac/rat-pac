@@ -6,9 +6,7 @@
 #include <G4PVPlacement.hh>
 
 #include <RAT/Materials.hh>
-#include <RAT/GLG4PMTSD.hh>
 #include <G4LogicalBorderSurface.hh>
-#include <RAT/GLG4PMTSD.hh>
 #include <RAT/DetectorConstruction.hh>
 #include <RAT/PMTConstruction.hh>
 #include <vector>
@@ -29,111 +27,32 @@ namespace RAT {
 
 DS::PMTInfo GeoPMTFactoryBase::pmtinfo;
 
-G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, std::vector<double> pmt_x, std::vector<double> pmt_y, std::vector<double> pmt_z)
-{
-  
-  int start_idx, end_idx;
-  try {
-    start_idx = table->GetI("start_idx"); //position in this array to start building pmts
-  } catch (DBNotFoundError &e) {
-    start_idx = 0; // defaults to beginning
-  }
-  try {
-    end_idx = table->GetI("end_idx"); //id of the last pmt to build in this array
-  } catch (DBNotFoundError &e) {
-    end_idx = pmt_x.size()-1; // defaults to whole array
-  }
-
-  string pos_table_name = table->GetS("pos_table");
-  DBLinkPtr lpos_table = DB::Get()->GetLink(pos_table_name);
-  
-  // Orientation of PMTs
-  vector<double> dir_x, dir_y, dir_z;
-  G4ThreeVector orient_point;
-  bool orient_manual = false;
-  try { 
-    string orient_str = table->GetS("orientation");
-    if (orient_str == "manual")
-      orient_manual = true;
-    else if (orient_str == "point")
-      orient_manual = false;
-    else 
-      Log::Die("GeoPMTFactoryBase error: Unknown PMT orientation " + orient_str);
-  } catch (DBNotFoundError &e) { }
-  if (orient_manual) {
-    dir_x = lpos_table->GetDArray("dir_x");
-    dir_y = lpos_table->GetDArray("dir_y");
-    dir_z = lpos_table->GetDArray("dir_z");
-  } else {
-    //fill with dummy values needed for pmtinfo.AddPMT. They will be redirected towards
-    //the proper point afterwards
-    dir_x.push_back(9999.);
-    dir_y.push_back(9999.);
-    dir_z.push_back(9999.);
-    vector<double> orient_point_array = table->GetDArray("orient_point");
-    if (orient_point_array.size() != 3)
-      Log::Die("GeoPMTFactoryBase error: orient_point must have 3 values");
-    orient_point.set(orient_point_array[0], orient_point_array[1],  orient_point_array[2]);    
-  }
-  
-  // Flip direction of PMT relative to specified direction
-  int flip = 0;
-  try {  flip = table->GetI("flip"); }
-  catch (DBNotFoundError &e) { }
-
-  // Optionally can rescale PMT radius from mother volume center for
-  // case where PMTs have spherical layout symmetry
-  bool rescale_radius = false;
-  double new_radius = 1.0;
-  try {
-    new_radius = table->GetD("rescale_radius");
-    rescale_radius = true;
-  } catch (DBNotFoundError &e) { }
-  
-  // Logical type of PMT (e.g. normal, veto, etc)
-  vector<int> pmt_type;
-  try {
-    pmt_type = lpos_table->GetIArray("type"); // functional type (e.g. inner, veto, etc. - arbitrary integers)
-  } catch (DBNotFoundError &e) {
-    pmt_type.resize(pmt_x.size());
-    fill(pmt_type.begin(),pmt_type.end(),-1); //defaults to type -1 if unspecified
-  }
-  
-  // Individual PMT efficiency correction
-  vector<double> pmt_effi_corr;
-  try {
-    pmt_effi_corr = lpos_table->GetDArray("efficiency"); // individual PMT efficiency corrections
-  } catch (DBNotFoundError &e) {
-    pmt_effi_corr.resize(pmt_x.size());
-    fill(pmt_effi_corr.begin(),pmt_effi_corr.end(),1.0); //defaults to 1.0
-  }
-  
-  /*
-  // Simplified PMT drawing for faster visualization
-  bool vis_simple = false;
-  try {
-    vis_simple = table->GetI("vis_simple") != 0;
-  } catch (DBNotFoundError &e) { }
-  */
-  
-  // Find mother volume
-  string volume_name = table->GetIndex();
-  string mother_name = table->GetS("mother");
-  G4LogicalVolume *mother = FindMother(mother_name);
-  if (mother == 0)
-    Log::Die("Unable to find mother volume " + mother_name + " for " + volume_name);
-  G4VPhysicalVolume* phys_mother = FindPhysMother(mother_name);
-  if (phys_mother == 0)
-    Log::Die("GeoPMTFactoryBase error: PMT mother physical volume " + mother_name + " not found");
- 
-  // Get the model of PMT to build 
-  string pmt_model = table->GetS("pmt_model"); // the form factor of the PMT (physical properties)
-  DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
-  
-  PMTConstruction *construction = PMTConstruction::NewConstruction(lpmt,mother);
+G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, 
+        const std::vector<G4ThreeVector> &pmt_pos, 
+        const std::vector<G4ThreeVector> &pmt_dir, 
+        const std::vector<int> &pmt_type, 
+        const std::vector<double> &pmt_effi_corr) {
+        
+    string volume_name = table->GetS("index");
+    string mother_name = table->GetS("mother");
+    string pmt_model = table->GetS("pmt_model");
     
-  G4LogicalVolume *logiPMT = construction->BuildVolume(volume_name);
+    DBLinkPtr lpmt = DB::Get()->GetLink("PMT",pmt_model);
+
+    // Find mother volume
+    G4LogicalVolume *mother = FindMother(mother_name);
+    if (mother == 0)
+        Log::Die("GeoPMTParser: Unable to find mother volume " + mother_name + " for " + volume_name);
+    G4VPhysicalVolume* phys_mother = FindPhysMother(mother_name);
+    if (phys_mother == 0)
+        Log::Die("GeoPMTParser: PMT mother physical volume " + mother_name + " not found");
+  
+    PMTConstruction *construction = PMTConstruction::NewConstruction(lpmt,mother);
+    G4LogicalVolume *log_pmt = construction->BuildVolume(volume_name);
      
+
+//FIXME take a look at what's going on with the Bfield stuff - no docs on this to be found
+
 //preparing to calculate magnetic efficiency corrections for all PMTs, if requested
   int BFieldOn=0;
   try{BFieldOn=DB::Get()->GetLink("BField")->GetI("b_field_on");}
@@ -274,48 +193,28 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, std::vector
   else
     BEffiTable=NULL;
   
-  //PMTINFO is always in global coordinates - so calculate the local offset first
-  G4ThreeVector offset = G4ThreeVector(0.0,0.0,0.0);
-  for (string parent_name = mother_name; parent_name != ""; ) {
-     G4VPhysicalVolume *parent_phys = FindPhysMother(parent_name);
-     offset += parent_phys->GetFrameTranslation();
-     DBLinkPtr parent_table = DB::Get()->GetLink("GEO",parent_name);
-     parent_name = parent_table->GetS("mother");
-  }
-  
   // This will contain individual efficiency corrections for the placed PMTs
   map<int,double> EfficiencyCorrection;
   
   // Place physical PMTs
   // idx - the element of the particular set of arrays we are reading
   // id - the nth pmt that GeoPMTFactoryBase has built
-  for (int idx = start_idx, id = pmtinfo.GetPMTCount(); idx <= end_idx; idx++, id++) {
-  
-    EfficiencyCorrection[id] = pmt_effi_corr[idx];
+  for (size_t i = 0, id = pmtinfo.GetPMTCount(); i < pmt_pos.size(); i++, id++) {
   
     string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
     
-    // position
-    G4ThreeVector pmtpos(pmt_x[idx], pmt_y[idx], pmt_z[idx]);
-    pmtpos += offset;
-    if (rescale_radius)
-      pmtpos.setMag(new_radius);
-
-    // direction
-    G4ThreeVector pmtdir;
-    if (orient_manual)
-      pmtdir.set(dir_x[idx], dir_y[idx], dir_z[idx]);
-    else
-      pmtdir = orient_point - pmtpos;
-    pmtdir = pmtdir.unit();
-    if (flip == 1) pmtdir = -pmtdir; 
-
+    G4ThreeVector pmtpos = pmt_pos[i];
+    G4ThreeVector pmtdir = pmt_dir[i];
+    
+    // Store individual efficiency
+    EfficiencyCorrection[id] = pmt_effi_corr[i];
+    
     // Write the real (perhaps calculated) PMT positions and directions.
     // This goes into the DS by way of Gsim
     pmtinfo.AddPMT(
-        TVector3(pmtpos.x(), pmtpos.y(), pmtpos.z()),
-        TVector3(pmtdir.x(), pmtdir.y(), pmtdir.z()),
-        pmt_type[idx],
+        TVector3(pmtpos.x(),pmtpos.y(),pmtpos.z()),
+        TVector3(pmtdir.x(),pmtdir.y(),pmtdir.z()),
+        pmt_type[i],
         pmt_model);
 
     // if requested, generates the magnetic efficiency corrections as the PMTs are created
@@ -393,7 +292,8 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, std::vector
         }
       }
     }
-    
+
+
     // rotation required to point in direction of pmtdir
     double angle_y = (-1.0)*atan2(pmtdir.x(), pmtdir.z());
     double angle_x = atan2(pmtdir.y(), sqrt(pmtdir.x()*pmtdir.x()+pmtdir.z()*pmtdir.z()));
@@ -402,15 +302,15 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, std::vector
     pmtrot->rotateY(angle_y);
     pmtrot->rotateX(angle_x);
     
-    construction->PlacePMT(pmtrot, pmtpos, pmtname, logiPMT, phys_mother, false, id);
+    construction->PlacePMT(pmtrot, pmtpos, pmtname, log_pmt, phys_mother, false, id);
     
   } // end loop over id
 
   // finally pass the efficiency table to GLG4PMTOpticalModel
   const G4String modname(volume_name+"_optical_model");
-  for (size_t i = 0; i < logiPMT->GetFastSimulationManager()->GetFastSimulationModelList().size(); i++) {
-    if (logiPMT->GetFastSimulationManager()->GetFastSimulationModelList()[i]->GetName() == modname) {
-      ((GLG4PMTOpticalModel*)logiPMT->GetFastSimulationManager()->GetFastSimulationModelList()[i])->SetEfficiencyCorrection(EfficiencyCorrection);
+  for (size_t i = 0; i < log_pmt->GetFastSimulationManager()->GetFastSimulationModelList().size(); i++) {
+    if (log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i]->GetName() == modname) {
+      ((GLG4PMTOpticalModel*)log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i])->SetEfficiencyCorrection(EfficiencyCorrection);
       break;
     }
   }
