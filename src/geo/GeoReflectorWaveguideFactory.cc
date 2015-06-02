@@ -3,9 +3,9 @@
 #include <G4Material.hh>
 #include <G4Sphere.hh>
 #include <G4SubtractionSolid.hh>
-#include <RAT/PMTConstruction.hh>
+#include <RAT/ToroidalPMTConstruction.hh>
 #include <RAT/ConeWaveguideConstruction.hh>
-#include <RAT/GeoPMTInfoParser.hh>
+#include <RAT/PMTInfoParser.hh>
 #include <RAT/Log.hh>
 #include <G4PVPlacement.hh>
 #include <RAT/Materials.hh>
@@ -68,7 +68,7 @@ G4VPhysicalVolume *GeoReflectorWaveguideFactory::Construct(DBLinkPtr table)
 
   string pmt_table = table->GetS("pmt_table");
   DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-  GeoPMTInfoParser pmt_parser(lgeo_pmt,mother_name);
+  PMTInfoParser pmt_parser(lgeo_pmt,mother_name);
   DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
   ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
   G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");
@@ -77,7 +77,7 @@ G4VPhysicalVolume *GeoReflectorWaveguideFactory::Construct(DBLinkPtr table)
   string waveguide_desc = lgeo_pmt->GetS("waveguide_desc");
   string waveguide_table, waveguide_index;
   if (!DB::ParseTableName(waveguide_desc, waveguide_table, waveguide_index))
-    Log::Die("GeoPMTFactoryBase: Waveguide descriptor name is not a valid RATDB table: "
+    Log::Die("PMTFactoryBase: Waveguide descriptor name is not a valid RATDB table: "
              +waveguide_desc);
                                                                                                    
   ConeWaveguideConstruction coneConstruct(waveguide_table, waveguide_index);

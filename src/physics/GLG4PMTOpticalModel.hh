@@ -15,6 +15,7 @@
 
 #include "G4VFastSimulationModel.hh"
 #include "G4MaterialPropertyVector.hh"
+#include "G4OpticalSurface.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4UImessenger.hh"
@@ -42,7 +43,7 @@ public:
   // 28-Jul-2006 WGS: Must define a G4Region for Fast Simulations
   // (change from Geant 4.7 to Geant 4.8).
   GLG4PMTOpticalModel (G4String, G4Region*, G4LogicalVolume* body, 
-                       G4LogicalBorderSurface *pc_log_surface, 
+                       G4OpticalSurface *op_surface, 
 		       double efficiency_correction=1.0,
 		       double dynodeTop = 0.0, double dynodeRadius = 0.0,
 		       double prepulseProb = 0.0);

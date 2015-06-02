@@ -1,5 +1,5 @@
-#include <RAT/GeoPMTArrayFactory.hh>
-#include <RAT/GeoPMTInfoParser.hh>
+#include <RAT/PMTArrayFactory.hh>
+#include <RAT/PMTInfoParser.hh>
 #include <vector>
 #include <RAT/Log.hh>
 
@@ -7,17 +7,17 @@ using namespace std;
 
 namespace RAT {
 
-    G4VPhysicalVolume *GeoPMTArrayFactory::Construct(DBLinkPtr table){
+    G4VPhysicalVolume *PMTArrayFactory::Construct(DBLinkPtr table){
         
         string volume_name = table->GetS("index");
         string mother_name = table->GetS("mother");
         
-        info << "GeoPMTArrayFactory: Constructing volume " + volume_name << newline;
+        info << "PMTArrayFactory: Constructing volume " + volume_name << newline;
         
         string pos_table_name = table->GetS("pos_table");
         DBLinkPtr lpos_table = DB::Get()->GetLink(pos_table_name);
         
-        GeoPMTInfoParser pmtinfo(lpos_table,mother_name);
+        PMTInfoParser pmtinfo(lpos_table,mother_name);
         
         const vector<G4ThreeVector> &pmtinfo_pos = pmtinfo.GetPMTLocations();
         const vector<G4ThreeVector> &pmtinfo_dir = pmtinfo.GetPMTDirections();
@@ -62,13 +62,13 @@ namespace RAT {
             else if (orient_str == "point")
                 orient_manual = false;
             else 
-                Log::Die("GeoPMTFactoryBase error: Unknown PMT orientation " + orient_str);
+                Log::Die("PMTFactoryBase error: Unknown PMT orientation " + orient_str);
         } catch (DBNotFoundError &e) { }
         
         if (!orient_manual) {
             const vector<double> &orient_point_array = table->GetDArray("orient_point");
             if (orient_point_array.size() != 3)
-                Log::Die("GeoPMTFactoryBase error: orient_point must have 3 values");
+                Log::Die("PMTFactoryBase error: orient_point must have 3 values");
             orient_point.set(orient_point_array[0], orient_point_array[1],  orient_point_array[2]);    
         }
         

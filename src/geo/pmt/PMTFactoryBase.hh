@@ -1,13 +1,13 @@
-#ifndef __RAT_GeoPMTFactoryBase__
-#define __RAT_GeoPMTFactoryBase__
+#ifndef __RAT_PMTFactoryBase__
+#define __RAT_PMTFactoryBase__
 
 #include <RAT/GeoFactory.hh>
 #include <RAT/DS/PMTInfo.hh>
 
 namespace RAT {
-  class GeoPMTFactoryBase : public GeoFactory {
+  class PMTFactoryBase : public GeoFactory {
   public:
-    GeoPMTFactoryBase(const std::string &name) : GeoFactory(name) { };
+    PMTFactoryBase(const std::string &name) : GeoFactory(name) { };
     static const DS::PMTInfo& GetPMTInfo() { return pmtinfo; }
   protected:
   

@@ -5,8 +5,8 @@
 #include <G4SubtractionSolid.hh>
 #include <G4DisplacedSolid.hh>
 #include <RAT/UnionSolidArray.hh>
-#include <RAT/PMTConstruction.hh>
-#include <RAT/GeoPMTInfoParser.hh>
+#include <RAT/ToroidalPMTConstruction.hh>
+#include <RAT/PMTInfoParser.hh>
 #include <RAT/Log.hh>
 #include <G4PVPlacement.hh>
 #include <RAT/Materials.hh>
@@ -69,7 +69,7 @@ G4VPhysicalVolume *GeoReflectorFactory::Construct(DBLinkPtr table)
 
   string pmt_table = table->GetS("pmt_table");
   DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-  GeoPMTInfoParser pmt_parser(lgeo_pmt,mother_name);
+  PMTInfoParser pmt_parser(lgeo_pmt,mother_name);
   DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
   ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
   G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");

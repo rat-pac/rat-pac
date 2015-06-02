@@ -1,5 +1,5 @@
-#ifndef __RAT_GeoPMTInfoParser__
-#define __RAT_GeoPMTInfoParser__
+#ifndef __RAT_PMTInfoParser__
+#define __RAT_PMTInfoParser__
 
 #include <G4RotationMatrix.hh>
 #include <RAT/PMTConstruction.hh>
@@ -9,10 +9,10 @@
 namespace RAT {
 
 // Helper class which reads the attributes stored in a PMTINFO
-class GeoPMTInfoParser {
+class PMTInfoParser {
 public:
-    GeoPMTInfoParser(DBLinkPtr table, const std::string &mother_name);
-    ~GeoPMTInfoParser() { };
+    PMTInfoParser(DBLinkPtr table, const std::string &mother_name);
+    ~PMTInfoParser() { };
 
     // Returns total number of PMTs described by the PMTINFO table
     int GetPMTCount() const { return fPos.size(); };

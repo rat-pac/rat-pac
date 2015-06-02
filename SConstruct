@@ -7,7 +7,7 @@
 #### Add new source module names here ####
 
 modules = Split('''
-cmd core cut daq db fit gen geo io physics stlplus util
+cmd core cut daq db fit gen geo geo/pmt io physics stlplus util
 ''') # ds handled separately
 
 

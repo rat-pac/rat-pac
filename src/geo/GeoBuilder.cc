@@ -10,8 +10,8 @@
 #include <RAT/GeoSphereFactory.hh>
 #include <RAT/GeoReflectorFactory.hh>
 #include <RAT/GeoReflectorWaveguideFactory.hh>
-#include <RAT/GeoPMTArrayFactory.hh>
-#include <RAT/GeoPMTCoverageFactory.hh>
+#include <RAT/PMTArrayFactory.hh>
+#include <RAT/PMTCoverageFactory.hh>
 #include <RAT/GeoWaterBoxArrayFactory.hh>
 #include <RAT/GeoBubbleFactory.hh>
 #include <RAT/GeoPerfTubeFactory.hh>
@@ -44,8 +44,8 @@ GeoBuilder::GeoBuilder()
   new GeoSphereFactory();
   new GeoReflectorFactory();
   new GeoReflectorWaveguideFactory();
-  new GeoPMTArrayFactory();
-  new GeoPMTCoverageFactory();
+  new PMTArrayFactory();
+  new PMTCoverageFactory();
   new GeoWaterBoxArrayFactory();
   new GeoBubbleFactory();
   new GeoPerfTubeFactory();

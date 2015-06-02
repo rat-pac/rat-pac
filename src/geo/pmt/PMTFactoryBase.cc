@@ -1,4 +1,4 @@
-#include <GeoPMTFactoryBase.hh>
+#include <PMTFactoryBase.hh>
 #include <RAT/DB.hh>
 #include <RAT/Log.hh>
 
@@ -25,9 +25,9 @@ using namespace std;
 
 namespace RAT {
 
-DS::PMTInfo GeoPMTFactoryBase::pmtinfo;
+DS::PMTInfo PMTFactoryBase::pmtinfo;
 
-G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table, 
+G4VPhysicalVolume *PMTFactoryBase::ConstructPMTs(DBLinkPtr table, 
         const std::vector<G4ThreeVector> &pmt_pos, 
         const std::vector<G4ThreeVector> &pmt_dir, 
         const std::vector<int> &pmt_type, 
@@ -42,10 +42,10 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     // Find mother volume
     G4LogicalVolume *mother = FindMother(mother_name);
     if (mother == 0)
-        Log::Die("GeoPMTParser: Unable to find mother volume " + mother_name + " for " + volume_name);
+        Log::Die("PMTParser: Unable to find mother volume " + mother_name + " for " + volume_name);
     G4VPhysicalVolume* phys_mother = FindPhysMother(mother_name);
     if (phys_mother == 0)
-        Log::Die("GeoPMTParser: PMT mother physical volume " + mother_name + " not found");
+        Log::Die("PMTParser: PMT mother physical volume " + mother_name + " not found");
   
     PMTConstruction *construction = PMTConstruction::NewConstruction(lpmt,mother);
     G4LogicalVolume *log_pmt = construction->BuildVolume(volume_name);
@@ -198,7 +198,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   
   // Place physical PMTs
   // idx - the element of the particular set of arrays we are reading
-  // id - the nth pmt that GeoPMTFactoryBase has built
+  // id - the nth pmt that PMTFactoryBase has built
   for (size_t i = 0, id = pmtinfo.GetPMTCount(); i < pmt_pos.size(); i++, id++) {
   
     string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid

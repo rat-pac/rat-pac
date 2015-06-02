@@ -14,7 +14,6 @@
 #include "GLG4HitPhoton.hh"
 
 #include "G4LogicalBorderSurface.hh"
-#include "G4OpticalSurface.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4TransportationManager.hh"
@@ -42,7 +41,7 @@ double GLG4PMTOpticalModel::surfaceTolerance = 0.0;
 GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
 					  G4Region* envelope_region,
 					  G4LogicalVolume* envelope_log,
-					  G4LogicalBorderSurface *pc_log_surface,
+					  G4OpticalSurface* pc_opsurf,
 					  double efficiency_correction,
 					  double dynodeTop,
 					  double dynodeRadius,
@@ -75,23 +74,7 @@ GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
   // be VERY careful about how to do this
   _inner2_phys= envelope_log->GetDaughter(1);
   _central_gap_phys = envelope_log->GetDaughter(2);
-  
-  if (pc_log_surface == NULL)
-    G4Exception(__FILE__, "Bad Properties", FatalException, "GLG4PMTOpticalModel: no photocathode logical surface!?!");
 
-#if (G4VERSION_NUMBER < 600 )
-  // it used to be so easy...
-  G4OpticalSurface* pc_opsurf= pc_log_surface->GetOpticalSurface();
-#else
-  // G4LogicalSurface::GetOpticalSurface() function was eliminated from Geant4
-  // version 6.  G4OpticalSurface now inherits from G4SurfaceProperty.
-  // We have to trust that the G4SurfaceProperty returned by
-  // pc_log_surface->GetSurfaceProperty() will be a G4OpticalSurface,
-  // and cast the pointer accordingly by faith alone!
-  G4OpticalSurface* pc_opsurf= (G4OpticalSurface*)
-    ( pc_log_surface->GetSurfaceProperty() );
-#endif
-  
   if (pc_opsurf == NULL)
     G4Exception(__FILE__, "Bad Properties", FatalException, "GLG4PMTOpticalModel: no photocathode optical surface!?!");
   G4MaterialPropertiesTable* pc_pt=
