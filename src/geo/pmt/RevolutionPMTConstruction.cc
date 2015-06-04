@@ -19,6 +19,17 @@ RevolutionPMTConstruction::RevolutionPMTConstruction(DBLinkPtr table, G4LogicalV
     
     string pmt_model = table->GetS("index");
     
+    fParams.rEdge = table->GetDArray("rho_edge");
+    fParams.zEdge = table->GetDArray("z_edge");
+    fParams.rInner = table->GetDArray("rho_inner");
+    fParams.zInner = table->GetDArray("z_inner");
+    fParams.dynodeRadius = table->GetD("dynode_radius");
+    fParams.dynodeTop = table->GetD("dynode_top");
+    fParams.dynodeHeight = table->GetD("dynode_height");
+    
+    Log::Assert(fParams.rEdge.size() == fParams.zEdge.size(),"RevolutionPMTConstruction: " + pmt_model + " must have equal length rho_edge, z_edge arrays");
+    Log::Assert(fParams.rInner.size() == fParams.zInner.size(),"RevolutionPMTConstruction: " + pmt_model + " must have equal length rho_inner, z_inner arrays");
+    
     // Materials
     fParams.exterior = mother->GetMaterial();
     fParams.glass = G4Material::GetMaterial(table->GetS("glass_material"));
@@ -51,18 +62,29 @@ G4LogicalVolume* RevolutionPMTConstruction::BuildVolume(const std::string &prefi
     if (body_log) return body_log;
                                     
     // glass body
-    G4Polycone *body_solid = NULL;// = (GLG4TorusStack*)BuildSolid(prefix+"_body_solid");
-
+    G4Polycone *body_solid  = (G4Polycone*)BuildSolid(prefix+"_body_solid");
+    
+    size_t inner_equator_idx; //defined as zero in z
+    for (inner_equator_idx = 0; inner_equator_idx < fParams.zInner.size(); inner_equator_idx++) {
+        if (fParams.zInner[inner_equator_idx] <= 0.0) break;
+    }
+    size_t edge_equator_idx; //defined as zero in z
+    for (edge_equator_idx = 0; edge_equator_idx < fParams.zEdge.size(); edge_equator_idx++) {
+        if (fParams.zEdge[edge_equator_idx] <= 0.0) break;
+    }
+    
+    vector<double> zeros(fParams.rInner.size(),0.0);
+    
     // inner vacuum
-    G4Polycone *inner1_solid = NULL;// = new GLG4TorusStack(prefix + "_inner1_solid");
-    G4Polycone *inner2_solid = NULL;// = new GLG4TorusStack(prefix + "_inner2_solid");
+    G4Polycone *inner1_solid = new G4Polycone(prefix + "_inner1_solid",0.0,2.0*pi,inner_equator_idx+1,&fParams.zInner[0],&zeros[0],&fParams.rInner[0]);
+    G4Polycone *inner2_solid = new G4Polycone(prefix + "_inner2_solid",0.0,2.0*pi,fParams.rInner.size()-inner_equator_idx,&fParams.zInner[inner_equator_idx],&zeros[0],&fParams.rInner[inner_equator_idx]);
 
+    // dynode (FIXME solid like other tube...?)
     G4Tubs *dynode_solid = new G4Tubs(prefix+"_dynode_solid", 0.0, fParams.dynodeRadius, fParams.dynodeHeight/2.0, 0., twopi);
 
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
-    G4double hhgap = 0.5e-7;                                            // half the needed gap between the front and back of the PMT
-    G4double toleranceGapRadius = 0.0;//  = innerRhoEdge[equatorIndex];            // the outer radius of the gap needs to be equal to the
-                                                                       // inner radius of the PMT where inner1 and inner2 join 
+    G4double hhgap = 0.5e-7; // half the needed gap between the front and back of the PMT
+    G4double toleranceGapRadius = fParams.rInner[inner_equator_idx]; // gap goes at equator
                                                                        
     G4Tubs *central_gap_solid = new G4Tubs(prefix+"_central_gap_solid", 0.0, toleranceGapRadius, hhgap, 0., twopi);
 
@@ -109,8 +131,7 @@ G4LogicalVolume* RevolutionPMTConstruction::BuildVolume(const std::string &prefi
         0 );
         
     // build the optical surface for the dynode
-    new G4LogicalSkinSurface(prefix+"_dynode_logsurf",
-        dynode_log, fParams.dynode_surface);
+    new G4LogicalSkinSurface(prefix+"_dynode_logsurf", dynode_log, fParams.dynode_surface);
 
     // setup optical model
     G4Region* body_region = new G4Region(prefix+"_GLG4_PMTOpticalRegion");
@@ -145,7 +166,8 @@ G4LogicalVolume* RevolutionPMTConstruction::BuildVolume(const std::string &prefi
 }
 
 G4VSolid* RevolutionPMTConstruction::BuildSolid(const string &name) {
-    G4Polycone *body = NULL;
+    vector<double> zeros(fParams.rEdge.size(),0.0);
+    G4Polycone *body = new G4Polycone(name,0,2*pi,fParams.rEdge.size(),&fParams.zEdge[0],&zeros[0],&fParams.rEdge[0]);
     return body;
 }
 

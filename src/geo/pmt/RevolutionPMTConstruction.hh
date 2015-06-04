@@ -23,10 +23,11 @@ struct RevolutionPMTConstructionParams {
     
     bool invisible;
     
-    double wallThickness; // mm
     double dynodeRadius; // mm
     double dynodeTop; // mm
     double dynodeHeight; // mm
+
+    std::vector<double> rInner, zInner, rEdge, zEdge;
 
     G4Material *exterior;
     G4Material *glass;
