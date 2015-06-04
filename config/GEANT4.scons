@@ -13,6 +13,7 @@ for key in ['ASFLAGS','CCFLAGS','CPPFLAGS','CPPPATH','LIBPATH','LIBS',
             'LINKFLAGS', 'CPPDEFINES']:
     if key in g4env:
         g4opts[key] = g4env[key]
+g4opts["LIBS"] += ["xerces-c"]
 
 # Returns a dictionary when you import this file using:
 # g4opts = SConscript('config/GEANT4.scons')
