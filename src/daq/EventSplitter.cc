@@ -26,26 +26,23 @@ namespace RAT {
             // we really should warn the user what is taking place
         }
         
-        double totalQ    = 0.0;
-        double calibQ    = 0.0;
-        double time, charge;
-        int    subevent  = 0;
-        double timeDiff;
-        bool subEventFound   = 0.0;
+        double      totalQ    = 0.0;
+        double      calibQ    = 0.0;
+        double      time, charge;
+        int         subevent  = 0;
+        double      timeDiff;
+        bool        subPMTEventFound   = 0.0;
+        int         countPMTinSubEvents = 0;
+       // Double_t    timeSubEvents = 0.0;
         
         Double_t chargeTmp[200];
         Double_t timeTmp[200];
-//        Double_t timeMin[200];
-//        Double_t timeMax[200];
-        
-
-        //        Double_t pidTmp[200];
-        
         
         //Reset the container of the PMT information
-        timeVec.erase   (timeVec.begin()  ,timeVec.end());
-        chargeVec.erase (chargeVec.begin(),chargeVec.end());
-        pmtIDVec.erase  (pmtIDVec.begin() ,pmtIDVec.end());
+//        timeVec.erase   (timeVec.begin()  ,timeVec.end());
+//        chargeVec.erase (chargeVec.begin(),chargeVec.end());
+//        pmtIDVec.erase  (pmtIDVec.begin() ,pmtIDVec.end());
+        matr.erase (matr.begin() ,matr.end());
         
         //Fill the containers of the PMT information
         for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
@@ -60,79 +57,136 @@ namespace RAT {
 
                 
                 if(mcpmt->GetMCPhotonCount()==1){
-                    time                = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                    charge              = mcpmt->GetMCPhoton(0)->GetCharge();
-                    timeTmp[subevent]   = time;
-                    chargeTmp[subevent] = charge;
+                    timeTmp[subevent]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                    chargeTmp[subevent] = mcpmt->GetMCPhoton(0)->GetCharge();
                     
-                    chargeVec.push_back(chargeTmp[subevent]);
-                    timeVec.push_back(timeTmp[subevent]);
-                    pmtIDVec.push_back(pmtID);
+                    Vec.erase  (Vec.begin() ,Vec.end());
+                    Vec.push_back(timeTmp[subevent]);
+                    Vec.push_back(chargeTmp[subevent]);
+                    Vec.push_back(pmtID);
+                    matr.push_back(Vec);
+                    
+//                    chargeVec.push_back(chargeTmp[subevent]);
+//                    timeVec.push_back(timeTmp[subevent]);
+//                    pmtIDVec.push_back(pmtID);
+                    
                     chargeTmp[subevent] = timeTmp[subevent] = 0;
-                    
                 }
                 
                 if(mcpmt->GetMCPhotonCount()>1){
                     for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
                         
-                        subEventFound = 0;
+                        subPMTEventFound = 0;
                         for (int k = 0; k<=subevent; k++) {
                             timeDiff  = timeTmp[k] - mcpmt->GetMCPhoton(i)->GetFrontEndTime();
                             if (    timeDiff > 0  &&  abs(timeDiff) < collectionWindow){
                                 timeTmp[k]   = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
                                 chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
-//                                if (timeTmp[k]<timeMin[k]) {
-//                                    timeMin[k] = timeTmp[k];
-//                                }
-//                                if (timeTmp[k]>timeMax[k]) {
-//                                    timeMax[k] = timeTmp[k];
-//                                }
-//                                std::printf("(1) a PMT hit %d %f!\n",pmtID,timeTmp[subevent]);
-                                subEventFound = 1;
+                                subPMTEventFound = 1;
                                 
                             }else if(timeDiff < 0 && abs(timeDiff) < collectionWindow){
-                                timeTmp[k]   = timeTmp[k];//Wrong here
+                                timeTmp[k]   = timeTmp[k];
                                 chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
-//                                std::printf("(2) a PMT hit %d %f %f!\n",pmtID,timeTmp[subevent],mcpmt->GetMCPhoton(i)->GetFrontEndTime());
-
-                                subEventFound = 1;
+                                subPMTEventFound = 1;
                             }
                         }
-                        if(subEventFound == 0){
+                        if(subPMTEventFound == 0){
                             subevent++;
                             timeTmp[subevent]   = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
                             chargeTmp[subevent] += mcpmt->GetMCPhoton(i)->GetCharge();
-//                            std::printf("(3) a PMT hit %d %f %f!\n",pmtID,timeTmp[subevent],timeTmp[subevent-1]);
-                        
                         }
                     }
                     for (int k = 0; k<=subevent; k++) {
                         
                         if (timeTmp[k]==0) {
-                            std::printf("What what what?????\n");
+                            std::printf("There is something wrong in the eventSplitter code.\n");
                         }
-                        chargeVec.push_back(chargeTmp[k]);
-                        timeVec.push_back(timeTmp[k]);
-                        pmtIDVec.push_back(pmtID);
+//                        chargeVec.push_back(chargeTmp[k]);
+//                        timeVec.push_back(timeTmp[k]);
+//                        pmtIDVec.push_back(pmtID);
+                        
+                        Vec.erase  (Vec.begin() ,Vec.end());
+                        Vec.push_back(timeTmp[k]);
+                        Vec.push_back(chargeTmp[k]);
+                        Vec.push_back(pmtID);
+                        
+                        matr.push_back(Vec);
+
                         chargeTmp[k] = timeTmp[k] = 0;
                     }
+                }
+            }
+        }
+       
+//        if(timeVec.size()>nhitThresh){
+//            std::printf("My events contains %lu distinct PMT hits\n",timeVec.size());
+//        }
+
+//        for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
+//        {
+//            for ( std::vector<double>::size_type j = 0; j < matr[i].size(); j++ )
+//            {
+//                std::cout << matr[i][j] << ' ';
+//            }
+//            std::cout << std::endl;
+//        }
+////
+//        std::cout << std::endl;
+//        std::cout << std::endl;
+//        std::cout << std::endl;
+        
+        std::sort(matr.begin(),matr.end());
+//        
+//        for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
+//        {
+//            for ( std::vector<double>::size_type j = 0; j < matr[i].size(); j++ )
+//            {
+//                std::cout << matr[i][j] << ' ';
+//            }
+//            std::cout << std::endl;
+//        }
+        
+        Int_t t_i = matr[0][0] ; // Set the first PMT hit of the event
+        Int_t t_f = matr[matr.size()-1][0] + 1; //Add a second so to make sure there is
+                                                // no roundoff errors for the final PMT
+                                                // hit of the event
+        
+        //std::cout << t_i << " " << t_f << std::endl;
+        //
+        
+        // Start counting in clock clicks from one
+//        
+//        for (int t_i =0 ; t_i < t_f; t_i++) {
+//            
+//        }
+        
+
+        subevent = 0;
+        countPMTinSubEvents = 0;
+        
+        if ((t_f-t_i) < int(collectionWindow)){
+            std::cout << "\nOnly one subevent " << t_i << " " << t_f << std::endl;
+            subevent = 1;
+            
+        }else{
+            std::cout << "\nPotentially more than one subevent " << t_i << " " << t_f << std::endl;
+        
+            for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
+            {
+                if ( matr[i][0] < t_i +int(collectionWindow)){
+                    countPMTinSubEvents++;
+                }else{
+                    
+                    std::printf("Number of PMT in subevent %d has %d PMT at time %d\n",subevent,countPMTinSubEvents,t_i);
+                    subevent++;
+                    countPMTinSubEvents = 0;
+                    t_i =matr[i][0];
                     
                 }
             }
         }
         
-        
-        //
-        //                chargeVec.push_back(charge);
-        //                timeVec.push_back(time);
-        //                pmtIDVec.push_back(pmtID);
-        if(timeVec.size()>nhitThresh){
-            std::printf("My events contains %lu distinct PMT hits\n",timeVec.size());
-        }
-        std::cout << "myvector contains:";
-        for (std::vector<double>::iterator it=timeVec.begin(); it!=timeVec.end(); ++it)
-            std::cout << ' ' << *it;
-        std::cout << '\n';
+        std::cout << "Total number of subevents " << subevent << std::endl;
         
         DS::EV *ev = ds->AddNewEV();
         ev->SetID(fEventCounter);

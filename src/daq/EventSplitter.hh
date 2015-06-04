@@ -26,6 +26,9 @@ protected:
   std::vector<double> chargeVec;
   std::vector<double> timeVec;
   std::vector<double> pmtIDVec;
+  std::vector<double> Vec;
+  std::vector <std::vector <double> > matr;
+
 };
 
 

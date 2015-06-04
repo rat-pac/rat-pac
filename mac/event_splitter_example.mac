@@ -15,7 +15,7 @@
 
 
 /rat/proc count
-/rat/procset update 1
+/rat/procset update 100
 
 # Use IO.default_output_filename
 /rat/proclast outroot
