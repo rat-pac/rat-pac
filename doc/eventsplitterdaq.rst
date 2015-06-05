@@ -9,7 +9,9 @@ Data Structure Definition
 `````````````````````````
 The "physics events" and "detector events" are both kept in the data structure. For example, when using the processor the line:
 
+...
 CountProc: Event 100 (181 triggered events)
+...
 
 indicates that 100 "physics events" have been processed while 181 "detector events" have been observed. This case was for pi+ events provided in the "mac/event_splitter_example.mac" routine, these events tend eventually decay into michel electrons.
 
@@ -40,6 +42,10 @@ Additionally, two other parameters are used in this DAQ processor:
 
 *id*: Incremental counter that registers that there is a subevent present
 *qTotal*: Charge collected within the sub-event window
+
+For an example of the charge/timing seperation in root:
+
+>T.Draw("ds.ev.qTotal:log10(ds.ev.triggerTime)","","colz")
 
 
 

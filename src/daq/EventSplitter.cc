@@ -48,13 +48,13 @@ namespace RAT {
                 time                = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
                 charge              = 0;
                 subevent            = 0;
-                timeTmp[subevent]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                chargeTmp[subevent] = mcpmt->GetMCPhoton(0)->GetCharge();
+                timeTmp[0]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                chargeTmp[0] = mcpmt->GetMCPhoton(0)->GetCharge();
                 
-                
+                //If PMT only has one hit:
                 if(mcpmt->GetMCPhotonCount()==1){
-                    timeTmp[subevent]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                    chargeTmp[subevent] = mcpmt->GetMCPhoton(0)->GetCharge();
+                    timeTmp[0]   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
+                    chargeTmp[0] = mcpmt->GetMCPhoton(0)->GetCharge();
                     
                     Vec.erase  (Vec.begin() ,Vec.end());
                     Vec.push_back(timeTmp[subevent]);
@@ -62,24 +62,32 @@ namespace RAT {
                     Vec.push_back(pmtID);
                     matr.push_back(Vec);
                     
-                    chargeTmp[subevent] = timeTmp[subevent] = 0;
+                    chargeTmp[0] = timeTmp[0] = 0;
                 }
                 
                 if(mcpmt->GetMCPhotonCount()>1){
                     for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
                         
                         subPMTEventFound = 0;
+                        
                         for (int k = 0; k<=subevent; k++) {
+                            
                             timeDiff  = timeTmp[k] - mcpmt->GetMCPhoton(i)->GetFrontEndTime();
-                            if (    timeDiff > 0  &&  abs(timeDiff) < collectionWindow){
+                            
+                            if (timeDiff > 0  &&  abs(timeDiff) < collectionWindow){
+                                
                                 timeTmp[k]   = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
                                 chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
                                 subPMTEventFound = 1;
                                 
                             }else if(timeDiff < 0 && abs(timeDiff) < collectionWindow){
+                        
                                 timeTmp[k]   = timeTmp[k];
                                 chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
                                 subPMTEventFound = 1;
+                            }else {
+                                std::printf("There is something wrong: %d %f %f %f %f.\n",\
+                                            pmtID,timeTmp[k],timeDiff,abs(timeDiff),chargeTmp[k]);
                             }
                         }
                         if(subPMTEventFound == 0){
@@ -101,7 +109,7 @@ namespace RAT {
                         
                         matr.push_back(Vec);
                         
-                        chargeTmp[k] = timeTmp[k] = 0;
+                        chargeTmp[k] = timeTmp[k] = 0.0;
                     }
                 }
             }
@@ -192,7 +200,6 @@ namespace RAT {
                     totalQ+=matr[j][1];
                 }
             }
-            
             ev->SetTotalCharge(totalQ);
         }
         
