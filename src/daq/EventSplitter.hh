@@ -19,7 +19,7 @@ public:
 protected:
   int fEventCounter;
   double clockSpeed;
-  double slidingWindow;
+  double offsetToWindow;
   double collectionWindow;
   double nhitThresh;
 //  std::vector<double> fSPECharge;

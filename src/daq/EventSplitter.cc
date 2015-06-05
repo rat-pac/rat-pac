@@ -22,32 +22,28 @@ namespace RAT {
         DS::MC *mc = ds->GetMC();
         if(ds->ExistEV()) {  // there is already a EV branch present
             ds->PruneEV();     // remove it, otherwise we'll have multiple detector events
-            // in this physics event
-            // we really should warn the user what is taking place
         }
         
         double      totalQ    = 0.0;
-        double      calibQ    = 0.0;
+//        double      calibQ    = 0.0;
         double      time, charge;
         int         subevent  = 1;
         double      timeDiff;
         bool        subPMTEventFound   = 0.0;
         int         countPMTinSubEvents = 0;
-        // Double_t    timeSubEvents = 0.0;
         
         Double_t chargeTmp[200];
         Double_t timeTmp[200];
         
         //Reset the container of the PMT information
-        //        timeVec.erase   (timeVec.begin()  ,timeVec.end());
-        //        chargeVec.erase (chargeVec.begin(),chargeVec.end());
-        //        pmtIDVec.erase  (pmtIDVec.begin() ,pmtIDVec.end());
         matr.erase (matr.begin() ,matr.end());
         recordSubTime.erase (recordSubTime.begin() ,recordSubTime.end());
+        
         //Fill the containers of the PMT information
         for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
             DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
             int pmtID = mcpmt->GetID();
+            
             if (mcpmt->GetMCPhotonCount() > 0) {
                 time                = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
                 charge              = 0;
@@ -65,10 +61,6 @@ namespace RAT {
                     Vec.push_back(chargeTmp[subevent]);
                     Vec.push_back(pmtID);
                     matr.push_back(Vec);
-                    
-                    //                    chargeVec.push_back(chargeTmp[subevent]);
-                    //                    timeVec.push_back(timeTmp[subevent]);
-                    //                    pmtIDVec.push_back(pmtID);
                     
                     chargeTmp[subevent] = timeTmp[subevent] = 0;
                 }
@@ -101,9 +93,6 @@ namespace RAT {
                         if (timeTmp[k]==0) {
                             std::printf("There is something wrong in the eventSplitter code.\n");
                         }
-                        //                        chargeVec.push_back(chargeTmp[k]);
-                        //                        timeVec.push_back(timeTmp[k]);
-                        //                        pmtIDVec.push_back(pmtID);
                         
                         Vec.erase  (Vec.begin() ,Vec.end());
                         Vec.push_back(timeTmp[k]);
@@ -122,46 +111,42 @@ namespace RAT {
         
         Double_t t_i = matr[0][0] ; // Set the first PMT hit of the event
         Double_t t_f = matr[matr.size()-1][0] + 1; //Add a second so to make sure there is
-       
+        
         subevent = 1;
         countPMTinSubEvents = 0;
-//        
-//        Vec.erase  (Vec.begin() ,Vec.end());
-//        Vec.push_back(subevent);
-//        Vec.push_back(t_i);
-//        recordSubTime.push_back(Vec);
-
+        
         if ((t_f-t_i) < (collectionWindow)){
+            
             std::cout << "\nOnly one subevent " << t_i << " " << t_f << std::endl;
             subevent = 1;
-
+            
             Vec.erase  (Vec.begin() ,Vec.end());
             Vec.push_back(subevent);
             Vec.push_back(t_i);
             Vec.push_back(matr.size());
             
             recordSubTime.push_back(Vec);
-                        
+            
         }else{
             std::cout << "\nPotentially more than one subevent " << t_i << " " << t_f << std::endl;
             
             for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
             {
-//                std::printf("%f %d %d\n",matr[i][0] -t_i, subevent,countPMTinSubEvents);
+                //                std::printf("%f %d %d\n",matr[i][0] -t_i, subevent,countPMTinSubEvents);
                 if ( matr[i][0] < t_i +int(collectionWindow)){
                     countPMTinSubEvents++;
                 }else{
-                   // std::printf("Number of PMT in subevent %d has %d PMT at time %5.3f\n",subevent,countPMTinSubEvents,t_i);
+                    // std::printf("Number of PMT in subevent %d has %d PMT at time %5.3f\n",subevent,countPMTinSubEvents,t_i);
                     Vec.erase  (Vec.begin() ,Vec.end());
                     Vec.push_back(subevent);
                     Vec.push_back(t_i);
                     Vec.push_back(countPMTinSubEvents);
-
+                    
                     recordSubTime.push_back(Vec);
                     countPMTinSubEvents = 1;
                     subevent++;
                     t_i =matr[i][0];
-
+                    
                 }
                 
             }
@@ -174,9 +159,8 @@ namespace RAT {
             
             recordSubTime.push_back(Vec);
             countPMTinSubEvents = 0;
-
+            
         }
-
         
         for ( std::vector<std::vector<double> >::size_type i = 0; i < recordSubTime.size(); i++ )
         {
@@ -189,65 +173,36 @@ namespace RAT {
         
         std::cout << "Total number of subevents " << subevent << std::endl;
         
-        DS::EV *ev = ds->AddNewEV();
-        ev->SetID(fEventCounter);
-        fEventCounter++;
-        
-        //Dangerous here, adding new event
-        //ev = ds->AddNewEV();
-        
-        ev->SetID(fEventCounter);
-        fEventCounter++;
-        
-        for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
-            DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
-            int pmtID = mcpmt->GetID();
+        for ( std::vector<std::vector<double> >::size_type i = 0; i < recordSubTime.size(); i++ ){
             
-            if (mcpmt->GetMCPhotonCount() > 0) {
-                // Need at least one photon to trigger
-                DS::PMT* pmt = ev->AddNewPMT();
-                pmt->SetID(pmtID);
+            DS::EV *ev = ds->AddNewEV();
+            
+            ev->SetTotalSubEV(recordSubTime.size());
+            ev->SetSubEV(int(i));
+            ev->SetID(fEventCounter);
+            ev->SetSubTriggerTime(recordSubTime[i][1]);
+            
+            fEventCounter++;
+            totalQ = 0.0;
+            
+            for ( std::vector<std::vector<double> >::size_type j = 0; j < matr.size(); j++ ){
                 
-                // Create one sample, hit time is determined by first hit,
-                // "infinite" charge integration time
-                // WARNING: gets multiphoton effect right, but not walk correction
-                // Write directly to calibrated waveform branch
-                
-                time = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                //need to understand this, not realistic
-                charge = 0;
-                
-                if(mcpmt->GetMCPhotonCount()==1){
-                    time   = mcpmt->GetMCPhoton(0)->GetFrontEndTime();
-                    charge = mcpmt->GetMCPhoton(0)->GetCharge();
-                    //          std::printf("%3d %3d %4d %10.2f %10.2f %5.2f\n",fEventCounter,\
-                    //                        0,pmtID,\
-                    //                        time,\
-                    //                        mcpmt->GetMCPhoton(0)->GetHitTime(),\
-                    //                        time - mcpmt->GetMCPhoton(0)->GetHitTime());
+                if (matr[j][0] >= recordSubTime[i][1] && matr[j][0] < recordSubTime[i][1] + collectionWindow ) {
+                    
+//                    std::printf("%f %f %d %d %f %f\n",matr[j][0],recordSubTime[i][1],i,j,matr[j][1],matr[j][2]);
+                    DS::PMT* pmt = ev->AddNewPMT();
+                    pmt->SetID(int(matr[j][2]));
+                    pmt->SetTime(matr[j][0]-recordSubTime[i][1]+offsetToWindow);
+                    pmt->SetCharge(matr[j][1]);
+                    totalQ+=matr[j][1];
                 }
-                if(mcpmt->GetMCPhotonCount()>1){
-                    for (int i=1; i < mcpmt->GetMCPhotonCount(); i++)  {
-                        if (time > mcpmt->GetMCPhoton(i)->GetFrontEndTime())
-                            time = mcpmt->GetMCPhoton(i)->GetFrontEndTime();//end if
-                        charge += mcpmt->GetMCPhoton(i)->GetCharge();
-                    }
-                }
-                //pmt->SetCalibratedCharge(charge);
-                totalQ += charge;
-                
-                //charge *= fSPECharge[pmtID] * 1e12; /* convert to pC */
-                pmt->SetTime(time);
-                pmt->SetCharge(charge);
-                calibQ += charge;
             }
+            
+            ev->SetTotalCharge(totalQ);
         }
         
-        ev->SetTotalCharge(totalQ);
-        //ev->SetCalibQ(calibQ);
-        
         return Processor::OK;
-    }
+    }// end of Processor::Result EventSplitter::DSEvent
     
     
     void EventSplitter::SetI(std::string param, int value)
@@ -255,16 +210,16 @@ namespace RAT {
         if (param == "clockSpeedMHz") {
             clockSpeed= double(value);
             std::printf("Clock speed: %13.1f MHz\n",clockSpeed);
-        }else if (param == "slidingTimeWindowNanoSec"){
-            slidingWindow = double(value);
-            std::printf("Sliding time window: %4.1f ns\n",slidingWindow);
+        }else if (param == "offsetToTimeWindowNanoSec"){
+            offsetToWindow = double(value);
+            std::printf("Offset to time window: %4.1f ns\n",offsetToWindow);
         }else if (param == "nhitThreshold"){
             nhitThresh = value;
             std::printf("Nhit Threshold: %9.0f hit\n",nhitThresh);
         }else if (param == "collectionTimeWindowNanoSec"){
             collectionWindow = value;
             std::printf("Collection window: %7.1f ns\n",collectionWindow);
-        }
+        }// End of EventSplitter::SetI
     }
 } // namespace RAT
 
