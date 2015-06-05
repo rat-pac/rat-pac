@@ -29,7 +29,7 @@ namespace RAT {
         double      totalQ    = 0.0;
         double      calibQ    = 0.0;
         double      time, charge;
-        int         subevent  = 0;
+        int         subevent  = 1;
         double      timeDiff;
         bool        subPMTEventFound   = 0.0;
         int         countPMTinSubEvents = 0;
@@ -43,7 +43,7 @@ namespace RAT {
         //        chargeVec.erase (chargeVec.begin(),chargeVec.end());
         //        pmtIDVec.erase  (pmtIDVec.begin() ,pmtIDVec.end());
         matr.erase (matr.begin() ,matr.end());
-        
+        recordSubTime.erase (recordSubTime.begin() ,recordSubTime.end());
         //Fill the containers of the PMT information
         for (int imcpmt=0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
             DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
@@ -118,79 +118,75 @@ namespace RAT {
             }
         }
         
-        //        if(timeVec.size()>nhitThresh){
-        //            std::printf("My events contains %lu distinct PMT hits\n",timeVec.size());
-        //        }
-        
-        //        for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
-        //        {
-        //            for ( std::vector<double>::size_type j = 0; j < matr[i].size(); j++ )
-        //            {
-        //                std::cout << matr[i][j] << ' ';
-        //            }
-        //            std::cout << std::endl;
-        //        }
-        ////
-        //        std::cout << std::endl;
-        //        std::cout << std::endl;
-        //        std::cout << std::endl;
-        
         std::sort(matr.begin(),matr.end());
-        //
-        //        for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
-        //        {
-        //            for ( std::vector<double>::size_type j = 0; j < matr[i].size(); j++ )
-        //            {
-        //                std::cout << matr[i][j] << ' ';
-        //            }
-        //            std::cout << std::endl;
-        //        }
         
-        Int_t t_i = matr[0][0] ; // Set the first PMT hit of the event
-        Int_t t_f = matr[matr.size()-1][0] + 1; //Add a second so to make sure there is
-        // no roundoff errors for the final PMT
-        // hit of the event
-        
-        //std::cout << t_i << " " << t_f << std::endl;
-        //
-        
-        // Start counting in clock clicks from one
-        //
-        //        for (int t_i =0 ; t_i < t_f; t_i++) {
-        //
-        //        }
-        
-        
-        subevent = 0;
+        Double_t t_i = matr[0][0] ; // Set the first PMT hit of the event
+        Double_t t_f = matr[matr.size()-1][0] + 1; //Add a second so to make sure there is
+       
+        subevent = 1;
         countPMTinSubEvents = 0;
-        
-        if ((t_f-t_i) < int(collectionWindow)){
+//        
+//        Vec.erase  (Vec.begin() ,Vec.end());
+//        Vec.push_back(subevent);
+//        Vec.push_back(t_i);
+//        recordSubTime.push_back(Vec);
+
+        if ((t_f-t_i) < (collectionWindow)){
             std::cout << "\nOnly one subevent " << t_i << " " << t_f << std::endl;
             subevent = 1;
+
+            Vec.erase  (Vec.begin() ,Vec.end());
+            Vec.push_back(subevent);
+            Vec.push_back(t_i);
+            Vec.push_back(matr.size());
+            
+            recordSubTime.push_back(Vec);
+                        
         }else{
             std::cout << "\nPotentially more than one subevent " << t_i << " " << t_f << std::endl;
             
             for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
             {
-                std::printf("%f %f %d\n",t_i, matr[i][0]);
+//                std::printf("%f %d %d\n",matr[i][0] -t_i, subevent,countPMTinSubEvents);
                 if ( matr[i][0] < t_i +int(collectionWindow)){
                     countPMTinSubEvents++;
                 }else{
-                    std::printf("Number of PMT in subevent %d has %d PMT at time %d\n",subevent,countPMTinSubEvents,t_i);
+                   // std::printf("Number of PMT in subevent %d has %d PMT at time %5.3f\n",subevent,countPMTinSubEvents,t_i);
+                    Vec.erase  (Vec.begin() ,Vec.end());
+                    Vec.push_back(subevent);
+                    Vec.push_back(t_i);
+                    Vec.push_back(countPMTinSubEvents);
+
+                    recordSubTime.push_back(Vec);
+                    countPMTinSubEvents = 1;
                     subevent++;
-                    countPMTinSubEvents = 0;
                     t_i =matr[i][0];
+
                 }
+                
             }
+            //std::printf("Number of PMT in subevent %d has %d PMT at time %5.3f\n",subevent,countPMTinSubEvents,t_i);
+            
+            Vec.erase  (Vec.begin() ,Vec.end());
+            Vec.push_back(subevent);
+            Vec.push_back(t_i);
+            Vec.push_back(countPMTinSubEvents);
+            
+            recordSubTime.push_back(Vec);
+            countPMTinSubEvents = 0;
+
         }
-//        for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
-//        {
-//            for ( std::vector<double>::size_type j = 0; j < matr[i].size(); j++ )
-//            {
-//                std::cout << matr[i][j] << ' ';
-//            }
-//            std::cout << std::endl;
-//        }
+
+        
+        for ( std::vector<std::vector<double> >::size_type i = 0; i < recordSubTime.size(); i++ )
+        {
+            for ( std::vector<double>::size_type j = 0; j < recordSubTime[i].size(); j++ )
+            {
+                std::cout << recordSubTime[i][j] << ' ';
+            }
+            std::cout << std::endl;
+        }
+        
         std::cout << "Total number of subevents " << subevent << std::endl;
         
         DS::EV *ev = ds->AddNewEV();
