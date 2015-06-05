@@ -36,12 +36,12 @@ public:
   virtual Int_t GetID() const { return id; }
   virtual void SetID(Int_t _id) { id = _id; }
     
-  /** Sub Event informat. */
+  /** Sub Event information. Including trigger time of sub event with respect 
+   to event start.*/
   virtual Int_t GetSubEV() const { return subevent; }
   virtual void SetSubEV(Int_t _subevent) { subevent = _subevent; }
   virtual Int_t GetTotalSubEV() const { return nSubevents; }
   virtual void SetTotalSubEV(Int_t _nSubevents) { nSubevents = _nSubevents; }
-  /** Total charge in all PMT waveforms (pC). */
   Float_t GetSubTriggerTime() const { return triggerTime; }
   void SetSubTriggerTime(Float_t _triggerTime) { triggerTime = _triggerTime; }
 
@@ -97,11 +97,11 @@ protected:
   Int_t id;
   Float_t qTotal;
   Float_t calibratedTriggerTime;
-  Float_t triggerTime;
+  Float_t triggerTime;  //Trigger time of subevent. PMT times of subevents are
+                        //subtracted by this value
   Float_t deltat;
-  Float_t globalTime;
-  Int_t nSubevents;
-  Int_t subevent;
+  Int_t nSubevents; //Total number of subevent in event.
+  Int_t subevent;   //subevent index. Allows to select PMT in a specific range
   TTimeStamp utc;
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;

@@ -106,7 +106,7 @@ namespace RAT {
                 }
             }
         }
-        
+        //Sort the PMT information by time, from earliest to latest:
         std::sort(matr.begin(),matr.end());
         
         Double_t t_i = matr[0][0] ; // Set the first PMT hit of the event
@@ -114,10 +114,11 @@ namespace RAT {
         
         subevent = 1;
         countPMTinSubEvents = 0;
-        
+
+        //Evaluate the number of subevents
         if ((t_f-t_i) < (collectionWindow)){
             
-            std::cout << "\nOnly one subevent " << t_i << " " << t_f << std::endl;
+//            std::cout << "\nOnly one subevent " << t_i << " " << t_f << std::endl;
             subevent = 1;
             
             Vec.erase  (Vec.begin() ,Vec.end());
@@ -125,10 +126,12 @@ namespace RAT {
             Vec.push_back(t_i);
             Vec.push_back(matr.size());
             
-            recordSubTime.push_back(Vec);
+            if(matr.size()>=nhitThresh){
+                recordSubTime.push_back(Vec);
+            }
             
         }else{
-            std::cout << "\nPotentially more than one subevent " << t_i << " " << t_f << std::endl;
+//            std::cout << "\nPotentially more than one subevent " << t_i << " " << t_f << std::endl;
             
             for ( std::vector<std::vector<double> >::size_type i = 0; i < matr.size(); i++ )
             {
@@ -142,7 +145,9 @@ namespace RAT {
                     Vec.push_back(t_i);
                     Vec.push_back(countPMTinSubEvents);
                     
-                    recordSubTime.push_back(Vec);
+                    if(countPMTinSubEvents>=nhitThresh){
+                        recordSubTime.push_back(Vec);
+                    }
                     countPMTinSubEvents = 1;
                     subevent++;
                     t_i =matr[i][0];
@@ -162,17 +167,7 @@ namespace RAT {
             
         }
         
-        for ( std::vector<std::vector<double> >::size_type i = 0; i < recordSubTime.size(); i++ )
-        {
-            for ( std::vector<double>::size_type j = 0; j < recordSubTime[i].size(); j++ )
-            {
-                std::cout << recordSubTime[i][j] << ' ';
-            }
-            std::cout << std::endl;
-        }
-        
-        std::cout << "Total number of subevents " << subevent << std::endl;
-        
+        // Loop through found sub events and assign PMTs and evaluate charge.
         for ( std::vector<std::vector<double> >::size_type i = 0; i < recordSubTime.size(); i++ ){
             
             DS::EV *ev = ds->AddNewEV();
@@ -188,8 +183,8 @@ namespace RAT {
             for ( std::vector<std::vector<double> >::size_type j = 0; j < matr.size(); j++ ){
                 
                 if (matr[j][0] >= recordSubTime[i][1] && matr[j][0] < recordSubTime[i][1] + collectionWindow ) {
-                    
-//                    std::printf("%f %f %d %d %f %f\n",matr[j][0],recordSubTime[i][1],i,j,matr[j][1],matr[j][2]);
+                // Prints out the PMTs and
+                //    std::printf("%f %f %d %d %f %f\n",matr[j][0],recordSubTime[i][1],i,j,matr[j][1],matr[j][2]);
                     DS::PMT* pmt = ev->AddNewPMT();
                     pmt->SetID(int(matr[j][2]));
                     pmt->SetTime(matr[j][0]-recordSubTime[i][1]+offsetToWindow);
@@ -207,10 +202,7 @@ namespace RAT {
     
     void EventSplitter::SetI(std::string param, int value)
     {
-        if (param == "clockSpeedMHz") {
-            clockSpeed= double(value);
-            std::printf("Clock speed: %13.1f MHz\n",clockSpeed);
-        }else if (param == "offsetToTimeWindowNanoSec"){
+        if (param == "offsetToTimeWindowNanoSec"){
             offsetToWindow = double(value);
             std::printf("Offset to time window: %4.1f ns\n",offsetToWindow);
         }else if (param == "nhitThreshold"){

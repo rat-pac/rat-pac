@@ -18,16 +18,15 @@ public:
 
 protected:
   int fEventCounter;
-  double clockSpeed;
   double offsetToWindow;
   double collectionWindow;
   double nhitThresh;
-//  std::vector<double> fSPECharge;
-//  std::vector<double> chargeVec;
-//  std::vector<double> timeVec;
-//  std::vector<double> pmtIDVec;
+  //Standard vector to fill the two matrices
   std::vector<double> Vec;
+  //MAtrix that include all PMT time, charge and ID
   std::vector <std::vector <double> > matr;
+  //Matrix of subevent information, include event trig time,
+  //and PMT count in subevent event window
   std::vector <std::vector <double> > recordSubTime;
 
 

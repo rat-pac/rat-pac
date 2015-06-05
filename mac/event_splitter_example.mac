@@ -1,4 +1,4 @@
-/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
 
 /rat/db/set DETECTOR experiment "Watchman"
@@ -8,7 +8,6 @@
 
 # BEGIN EVENT LOOP
 /rat/proc eventsplitterdaq
-/rat/procset clockSpeedMHz 50
 /rat/procset offsetToTimeWindowNanoSec 100
 /rat/procset collectionTimeWindowNanoSec 400
 /rat/procset nhitThreshold 15
@@ -22,7 +21,7 @@
 #END EVENT LOOP
 
 /generator/add combo gun2:fill
-/generator/vtx/set pi-  0 0 0 0 100.0 300.0
+/generator/vtx/set pi+  0 0 0 0 100.0 300.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 20
+/run/beamOn 1000
