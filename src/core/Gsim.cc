@@ -94,7 +94,7 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("ibd",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_IBD>);
-  GlobalFactory<GLG4VertexGen>::Register("ibd",
+  GlobalFactory<GLG4VertexGen>::Register("reacibd",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_ReacIBD>);
    GlobalFactory<GLG4VertexGen>::Register("es",
