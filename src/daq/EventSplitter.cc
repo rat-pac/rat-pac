@@ -70,7 +70,7 @@ namespace RAT {
                         
                         subPMTEventFound = 0;
                         
-                        for (int k = 0; k<=subevent; k++) {
+                        for (int k = 0; k<subevent; k++) {
                             
                             timeDiff  = timeTmp[k] - mcpmt->GetMCPhoton(i)->GetFrontEndTime();
                             
@@ -85,10 +85,10 @@ namespace RAT {
                                 timeTmp[k]   = timeTmp[k];
                                 chargeTmp[k] += mcpmt->GetMCPhoton(i)->GetCharge();
                                 subPMTEventFound = 1;
-                            }else {
+                            }/*else {
                                 std::printf("There is something wrong: %d %f %f %f %f.\n",\
                                             pmtID,timeTmp[k],timeDiff,abs(timeDiff),chargeTmp[k]);
-                            }
+                            }*/
                         }
                         if(subPMTEventFound == 0){
                             subevent++;
