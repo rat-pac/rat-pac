@@ -35,6 +35,11 @@ namespace RAT {
         Double_t chargeTmp[200];
         Double_t timeTmp[200];
         
+        for (int i =0; i<200;i++) {
+            timeTmp[i]   = 0.0;
+            chargeTmp[i] = 0.0;
+        }
+        
         //Reset the container of the PMT information
         matr.erase (matr.begin() ,matr.end());
         recordSubTime.erase (recordSubTime.begin() ,recordSubTime.end());
@@ -109,7 +114,8 @@ namespace RAT {
                         
                         matr.push_back(Vec);
                         
-                        chargeTmp[k] = timeTmp[k] = 0.0;
+                        chargeTmp[k] = 0.0;
+                        timeTmp[k] = 0.0;
                     }
                 }
             }

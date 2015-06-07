@@ -19,7 +19,6 @@
 #include <TObject.h>
 #include <TTimeStamp.h>
 #include <RAT/DS/PMT.hh>
-#include <RAT/DS/PMTSubEvent.hh>
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/PathFit.hh>
 #include <vector>

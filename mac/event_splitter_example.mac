@@ -24,4 +24,4 @@
 /generator/vtx/set pi+  0 0 0 0 100.0 300.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 500
+/run/beamOn 1000
