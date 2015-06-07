@@ -64,11 +64,12 @@ public:
   double IBDESpectrum(float x);
 
 protected:
-  LinearInterp<double> rmpflux;
   double Emax;
   double Emin;
-  double XCmax;
-  double FluxMax;
+  double U238Amp;
+  double U235Amp;
+  double Pu239Amp;
+  double Pu241Amp;
 };
 
 

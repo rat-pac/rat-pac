@@ -210,14 +210,15 @@ float ReacIBDgen::U235ReacSpectrum(const float& x){
 
     // return the the reactor U235 neutrino flux contribution U235(x)
     float N = 0.;
-
-    double C0=0.496;
+    
+    U235Amp = 0.496;
+    //double C0=0.496;
     double C1=0.870;
     double C2=0.160;
     double C3=0.091;
     //double C4=201.92;  //Defined in Marc's file; not sure of function
 
-    N = C0 * exp(C1 - C2*x - C3*x*x);
+    N = U235Amp * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
     return N;
@@ -229,13 +230,14 @@ float ReacIBDgen::Pu239ReacSpectrum(const float& x){
     // return the reactor Pu239 neutrino flux contribution Pu239(x)
     float N = 0.;
 
-    double C0=0.351;
+    Pu239Amp = 0.351;
+    //double C0=0.351;
     double C1=0.896;
     double C2=0.239;
     double C3=0.0981;
     //double C4=209.99;  //Defined in Marc's file; not sure of function
 
-    N = C0 * exp(C1 - C2*x - C3*x*x);
+    N = Pu239Amp * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
     return N;
@@ -246,13 +248,14 @@ float ReacIBDgen::U238ReacSpectrum(const float& x){
     // return the reactor U238 neutrino flux contribution U238(x)
     float N = 0.;
 
-    double C0=0.087;
+    U238Amp = 0.087;
+    //double C0=0.087;
     double C1=0.976;
     double C2=0.162;
     double C3=0.079;
     //double C4=205.52;  //Defined in Marc's file; not sure of function
 
-    N = C0 * exp(C1 - C2*x - C3*x*x);
+    N = U238Amp * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
     return N;
@@ -263,13 +266,14 @@ float ReacIBDgen::Pu241ReacSpectrum(const float& x){
     // return the the reactor Pu241 Neutrino flux contribution Pu241(x)
     float N = 0.;
 
-    double C0=0.066;
+    Pu241Amp = 0.066;
+    //double C0=0.066;
     double C1=0.793;
     double C2=0.080;
     double C3=0.1085;
     //double C4=213.60;  //Defined in Marc's file; not sure of function
 
-    N = C0 * exp(C1 - C2*x - C3*x*x);
+    N = Pu241Amp * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
     return N;
