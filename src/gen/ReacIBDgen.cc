@@ -16,6 +16,14 @@ namespace RAT {
 // Additional constants
 const double DELTA = neutron_mass_c2 - proton_mass_c2;
 const double GFERMI = 1.16639e-11 / MeV / MeV;
+
+//We start with the Reactor Isotope components given in Marc Bergevin's original
+//IBDgenerator file
+
+const double ReacIBDgen::U235DEFAULT = 0.48;
+const double ReacIBDgen::U238DEFAULT = 0.31;
+const double ReacIBDgen::Pu239DEFAULT = 0.06;
+const double ReacIBDgen::Pu241DEFAULT = 0.08;
  
 ReacIBDgen::ReacIBDgen()
 {
@@ -211,7 +219,12 @@ float ReacIBDgen::U235ReacSpectrum(const float& x){
     // return the the reactor U235 neutrino flux contribution U235(x)
     float N = 0.;
     
-    U235Amp = 0.496;
+    //U235Amp = 0.496;
+
+#ifdef DEBUG
+    std::cout << "I made it here, and the U235Amp is" << U235Amp << std::endl;
+#endif
+
     //double C0=0.496;
     double C1=0.870;
     double C2=0.160;
@@ -288,5 +301,14 @@ float ReacIBDgen::NuReacSpectrum(const float& x){
 
   return tot;
   }
+
+void ReacIBDgen::SetI(std::string param, double value)
+{
+  if (param == "U235FluxAmplitude"){
+	U235Amp = value;
+	std::cout << "Fractional contribution of U235 to Neutrino flux: " <<
+	value << " " << std::endl;
+	}
+}
 
 } // namespace RAT

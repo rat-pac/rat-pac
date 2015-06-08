@@ -31,9 +31,20 @@ public:
   //   with a proton, so both the incident flux, and the (relative) 
   //   differential cross-section are factored in.
   void GenInteraction(float &E, float &CosThetaLab);
+  
+  void SetU235AmpValue (double U235Amp = U235DEFAULT);
+  void SetU238AmpValue (double U238Amp = U238DEFAULT);
+  void SetPu239AmpValue (double Pu239Amp = Pu239DEFAULT);
+  void SetPu241AmpValue (double Pu241Amp = PU241DEFAULT); 
 
   // Total cross section for inverse beta decay
   static double CrossSection(float x);
+
+
+  inline double GetU235Amplitude()   {return U235Amp;} ;
+  inline double GetU238Amplitude()   {return U238Amp;} ;
+  inline double GetPu239Amplitude()  {return Pu239Amp;} ;
+  inline double GetPu241Amplitude()  {return Pu241Amp;} ;
 
   //Creates a probability density spectrum using the sum of the different
   //reactor neutrino probability density spectrums as a function of energy.
@@ -70,6 +81,11 @@ protected:
   double U235Amp;
   double Pu239Amp;
   double Pu241Amp;
+
+  static const double U235DEFAULT;
+  static const double U238DEFAULT;
+  static const double Pu239DEFAULT;
+  static const double Pu241DEFAULT;
 };
 
 
