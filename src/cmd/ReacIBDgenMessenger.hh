@@ -8,7 +8,7 @@
 #define RAT_ReacIBDgenMessenger_hh
 
 #include "G4UImessenger.hh"
-#include "G4string.hh"
+#include "G4String.hh"
 
 //Forward declarations
 class G4UIcommand;
@@ -22,6 +22,7 @@ namespace RAT {
   class ReacIBDgenMessenger: public G4UImessenger
   {
   public:
+    //ReacIBDgenMessenger(ReacIBDgen*);
     ReacIBDgenMessenger(ReacIBDgen*);
     ~ReacIBDgenMessenger();
 
@@ -34,7 +35,7 @@ namespace RAT {
     G4UIcmdWithADouble* U235AmpCmd;
     G4UIcmdWithADouble* U238AmpCmd;
     G4UIcmdWithADouble* Pu239AmpCmd;
-    G4UIcmdWithADouble* PU241AmpCmd;
+    G4UIcmdWithADouble* Pu241AmpCmd;
   };
 
 } // namespace RAT

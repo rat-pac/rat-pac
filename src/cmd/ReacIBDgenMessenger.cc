@@ -21,26 +21,26 @@ namespace RAT {
     dir->SetGuidance("Control the reactor isotope contents of the Reactor IBD generator");
 
     U235AmpCmd = new G4UIcmdWithADouble("/generator/reacibd/U235", this);
-    U235AmpCmd = SetGuidance("Sets the fractional amount of U235 in the reactor of interest");
+    U235AmpCmd->SetGuidance("Sets the fractional amount of U235 in the reactor of interest");
     U235AmpCmd->SetParameterName("U235Amp",false);
-    U235AmpCmd->SetDefaultValue( reacibdgen->GetU235Content() );
+    U235AmpCmd->SetDefaultValue( reacibdgen->GetU235Amplitude() );
 
 
     U238AmpCmd = new G4UIcmdWithADouble("/generator/reacibd/U238", this);
-    U238AmpCmd = SetGuidance("Sets the fractional amount of U238 in the reactor of interest");
+    U238AmpCmd->SetGuidance("Sets the fractional amount of U238 in the reactor of interest");
     U238AmpCmd->SetParameterName("U238Amp",false);
-    U238AmpCmd->SetDefaultValue( reacibdgen->GetU238Content() );
+    U238AmpCmd->SetDefaultValue( reacibdgen->GetU238Amplitude() );
 
 
     Pu239AmpCmd = new G4UIcmdWithADouble("/generator/reacibd/Pu239", this);
-    Pu239AmpCmd = SetGuidance("Sets the fractional amount of Pu239 in the reactor of interest");
+    Pu239AmpCmd->SetGuidance("Sets the fractional amount of Pu239 in the reactor of interest");
     Pu239AmpCmd->SetParameterName("Pu239Amp",false);
-    Pu239AmpCmd->SetDefaultValue( reacibdgen->GetPu239Content() );
+    Pu239AmpCmd->SetDefaultValue( reacibdgen->GetPu239Amplitude() );
 
     Pu241AmpCmd = new G4UIcmdWithADouble("/generator/reacibd/Pu241", this);
-    Pu241AmpCmd = SetGuidance("Sets the fractional amount of Pu241 in the reactor of interest");
+    Pu241AmpCmd->SetGuidance("Sets the fractional amount of Pu241 in the reactor of interest");
     Pu241AmpCmd->SetParameterName("Pu241Amp",false);
-    Pu241AmpCmd->SetDefaultValue( reacibdgen->GetPu241Content() );
+    Pu241AmpCmd->SetDefaultValue( reacibdgen->GetPu241Amplitude() );
   }
 
   ReacIBDgenMessenger::~ReacIBDgenMessenger() {;}
@@ -49,23 +49,23 @@ namespace RAT {
   {
     if ( command == U235AmpCmd )
       {
-        G4double U235Amp = U235AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetU235AmpValue ( U235Amp );
+        G4double U235Ampl = U235AmpCmd->GetNewDoubleValue( newValue );
+        reacibdgen->SetU235AmpValue ( U235Ampl );
       }
     else if ( command == U238AmpCmd )
       {
-        G4double U238Amp = U238AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetU238AmpValue ( U238Amp );
+        G4double U238Ampl = U238AmpCmd->GetNewDoubleValue( newValue );
+        reacibdgen->SetU238AmpValue ( U238Ampl );
       }
     else if ( command == Pu239AmpCmd )
       {
-        G4double Pu239Amp = Pu239AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetPu239AmpValue ( Pu239Amp );
+        G4double Pu239Ampl = Pu239AmpCmd->GetNewDoubleValue( newValue );
+        reacibdgen->SetPu239AmpValue ( Pu239Ampl );
       }
     else if ( command == Pu241AmpCmd )
       {
-        G4double Pu241Amp = Pu241AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetPu241AmpValue ( Pu241Amp );
+        G4double Pu241Ampl = Pu241AmpCmd->GetNewDoubleValue( newValue );
+        reacibdgen->SetPu241AmpValue ( Pu241Ampl );
       }
     else
       {

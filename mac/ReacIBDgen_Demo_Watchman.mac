@@ -16,9 +16,13 @@
 #END EVENT LOOP
 
 /generator/add combo reacibd:point 
-/generator/set U235FluxAmplitude 0.32
+/generator/reacibd/U235 0.27
+/generator/reacibd/U238 0.26
+/generator/reacibd/Pu239 0.24
+/generator/reacibd/Pu241 0.23
+
 /generator/vtx/set 0 0 1.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 1000
+/run/beamOn 100
 
