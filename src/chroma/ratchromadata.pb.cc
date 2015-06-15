@@ -20,9 +20,9 @@ namespace ratchroma {
 
 namespace {
 
-const ::google::protobuf::Descriptor* CherenkovData_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* CherenkovPhoton_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  CherenkovData_reflection_ = NULL;
+  CherenkovPhoton_reflection_ = NULL;
 const ::google::protobuf::Descriptor* ScintStep_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ScintStep_reflection_ = NULL;
@@ -39,32 +39,31 @@ void protobuf_AssignDesc_ratchromadata_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "ratchromadata.proto");
   GOOGLE_CHECK(file != NULL);
-  CherenkovData_descriptor_ = file->message_type(0);
-  static const int CherenkovData_offsets_[12] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, nphotons_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, x_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, y_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, z_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, t_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, dx_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, dy_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, dz_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, wavelength_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, px_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, py_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, pz_),
+  CherenkovPhoton_descriptor_ = file->message_type(0);
+  static const int CherenkovPhoton_offsets_[11] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, x_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, y_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, z_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, t_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, dx_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, dy_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, dz_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, wavelength_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, px_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, py_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, pz_),
   };
-  CherenkovData_reflection_ =
+  CherenkovPhoton_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      CherenkovData_descriptor_,
-      CherenkovData::default_instance_,
-      CherenkovData_offsets_,
+      CherenkovPhoton_descriptor_,
+      CherenkovPhoton::default_instance_,
+      CherenkovPhoton_offsets_,
       -1,
       -1,
       -1,
-      sizeof(CherenkovData),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovData, _is_default_instance_));
+      sizeof(CherenkovPhoton),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CherenkovPhoton, _is_default_instance_));
   ScintStep_descriptor_ = file->message_type(1);
   static const int ScintStep_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScintStep, nphotons_),
@@ -90,9 +89,11 @@ void protobuf_AssignDesc_ratchromadata_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScintStep, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScintStep, _is_default_instance_));
   ChromaData_descriptor_ = file->message_type(2);
-  static const int ChromaData_offsets_[3] = {
+  static const int ChromaData_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, eventid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, cherekovphotons_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, ncherenkov_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, nsteps_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, cherekovdata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, stepdata_),
   };
   ChromaData_reflection_ =
@@ -119,7 +120,7 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      CherenkovData_descriptor_, &CherenkovData::default_instance());
+      CherenkovPhoton_descriptor_, &CherenkovPhoton::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       ScintStep_descriptor_, &ScintStep::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -129,8 +130,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_ratchromadata_2eproto() {
-  delete CherenkovData::default_instance_;
-  delete CherenkovData_reflection_;
+  delete CherenkovPhoton::default_instance_;
+  delete CherenkovPhoton_reflection_;
   delete ScintStep::default_instance_;
   delete ScintStep_reflection_;
   delete ChromaData::default_instance_;
@@ -144,26 +145,27 @@ void protobuf_AddDesc_ratchromadata_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\023ratchromadata.proto\022\tratchroma\"\251\001\n\rChe"
-    "renkovData\022\020\n\010nphotons\030\001 \001(\005\022\t\n\001x\030\002 \003(\002\022"
-    "\t\n\001y\030\003 \003(\002\022\t\n\001z\030\004 \003(\002\022\t\n\001t\030\005 \003(\002\022\n\n\002dx\030\006"
-    " \003(\002\022\n\n\002dy\030\007 \003(\002\022\n\n\002dz\030\010 \003(\002\022\022\n\nwaveleng"
-    "th\030\t \003(\002\022\n\n\002px\030\n \003(\002\022\n\n\002py\030\013 \003(\002\022\n\n\002pz\030\014"
-    " \003(\002\"\327\001\n\tScintStep\022\020\n\010nphotons\030\001 \001(\005\022\024\n\014"
-    "step_start_x\030\002 \001(\002\022\024\n\014step_start_y\030\003 \001(\002"
-    "\022\024\n\014step_start_z\030\004 \001(\002\022\024\n\014step_start_t\030\005"
-    " \001(\002\022\022\n\nstep_end_x\030\006 \001(\002\022\022\n\nstep_end_y\030\007"
-    " \001(\002\022\022\n\nstep_end_z\030\010 \001(\002\022\022\n\nstep_end_t\030\t"
-    " \001(\002\022\020\n\010material\030\n \001(\t\"x\n\nChromaData\022\017\n\007"
-    "eventid\030\001 \001(\005\0221\n\017cherekovphotons\030\002 \001(\0132\030"
-    ".ratchroma.CherenkovData\022&\n\010stepdata\030\003 \003"
-    "(\0132\024.ratchroma.ScintStepb\006proto3", 552);
+    "\n\023ratchromadata.proto\022\tratchroma\"\231\001\n\017Che"
+    "renkovPhoton\022\t\n\001x\030\002 \001(\002\022\t\n\001y\030\003 \001(\002\022\t\n\001z\030"
+    "\004 \001(\002\022\t\n\001t\030\005 \001(\002\022\n\n\002dx\030\006 \001(\002\022\n\n\002dy\030\007 \001(\002"
+    "\022\n\n\002dz\030\010 \001(\002\022\022\n\nwavelength\030\t \001(\002\022\n\n\002px\030\n"
+    " \001(\002\022\n\n\002py\030\013 \001(\002\022\n\n\002pz\030\014 \001(\002\"\327\001\n\tScintSt"
+    "ep\022\020\n\010nphotons\030\001 \001(\005\022\024\n\014step_start_x\030\002 \001"
+    "(\002\022\024\n\014step_start_y\030\003 \001(\002\022\024\n\014step_start_z"
+    "\030\004 \001(\002\022\024\n\014step_start_t\030\005 \001(\002\022\022\n\nstep_end"
+    "_x\030\006 \001(\002\022\022\n\nstep_end_y\030\007 \001(\002\022\022\n\nstep_end"
+    "_z\030\010 \001(\002\022\022\n\nstep_end_t\030\t \001(\002\022\020\n\010material"
+    "\030\n \001(\t\"\233\001\n\nChromaData\022\017\n\007eventid\030\001 \001(\005\022\022"
+    "\n\nncherenkov\030\002 \001(\005\022\016\n\006nsteps\030\003 \001(\005\0220\n\014ch"
+    "erekovdata\030\004 \003(\0132\032.ratchroma.CherenkovPh"
+    "oton\022&\n\010stepdata\030\005 \003(\0132\024.ratchroma.Scint"
+    "Stepb\006proto3", 572);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ratchromadata.proto", &protobuf_RegisterTypes);
-  CherenkovData::default_instance_ = new CherenkovData();
+  CherenkovPhoton::default_instance_ = new CherenkovPhoton();
   ScintStep::default_instance_ = new ScintStep();
   ChromaData::default_instance_ = new ChromaData();
-  CherenkovData::default_instance_->InitAsDefaultInstance();
+  CherenkovPhoton::default_instance_->InitAsDefaultInstance();
   ScintStep::default_instance_->InitAsDefaultInstance();
   ChromaData::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_ratchromadata_2eproto);
@@ -189,323 +191,275 @@ static void MergeFromFail(int line) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int CherenkovData::kNphotonsFieldNumber;
-const int CherenkovData::kXFieldNumber;
-const int CherenkovData::kYFieldNumber;
-const int CherenkovData::kZFieldNumber;
-const int CherenkovData::kTFieldNumber;
-const int CherenkovData::kDxFieldNumber;
-const int CherenkovData::kDyFieldNumber;
-const int CherenkovData::kDzFieldNumber;
-const int CherenkovData::kWavelengthFieldNumber;
-const int CherenkovData::kPxFieldNumber;
-const int CherenkovData::kPyFieldNumber;
-const int CherenkovData::kPzFieldNumber;
+const int CherenkovPhoton::kXFieldNumber;
+const int CherenkovPhoton::kYFieldNumber;
+const int CherenkovPhoton::kZFieldNumber;
+const int CherenkovPhoton::kTFieldNumber;
+const int CherenkovPhoton::kDxFieldNumber;
+const int CherenkovPhoton::kDyFieldNumber;
+const int CherenkovPhoton::kDzFieldNumber;
+const int CherenkovPhoton::kWavelengthFieldNumber;
+const int CherenkovPhoton::kPxFieldNumber;
+const int CherenkovPhoton::kPyFieldNumber;
+const int CherenkovPhoton::kPzFieldNumber;
 #endif  // !_MSC_VER
 
-CherenkovData::CherenkovData()
+CherenkovPhoton::CherenkovPhoton()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(constructor:ratchroma.CherenkovPhoton)
 }
 
-void CherenkovData::InitAsDefaultInstance() {
+void CherenkovPhoton::InitAsDefaultInstance() {
   _is_default_instance_ = true;
 }
 
-CherenkovData::CherenkovData(const CherenkovData& from)
+CherenkovPhoton::CherenkovPhoton(const CherenkovPhoton& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(copy_constructor:ratchroma.CherenkovPhoton)
 }
 
-void CherenkovData::SharedCtor() {
+void CherenkovPhoton::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
-  nphotons_ = 0;
+  x_ = 0;
+  y_ = 0;
+  z_ = 0;
+  t_ = 0;
+  dx_ = 0;
+  dy_ = 0;
+  dz_ = 0;
+  wavelength_ = 0;
+  px_ = 0;
+  py_ = 0;
+  pz_ = 0;
 }
 
-CherenkovData::~CherenkovData() {
-  // @@protoc_insertion_point(destructor:ratchroma.CherenkovData)
+CherenkovPhoton::~CherenkovPhoton() {
+  // @@protoc_insertion_point(destructor:ratchroma.CherenkovPhoton)
   SharedDtor();
 }
 
-void CherenkovData::SharedDtor() {
+void CherenkovPhoton::SharedDtor() {
   if (this != default_instance_) {
   }
 }
 
-void CherenkovData::SetCachedSize(int size) const {
+void CherenkovPhoton::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* CherenkovData::descriptor() {
+const ::google::protobuf::Descriptor* CherenkovPhoton::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return CherenkovData_descriptor_;
+  return CherenkovPhoton_descriptor_;
 }
 
-const CherenkovData& CherenkovData::default_instance() {
+const CherenkovPhoton& CherenkovPhoton::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_ratchromadata_2eproto();
   return *default_instance_;
 }
 
-CherenkovData* CherenkovData::default_instance_ = NULL;
+CherenkovPhoton* CherenkovPhoton::default_instance_ = NULL;
 
-CherenkovData* CherenkovData::New(::google::protobuf::Arena* arena) const {
-  CherenkovData* n = new CherenkovData;
+CherenkovPhoton* CherenkovPhoton::New(::google::protobuf::Arena* arena) const {
+  CherenkovPhoton* n = new CherenkovPhoton;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void CherenkovData::Clear() {
-  nphotons_ = 0;
-  x_.Clear();
-  y_.Clear();
-  z_.Clear();
-  t_.Clear();
-  dx_.Clear();
-  dy_.Clear();
-  dz_.Clear();
-  wavelength_.Clear();
-  px_.Clear();
-  py_.Clear();
-  pz_.Clear();
+void CherenkovPhoton::Clear() {
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<CherenkovPhoton*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(x_, wavelength_);
+  ZR_(px_, pz_);
+
+#undef ZR_HELPER_
+#undef ZR_
+
 }
 
-bool CherenkovData::MergePartialFromCodedStream(
+bool CherenkovPhoton::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(parse_start:ratchroma.CherenkovPhoton)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int32 nphotons = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &nphotons_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(21)) goto parse_x;
-        break;
-      }
-
-      // repeated float x = 2;
+      // optional float x = 2;
       case 2: {
         if (tag == 21) {
-         parse_x:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 21, input, this->mutable_x())));
-        } else if (tag == 18) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_x())));
+                 input, &x_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(21)) goto parse_x;
         if (input->ExpectTag(29)) goto parse_y;
         break;
       }
 
-      // repeated float y = 3;
+      // optional float y = 3;
       case 3: {
         if (tag == 29) {
          parse_y:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 29, input, this->mutable_y())));
-        } else if (tag == 26) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_y())));
+                 input, &y_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(29)) goto parse_y;
         if (input->ExpectTag(37)) goto parse_z;
         break;
       }
 
-      // repeated float z = 4;
+      // optional float z = 4;
       case 4: {
         if (tag == 37) {
          parse_z:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 37, input, this->mutable_z())));
-        } else if (tag == 34) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_z())));
+                 input, &z_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(37)) goto parse_z;
         if (input->ExpectTag(45)) goto parse_t;
         break;
       }
 
-      // repeated float t = 5;
+      // optional float t = 5;
       case 5: {
         if (tag == 45) {
          parse_t:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 45, input, this->mutable_t())));
-        } else if (tag == 42) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_t())));
+                 input, &t_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(45)) goto parse_t;
         if (input->ExpectTag(53)) goto parse_dx;
         break;
       }
 
-      // repeated float dx = 6;
+      // optional float dx = 6;
       case 6: {
         if (tag == 53) {
          parse_dx:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 53, input, this->mutable_dx())));
-        } else if (tag == 50) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_dx())));
+                 input, &dx_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(53)) goto parse_dx;
         if (input->ExpectTag(61)) goto parse_dy;
         break;
       }
 
-      // repeated float dy = 7;
+      // optional float dy = 7;
       case 7: {
         if (tag == 61) {
          parse_dy:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 61, input, this->mutable_dy())));
-        } else if (tag == 58) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_dy())));
+                 input, &dy_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(61)) goto parse_dy;
         if (input->ExpectTag(69)) goto parse_dz;
         break;
       }
 
-      // repeated float dz = 8;
+      // optional float dz = 8;
       case 8: {
         if (tag == 69) {
          parse_dz:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 69, input, this->mutable_dz())));
-        } else if (tag == 66) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_dz())));
+                 input, &dz_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(69)) goto parse_dz;
         if (input->ExpectTag(77)) goto parse_wavelength;
         break;
       }
 
-      // repeated float wavelength = 9;
+      // optional float wavelength = 9;
       case 9: {
         if (tag == 77) {
          parse_wavelength:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 77, input, this->mutable_wavelength())));
-        } else if (tag == 74) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_wavelength())));
+                 input, &wavelength_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(77)) goto parse_wavelength;
         if (input->ExpectTag(85)) goto parse_px;
         break;
       }
 
-      // repeated float px = 10;
+      // optional float px = 10;
       case 10: {
         if (tag == 85) {
          parse_px:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 85, input, this->mutable_px())));
-        } else if (tag == 82) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_px())));
+                 input, &px_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(85)) goto parse_px;
         if (input->ExpectTag(93)) goto parse_py;
         break;
       }
 
-      // repeated float py = 11;
+      // optional float py = 11;
       case 11: {
         if (tag == 93) {
          parse_py:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 93, input, this->mutable_py())));
-        } else if (tag == 90) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_py())));
+                 input, &py_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(93)) goto parse_py;
         if (input->ExpectTag(101)) goto parse_pz;
         break;
       }
 
-      // repeated float pz = 12;
+      // optional float pz = 12;
       case 12: {
         if (tag == 101) {
          parse_pz:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 1, 101, input, this->mutable_pz())));
-        } else if (tag == 98) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
-                 input, this->mutable_pz())));
+                 input, &pz_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(101)) goto parse_pz;
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -523,463 +477,193 @@ bool CherenkovData::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(parse_success:ratchroma.CherenkovPhoton)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(parse_failure:ratchroma.CherenkovPhoton)
   return false;
 #undef DO_
 }
 
-void CherenkovData::SerializeWithCachedSizes(
+void CherenkovPhoton::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:ratchroma.CherenkovData)
-  // optional int32 nphotons = 1;
-  if (this->nphotons() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->nphotons(), output);
+  // @@protoc_insertion_point(serialize_start:ratchroma.CherenkovPhoton)
+  // optional float x = 2;
+  if (this->x() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(2, this->x(), output);
   }
 
-  // repeated float x = 2;
-  if (this->x_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(2, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_x_cached_byte_size_);
-  }
-  for (int i = 0; i < this->x_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->x(i), output);
+  // optional float y = 3;
+  if (this->y() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(3, this->y(), output);
   }
 
-  // repeated float y = 3;
-  if (this->y_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_y_cached_byte_size_);
-  }
-  for (int i = 0; i < this->y_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->y(i), output);
+  // optional float z = 4;
+  if (this->z() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(4, this->z(), output);
   }
 
-  // repeated float z = 4;
-  if (this->z_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(4, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_z_cached_byte_size_);
-  }
-  for (int i = 0; i < this->z_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->z(i), output);
+  // optional float t = 5;
+  if (this->t() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(5, this->t(), output);
   }
 
-  // repeated float t = 5;
-  if (this->t_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(5, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_t_cached_byte_size_);
-  }
-  for (int i = 0; i < this->t_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->t(i), output);
+  // optional float dx = 6;
+  if (this->dx() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(6, this->dx(), output);
   }
 
-  // repeated float dx = 6;
-  if (this->dx_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(6, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_dx_cached_byte_size_);
-  }
-  for (int i = 0; i < this->dx_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->dx(i), output);
+  // optional float dy = 7;
+  if (this->dy() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(7, this->dy(), output);
   }
 
-  // repeated float dy = 7;
-  if (this->dy_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(7, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_dy_cached_byte_size_);
-  }
-  for (int i = 0; i < this->dy_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->dy(i), output);
+  // optional float dz = 8;
+  if (this->dz() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(8, this->dz(), output);
   }
 
-  // repeated float dz = 8;
-  if (this->dz_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(8, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_dz_cached_byte_size_);
-  }
-  for (int i = 0; i < this->dz_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->dz(i), output);
+  // optional float wavelength = 9;
+  if (this->wavelength() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->wavelength(), output);
   }
 
-  // repeated float wavelength = 9;
-  if (this->wavelength_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(9, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_wavelength_cached_byte_size_);
-  }
-  for (int i = 0; i < this->wavelength_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->wavelength(i), output);
+  // optional float px = 10;
+  if (this->px() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(10, this->px(), output);
   }
 
-  // repeated float px = 10;
-  if (this->px_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(10, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_px_cached_byte_size_);
-  }
-  for (int i = 0; i < this->px_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->px(i), output);
+  // optional float py = 11;
+  if (this->py() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(11, this->py(), output);
   }
 
-  // repeated float py = 11;
-  if (this->py_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(11, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_py_cached_byte_size_);
-  }
-  for (int i = 0; i < this->py_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->py(i), output);
+  // optional float pz = 12;
+  if (this->pz() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(12, this->pz(), output);
   }
 
-  // repeated float pz = 12;
-  if (this->pz_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(12, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_pz_cached_byte_size_);
-  }
-  for (int i = 0; i < this->pz_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteFloatNoTag(
-      this->pz(i), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(serialize_end:ratchroma.CherenkovPhoton)
 }
 
-::google::protobuf::uint8* CherenkovData::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* CherenkovPhoton::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:ratchroma.CherenkovData)
-  // optional int32 nphotons = 1;
-  if (this->nphotons() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->nphotons(), target);
+  // @@protoc_insertion_point(serialize_to_array_start:ratchroma.CherenkovPhoton)
+  // optional float x = 2;
+  if (this->x() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(2, this->x(), target);
   }
 
-  // repeated float x = 2;
-  if (this->x_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      2,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _x_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->x_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->x(i), target);
+  // optional float y = 3;
+  if (this->y() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(3, this->y(), target);
   }
 
-  // repeated float y = 3;
-  if (this->y_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      3,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _y_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->y_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->y(i), target);
+  // optional float z = 4;
+  if (this->z() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(4, this->z(), target);
   }
 
-  // repeated float z = 4;
-  if (this->z_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      4,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _z_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->z_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->z(i), target);
+  // optional float t = 5;
+  if (this->t() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(5, this->t(), target);
   }
 
-  // repeated float t = 5;
-  if (this->t_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      5,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _t_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->t_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->t(i), target);
+  // optional float dx = 6;
+  if (this->dx() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(6, this->dx(), target);
   }
 
-  // repeated float dx = 6;
-  if (this->dx_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      6,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _dx_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->dx_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->dx(i), target);
+  // optional float dy = 7;
+  if (this->dy() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(7, this->dy(), target);
   }
 
-  // repeated float dy = 7;
-  if (this->dy_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      7,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _dy_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->dy_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->dy(i), target);
+  // optional float dz = 8;
+  if (this->dz() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(8, this->dz(), target);
   }
 
-  // repeated float dz = 8;
-  if (this->dz_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      8,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _dz_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->dz_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->dz(i), target);
+  // optional float wavelength = 9;
+  if (this->wavelength() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->wavelength(), target);
   }
 
-  // repeated float wavelength = 9;
-  if (this->wavelength_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      9,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _wavelength_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->wavelength_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->wavelength(i), target);
+  // optional float px = 10;
+  if (this->px() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(10, this->px(), target);
   }
 
-  // repeated float px = 10;
-  if (this->px_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      10,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _px_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->px_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->px(i), target);
+  // optional float py = 11;
+  if (this->py() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(11, this->py(), target);
   }
 
-  // repeated float py = 11;
-  if (this->py_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      11,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _py_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->py_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->py(i), target);
+  // optional float pz = 12;
+  if (this->pz() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(12, this->pz(), target);
   }
 
-  // repeated float pz = 12;
-  if (this->pz_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      12,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _pz_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->pz_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteFloatNoTagToArray(this->pz(i), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(serialize_to_array_end:ratchroma.CherenkovPhoton)
   return target;
 }
 
-int CherenkovData::ByteSize() const {
+int CherenkovPhoton::ByteSize() const {
   int total_size = 0;
 
-  // optional int32 nphotons = 1;
-  if (this->nphotons() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->nphotons());
+  // optional float x = 2;
+  if (this->x() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float x = 2;
-  {
-    int data_size = 0;
-    data_size = 4 * this->x_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _x_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float y = 3;
+  if (this->y() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float y = 3;
-  {
-    int data_size = 0;
-    data_size = 4 * this->y_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _y_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float z = 4;
+  if (this->z() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float z = 4;
-  {
-    int data_size = 0;
-    data_size = 4 * this->z_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _z_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float t = 5;
+  if (this->t() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float t = 5;
-  {
-    int data_size = 0;
-    data_size = 4 * this->t_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _t_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float dx = 6;
+  if (this->dx() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float dx = 6;
-  {
-    int data_size = 0;
-    data_size = 4 * this->dx_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _dx_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float dy = 7;
+  if (this->dy() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float dy = 7;
-  {
-    int data_size = 0;
-    data_size = 4 * this->dy_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _dy_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float dz = 8;
+  if (this->dz() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float dz = 8;
-  {
-    int data_size = 0;
-    data_size = 4 * this->dz_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _dz_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float wavelength = 9;
+  if (this->wavelength() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float wavelength = 9;
-  {
-    int data_size = 0;
-    data_size = 4 * this->wavelength_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _wavelength_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float px = 10;
+  if (this->px() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float px = 10;
-  {
-    int data_size = 0;
-    data_size = 4 * this->px_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _px_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float py = 11;
+  if (this->py() != 0) {
+    total_size += 1 + 4;
   }
 
-  // repeated float py = 11;
-  {
-    int data_size = 0;
-    data_size = 4 * this->py_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _py_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
-  }
-
-  // repeated float pz = 12;
-  {
-    int data_size = 0;
-    data_size = 4 * this->pz_size();
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _pz_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
+  // optional float pz = 12;
+  if (this->pz() != 0) {
+    total_size += 1 + 4;
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -988,10 +672,10 @@ int CherenkovData::ByteSize() const {
   return total_size;
 }
 
-void CherenkovData::MergeFrom(const ::google::protobuf::Message& from) {
+void CherenkovPhoton::MergeFrom(const ::google::protobuf::Message& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  const CherenkovData* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const CherenkovData>(
+  const CherenkovPhoton* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const CherenkovPhoton>(
           &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1000,415 +684,243 @@ void CherenkovData::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void CherenkovData::MergeFrom(const CherenkovData& from) {
+void CherenkovPhoton::MergeFrom(const CherenkovPhoton& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
-  x_.MergeFrom(from.x_);
-  y_.MergeFrom(from.y_);
-  z_.MergeFrom(from.z_);
-  t_.MergeFrom(from.t_);
-  dx_.MergeFrom(from.dx_);
-  dy_.MergeFrom(from.dy_);
-  dz_.MergeFrom(from.dz_);
-  wavelength_.MergeFrom(from.wavelength_);
-  px_.MergeFrom(from.px_);
-  py_.MergeFrom(from.py_);
-  pz_.MergeFrom(from.pz_);
-  if (from.nphotons() != 0) {
-    set_nphotons(from.nphotons());
+  if (from.x() != 0) {
+    set_x(from.x());
+  }
+  if (from.y() != 0) {
+    set_y(from.y());
+  }
+  if (from.z() != 0) {
+    set_z(from.z());
+  }
+  if (from.t() != 0) {
+    set_t(from.t());
+  }
+  if (from.dx() != 0) {
+    set_dx(from.dx());
+  }
+  if (from.dy() != 0) {
+    set_dy(from.dy());
+  }
+  if (from.dz() != 0) {
+    set_dz(from.dz());
+  }
+  if (from.wavelength() != 0) {
+    set_wavelength(from.wavelength());
+  }
+  if (from.px() != 0) {
+    set_px(from.px());
+  }
+  if (from.py() != 0) {
+    set_py(from.py());
+  }
+  if (from.pz() != 0) {
+    set_pz(from.pz());
   }
 }
 
-void CherenkovData::CopyFrom(const ::google::protobuf::Message& from) {
+void CherenkovPhoton::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void CherenkovData::CopyFrom(const CherenkovData& from) {
+void CherenkovPhoton::CopyFrom(const CherenkovPhoton& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool CherenkovData::IsInitialized() const {
+bool CherenkovPhoton::IsInitialized() const {
 
   return true;
 }
 
-void CherenkovData::Swap(CherenkovData* other) {
+void CherenkovPhoton::Swap(CherenkovPhoton* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void CherenkovData::InternalSwap(CherenkovData* other) {
-  std::swap(nphotons_, other->nphotons_);
-  x_.UnsafeArenaSwap(&other->x_);
-  y_.UnsafeArenaSwap(&other->y_);
-  z_.UnsafeArenaSwap(&other->z_);
-  t_.UnsafeArenaSwap(&other->t_);
-  dx_.UnsafeArenaSwap(&other->dx_);
-  dy_.UnsafeArenaSwap(&other->dy_);
-  dz_.UnsafeArenaSwap(&other->dz_);
-  wavelength_.UnsafeArenaSwap(&other->wavelength_);
-  px_.UnsafeArenaSwap(&other->px_);
-  py_.UnsafeArenaSwap(&other->py_);
-  pz_.UnsafeArenaSwap(&other->pz_);
+void CherenkovPhoton::InternalSwap(CherenkovPhoton* other) {
+  std::swap(x_, other->x_);
+  std::swap(y_, other->y_);
+  std::swap(z_, other->z_);
+  std::swap(t_, other->t_);
+  std::swap(dx_, other->dx_);
+  std::swap(dy_, other->dy_);
+  std::swap(dz_, other->dz_);
+  std::swap(wavelength_, other->wavelength_);
+  std::swap(px_, other->px_);
+  std::swap(py_, other->py_);
+  std::swap(pz_, other->pz_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata CherenkovData::GetMetadata() const {
+::google::protobuf::Metadata CherenkovPhoton::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = CherenkovData_descriptor_;
-  metadata.reflection = CherenkovData_reflection_;
+  metadata.descriptor = CherenkovPhoton_descriptor_;
+  metadata.reflection = CherenkovPhoton_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// CherenkovData
+// CherenkovPhoton
 
-// optional int32 nphotons = 1;
-void CherenkovData::clear_nphotons() {
-  nphotons_ = 0;
+// optional float x = 2;
+void CherenkovPhoton::clear_x() {
+  x_ = 0;
 }
- ::google::protobuf::int32 CherenkovData::nphotons() const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.nphotons)
-  return nphotons_;
-}
- void CherenkovData::set_nphotons(::google::protobuf::int32 value) {
-  
-  nphotons_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.nphotons)
-}
-
-// repeated float x = 2;
-int CherenkovData::x_size() const {
-  return x_.size();
-}
-void CherenkovData::clear_x() {
-  x_.Clear();
-}
- float CherenkovData::x(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.x)
-  return x_.Get(index);
-}
- void CherenkovData::set_x(int index, float value) {
-  x_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.x)
-}
- void CherenkovData::add_x(float value) {
-  x_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.x)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::x() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.x)
+ float CherenkovPhoton::x() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.x)
   return x_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_x() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.x)
-  return &x_;
+ void CherenkovPhoton::set_x(float value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.x)
 }
 
-// repeated float y = 3;
-int CherenkovData::y_size() const {
-  return y_.size();
+// optional float y = 3;
+void CherenkovPhoton::clear_y() {
+  y_ = 0;
 }
-void CherenkovData::clear_y() {
-  y_.Clear();
-}
- float CherenkovData::y(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.y)
-  return y_.Get(index);
-}
- void CherenkovData::set_y(int index, float value) {
-  y_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.y)
-}
- void CherenkovData::add_y(float value) {
-  y_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.y)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::y() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.y)
+ float CherenkovPhoton::y() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.y)
   return y_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_y() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.y)
-  return &y_;
+ void CherenkovPhoton::set_y(float value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.y)
 }
 
-// repeated float z = 4;
-int CherenkovData::z_size() const {
-  return z_.size();
+// optional float z = 4;
+void CherenkovPhoton::clear_z() {
+  z_ = 0;
 }
-void CherenkovData::clear_z() {
-  z_.Clear();
-}
- float CherenkovData::z(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.z)
-  return z_.Get(index);
-}
- void CherenkovData::set_z(int index, float value) {
-  z_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.z)
-}
- void CherenkovData::add_z(float value) {
-  z_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.z)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::z() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.z)
+ float CherenkovPhoton::z() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.z)
   return z_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_z() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.z)
-  return &z_;
+ void CherenkovPhoton::set_z(float value) {
+  
+  z_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.z)
 }
 
-// repeated float t = 5;
-int CherenkovData::t_size() const {
-  return t_.size();
+// optional float t = 5;
+void CherenkovPhoton::clear_t() {
+  t_ = 0;
 }
-void CherenkovData::clear_t() {
-  t_.Clear();
-}
- float CherenkovData::t(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.t)
-  return t_.Get(index);
-}
- void CherenkovData::set_t(int index, float value) {
-  t_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.t)
-}
- void CherenkovData::add_t(float value) {
-  t_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.t)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::t() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.t)
+ float CherenkovPhoton::t() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.t)
   return t_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_t() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.t)
-  return &t_;
+ void CherenkovPhoton::set_t(float value) {
+  
+  t_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.t)
 }
 
-// repeated float dx = 6;
-int CherenkovData::dx_size() const {
-  return dx_.size();
+// optional float dx = 6;
+void CherenkovPhoton::clear_dx() {
+  dx_ = 0;
 }
-void CherenkovData::clear_dx() {
-  dx_.Clear();
-}
- float CherenkovData::dx(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dx)
-  return dx_.Get(index);
-}
- void CherenkovData::set_dx(int index, float value) {
-  dx_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dx)
-}
- void CherenkovData::add_dx(float value) {
-  dx_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dx)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dx() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dx)
+ float CherenkovPhoton::dx() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dx)
   return dx_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dx() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dx)
-  return &dx_;
+ void CherenkovPhoton::set_dx(float value) {
+  
+  dx_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dx)
 }
 
-// repeated float dy = 7;
-int CherenkovData::dy_size() const {
-  return dy_.size();
+// optional float dy = 7;
+void CherenkovPhoton::clear_dy() {
+  dy_ = 0;
 }
-void CherenkovData::clear_dy() {
-  dy_.Clear();
-}
- float CherenkovData::dy(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dy)
-  return dy_.Get(index);
-}
- void CherenkovData::set_dy(int index, float value) {
-  dy_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dy)
-}
- void CherenkovData::add_dy(float value) {
-  dy_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dy)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dy() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dy)
+ float CherenkovPhoton::dy() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dy)
   return dy_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dy() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dy)
-  return &dy_;
+ void CherenkovPhoton::set_dy(float value) {
+  
+  dy_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dy)
 }
 
-// repeated float dz = 8;
-int CherenkovData::dz_size() const {
-  return dz_.size();
+// optional float dz = 8;
+void CherenkovPhoton::clear_dz() {
+  dz_ = 0;
 }
-void CherenkovData::clear_dz() {
-  dz_.Clear();
-}
- float CherenkovData::dz(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dz)
-  return dz_.Get(index);
-}
- void CherenkovData::set_dz(int index, float value) {
-  dz_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dz)
-}
- void CherenkovData::add_dz(float value) {
-  dz_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dz)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dz() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dz)
+ float CherenkovPhoton::dz() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dz)
   return dz_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dz() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dz)
-  return &dz_;
+ void CherenkovPhoton::set_dz(float value) {
+  
+  dz_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dz)
 }
 
-// repeated float wavelength = 9;
-int CherenkovData::wavelength_size() const {
-  return wavelength_.size();
+// optional float wavelength = 9;
+void CherenkovPhoton::clear_wavelength() {
+  wavelength_ = 0;
 }
-void CherenkovData::clear_wavelength() {
-  wavelength_.Clear();
-}
- float CherenkovData::wavelength(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.wavelength)
-  return wavelength_.Get(index);
-}
- void CherenkovData::set_wavelength(int index, float value) {
-  wavelength_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.wavelength)
-}
- void CherenkovData::add_wavelength(float value) {
-  wavelength_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.wavelength)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::wavelength() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.wavelength)
+ float CherenkovPhoton::wavelength() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.wavelength)
   return wavelength_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_wavelength() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.wavelength)
-  return &wavelength_;
+ void CherenkovPhoton::set_wavelength(float value) {
+  
+  wavelength_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.wavelength)
 }
 
-// repeated float px = 10;
-int CherenkovData::px_size() const {
-  return px_.size();
+// optional float px = 10;
+void CherenkovPhoton::clear_px() {
+  px_ = 0;
 }
-void CherenkovData::clear_px() {
-  px_.Clear();
-}
- float CherenkovData::px(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.px)
-  return px_.Get(index);
-}
- void CherenkovData::set_px(int index, float value) {
-  px_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.px)
-}
- void CherenkovData::add_px(float value) {
-  px_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.px)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::px() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.px)
+ float CherenkovPhoton::px() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.px)
   return px_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_px() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.px)
-  return &px_;
+ void CherenkovPhoton::set_px(float value) {
+  
+  px_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.px)
 }
 
-// repeated float py = 11;
-int CherenkovData::py_size() const {
-  return py_.size();
+// optional float py = 11;
+void CherenkovPhoton::clear_py() {
+  py_ = 0;
 }
-void CherenkovData::clear_py() {
-  py_.Clear();
-}
- float CherenkovData::py(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.py)
-  return py_.Get(index);
-}
- void CherenkovData::set_py(int index, float value) {
-  py_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.py)
-}
- void CherenkovData::add_py(float value) {
-  py_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.py)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::py() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.py)
+ float CherenkovPhoton::py() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.py)
   return py_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_py() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.py)
-  return &py_;
+ void CherenkovPhoton::set_py(float value) {
+  
+  py_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.py)
 }
 
-// repeated float pz = 12;
-int CherenkovData::pz_size() const {
-  return pz_.size();
+// optional float pz = 12;
+void CherenkovPhoton::clear_pz() {
+  pz_ = 0;
 }
-void CherenkovData::clear_pz() {
-  pz_.Clear();
-}
- float CherenkovData::pz(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.pz)
-  return pz_.Get(index);
-}
- void CherenkovData::set_pz(int index, float value) {
-  pz_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.pz)
-}
- void CherenkovData::add_pz(float value) {
-  pz_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.pz)
-}
- const ::google::protobuf::RepeatedField< float >&
-CherenkovData::pz() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.pz)
+ float CherenkovPhoton::pz() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.pz)
   return pz_;
 }
- ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_pz() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.pz)
-  return &pz_;
+ void CherenkovPhoton::set_pz(float value) {
+  
+  pz_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.pz)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -2154,7 +1666,9 @@ void ScintStep::clear_material() {
 
 #ifndef _MSC_VER
 const int ChromaData::kEventidFieldNumber;
-const int ChromaData::kCherekovphotonsFieldNumber;
+const int ChromaData::kNcherenkovFieldNumber;
+const int ChromaData::kNstepsFieldNumber;
+const int ChromaData::kCherekovdataFieldNumber;
 const int ChromaData::kStepdataFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2166,7 +1680,6 @@ ChromaData::ChromaData()
 
 void ChromaData::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  cherekovphotons_ = const_cast< ::ratchroma::CherenkovData*>(&::ratchroma::CherenkovData::default_instance());
 }
 
 ChromaData::ChromaData(const ChromaData& from)
@@ -2181,7 +1694,8 @@ void ChromaData::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   eventid_ = 0;
-  cherekovphotons_ = NULL;
+  ncherenkov_ = 0;
+  nsteps_ = 0;
 }
 
 ChromaData::~ChromaData() {
@@ -2191,7 +1705,6 @@ ChromaData::~ChromaData() {
 
 void ChromaData::SharedDtor() {
   if (this != default_instance_) {
-    delete cherekovphotons_;
   }
 }
 
@@ -2221,9 +1734,21 @@ ChromaData* ChromaData::New(::google::protobuf::Arena* arena) const {
 }
 
 void ChromaData::Clear() {
-  eventid_ = 0;
-  if (GetArenaNoVirtual() == NULL && cherekovphotons_ != NULL) delete cherekovphotons_;
-  cherekovphotons_ = NULL;
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<ChromaData*>(16)->f)
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(eventid_, ncherenkov_);
+  nsteps_ = 0;
+
+#undef ZR_HELPER_
+#undef ZR_
+
+  cherekovdata_.Clear();
   stepdata_.Clear();
 }
 
@@ -2247,27 +1772,60 @@ bool ChromaData::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_cherekovphotons;
+        if (input->ExpectTag(16)) goto parse_ncherenkov;
         break;
       }
 
-      // optional .ratchroma.CherenkovData cherekovphotons = 2;
+      // optional int32 ncherenkov = 2;
       case 2: {
-        if (tag == 18) {
-         parse_cherekovphotons:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_cherekovphotons()));
+        if (tag == 16) {
+         parse_ncherenkov:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &ncherenkov_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_stepdata;
+        if (input->ExpectTag(24)) goto parse_nsteps;
         break;
       }
 
-      // repeated .ratchroma.ScintStep stepdata = 3;
+      // optional int32 nsteps = 3;
       case 3: {
-        if (tag == 26) {
-         parse_stepdata:
+        if (tag == 24) {
+         parse_nsteps:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &nsteps_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_cherekovdata;
+        break;
+      }
+
+      // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+      case 4: {
+        if (tag == 34) {
+         parse_cherekovdata:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_cherekovdata:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_cherekovdata()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_loop_cherekovdata;
+        if (input->ExpectTag(42)) goto parse_loop_stepdata;
+        input->UnsafeDecrementRecursionDepth();
+        break;
+      }
+
+      // repeated .ratchroma.ScintStep stepdata = 5;
+      case 5: {
+        if (tag == 42) {
           DO_(input->IncrementRecursionDepth());
          parse_loop_stepdata:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
@@ -2275,7 +1833,7 @@ bool ChromaData::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_loop_stepdata;
+        if (input->ExpectTag(42)) goto parse_loop_stepdata;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -2310,16 +1868,26 @@ void ChromaData::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->eventid(), output);
   }
 
-  // optional .ratchroma.CherenkovData cherekovphotons = 2;
-  if (this->has_cherekovphotons()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->cherekovphotons_, output);
+  // optional int32 ncherenkov = 2;
+  if (this->ncherenkov() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->ncherenkov(), output);
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 3;
+  // optional int32 nsteps = 3;
+  if (this->nsteps() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->nsteps(), output);
+  }
+
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  for (unsigned int i = 0, n = this->cherekovdata_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4, this->cherekovdata(i), output);
+  }
+
+  // repeated .ratchroma.ScintStep stepdata = 5;
   for (unsigned int i = 0, n = this->stepdata_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->stepdata(i), output);
+      5, this->stepdata(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:ratchroma.ChromaData)
@@ -2333,18 +1901,28 @@ void ChromaData::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->eventid(), target);
   }
 
-  // optional .ratchroma.CherenkovData cherekovphotons = 2;
-  if (this->has_cherekovphotons()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteMessageNoVirtualToArray(
-        2, *this->cherekovphotons_, target);
+  // optional int32 ncherenkov = 2;
+  if (this->ncherenkov() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->ncherenkov(), target);
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 3;
+  // optional int32 nsteps = 3;
+  if (this->nsteps() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->nsteps(), target);
+  }
+
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  for (unsigned int i = 0, n = this->cherekovdata_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        4, this->cherekovdata(i), target);
+  }
+
+  // repeated .ratchroma.ScintStep stepdata = 5;
   for (unsigned int i = 0, n = this->stepdata_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        3, this->stepdata(i), target);
+        5, this->stepdata(i), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:ratchroma.ChromaData)
@@ -2361,14 +1939,29 @@ int ChromaData::ByteSize() const {
         this->eventid());
   }
 
-  // optional .ratchroma.CherenkovData cherekovphotons = 2;
-  if (this->has_cherekovphotons()) {
+  // optional int32 ncherenkov = 2;
+  if (this->ncherenkov() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->cherekovphotons_);
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->ncherenkov());
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 3;
+  // optional int32 nsteps = 3;
+  if (this->nsteps() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->nsteps());
+  }
+
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  total_size += 1 * this->cherekovdata_size();
+  for (int i = 0; i < this->cherekovdata_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->cherekovdata(i));
+  }
+
+  // repeated .ratchroma.ScintStep stepdata = 5;
   total_size += 1 * this->stepdata_size();
   for (int i = 0; i < this->stepdata_size(); i++) {
     total_size +=
@@ -2396,12 +1989,16 @@ void ChromaData::MergeFrom(const ::google::protobuf::Message& from) {
 
 void ChromaData::MergeFrom(const ChromaData& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) MergeFromFail(__LINE__);
+  cherekovdata_.MergeFrom(from.cherekovdata_);
   stepdata_.MergeFrom(from.stepdata_);
   if (from.eventid() != 0) {
     set_eventid(from.eventid());
   }
-  if (from.has_cherekovphotons()) {
-    mutable_cherekovphotons()->::ratchroma::CherenkovData::MergeFrom(from.cherekovphotons());
+  if (from.ncherenkov() != 0) {
+    set_ncherenkov(from.ncherenkov());
+  }
+  if (from.nsteps() != 0) {
+    set_nsteps(from.nsteps());
   }
 }
 
@@ -2428,7 +2025,9 @@ void ChromaData::Swap(ChromaData* other) {
 }
 void ChromaData::InternalSwap(ChromaData* other) {
   std::swap(eventid_, other->eventid_);
-  std::swap(cherekovphotons_, other->cherekovphotons_);
+  std::swap(ncherenkov_, other->ncherenkov_);
+  std::swap(nsteps_, other->nsteps_);
+  cherekovdata_.UnsafeArenaSwap(&other->cherekovdata_);
   stepdata_.UnsafeArenaSwap(&other->stepdata_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2459,44 +2058,65 @@ void ChromaData::clear_eventid() {
   // @@protoc_insertion_point(field_set:ratchroma.ChromaData.eventid)
 }
 
-// optional .ratchroma.CherenkovData cherekovphotons = 2;
-bool ChromaData::has_cherekovphotons() const {
-  return !_is_default_instance_ && cherekovphotons_ != NULL;
+// optional int32 ncherenkov = 2;
+void ChromaData::clear_ncherenkov() {
+  ncherenkov_ = 0;
 }
-void ChromaData::clear_cherekovphotons() {
-  if (GetArenaNoVirtual() == NULL && cherekovphotons_ != NULL) delete cherekovphotons_;
-  cherekovphotons_ = NULL;
+ ::google::protobuf::int32 ChromaData::ncherenkov() const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.ncherenkov)
+  return ncherenkov_;
 }
- const ::ratchroma::CherenkovData& ChromaData::cherekovphotons() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.cherekovphotons)
-  return cherekovphotons_ != NULL ? *cherekovphotons_ : *default_instance_->cherekovphotons_;
-}
- ::ratchroma::CherenkovData* ChromaData::mutable_cherekovphotons() {
+ void ChromaData::set_ncherenkov(::google::protobuf::int32 value) {
   
-  if (cherekovphotons_ == NULL) {
-    cherekovphotons_ = new ::ratchroma::CherenkovData;
-  }
-  // @@protoc_insertion_point(field_mutable:ratchroma.ChromaData.cherekovphotons)
-  return cherekovphotons_;
-}
- ::ratchroma::CherenkovData* ChromaData::release_cherekovphotons() {
-  
-  ::ratchroma::CherenkovData* temp = cherekovphotons_;
-  cherekovphotons_ = NULL;
-  return temp;
-}
- void ChromaData::set_allocated_cherekovphotons(::ratchroma::CherenkovData* cherekovphotons) {
-  delete cherekovphotons_;
-  cherekovphotons_ = cherekovphotons;
-  if (cherekovphotons) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:ratchroma.ChromaData.cherekovphotons)
+  ncherenkov_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.ncherenkov)
 }
 
-// repeated .ratchroma.ScintStep stepdata = 3;
+// optional int32 nsteps = 3;
+void ChromaData::clear_nsteps() {
+  nsteps_ = 0;
+}
+ ::google::protobuf::int32 ChromaData::nsteps() const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.nsteps)
+  return nsteps_;
+}
+ void ChromaData::set_nsteps(::google::protobuf::int32 value) {
+  
+  nsteps_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.nsteps)
+}
+
+// repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+int ChromaData::cherekovdata_size() const {
+  return cherekovdata_.size();
+}
+void ChromaData::clear_cherekovdata() {
+  cherekovdata_.Clear();
+}
+ const ::ratchroma::CherenkovPhoton& ChromaData::cherekovdata(int index) const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Get(index);
+}
+ ::ratchroma::CherenkovPhoton* ChromaData::mutable_cherekovdata(int index) {
+  // @@protoc_insertion_point(field_mutable:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Mutable(index);
+}
+ ::ratchroma::CherenkovPhoton* ChromaData::add_cherekovdata() {
+  // @@protoc_insertion_point(field_add:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Add();
+}
+ const ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >&
+ChromaData::cherekovdata() const {
+  // @@protoc_insertion_point(field_list:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_;
+}
+ ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >*
+ChromaData::mutable_cherekovdata() {
+  // @@protoc_insertion_point(field_mutable_list:ratchroma.ChromaData.cherekovdata)
+  return &cherekovdata_;
+}
+
+// repeated .ratchroma.ScintStep stepdata = 5;
 int ChromaData::stepdata_size() const {
   return stepdata_.size();
 }

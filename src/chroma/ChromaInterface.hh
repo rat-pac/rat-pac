@@ -2,6 +2,7 @@
 #define __CHROMA_INTERFACE__
 
 #include <vector>
+#include "ratchromadata.pb.h"
 
 class G4Track;
 
@@ -19,7 +20,7 @@ public:
 
 protected:
 
-  
+  ratchroma::ChromaData message;
 
 };
 

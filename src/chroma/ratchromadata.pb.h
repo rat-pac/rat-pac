@@ -36,38 +36,38 @@ void protobuf_AddDesc_ratchromadata_2eproto();
 void protobuf_AssignDesc_ratchromadata_2eproto();
 void protobuf_ShutdownFile_ratchromadata_2eproto();
 
-class CherenkovData;
+class CherenkovPhoton;
 class ScintStep;
 class ChromaData;
 
 // ===================================================================
 
-class CherenkovData : public ::google::protobuf::Message {
+class CherenkovPhoton : public ::google::protobuf::Message {
  public:
-  CherenkovData();
-  virtual ~CherenkovData();
+  CherenkovPhoton();
+  virtual ~CherenkovPhoton();
 
-  CherenkovData(const CherenkovData& from);
+  CherenkovPhoton(const CherenkovPhoton& from);
 
-  inline CherenkovData& operator=(const CherenkovData& from) {
+  inline CherenkovPhoton& operator=(const CherenkovPhoton& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const CherenkovData& default_instance();
+  static const CherenkovPhoton& default_instance();
 
-  void Swap(CherenkovData* other);
+  void Swap(CherenkovPhoton* other);
 
   // implements Message ----------------------------------------------
 
-  inline CherenkovData* New() const { return New(NULL); }
+  inline CherenkovPhoton* New() const { return New(NULL); }
 
-  CherenkovData* New(::google::protobuf::Arena* arena) const;
+  CherenkovPhoton* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const CherenkovData& from);
-  void MergeFrom(const CherenkovData& from);
+  void CopyFrom(const CherenkovPhoton& from);
+  void MergeFrom(const CherenkovPhoton& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -82,7 +82,7 @@ class CherenkovData : public ::google::protobuf::Message {
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(CherenkovData* other);
+  void InternalSwap(CherenkovPhoton* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -98,179 +98,95 @@ class CherenkovData : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // optional int32 nphotons = 1;
-  void clear_nphotons();
-  static const int kNphotonsFieldNumber = 1;
-  ::google::protobuf::int32 nphotons() const;
-  void set_nphotons(::google::protobuf::int32 value);
-
-  // repeated float x = 2;
-  int x_size() const;
+  // optional float x = 2;
   void clear_x();
   static const int kXFieldNumber = 2;
-  float x(int index) const;
-  void set_x(int index, float value);
-  void add_x(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      x() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_x();
+  float x() const;
+  void set_x(float value);
 
-  // repeated float y = 3;
-  int y_size() const;
+  // optional float y = 3;
   void clear_y();
   static const int kYFieldNumber = 3;
-  float y(int index) const;
-  void set_y(int index, float value);
-  void add_y(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      y() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_y();
+  float y() const;
+  void set_y(float value);
 
-  // repeated float z = 4;
-  int z_size() const;
+  // optional float z = 4;
   void clear_z();
   static const int kZFieldNumber = 4;
-  float z(int index) const;
-  void set_z(int index, float value);
-  void add_z(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      z() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_z();
+  float z() const;
+  void set_z(float value);
 
-  // repeated float t = 5;
-  int t_size() const;
+  // optional float t = 5;
   void clear_t();
   static const int kTFieldNumber = 5;
-  float t(int index) const;
-  void set_t(int index, float value);
-  void add_t(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      t() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_t();
+  float t() const;
+  void set_t(float value);
 
-  // repeated float dx = 6;
-  int dx_size() const;
+  // optional float dx = 6;
   void clear_dx();
   static const int kDxFieldNumber = 6;
-  float dx(int index) const;
-  void set_dx(int index, float value);
-  void add_dx(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      dx() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_dx();
+  float dx() const;
+  void set_dx(float value);
 
-  // repeated float dy = 7;
-  int dy_size() const;
+  // optional float dy = 7;
   void clear_dy();
   static const int kDyFieldNumber = 7;
-  float dy(int index) const;
-  void set_dy(int index, float value);
-  void add_dy(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      dy() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_dy();
+  float dy() const;
+  void set_dy(float value);
 
-  // repeated float dz = 8;
-  int dz_size() const;
+  // optional float dz = 8;
   void clear_dz();
   static const int kDzFieldNumber = 8;
-  float dz(int index) const;
-  void set_dz(int index, float value);
-  void add_dz(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      dz() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_dz();
+  float dz() const;
+  void set_dz(float value);
 
-  // repeated float wavelength = 9;
-  int wavelength_size() const;
+  // optional float wavelength = 9;
   void clear_wavelength();
   static const int kWavelengthFieldNumber = 9;
-  float wavelength(int index) const;
-  void set_wavelength(int index, float value);
-  void add_wavelength(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      wavelength() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_wavelength();
+  float wavelength() const;
+  void set_wavelength(float value);
 
-  // repeated float px = 10;
-  int px_size() const;
+  // optional float px = 10;
   void clear_px();
   static const int kPxFieldNumber = 10;
-  float px(int index) const;
-  void set_px(int index, float value);
-  void add_px(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      px() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_px();
+  float px() const;
+  void set_px(float value);
 
-  // repeated float py = 11;
-  int py_size() const;
+  // optional float py = 11;
   void clear_py();
   static const int kPyFieldNumber = 11;
-  float py(int index) const;
-  void set_py(int index, float value);
-  void add_py(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      py() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_py();
+  float py() const;
+  void set_py(float value);
 
-  // repeated float pz = 12;
-  int pz_size() const;
+  // optional float pz = 12;
   void clear_pz();
   static const int kPzFieldNumber = 12;
-  float pz(int index) const;
-  void set_pz(int index, float value);
-  void add_pz(float value);
-  const ::google::protobuf::RepeatedField< float >&
-      pz() const;
-  ::google::protobuf::RepeatedField< float >*
-      mutable_pz();
+  float pz() const;
+  void set_pz(float value);
 
-  // @@protoc_insertion_point(class_scope:ratchroma.CherenkovData)
+  // @@protoc_insertion_point(class_scope:ratchroma.CherenkovPhoton)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::RepeatedField< float > x_;
-  mutable int _x_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > y_;
-  mutable int _y_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > z_;
-  mutable int _z_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > t_;
-  mutable int _t_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > dx_;
-  mutable int _dx_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > dy_;
-  mutable int _dy_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > dz_;
-  mutable int _dz_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > wavelength_;
-  mutable int _wavelength_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > px_;
-  mutable int _px_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > py_;
-  mutable int _py_cached_byte_size_;
-  ::google::protobuf::RepeatedField< float > pz_;
-  mutable int _pz_cached_byte_size_;
-  ::google::protobuf::int32 nphotons_;
+  float x_;
+  float y_;
+  float z_;
+  float t_;
+  float dx_;
+  float dy_;
+  float dz_;
+  float wavelength_;
+  float px_;
+  float py_;
+  float pz_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_ratchromadata_2eproto();
   friend void protobuf_AssignDesc_ratchromadata_2eproto();
   friend void protobuf_ShutdownFile_ratchromadata_2eproto();
 
   void InitAsDefaultInstance();
-  static CherenkovData* default_instance_;
+  static CherenkovPhoton* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -482,19 +398,34 @@ class ChromaData : public ::google::protobuf::Message {
   ::google::protobuf::int32 eventid() const;
   void set_eventid(::google::protobuf::int32 value);
 
-  // optional .ratchroma.CherenkovData cherekovphotons = 2;
-  bool has_cherekovphotons() const;
-  void clear_cherekovphotons();
-  static const int kCherekovphotonsFieldNumber = 2;
-  const ::ratchroma::CherenkovData& cherekovphotons() const;
-  ::ratchroma::CherenkovData* mutable_cherekovphotons();
-  ::ratchroma::CherenkovData* release_cherekovphotons();
-  void set_allocated_cherekovphotons(::ratchroma::CherenkovData* cherekovphotons);
+  // optional int32 ncherenkov = 2;
+  void clear_ncherenkov();
+  static const int kNcherenkovFieldNumber = 2;
+  ::google::protobuf::int32 ncherenkov() const;
+  void set_ncherenkov(::google::protobuf::int32 value);
 
-  // repeated .ratchroma.ScintStep stepdata = 3;
+  // optional int32 nsteps = 3;
+  void clear_nsteps();
+  static const int kNstepsFieldNumber = 3;
+  ::google::protobuf::int32 nsteps() const;
+  void set_nsteps(::google::protobuf::int32 value);
+
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  int cherekovdata_size() const;
+  void clear_cherekovdata();
+  static const int kCherekovdataFieldNumber = 4;
+  const ::ratchroma::CherenkovPhoton& cherekovdata(int index) const;
+  ::ratchroma::CherenkovPhoton* mutable_cherekovdata(int index);
+  ::ratchroma::CherenkovPhoton* add_cherekovdata();
+  const ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >&
+      cherekovdata() const;
+  ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >*
+      mutable_cherekovdata();
+
+  // repeated .ratchroma.ScintStep stepdata = 5;
   int stepdata_size() const;
   void clear_stepdata();
-  static const int kStepdataFieldNumber = 3;
+  static const int kStepdataFieldNumber = 5;
   const ::ratchroma::ScintStep& stepdata(int index) const;
   ::ratchroma::ScintStep* mutable_stepdata(int index);
   ::ratchroma::ScintStep* add_stepdata();
@@ -508,9 +439,11 @@ class ChromaData : public ::google::protobuf::Message {
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::ratchroma::CherenkovData* cherekovphotons_;
-  ::google::protobuf::RepeatedPtrField< ::ratchroma::ScintStep > stepdata_;
   ::google::protobuf::int32 eventid_;
+  ::google::protobuf::int32 ncherenkov_;
+  ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton > cherekovdata_;
+  ::google::protobuf::RepeatedPtrField< ::ratchroma::ScintStep > stepdata_;
+  ::google::protobuf::int32 nsteps_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_ratchromadata_2eproto();
   friend void protobuf_AssignDesc_ratchromadata_2eproto();
@@ -525,350 +458,160 @@ class ChromaData : public ::google::protobuf::Message {
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// CherenkovData
+// CherenkovPhoton
 
-// optional int32 nphotons = 1;
-inline void CherenkovData::clear_nphotons() {
-  nphotons_ = 0;
+// optional float x = 2;
+inline void CherenkovPhoton::clear_x() {
+  x_ = 0;
 }
-inline ::google::protobuf::int32 CherenkovData::nphotons() const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.nphotons)
-  return nphotons_;
-}
-inline void CherenkovData::set_nphotons(::google::protobuf::int32 value) {
-  
-  nphotons_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.nphotons)
-}
-
-// repeated float x = 2;
-inline int CherenkovData::x_size() const {
-  return x_.size();
-}
-inline void CherenkovData::clear_x() {
-  x_.Clear();
-}
-inline float CherenkovData::x(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.x)
-  return x_.Get(index);
-}
-inline void CherenkovData::set_x(int index, float value) {
-  x_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.x)
-}
-inline void CherenkovData::add_x(float value) {
-  x_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.x)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::x() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.x)
+inline float CherenkovPhoton::x() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.x)
   return x_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_x() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.x)
-  return &x_;
+inline void CherenkovPhoton::set_x(float value) {
+  
+  x_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.x)
 }
 
-// repeated float y = 3;
-inline int CherenkovData::y_size() const {
-  return y_.size();
+// optional float y = 3;
+inline void CherenkovPhoton::clear_y() {
+  y_ = 0;
 }
-inline void CherenkovData::clear_y() {
-  y_.Clear();
-}
-inline float CherenkovData::y(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.y)
-  return y_.Get(index);
-}
-inline void CherenkovData::set_y(int index, float value) {
-  y_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.y)
-}
-inline void CherenkovData::add_y(float value) {
-  y_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.y)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::y() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.y)
+inline float CherenkovPhoton::y() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.y)
   return y_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_y() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.y)
-  return &y_;
+inline void CherenkovPhoton::set_y(float value) {
+  
+  y_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.y)
 }
 
-// repeated float z = 4;
-inline int CherenkovData::z_size() const {
-  return z_.size();
+// optional float z = 4;
+inline void CherenkovPhoton::clear_z() {
+  z_ = 0;
 }
-inline void CherenkovData::clear_z() {
-  z_.Clear();
-}
-inline float CherenkovData::z(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.z)
-  return z_.Get(index);
-}
-inline void CherenkovData::set_z(int index, float value) {
-  z_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.z)
-}
-inline void CherenkovData::add_z(float value) {
-  z_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.z)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::z() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.z)
+inline float CherenkovPhoton::z() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.z)
   return z_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_z() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.z)
-  return &z_;
+inline void CherenkovPhoton::set_z(float value) {
+  
+  z_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.z)
 }
 
-// repeated float t = 5;
-inline int CherenkovData::t_size() const {
-  return t_.size();
+// optional float t = 5;
+inline void CherenkovPhoton::clear_t() {
+  t_ = 0;
 }
-inline void CherenkovData::clear_t() {
-  t_.Clear();
-}
-inline float CherenkovData::t(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.t)
-  return t_.Get(index);
-}
-inline void CherenkovData::set_t(int index, float value) {
-  t_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.t)
-}
-inline void CherenkovData::add_t(float value) {
-  t_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.t)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::t() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.t)
+inline float CherenkovPhoton::t() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.t)
   return t_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_t() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.t)
-  return &t_;
+inline void CherenkovPhoton::set_t(float value) {
+  
+  t_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.t)
 }
 
-// repeated float dx = 6;
-inline int CherenkovData::dx_size() const {
-  return dx_.size();
+// optional float dx = 6;
+inline void CherenkovPhoton::clear_dx() {
+  dx_ = 0;
 }
-inline void CherenkovData::clear_dx() {
-  dx_.Clear();
-}
-inline float CherenkovData::dx(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dx)
-  return dx_.Get(index);
-}
-inline void CherenkovData::set_dx(int index, float value) {
-  dx_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dx)
-}
-inline void CherenkovData::add_dx(float value) {
-  dx_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dx)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dx() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dx)
+inline float CherenkovPhoton::dx() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dx)
   return dx_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dx() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dx)
-  return &dx_;
+inline void CherenkovPhoton::set_dx(float value) {
+  
+  dx_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dx)
 }
 
-// repeated float dy = 7;
-inline int CherenkovData::dy_size() const {
-  return dy_.size();
+// optional float dy = 7;
+inline void CherenkovPhoton::clear_dy() {
+  dy_ = 0;
 }
-inline void CherenkovData::clear_dy() {
-  dy_.Clear();
-}
-inline float CherenkovData::dy(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dy)
-  return dy_.Get(index);
-}
-inline void CherenkovData::set_dy(int index, float value) {
-  dy_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dy)
-}
-inline void CherenkovData::add_dy(float value) {
-  dy_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dy)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dy() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dy)
+inline float CherenkovPhoton::dy() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dy)
   return dy_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dy() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dy)
-  return &dy_;
+inline void CherenkovPhoton::set_dy(float value) {
+  
+  dy_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dy)
 }
 
-// repeated float dz = 8;
-inline int CherenkovData::dz_size() const {
-  return dz_.size();
+// optional float dz = 8;
+inline void CherenkovPhoton::clear_dz() {
+  dz_ = 0;
 }
-inline void CherenkovData::clear_dz() {
-  dz_.Clear();
-}
-inline float CherenkovData::dz(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.dz)
-  return dz_.Get(index);
-}
-inline void CherenkovData::set_dz(int index, float value) {
-  dz_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.dz)
-}
-inline void CherenkovData::add_dz(float value) {
-  dz_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.dz)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::dz() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.dz)
+inline float CherenkovPhoton::dz() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.dz)
   return dz_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_dz() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.dz)
-  return &dz_;
+inline void CherenkovPhoton::set_dz(float value) {
+  
+  dz_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.dz)
 }
 
-// repeated float wavelength = 9;
-inline int CherenkovData::wavelength_size() const {
-  return wavelength_.size();
+// optional float wavelength = 9;
+inline void CherenkovPhoton::clear_wavelength() {
+  wavelength_ = 0;
 }
-inline void CherenkovData::clear_wavelength() {
-  wavelength_.Clear();
-}
-inline float CherenkovData::wavelength(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.wavelength)
-  return wavelength_.Get(index);
-}
-inline void CherenkovData::set_wavelength(int index, float value) {
-  wavelength_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.wavelength)
-}
-inline void CherenkovData::add_wavelength(float value) {
-  wavelength_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.wavelength)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::wavelength() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.wavelength)
+inline float CherenkovPhoton::wavelength() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.wavelength)
   return wavelength_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_wavelength() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.wavelength)
-  return &wavelength_;
+inline void CherenkovPhoton::set_wavelength(float value) {
+  
+  wavelength_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.wavelength)
 }
 
-// repeated float px = 10;
-inline int CherenkovData::px_size() const {
-  return px_.size();
+// optional float px = 10;
+inline void CherenkovPhoton::clear_px() {
+  px_ = 0;
 }
-inline void CherenkovData::clear_px() {
-  px_.Clear();
-}
-inline float CherenkovData::px(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.px)
-  return px_.Get(index);
-}
-inline void CherenkovData::set_px(int index, float value) {
-  px_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.px)
-}
-inline void CherenkovData::add_px(float value) {
-  px_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.px)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::px() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.px)
+inline float CherenkovPhoton::px() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.px)
   return px_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_px() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.px)
-  return &px_;
+inline void CherenkovPhoton::set_px(float value) {
+  
+  px_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.px)
 }
 
-// repeated float py = 11;
-inline int CherenkovData::py_size() const {
-  return py_.size();
+// optional float py = 11;
+inline void CherenkovPhoton::clear_py() {
+  py_ = 0;
 }
-inline void CherenkovData::clear_py() {
-  py_.Clear();
-}
-inline float CherenkovData::py(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.py)
-  return py_.Get(index);
-}
-inline void CherenkovData::set_py(int index, float value) {
-  py_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.py)
-}
-inline void CherenkovData::add_py(float value) {
-  py_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.py)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::py() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.py)
+inline float CherenkovPhoton::py() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.py)
   return py_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_py() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.py)
-  return &py_;
+inline void CherenkovPhoton::set_py(float value) {
+  
+  py_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.py)
 }
 
-// repeated float pz = 12;
-inline int CherenkovData::pz_size() const {
-  return pz_.size();
+// optional float pz = 12;
+inline void CherenkovPhoton::clear_pz() {
+  pz_ = 0;
 }
-inline void CherenkovData::clear_pz() {
-  pz_.Clear();
-}
-inline float CherenkovData::pz(int index) const {
-  // @@protoc_insertion_point(field_get:ratchroma.CherenkovData.pz)
-  return pz_.Get(index);
-}
-inline void CherenkovData::set_pz(int index, float value) {
-  pz_.Set(index, value);
-  // @@protoc_insertion_point(field_set:ratchroma.CherenkovData.pz)
-}
-inline void CherenkovData::add_pz(float value) {
-  pz_.Add(value);
-  // @@protoc_insertion_point(field_add:ratchroma.CherenkovData.pz)
-}
-inline const ::google::protobuf::RepeatedField< float >&
-CherenkovData::pz() const {
-  // @@protoc_insertion_point(field_list:ratchroma.CherenkovData.pz)
+inline float CherenkovPhoton::pz() const {
+  // @@protoc_insertion_point(field_get:ratchroma.CherenkovPhoton.pz)
   return pz_;
 }
-inline ::google::protobuf::RepeatedField< float >*
-CherenkovData::mutable_pz() {
-  // @@protoc_insertion_point(field_mutable_list:ratchroma.CherenkovData.pz)
-  return &pz_;
+inline void CherenkovPhoton::set_pz(float value) {
+  
+  pz_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.CherenkovPhoton.pz)
 }
 
 // -------------------------------------------------------------------
@@ -1062,44 +805,65 @@ inline void ChromaData::set_eventid(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:ratchroma.ChromaData.eventid)
 }
 
-// optional .ratchroma.CherenkovData cherekovphotons = 2;
-inline bool ChromaData::has_cherekovphotons() const {
-  return !_is_default_instance_ && cherekovphotons_ != NULL;
+// optional int32 ncherenkov = 2;
+inline void ChromaData::clear_ncherenkov() {
+  ncherenkov_ = 0;
 }
-inline void ChromaData::clear_cherekovphotons() {
-  if (GetArenaNoVirtual() == NULL && cherekovphotons_ != NULL) delete cherekovphotons_;
-  cherekovphotons_ = NULL;
+inline ::google::protobuf::int32 ChromaData::ncherenkov() const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.ncherenkov)
+  return ncherenkov_;
 }
-inline const ::ratchroma::CherenkovData& ChromaData::cherekovphotons() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.cherekovphotons)
-  return cherekovphotons_ != NULL ? *cherekovphotons_ : *default_instance_->cherekovphotons_;
-}
-inline ::ratchroma::CherenkovData* ChromaData::mutable_cherekovphotons() {
+inline void ChromaData::set_ncherenkov(::google::protobuf::int32 value) {
   
-  if (cherekovphotons_ == NULL) {
-    cherekovphotons_ = new ::ratchroma::CherenkovData;
-  }
-  // @@protoc_insertion_point(field_mutable:ratchroma.ChromaData.cherekovphotons)
-  return cherekovphotons_;
-}
-inline ::ratchroma::CherenkovData* ChromaData::release_cherekovphotons() {
-  
-  ::ratchroma::CherenkovData* temp = cherekovphotons_;
-  cherekovphotons_ = NULL;
-  return temp;
-}
-inline void ChromaData::set_allocated_cherekovphotons(::ratchroma::CherenkovData* cherekovphotons) {
-  delete cherekovphotons_;
-  cherekovphotons_ = cherekovphotons;
-  if (cherekovphotons) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:ratchroma.ChromaData.cherekovphotons)
+  ncherenkov_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.ncherenkov)
 }
 
-// repeated .ratchroma.ScintStep stepdata = 3;
+// optional int32 nsteps = 3;
+inline void ChromaData::clear_nsteps() {
+  nsteps_ = 0;
+}
+inline ::google::protobuf::int32 ChromaData::nsteps() const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.nsteps)
+  return nsteps_;
+}
+inline void ChromaData::set_nsteps(::google::protobuf::int32 value) {
+  
+  nsteps_ = value;
+  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.nsteps)
+}
+
+// repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+inline int ChromaData::cherekovdata_size() const {
+  return cherekovdata_.size();
+}
+inline void ChromaData::clear_cherekovdata() {
+  cherekovdata_.Clear();
+}
+inline const ::ratchroma::CherenkovPhoton& ChromaData::cherekovdata(int index) const {
+  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Get(index);
+}
+inline ::ratchroma::CherenkovPhoton* ChromaData::mutable_cherekovdata(int index) {
+  // @@protoc_insertion_point(field_mutable:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Mutable(index);
+}
+inline ::ratchroma::CherenkovPhoton* ChromaData::add_cherekovdata() {
+  // @@protoc_insertion_point(field_add:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >&
+ChromaData::cherekovdata() const {
+  // @@protoc_insertion_point(field_list:ratchroma.ChromaData.cherekovdata)
+  return cherekovdata_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >*
+ChromaData::mutable_cherekovdata() {
+  // @@protoc_insertion_point(field_mutable_list:ratchroma.ChromaData.cherekovdata)
+  return &cherekovdata_;
+}
+
+// repeated .ratchroma.ScintStep stepdata = 5;
 inline int ChromaData::stepdata_size() const {
   return stepdata_.size();
 }
