@@ -27,13 +27,19 @@
 #include "G4SteppingManager.hh"
 #include "GLG4PrimaryGeneratorAction.hh"
 #include <RAT/TrackInfo.hh>
+#include "RAT/ChromaInterface.hh"
 
-GLG4SteppingAction::GLG4SteppingAction()
+GLG4SteppingAction::GLG4SteppingAction( ChromaInterface* chroma )
 {
    myGenerator= GLG4PrimaryGeneratorAction::GetTheGLG4PrimaryGeneratorAction();
    if (myGenerator == 0) {
      G4Exception(__FILE__, "No Primary Generator", FatalException, "GLG4SteppingAction:: no GLG4PrimaryGeneratorAction instance.");
    }
+   fChroma = chroma;
+   if (fChroma==NULL)
+     kUseChroma = false;
+   else
+     kUseChroma = true;
 }
 
 #ifdef G4DEBUG
@@ -280,6 +286,13 @@ GLG4SteppingAction::UserSteppingAction(const G4Step* aStep)
   }
 #endif
 
+  // before scintillation: check for cerenkov photons
+  std::cout << "prescint secondary list: " << std::endl;
+  const std::vector< const G4Track* >* sndries = aStep->GetSecondaryInCurrentStep();
+  for (  std::vector< const G4Track* >::const_iterator it=sndries->begin(); it!=sndries->end(); it++ ) {
+    std::cout << "  " << (*it)->GetParticleDefinition()->GetParticleName() << " " << (*it)->GetCreatorProcess()->GetProcessName() << std::endl;
+  }
+  
   // do scintillation photons, and also re-emission
   if (fUseGLG4) {
       // invoke scintillation process
@@ -300,7 +313,8 @@ GLG4SteppingAction::UserSteppingAction(const G4Step* aStep)
 	}
       // clear ParticleChange
       pParticleChange->Clear();
-    }
+      std::cout << "GLGLScint: number of photons " << iSecondary << std::endl;
+  }
 
   // Commented out because this duplicates the function of GLG4DeferTrackProc
   // // if end step time since start of event is past event window, defer to later

@@ -199,6 +199,9 @@ opt = int(ARGUMENTS.get('opt', optdefault)) == 1
 if opt:
     env.Append(CXXFLAGS=arch['OPTFLAGS'])
 
+# Protobuf headers
+env.Append(CXXFLAGS=" -std=c++11 -Wno-deprecated-register -I/Users/twongjirad/working/ratchroma/protobuf/include")
+env.Append(LINKFLAGS=" -L/Users/twongjirad/working/ratchroma/protobuf/lib -lprotobuf")
 
 # Add arch-dependent flags needed by extra packages (X11, OpenGL, etc.)
 for pkg in env['ARCHEXTRA']:
