@@ -6,20 +6,47 @@
 #include "G4VParticleChange.hh"
 #include "G4StepPoint.hh"
 
+#include "GLG4VEventAction.hh"
+#include "GLG4HitPhoton.hh"
+
+#include <RAT/DB.hh>
+#include <RAT/Log.hh>
+
 namespace RAT {
 
   ChromaInterface::ChromaInterface() {
     GOOGLE_PROTOBUF_VERIFY_VERSION; // checks protobuf version
-    message.Clear();
+    ClearData();
   }
 
 
   ChromaInterface::~ChromaInterface() {
   }
 
-  void ChromaInterface::initializeServerConnection() {}
+  void ChromaInterface::initializeServerConnection() {
+    // Load the Chroma Table
+    DB* db = DB::Get();
+    DBLinkPtr lChroma = db->GetLink("CHROMA");
 
-  void ChromaInterface::closeServerConnection() {}
+    fStrQueueAddress = lChroma->GetS("QueueManagerAddress");
+    try {
+      info << "Chroma/RAT Queue manager address is " << fStrQueueAddress << newline;
+    }
+    catch ( DBNotFoundError& e) {
+      Log::Die( "Chroma interface initialized without specifying Chroma/RAT Queue manager address." );
+    }
+
+    // Here load appropriate socket
+
+    // Gather required geometry data
+
+    // Talk to Server/Handshake/Send out detector data
+    SendDetectorConfigData();
+  }
+
+  void ChromaInterface::closeServerConnection() {
+    // close socket
+  }
 
   void ChromaInterface::readStoreKillCherenkovPhotons( std::vector< G4Track* >* secondaries ) {
   
@@ -68,6 +95,30 @@ namespace RAT {
     scintinfo->set_step_end_z( poststep->GetPosition().z() );
     scintinfo->set_material( prestep->GetMaterial()->GetName() );
     scint_photons->Clear();
+  }
+
+  void ChromaInterface::ClearData() {
+    message.Clear();
+  }
+
+  void ChromaInterface::SendPhotonData() {
+    // Send data
+  }
+
+  void ChromaInterface::ReceivePhotonData() {
+
+  }
+
+  void ChromaInterface::SendDetectorConfigData() {
+    // Send geometry information.
+    // Includes mesh representation of detector (or activation of cache).  
+    // Also, geometry info has to sync. optical detector indexes between Chroma and RAT
+  }
+
+  void ChromaInterface::MakePhotonHitData() {
+    GLG4HitPhoton* hit_photon = new GLG4HitPhoton();
+    //hit_photon->SetPMTID((int)iopdet);
+    GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
   }
 
 }// end of namespace RAT

@@ -132,6 +132,7 @@ void Gsim::Init() {
   kUseChroma = false;
   fChroma = new ChromaInterface();
   kUseChroma = true;
+  fChroma->initializeServerConnection();
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(this));
   theRunManager->SetUserAction(new GLG4SteppingAction( fChroma ));
 
@@ -145,6 +146,13 @@ void Gsim::Init() {
 }
 
 Gsim::~Gsim() {
+
+  // destroy chroma connection
+  if ( fChroma ) {
+    fChroma->closeServerConnection();
+    delete fChroma;
+  }
+
   // GEANT4 will try to delete the G4UserEventAction when we delete
   // the Run Manager, but that object is us!!  Clear event action
   // first to avoid circular delete.  Funny casting because
@@ -249,9 +257,21 @@ void Gsim::BeginOfEventAction(const G4Event* anEvent) {
   if (StoreOpticalTrackID) {
   	OpticalPhotonIDs.resize(10000);
   }
+
+  // only necessary if we run chroma interface: clears protobuf data (retains allocation)
+  if ( kUseChroma )
+    fChroma->ClearData();
 }
 
 void Gsim::EndOfEventAction(const G4Event* anEvent) {
+  
+  // If we used Chroma, we need to send out photon data and then make photon hits
+  if ( kUseChroma ) {
+    fChroma->SendPhotonData();
+    fChroma->ReceivePhotonData(); // blocks until data retrieved
+    fChroma->MakePhotonHitData();
+  }
+  
     // Now build data structure out of G4Event
     DS::Root* ds = new DS::Root;
     MakeEvent(anEvent, ds);
