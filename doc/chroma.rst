@@ -25,8 +25,7 @@ Setting up you geometry for Chroma
 Integration of Geant4/RAT geometry, unfortunately, is not automatic and seemless.  Preparing a geometry description requires the user to perform a number of steps.
 
 - Export Geant4 geometry using G4DAE tool (by S.C. Blythe).  This is now a feature in Geant4.10. But you can also build it into your own Geant4 copy
-- Use the Chroma tool, genUserGeant4GeometryDesciption.py, to generate a template python class.  The user must then fill in class methods which provide a way for
-Chroma to learn about the geometries materials, sensitive detectors, etc.  There are also functions to help the user smooth over the transition from Geant4 geometry to Chroma triangle mesh.
+- Use the Chroma tool, genUserGeant4GeometryDesciption.py, to generate a template python class.  The user must then fill in class methods which provide a way for Chroma to learn about the geometries materials, sensitive detectors, etc.  There are also functions to help the user smooth over the transition from Geant4 geometry to Chroma triangle mesh.
 - Set the parameters in CHROMA.ratdb to configure interface
 
 Interface settings available in CHROMA.ratdb
