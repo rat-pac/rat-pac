@@ -89,10 +89,8 @@ void protobuf_AssignDesc_ratchromadata_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScintStep, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ScintStep, _is_default_instance_));
   ChromaData_descriptor_ = file->message_type(2);
-  static const int ChromaData_offsets_[5] = {
+  static const int ChromaData_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, eventid_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, ncherenkov_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, nsteps_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, cherekovdata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChromaData, stepdata_),
   };
@@ -155,11 +153,10 @@ void protobuf_AddDesc_ratchromadata_2eproto() {
     "\030\004 \001(\002\022\024\n\014step_start_t\030\005 \001(\002\022\022\n\nstep_end"
     "_x\030\006 \001(\002\022\022\n\nstep_end_y\030\007 \001(\002\022\022\n\nstep_end"
     "_z\030\010 \001(\002\022\022\n\nstep_end_t\030\t \001(\002\022\020\n\010material"
-    "\030\n \001(\t\"\233\001\n\nChromaData\022\017\n\007eventid\030\001 \001(\005\022\022"
-    "\n\nncherenkov\030\002 \001(\005\022\016\n\006nsteps\030\003 \001(\005\0220\n\014ch"
-    "erekovdata\030\004 \003(\0132\032.ratchroma.CherenkovPh"
-    "oton\022&\n\010stepdata\030\005 \003(\0132\024.ratchroma.Scint"
-    "Stepb\006proto3", 572);
+    "\030\n \001(\t\"w\n\nChromaData\022\017\n\007eventid\030\001 \001(\005\0220\n"
+    "\014cherekovdata\030\002 \003(\0132\032.ratchroma.Cherenko"
+    "vPhoton\022&\n\010stepdata\030\003 \003(\0132\024.ratchroma.Sc"
+    "intStepb\006proto3", 535);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "ratchromadata.proto", &protobuf_RegisterTypes);
   CherenkovPhoton::default_instance_ = new CherenkovPhoton();
@@ -1666,8 +1663,6 @@ void ScintStep::clear_material() {
 
 #ifndef _MSC_VER
 const int ChromaData::kEventidFieldNumber;
-const int ChromaData::kNcherenkovFieldNumber;
-const int ChromaData::kNstepsFieldNumber;
 const int ChromaData::kCherekovdataFieldNumber;
 const int ChromaData::kStepdataFieldNumber;
 #endif  // !_MSC_VER
@@ -1694,8 +1689,6 @@ void ChromaData::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
   eventid_ = 0;
-  ncherenkov_ = 0;
-  nsteps_ = 0;
 }
 
 ChromaData::~ChromaData() {
@@ -1734,20 +1727,7 @@ ChromaData* ChromaData::New(::google::protobuf::Arena* arena) const {
 }
 
 void ChromaData::Clear() {
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<ChromaData*>(16)->f)
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(eventid_, ncherenkov_);
-  nsteps_ = 0;
-
-#undef ZR_HELPER_
-#undef ZR_
-
+  eventid_ = 0;
   cherekovdata_.Clear();
   stepdata_.Clear();
 }
@@ -1772,43 +1752,13 @@ bool ChromaData::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(16)) goto parse_ncherenkov;
+        if (input->ExpectTag(18)) goto parse_cherekovdata;
         break;
       }
 
-      // optional int32 ncherenkov = 2;
+      // repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
       case 2: {
-        if (tag == 16) {
-         parse_ncherenkov:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &ncherenkov_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(24)) goto parse_nsteps;
-        break;
-      }
-
-      // optional int32 nsteps = 3;
-      case 3: {
-        if (tag == 24) {
-         parse_nsteps:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &nsteps_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_cherekovdata;
-        break;
-      }
-
-      // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
-      case 4: {
-        if (tag == 34) {
+        if (tag == 18) {
          parse_cherekovdata:
           DO_(input->IncrementRecursionDepth());
          parse_loop_cherekovdata:
@@ -1817,15 +1767,15 @@ bool ChromaData::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_loop_cherekovdata;
-        if (input->ExpectTag(42)) goto parse_loop_stepdata;
+        if (input->ExpectTag(18)) goto parse_loop_cherekovdata;
+        if (input->ExpectTag(26)) goto parse_loop_stepdata;
         input->UnsafeDecrementRecursionDepth();
         break;
       }
 
-      // repeated .ratchroma.ScintStep stepdata = 5;
-      case 5: {
-        if (tag == 42) {
+      // repeated .ratchroma.ScintStep stepdata = 3;
+      case 3: {
+        if (tag == 26) {
           DO_(input->IncrementRecursionDepth());
          parse_loop_stepdata:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
@@ -1833,7 +1783,7 @@ bool ChromaData::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_loop_stepdata;
+        if (input->ExpectTag(26)) goto parse_loop_stepdata;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -1868,26 +1818,16 @@ void ChromaData::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->eventid(), output);
   }
 
-  // optional int32 ncherenkov = 2;
-  if (this->ncherenkov() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->ncherenkov(), output);
-  }
-
-  // optional int32 nsteps = 3;
-  if (this->nsteps() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->nsteps(), output);
-  }
-
-  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
   for (unsigned int i = 0, n = this->cherekovdata_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->cherekovdata(i), output);
+      2, this->cherekovdata(i), output);
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 5;
+  // repeated .ratchroma.ScintStep stepdata = 3;
   for (unsigned int i = 0, n = this->stepdata_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->stepdata(i), output);
+      3, this->stepdata(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:ratchroma.ChromaData)
@@ -1901,28 +1841,18 @@ void ChromaData::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->eventid(), target);
   }
 
-  // optional int32 ncherenkov = 2;
-  if (this->ncherenkov() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->ncherenkov(), target);
-  }
-
-  // optional int32 nsteps = 3;
-  if (this->nsteps() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->nsteps(), target);
-  }
-
-  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
   for (unsigned int i = 0, n = this->cherekovdata_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        4, this->cherekovdata(i), target);
+        2, this->cherekovdata(i), target);
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 5;
+  // repeated .ratchroma.ScintStep stepdata = 3;
   for (unsigned int i = 0, n = this->stepdata_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        5, this->stepdata(i), target);
+        3, this->stepdata(i), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:ratchroma.ChromaData)
@@ -1939,21 +1869,7 @@ int ChromaData::ByteSize() const {
         this->eventid());
   }
 
-  // optional int32 ncherenkov = 2;
-  if (this->ncherenkov() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->ncherenkov());
-  }
-
-  // optional int32 nsteps = 3;
-  if (this->nsteps() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->nsteps());
-  }
-
-  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
   total_size += 1 * this->cherekovdata_size();
   for (int i = 0; i < this->cherekovdata_size(); i++) {
     total_size +=
@@ -1961,7 +1877,7 @@ int ChromaData::ByteSize() const {
         this->cherekovdata(i));
   }
 
-  // repeated .ratchroma.ScintStep stepdata = 5;
+  // repeated .ratchroma.ScintStep stepdata = 3;
   total_size += 1 * this->stepdata_size();
   for (int i = 0; i < this->stepdata_size(); i++) {
     total_size +=
@@ -1994,12 +1910,6 @@ void ChromaData::MergeFrom(const ChromaData& from) {
   if (from.eventid() != 0) {
     set_eventid(from.eventid());
   }
-  if (from.ncherenkov() != 0) {
-    set_ncherenkov(from.ncherenkov());
-  }
-  if (from.nsteps() != 0) {
-    set_nsteps(from.nsteps());
-  }
 }
 
 void ChromaData::CopyFrom(const ::google::protobuf::Message& from) {
@@ -2025,8 +1935,6 @@ void ChromaData::Swap(ChromaData* other) {
 }
 void ChromaData::InternalSwap(ChromaData* other) {
   std::swap(eventid_, other->eventid_);
-  std::swap(ncherenkov_, other->ncherenkov_);
-  std::swap(nsteps_, other->nsteps_);
   cherekovdata_.UnsafeArenaSwap(&other->cherekovdata_);
   stepdata_.UnsafeArenaSwap(&other->stepdata_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -2058,35 +1966,7 @@ void ChromaData::clear_eventid() {
   // @@protoc_insertion_point(field_set:ratchroma.ChromaData.eventid)
 }
 
-// optional int32 ncherenkov = 2;
-void ChromaData::clear_ncherenkov() {
-  ncherenkov_ = 0;
-}
- ::google::protobuf::int32 ChromaData::ncherenkov() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.ncherenkov)
-  return ncherenkov_;
-}
- void ChromaData::set_ncherenkov(::google::protobuf::int32 value) {
-  
-  ncherenkov_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.ncherenkov)
-}
-
-// optional int32 nsteps = 3;
-void ChromaData::clear_nsteps() {
-  nsteps_ = 0;
-}
- ::google::protobuf::int32 ChromaData::nsteps() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.nsteps)
-  return nsteps_;
-}
- void ChromaData::set_nsteps(::google::protobuf::int32 value) {
-  
-  nsteps_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.nsteps)
-}
-
-// repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+// repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
 int ChromaData::cherekovdata_size() const {
   return cherekovdata_.size();
 }
@@ -2116,7 +1996,7 @@ ChromaData::mutable_cherekovdata() {
   return &cherekovdata_;
 }
 
-// repeated .ratchroma.ScintStep stepdata = 5;
+// repeated .ratchroma.ScintStep stepdata = 3;
 int ChromaData::stepdata_size() const {
   return stepdata_.size();
 }

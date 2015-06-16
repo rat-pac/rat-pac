@@ -31,8 +31,6 @@ message ScintStep {
 
 message ChromaData {
 	int32 eventid				= 1;
-	int32 ncherenkov			= 2;
-	int32 nsteps				= 3;
-	repeated CherenkovPhoton cherekovdata	= 4;
-	repeated ScintStep stepdata		= 5;
+	repeated CherenkovPhoton cherekovdata	= 2;
+	repeated ScintStep stepdata		= 3;
 }

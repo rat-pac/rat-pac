@@ -398,22 +398,10 @@ class ChromaData : public ::google::protobuf::Message {
   ::google::protobuf::int32 eventid() const;
   void set_eventid(::google::protobuf::int32 value);
 
-  // optional int32 ncherenkov = 2;
-  void clear_ncherenkov();
-  static const int kNcherenkovFieldNumber = 2;
-  ::google::protobuf::int32 ncherenkov() const;
-  void set_ncherenkov(::google::protobuf::int32 value);
-
-  // optional int32 nsteps = 3;
-  void clear_nsteps();
-  static const int kNstepsFieldNumber = 3;
-  ::google::protobuf::int32 nsteps() const;
-  void set_nsteps(::google::protobuf::int32 value);
-
-  // repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+  // repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
   int cherekovdata_size() const;
   void clear_cherekovdata();
-  static const int kCherekovdataFieldNumber = 4;
+  static const int kCherekovdataFieldNumber = 2;
   const ::ratchroma::CherenkovPhoton& cherekovdata(int index) const;
   ::ratchroma::CherenkovPhoton* mutable_cherekovdata(int index);
   ::ratchroma::CherenkovPhoton* add_cherekovdata();
@@ -422,10 +410,10 @@ class ChromaData : public ::google::protobuf::Message {
   ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton >*
       mutable_cherekovdata();
 
-  // repeated .ratchroma.ScintStep stepdata = 5;
+  // repeated .ratchroma.ScintStep stepdata = 3;
   int stepdata_size() const;
   void clear_stepdata();
-  static const int kStepdataFieldNumber = 5;
+  static const int kStepdataFieldNumber = 3;
   const ::ratchroma::ScintStep& stepdata(int index) const;
   ::ratchroma::ScintStep* mutable_stepdata(int index);
   ::ratchroma::ScintStep* add_stepdata();
@@ -439,11 +427,9 @@ class ChromaData : public ::google::protobuf::Message {
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::int32 eventid_;
-  ::google::protobuf::int32 ncherenkov_;
   ::google::protobuf::RepeatedPtrField< ::ratchroma::CherenkovPhoton > cherekovdata_;
   ::google::protobuf::RepeatedPtrField< ::ratchroma::ScintStep > stepdata_;
-  ::google::protobuf::int32 nsteps_;
+  ::google::protobuf::int32 eventid_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_ratchromadata_2eproto();
   friend void protobuf_AssignDesc_ratchromadata_2eproto();
@@ -805,35 +791,7 @@ inline void ChromaData::set_eventid(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:ratchroma.ChromaData.eventid)
 }
 
-// optional int32 ncherenkov = 2;
-inline void ChromaData::clear_ncherenkov() {
-  ncherenkov_ = 0;
-}
-inline ::google::protobuf::int32 ChromaData::ncherenkov() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.ncherenkov)
-  return ncherenkov_;
-}
-inline void ChromaData::set_ncherenkov(::google::protobuf::int32 value) {
-  
-  ncherenkov_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.ncherenkov)
-}
-
-// optional int32 nsteps = 3;
-inline void ChromaData::clear_nsteps() {
-  nsteps_ = 0;
-}
-inline ::google::protobuf::int32 ChromaData::nsteps() const {
-  // @@protoc_insertion_point(field_get:ratchroma.ChromaData.nsteps)
-  return nsteps_;
-}
-inline void ChromaData::set_nsteps(::google::protobuf::int32 value) {
-  
-  nsteps_ = value;
-  // @@protoc_insertion_point(field_set:ratchroma.ChromaData.nsteps)
-}
-
-// repeated .ratchroma.CherenkovPhoton cherekovdata = 4;
+// repeated .ratchroma.CherenkovPhoton cherekovdata = 2;
 inline int ChromaData::cherekovdata_size() const {
   return cherekovdata_.size();
 }
@@ -863,7 +821,7 @@ ChromaData::mutable_cherekovdata() {
   return &cherekovdata_;
 }
 
-// repeated .ratchroma.ScintStep stepdata = 5;
+// repeated .ratchroma.ScintStep stepdata = 3;
 inline int ChromaData::stepdata_size() const {
   return stepdata_.size();
 }
