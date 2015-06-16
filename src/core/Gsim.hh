@@ -25,6 +25,7 @@ class ProcBlock;
 class DetectorConstruction;
 class PMTTime;
 class PMTCharge;
+class ChromaInterface;
 
 int get_pdgcode(const G4PrimaryParticle *p);
 
@@ -103,6 +104,10 @@ protected:
   double channelEfficiency;
 
   bool fInitialStoreTrajectoryState;
+
+  /* Chroma Interface */
+  ChromaInterface* fChroma;
+  bool kUseChroma;
 
   static bool FillPointCont;
   static bool StoreOpticalTrackID;

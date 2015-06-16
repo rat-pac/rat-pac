@@ -29,6 +29,7 @@
 #include <RAT/GLG4SteppingAction.hh>
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
+#include <RAT/ChromaInterface.hh>
 
 #include <RAT/PDFPMTTime.hh>
 #include <RAT/MiniCleanPMTCharge.hh>
@@ -124,9 +125,15 @@ void Gsim::Init() {
   theRunManager->SetUserAction(static_cast<G4UserRunAction*>(this));
 
   // Tracking action used to add our specialized Trajectory object
-  // to capture particle track information
+  //   to capture particle track information
+  // Optional ChromaInterface can be activated to use GPUs to 
+  //   accelerate photon transport.
+  fChroma = NULL;
+  kUseChroma = false;
+  fChroma = new ChromaInterface();
+  kUseChroma = true;
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(this));
-  theRunManager->SetUserAction(new GLG4SteppingAction);
+  theRunManager->SetUserAction(new GLG4SteppingAction( fChroma ));
 
   // ...and finally the hook.  Here's where we trap GEANT4 at the end of
   // each event and do our business.
