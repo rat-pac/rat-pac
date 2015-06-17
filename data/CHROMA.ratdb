@@ -1,0 +1,9 @@
+/* Control Chroma Interface*/
+{
+name: "CHROMA",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+QueueManagerAddress: "tcp://localhost:5554",
+
+}

@@ -8,12 +8,15 @@
 #include "G4UserSteppingAction.hh"
 
 class GLG4PrimaryGeneratorAction;
+namespace RAT {
+  class ChromaInterface;
+}
 
 class GLG4SteppingAction : public G4UserSteppingAction
 {
 public:
   static G4bool fUseGLG4;
-  GLG4SteppingAction();
+  GLG4SteppingAction( RAT::ChromaInterface* chroma=NULL );
   void UserSteppingAction(const G4Step* aStep);
 
   // Kill a track if its global time exceeds this time.
@@ -22,6 +25,8 @@ public:
 
 private:
   GLG4PrimaryGeneratorAction* myGenerator;
+  bool kUseChroma;
+  RAT::ChromaInterface* fChroma;
 };
 
 #endif

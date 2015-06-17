@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package ratchroma;
+
+message CherenkovPhoton {
+	float x      		= 2;
+	float y			= 3;
+	float z			= 4;
+	float t			= 5;
+	float dx 		= 6;
+	float dy		= 7;
+	float dz		= 8;
+	float wavelength	= 9;
+	float px		= 10;
+	float py		= 11;
+	float pz		= 12;
+}
+
+message ScintStep {
+	int32 nphotons		= 1;
+	float step_start_x	= 2;
+	float step_start_y	= 3;
+	float step_start_z	= 4;
+	float step_start_t	= 5;
+	float step_end_x	= 6;
+	float step_end_y	= 7;
+	float step_end_z	= 8;
+	float step_end_t	= 9;
+	string material		= 10;
+}
+
+message ChromaData {
+	int32 eventid				= 1;
+	repeated CherenkovPhoton cherekovdata	= 2;
+	repeated ScintStep stepdata		= 3;
+}

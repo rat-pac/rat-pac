@@ -29,6 +29,7 @@
 #include <RAT/GLG4SteppingAction.hh>
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
+#include <RAT/ChromaInterface.hh>
 
 #include <RAT/PDFPMTTime.hh>
 #include <RAT/MiniCleanPMTCharge.hh>
@@ -124,9 +125,16 @@ void Gsim::Init() {
   theRunManager->SetUserAction(static_cast<G4UserRunAction*>(this));
 
   // Tracking action used to add our specialized Trajectory object
-  // to capture particle track information
+  //   to capture particle track information
+  // Optional ChromaInterface can be activated to use GPUs to 
+  //   accelerate photon transport.
+  fChroma = NULL;
+  kUseChroma = false;
+  fChroma = new ChromaInterface();
+  kUseChroma = true;
+  fChroma->initializeServerConnection();
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(this));
-  theRunManager->SetUserAction(new GLG4SteppingAction);
+  theRunManager->SetUserAction(new GLG4SteppingAction( fChroma ));
 
   // ...and finally the hook.  Here's where we trap GEANT4 at the end of
   // each event and do our business.
@@ -138,6 +146,13 @@ void Gsim::Init() {
 }
 
 Gsim::~Gsim() {
+
+  // destroy chroma connection
+  if ( fChroma ) {
+    fChroma->closeServerConnection();
+    delete fChroma;
+  }
+
   // GEANT4 will try to delete the G4UserEventAction when we delete
   // the Run Manager, but that object is us!!  Clear event action
   // first to avoid circular delete.  Funny casting because
@@ -242,9 +257,21 @@ void Gsim::BeginOfEventAction(const G4Event* anEvent) {
   if (StoreOpticalTrackID) {
   	OpticalPhotonIDs.resize(10000);
   }
+
+  // only necessary if we run chroma interface: clears protobuf data (retains allocation)
+  if ( kUseChroma )
+    fChroma->ClearData();
 }
 
 void Gsim::EndOfEventAction(const G4Event* anEvent) {
+  
+  // If we used Chroma, we need to send out photon data and then make photon hits
+  if ( kUseChroma ) {
+    fChroma->SendPhotonData();
+    fChroma->ReceivePhotonData(); // blocks until data retrieved
+    fChroma->MakePhotonHitData();
+  }
+  
     // Now build data structure out of G4Event
     DS::Root* ds = new DS::Root;
     MakeEvent(anEvent, ds);
