@@ -104,6 +104,15 @@ namespace RAT {
     message.Clear();
   }
 
+  void ChromaInterface::JoinQueue() {
+    s_send (*client, "RDY");
+  }
+  //must initialize client before setting its identity
+  void ChromaInterface::SetIdentity() {
+    //uses zhelpers member function to set a random identity.
+    //(this method is thread-safe)
+    ClientIdentity = s_set_id(*client);
+  }
   void ChromaInterface::SendPhotonData() {
     // Send data
     //basic implementation, probably want to handshake or do

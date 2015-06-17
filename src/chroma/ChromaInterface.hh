@@ -39,6 +39,7 @@ protected:
   zmq::context_t *context;
   ratchroma::ChromaData message;
   std::string fStrQueueAddress;
+  std::string ClientIdentity;
 };
 
 }// end of RAT namespace
