@@ -12,6 +12,9 @@
 #include <RAT/DB.hh>
 #include <RAT/Log.hh>
 
+//#include "zhelpers.hpp"
+//use this to simplify ZMQ functions
+
 namespace RAT {
 
   ChromaInterface::ChromaInterface() {
@@ -37,15 +40,18 @@ namespace RAT {
     }
 
     // Here load appropriate socket
+    context = zmq::context_t(1);//flag=# of i/o threads, apparently
+    client = S_Client_Socket (context);
 
     // Gather required geometry data
-
+    
     // Talk to Server/Handshake/Send out detector data
     SendDetectorConfigData();
   }
 
   void ChromaInterface::closeServerConnection() {
-    // close socket
+    delete client; // close socket
+    delete context;
   }
 
   void ChromaInterface::readStoreKillCherenkovPhotons( std::vector< G4Track* >* secondaries ) {
@@ -69,11 +75,8 @@ namespace RAT {
 	cerenkov->set_wavelength( wavelength );
 	cerenkov->set_px( (*it)->GetPolarization().x() );
 	(*it)->SetTrackStatus( fStopAndKill ); // we take this over now!
-      }
-
-    
+      }    
     }
-
   }
 
   void ChromaInterface::readStoreKillScintillationPhotons( const G4Step* aStep, G4VParticleChange* scint_photons ) {
@@ -103,10 +106,18 @@ namespace RAT {
 
   void ChromaInterface::SendPhotonData() {
     // Send data
+    //basic implementation, probably want to handshake or do
+    //some check first.
+    s_send (*client, message.SerializeToString());
+    }
   }
 
   void ChromaInterface::ReceivePhotonData() {
-
+    //do some check/configrmation first
+    string msg, data;
+    msg = s_recv (*client);
+    data = msg.ParseFromString();
+    //std::cout << data << "\n" ;
   }
 
   void ChromaInterface::SendDetectorConfigData() {
@@ -121,4 +132,16 @@ namespace RAT {
     GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
   }
 
+  //returns a REQ client
+  zmq::socket_t* ChromaInterface::S_Client_Socket (zmq::context_t & context)
+  {
+    zmq::socket_t * client = new zmq::socket_t (context, ZMQ_REQ);
+    client->connect ("tcp://localhost:5554");
+    //can write this more generally (to connect to another
+    //port) if we need to
+    return client;
+  }
 }// end of namespace RAT
+
+
+

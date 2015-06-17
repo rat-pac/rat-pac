@@ -6,6 +6,8 @@
 
 #include "ratchromadata.pb.h"
 
+//#include "zhelpers.hpp"
+
 class G4Track;
 class G4VParticleChange;
 class G4Step;
@@ -30,12 +32,13 @@ public:
   void ReceivePhotonData();
   void SendDetectorConfigData();
   void MakePhotonHitData();
+  zmq::socket_t * S_Client_Socket (zmq::context_t & context);
 
 protected:
-
+  zmq::socket_t *client;
+  zmq::context_t *context;
   ratchroma::ChromaData message;
   std::string fStrQueueAddress;
-
 };
 
 }// end of RAT namespace
