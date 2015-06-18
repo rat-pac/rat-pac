@@ -27,7 +27,9 @@ public:
   void readStoreKillScintillationPhotons( const G4Step* astep, G4VParticleChange* scint_photons );
 
   void ClearData();
-
+  
+  void SetIdentity();
+  void JoinQueue();
   void SendPhotonData();
   void ReceivePhotonData();
   void SendDetectorConfigData();
