@@ -6,7 +6,7 @@
 
 #include "ratchromadata.pb.h"
 
-//#include "zhelpers.hpp"
+#include "zhelpers.hpp"
 
 class G4Track;
 class G4VParticleChange;
@@ -39,7 +39,8 @@ public:
 protected:
   zmq::socket_t *client;
   zmq::context_t *context;
-  ratchroma::ChromaData message;
+  ratchroma::ChromaData message; // data we send to Chroma
+  //ratchroma::PMTHitData fChromaResults; // data we get back from Chroma
   std::string fStrQueueAddress;
   std::string ClientIdentity;
 };
