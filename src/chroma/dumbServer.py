@@ -1,5 +1,6 @@
 import sys
 import zmq
+import ratchromadata_pb2
 
 context = zmq.Context().instance()
 
@@ -9,7 +10,7 @@ socket.bind("tcp://*:5554")
 def Server():
     print "opened"
     msg = socket.recv()
-    print msg, "\n"
+    print ParseFromString(msg), "\n"
     socket.send(msg)
 
 Server()
