@@ -12,7 +12,6 @@
 #include <RAT/DB.hh>
 #include <RAT/Log.hh>
 
-//#include "zhelpers.hpp"
 //use this to simplify ZMQ functions
 
 namespace RAT {
@@ -40,8 +39,8 @@ namespace RAT {
     }
 
     // Here load appropriate socket
-    context = zmq::context_t(1);//flag=# of i/o threads, apparently
-    client = S_Client_Socket (context);
+    context =  new zmq::context_t(1);//flag=# of i/o threads, apparently
+    client = S_Client_Socket (*context);
 
     // Gather required geometry data
     
@@ -105,27 +104,28 @@ namespace RAT {
   }
 
   void ChromaInterface::JoinQueue() {
-    s_send (*client, "RDY");
+    zhelpers::s_send (*client, "RDY");
   }
   //must initialize client before setting its identity
   void ChromaInterface::SetIdentity() {
     //uses zhelpers member function to set a random identity.
     //(this method is thread-safe)
-    ClientIdentity = s_set_id(*client);
+    ClientIdentity = zhelpers::s_set_id(*client);
   }
   void ChromaInterface::SendPhotonData() {
     // Send data
     //basic implementation, probably want to handshake or do
     //some check first.
-    s_send (*client, message.SerializeToString());
-    }
+    std::string *str_msg = NULL;
+    message.SerializeToString(str_msg);
+    zhelpers::s_send (*client, *str_msg);
   }
 
   void ChromaInterface::ReceivePhotonData() {
     //do some check/configrmation first
-    string msg, data;
-    msg = s_recv (*client);
-    data = msg.ParseFromString();
+    std::string msg;
+    msg = zhelpers::s_recv (*client);
+    //data = message.ParseFromString(msg);
     //std::cout << data << "\n" ;
   }
 
