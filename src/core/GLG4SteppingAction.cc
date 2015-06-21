@@ -315,7 +315,7 @@ GLG4SteppingAction::UserSteppingAction(const G4Step* aStep)
 	  }
 	// clear ParticleChange
 	pParticleChange->Clear();
-	std::cout << "GLGLScint: number of photons " << iSecondary << std::endl;
+	//std::cout << "GLGLScint: number of photons " << iSecondary << std::endl;
       }
       else {
 	fChroma->readStoreKillScintillationPhotons( aStep, pParticleChange );

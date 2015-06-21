@@ -4,8 +4,15 @@
 #include <vector>
 #include <string>
 
-#ifdef _HAS_ZMQ
+#if defined(_HAS_ZMQ) && defined(_HAS_PROTOBUF)
+#define _HAS_CHROMA_INTERFACE
+#endif
+
+#ifdef _HAS_PROTOBUF
 #include "ratchromadata.pb.h"
+#endif
+
+#ifdef _HAS_ZMQ
 #include "zhelpers.hpp"
 #endif
 
@@ -48,8 +55,11 @@ protected:
 #ifdef _HAS_ZMQ
   zmq::socket_t *client;
   zmq::context_t *context;
+#endif
+#ifdef _HAS_PROTOBUF
   ratchroma::ChromaData message; // data we send to Chroma
 #endif
+
   bool fActive;
   std::string fStrQueueAddress;
   std::string ClientIdentity;

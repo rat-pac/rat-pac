@@ -119,6 +119,20 @@ if conf.CheckLibWithHeader('z','zlib.h','c'):
 if conf.CheckLibWithHeader('zmq','zmq.h','c'):
     conf.env.Append(CPPDEFINES=[('_HAS_ZMQ',1)])
 
+#Build with Google Protobuf support if lib found
+if "PROTOBUF_LIB_DIR" in os.environ:
+    conf.env.Append(LIBPATH=[os.environ["PROTOBUF_LIB_DIR"]])
+if "PROTOBUF_INC_DIR" in os.environ:
+    protobufdirs = [x[0] for x in os.walk(os.environ["PROTOBUF_INC_DIR"])]
+    conf.env.Append(CPPPATH=[os.environ["PROTOBUF_INC_DIR"]])
+
+#if conf.CheckLibWithHeader('protobuf','message.h'):
+if conf.CheckLib('protobuf'):
+    conf.env.Append(CPPDEFINES=[('_HAS_PROTOBUF',1)])
+    # Protobuf requires c++11
+    env.Append(CXXFLAGS=" -std=c++11 -Wno-deprecated-register")
+
+
 # Turn on G4 visualization
 conf.env.Append(CPPDEFINES=[('G4VIS_USE',1)])
 
@@ -202,10 +216,6 @@ else:
 opt = int(ARGUMENTS.get('opt', optdefault)) == 1
 if opt:
     env.Append(CXXFLAGS=arch['OPTFLAGS'])
-
-# Protobuf headers
-env.Append(CXXFLAGS=" -std=c++11 -Wno-deprecated-register -I/Users/twongjirad/working/ratchroma/protobuf/include")
-env.Append(LINKFLAGS=" -L/Users/twongjirad/working/ratchroma/protobuf/lib -lprotobuf")
 
 # Add arch-dependent flags needed by extra packages (X11, OpenGL, etc.)
 for pkg in env['ARCHEXTRA']:
