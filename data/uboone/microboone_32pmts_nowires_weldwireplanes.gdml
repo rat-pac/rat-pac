@@ -1,0 +1,2669 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+<gdml xmlns:gdml="http://cern.ch/2001/Schemas/GDML"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="GDMLSchema/gdml.xsd">
+-->
+<!-- For running in non-larsoft environment -->
+<gdml xmlns:gdml="http://cern.ch/2001/Schemas/GDML" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd" >
+<!-- xxxxxxxx -->
+<define>
+   <rotation name="rPlus30AboutX"  unit="deg" x="30"  y="0"   z="0"/>
+   <rotation name="rPlus60AboutX"  unit="deg" x="60"  y="0"   z="0"/>
+   <rotation name="rPlus90AboutX"  unit="deg" x="90"  y="0"   z="0"/>
+   <rotation name="rMinus90AboutX"  unit="deg" x="-90"  y="0"   z="0"/>
+   <rotation name="rPlusUVAngleAboutX"  unit="deg" x="90+60" y="0"   z="0"/>
+   <rotation name="rPlus150AboutX"      unit="deg" x="150" y="0"   z="0"/>
+   <rotation name="rPlus180AboutX"      unit="deg" x="180" y="0"   z="0"/>
+   <rotation name="rMinusUVAngleAboutX" unit="deg" x="-30" y="0"   z="0"/>
+   <rotation name="rPlus30AboutY"  unit="deg" x="0"   y="30"  z="0"/>
+   <rotation name="rPlus60AboutY"  unit="deg" x="0"   y="60"  z="0"/>
+   <rotation name="rPlus90AboutY"  unit="deg" x="0"   y="90"  z="0"/>
+   <rotation name="rPlus180AboutY" unit="deg" x="0"   y="180" z="0"/>
+   <rotation name="rMinus90AboutY" unit="deg" x="0"   y="-90" z="0"/>
+   <rotation name="rPlus90AboutZ"  unit="deg" x="0"   y="0"   z="90"/>
+   <rotation name="rMinus90AboutZ"  unit="deg" x="0"   y="0"   z="-90"/>
+   <rotation name="rPlus180AboutZ"      unit="deg" x="0"   y="0"   z="180"/>
+   <rotation name="rMinus180AboutZ"     unit="deg" x="0"   y="0"   z="-180"/>
+   <rotation name="rMinus90AboutYPlus180AboutZ" unit="deg" x="0" y="-90" z="180"/>
+   <rotation name="rMinus90AboutYMinus90AboutZ" unit="deg" x="0" y="-90" z="-90"/>
+   <rotation name="rPlus90AboutYPlus180AboutZ" unit="deg" x="0" y="90" z="180"/>
+   <rotation name="rMinus90AboutYPlus90AboutZ" unit="deg" x="0" y="-90" z="90"/>
+   <rotation name="rPlus90AboutYMinus90AboutZ" unit="deg" x="0" y="90" z="-90"/>
+   <rotation name="rPlus90AboutXPlus90AboutZ"  unit="deg" x="90" y="0"   z="90"/>
+   <rotation name="rPlus90AboutXPlus180AboutZ" unit="deg" x="90" y="0"   z="180"/>
+   <rotation name="rPlus90AboutXMinus90AboutY" unit="deg" x="90" y="-90" z="0"/>
+   <rotation name="rPlus90AboutXMinus90AboutZ" unit="deg" x="90" y="0"   z="-90"/>
+   <rotation name="rPlus90AboutXPlus90AboutY"  unit="deg"  x="90" y="90" z="0"/>
+   <rotation name="rPMTRotation1"  unit="deg" x="90"  y="270"   z="0"/>
+   <position name="posCenter" unit="mm" x="0" y="0" z="0"/>
+</define>
+
+<materials>
+  <element name="bromine" formula="Br" Z="35"> <atom value="79.904"/> </element>
+  <element name="hydrogen" formula="H" Z="1">  <atom value="1.0079"/> </element>
+  <element name="nitrogen" formula="N" Z="7">  <atom value="14.0067"/> </element>
+  <element name="oxygen" formula="O" Z="8">  <atom value="15.999"/> </element>
+  <element name="aluminum" formula="Al" Z="13"> <atom value="26.9815"/>  </element>
+  <element name="silicon" formula="Si" Z="14"> <atom value="28.0855"/>  </element>
+  <element name="carbon" formula="C" Z="6">  <atom value="12.0107"/>  </element>
+  <element name="potassium" formula="K" Z="19"> <atom value="39.0983"/>  </element>
+  <element name="chromium" formula="Cr" Z="24"> <atom value="51.9961"/>  </element>
+  <element name="iron" formula="Fe" Z="26"> <atom value="55.8450"/>  </element>
+  <element name="nickel" formula="Ni" Z="28"> <atom value="58.6934"/>  </element>
+  <element name="calcium" formula="Ca" Z="20"> <atom value="40.078"/>   </element>
+  <element name="magnesium" formula="Mg" Z="12"> <atom value="24.305"/>   </element>
+  <element name="sodium" formula="Na" Z="11"> <atom value="22.99"/>    </element>
+  <element name="titanium" formula="Ti" Z="22"> <atom value="47.867"/>   </element>
+  <element name="argon" formula="Ar" Z="18"> <atom value="39.9480"/>  </element>
+
+   <material Z="1" formula=" " name="Vacuum">
+   <D value="1.e-25" unit="g/cm3"/>
+   <atom value="1.0079"/>
+  </material>
+
+  <material name="ALUMINUM_Al" formula="ALUMINUM_Al">
+   <D value="2.6990" unit="g/cm3"/>
+   <fraction n="1.0000" ref="aluminum"/>
+  </material>
+
+  <material name="SILICON_Si" formula="SILICON_Si">
+   <D value="2.3300" unit="g/cm3"/>
+   <fraction n="1.0000" ref="silicon"/>
+  </material>
+
+  <material name="epoxy_resin" formula="C38H40O6Br4">
+   <D value="1.1250" unit="g/cm3"/>
+   <composite n="38" ref="carbon"/>
+   <composite n="40" ref="hydrogen"/>
+   <composite n="6" ref="oxygen"/>
+   <composite n="4" ref="bromine"/>
+  </material>
+  
+  <material name="PU_foam_dense" formula="C25H42N2O6">
+   <D value=".224" unit="g/cm3"/>
+   <composite n="25" ref="carbon"/>
+   <composite n="42" ref="hydrogen"/>
+   <composite n="2" ref="nitrogen"/>
+   <composite n="6" ref="oxygen"/>
+ </material>
+ 
+ <material name="PU_foam_light" formula="C25H42N2O6">
+	 <D value=".0384" unit="g/cm3"/>
+	 <composite n="25" ref="carbon"/>
+	 <composite n="42" ref="hydrogen"/>
+	 <composite n="2" ref="nitrogen"/>
+	 <composite n="6" ref="oxygen"/>
+ </material>
+	     
+  <material name="SiO2" formula="SiO2">
+   <D value="2.2" unit="g/cm3"/>
+   <composite n="1" ref="silicon"/>
+   <composite n="2" ref="oxygen"/>
+  </material>
+
+  <material name="Al2O3" formula="Al2O3">
+   <D value="3.97" unit="g/cm3"/>
+   <composite n="2" ref="aluminum"/>
+   <composite n="3" ref="oxygen"/>
+  </material>
+
+  <material name="Fe2O3" formula="Fe2O3">
+   <D value="5.24" unit="g/cm3"/>
+   <composite n="2" ref="iron"/>
+   <composite n="3" ref="oxygen"/>
+  </material>
+
+  <material name="CaO" formula="CaO">
+   <D value="3.35" unit="g/cm3"/>
+   <composite n="1" ref="calcium"/>
+   <composite n="1" ref="oxygen"/>
+  </material>
+
+  <material name="MgO" formula="MgO">
+   <D value="3.58" unit="g/cm3"/>
+   <composite n="1" ref="magnesium"/>
+   <composite n="1" ref="oxygen"/>
+  </material>
+
+  <material name="Na2O" formula="Na2O">
+   <D value="2.27" unit="g/cm3"/>
+   <composite n="2" ref="sodium"/>
+   <composite n="1" ref="oxygen"/>
+  </material>
+
+  <material name="TiO2" formula="TiO2">
+   <D value="4.23" unit="g/cm3"/>
+   <composite n="1" ref="titanium"/>
+   <composite n="2" ref="oxygen"/>
+  </material>
+
+  <material name="fibrous_glass">
+   <D value="2.74351" unit="g/cm3"/>
+   <fraction n="0.600" ref="SiO2"/>
+   <fraction n="0.118" ref="Al2O3"/>
+   <fraction n="0.001" ref="Fe2O3"/>
+   <fraction n="0.224" ref="CaO"/>
+   <fraction n="0.034" ref="MgO"/>
+   <fraction n="0.010" ref="Na2O"/>
+   <fraction n="0.013" ref="TiO2"/>
+  </material>
+
+  <material name="FR4">
+   <D value="1.98281" unit="g/cm3"/>
+   <fraction n="0.47" ref="epoxy_resin"/>
+   <fraction n="0.53" ref="fibrous_glass"/>
+  </material>
+
+  <material name="STEEL_STAINLESS_Fe7Cr2Ni" formula="STEEL_STAINLESS_Fe7Cr2Ni">
+   <D value="7.9300" unit="g/cm3"/>
+   <fraction n="0.0010" ref="carbon"/>
+   <fraction n="0.1792" ref="chromium"/>
+   <fraction n="0.7298" ref="iron"/>
+   <fraction n="0.0900" ref="nickel"/>
+  </material>
+
+  <material name="LAr" formula="LAr">
+   <D value="1.40" unit="g/cm3"/>
+   <fraction n="1.0000" ref="argon"/>
+  </material>
+
+  <material formula=" " name="Air">
+   <D value="0.001205" unit="g/cc"/>
+   <fraction n="0.781154" ref="nitrogen"/>
+   <fraction n="0.209476" ref="oxygen"/>
+   <fraction n="0.00937" ref="argon"/>
+  </material>
+
+  <material formula=" " name="G10">
+   <D value="1.7" unit="g/cc"/>
+   <fraction n="0.2805" ref="silicon"/>
+   <fraction n="0.3954" ref="oxygen"/>
+   <fraction n="0.2990" ref="carbon"/>
+   <fraction n="0.0251" ref="hydrogen"/>
+  </material>
+
+  <material formula=" " name="Granite">
+   <D value="2.7" unit="g/cc"/>
+   <fraction n="0.438" ref="oxygen"/>
+   <fraction n="0.257" ref="silicon"/>
+   <fraction n="0.222" ref="sodium"/>
+   <fraction n="0.049" ref="aluminum"/>
+   <fraction n="0.019" ref="iron"/>
+   <fraction n="0.015" ref="potassium"/>
+  </material>
+
+  <material formula=" " name="ShotRock">
+   <D value="2.7*0.6" unit="g/cc"/>
+   <fraction n="0.438" ref="oxygen"/>
+   <fraction n="0.257" ref="silicon"/>
+   <fraction n="0.222" ref="sodium"/>
+   <fraction n="0.049" ref="aluminum"/>
+   <fraction n="0.019" ref="iron"/>
+   <fraction n="0.015" ref="potassium"/>
+  </material>
+
+  <material formula=" " name="Dirt">
+   <D value="1.7" unit="g/cc"/>
+   <fraction n="0.438" ref="oxygen"/>
+   <fraction n="0.257" ref="silicon"/>
+   <fraction n="0.222" ref="sodium"/>
+   <fraction n="0.049" ref="aluminum"/>
+   <fraction n="0.019" ref="iron"/>
+   <fraction n="0.015" ref="potassium"/>
+  </material>
+
+  <material formula=" " name="Concrete">
+   <D value="2.3" unit="g/cc"/>
+   <fraction n="0.530" ref="oxygen"/>
+   <fraction n="0.335" ref="silicon"/>
+   <fraction n="0.060" ref="calcium"/>
+   <fraction n="0.015" ref="sodium"/>
+   <fraction n="0.020" ref="iron"/>
+   <fraction n="0.040" ref="aluminum"/>
+  </material>
+
+  <material formula="H2O" name="Water">
+   <D value="1.0" unit="g/cc"/>
+   <fraction n="0.1119" ref="hydrogen"/>
+   <fraction n="0.8881" ref="oxygen"/>
+  </material>
+
+  <material formula="Ti" name="Titanium">
+   <D value="4.506" unit="g/cc"/>
+   <fraction n="1." ref="titanium"/>
+  </material>
+
+  <material name="TPB" formula="TPB">
+   <D value="1.40" unit="g/cm3"/>
+   <fraction n="1.0000" ref="argon"/>
+  </material>
+
+  <material name="Glass">
+   <D value="2.74351" unit="g/cm3"/>
+   <fraction n="0.600" ref="SiO2"/>
+   <fraction n="0.118" ref="Al2O3"/>
+   <fraction n="0.001" ref="Fe2O3"/>
+   <fraction n="0.224" ref="CaO"/>
+   <fraction n="0.034" ref="MgO"/>
+   <fraction n="0.010" ref="Na2O"/>
+   <fraction n="0.013" ref="TiO2"/>
+  </material>
+
+  <material name="Acrylic">
+   <D value="1.19" unit="g/cm3"/>
+   <fraction n="0.600" ref="carbon"/>
+   <fraction n="0.320" ref="oxygen"/>
+   <fraction n="0.080" ref="hydrogen"/>
+  </material>
+
+  <material name="Polystyrene">
+   <D value="1.06" unit="g/cm3"/>
+   <fraction n="0.077418" ref="hydrogen"/>
+   <fraction n="0.922582" ref="carbon"/>
+  </material>
+
+</materials>
+<solids>
+<tube name="TPCWireCommon"
+  rmax="0.5*0.015"
+  z="233/0.5-0.0259573526"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+<box name="TPCPlane"
+  x="0.15"
+  y="233"
+  z="1037"
+  lunit="cm"/>
+
+<tube name="TPCWireVert"
+  rmax="0.5*0.015"
+  z="233"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+<box name="TPCPlaneVert"
+  x="0.15" 
+  y="233" 
+  z="1037"
+  lunit="cm"/>
+
+ <box name="GroundPlate"
+  lunit="cm"
+  x="224"
+  y="0.1"
+  z="1100"/>
+
+ <box name="CathodePlate"
+  lunit="cm"
+  x="0.1"
+  y="240"
+  z="1042"/>
+
+ <tube name="FieldCageTubeZ"
+  rmin="1.27-0.635"
+  rmax="1.27"  
+  z="1042.08-2*(6.35+1.27)" 
+  deltaphi="360" 
+  aunit="deg" 
+  lunit="cm"/> 
+ <tube name="FieldCageTubeY" 
+  rmin="1.27-0.635"
+  rmax="1.27"  
+  z="238.08-2*(6.35+1.27)"  
+  deltaphi="360" 
+  aunit="deg" 
+  lunit="cm"/>
+
+ <box name="TPCFrameA" x="11" y="254" z="1070.19" lunit="cm"/> 
+ <box name="TPCFrameB" x="11.1" y="230.29" z="1036.32" lunit="cm"/>
+ <box name="TPCVertBar" x="1" y="1" z="1" lunit="cm"/>
+ <box name="TPCCrossA" lunit="cm" x="9" y="304.8" z="7"/>
+
+<subtraction name="TPCFrame">
+<first ref="TPCFrameA"/> <second ref="TPCFrameB"/>
+<position name="posTPCSubtraction" x="0" y="0" z="0"/>
+</subtraction> 
+
+<union name="TPCCross">
+<first ref="TPCCrossA"/> <second ref="TPCCrossA"/>
+<position name="posTPCCross" x="0" y="0" z="0"/>
+<rotation name="rPlus83AboutX" unit="deg" x="83.16" y="0" z="0"/>
+</union> 
+
+
+ <box name="TPC"
+  lunit="cm"
+  x="260"
+  y="256"
+  z="1045"/>
+ <box name="TPCActive"
+  lunit="cm"
+  x="256.35"
+  y="233"
+  z="1036.8"/>
+
+ <tube name="PMTVolume"
+  rmax="(6.1*2.54)"
+  z="(11.1*2.54)+0.005"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+
+ <tube name="PMT_AcrylicPlate"
+  rmax="(6.0*2.54)"
+  z="(0.2)"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+ <tube name="PMT_Stalk"
+  rmax="(1.25*2.54)"
+  z="(3.0*2.54)"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+ <tube name="PMT_SteelBase"
+  rmax="(6.0*2.54)"
+  z="(1.5*2.54)"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+ <tube name="PMT_Underside"
+  rmax="2.54*4.0"
+  z="2.54*2.5"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+ <box name="Paddle_PMT"
+  lunit="cm"
+  x="1/8*2.54"
+  y="20*2.54"
+  z="(7+1/3)*2.54"/> 
+
+ <tube name="PMT_Lens"
+  rmax="2.54*4.0"
+  z="2.54*2.5"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+<!-- Chroma Mod -->
+ <sphere name="PMT_spherical_OuterLens"
+	 rmin="0.0"
+	 rmax="2.54*4.0"
+	 startphi="0"
+	 deltaphi="360"
+	 starttheta="0.0"
+	 deltatheta="90"
+	 lunit="cm"
+	 aunit="deg"
+	 />
+ <sphere name="PMT_spherical_InnerLens"
+	 rmin="0.0"
+	 rmax="2.54*4.0-1.0"
+	 startphi="0"
+	 deltaphi="360"
+	 starttheta="0.0"
+	 deltatheta="90"
+	 lunit="cm"
+	 aunit="deg"
+	 />
+<!-- -->
+
+<tube name="Insulation"
+  rmin="193+0.1"
+  rmax="193+0.1+2.54*16"
+  z="424.75*2.54+3*2.54"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+ <box name="PlatformOLDbig" lunit="cm" x="550+1" y="18+1" z="1500+1" />
+ <box name="PlatformOLDsmall" lunit="cm" x="550" y="18" z="1500" />
+ <tube name="PlatformNEW" lunit="cm" rmax="292*2.54-0.5" z="18+1.5" aunit="deg" deltaphi="360" /> 
+
+  <subtraction name="PlatformSub0">
+    <first ref="PlatformOLDbig"/> <second ref="PlatformNEW"/>
+	<position name="posPlatformSub0" unit="cm" x="0" y="0" z="0"/>
+	<rotation name="rotPlatformSub0" unit="deg" x="90" y="0" z="0"/>
+  </subtraction>
+
+  <subtraction name="Platform">
+	<first ref="PlatformOLDsmall"/> <second ref="PlatformSub0"/>
+	<position name="posPlatformSub1" unit="cm" x="0" y="0" z="0"/>
+  </subtraction> 
+
+
+<box name="Column"
+  x="16.79"
+  y="798"
+  z="16.79"
+  lunit="cm"/>
+<tube name="Tank1"
+  rmin="30.35"
+  rmax="38"  
+  z="140.3" 
+  deltaphi="360" 
+  aunit="deg" 
+  lunit="cm"/> 
+<tube name="TankCap1"
+  rmax="38"
+  z="40"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+<box name="TankBox1"
+  x="76.001"
+  y="221"
+  z="76.001"
+  lunit="cm"/>
+
+<box name="standBox"
+  x="507"
+  y="196.27"
+  z="91.44"
+  lunit="cm"/>
+<tube name="standSubTube"
+  rmax="233.75"
+  z="125"
+  deltaphi="360"
+  aunit="deg"
+  lunit="cm"/>
+<subtraction name="standSubtraction">
+  <first ref="standBox"/>
+  <second ref="standSubTube"/>
+  <position name="posStandSubtract" unit="cm" x="0" y="235.92" z="0"/>
+</subtraction>
+<box name="standConcrete"
+  x="548.64"
+  y="182.89"
+  z="91.44"
+  lunit="cm"/>
+
+<box name="rackBox"
+  x="90.5"
+  y="212.7"
+  z="60.96"
+  lunit="cm"/>
+<box name="rackX"
+  x="90.5"
+  y="5.8"
+  z="5.8"
+  lunit="cm"/>
+<box name="rackY"
+  x="5.8"
+  y="212.7-2*5.8-0.001"
+  z="5.8"
+  lunit="cm"/>
+<box name="rackZ"
+  x="5.8"
+  y="5.8"
+  z="60.96-2*5.8-0.001"
+  lunit="cm"/>
+
+<box name="rackInnards"
+  x="33.0"
+  y="84.5"
+  z="20.5"
+  lunit="cm"/>
+
+<box name="floorTankBox1"
+   x="59.7"
+   y="200"
+   z="59.7"
+   lunit="cm"/>
+<tube name="floorTank1"
+   rmin="45.4/2"
+   rmax="59.6/2"
+   z="159.8"
+   deltaphi="360"
+   aunit="deg"
+   lunit="cm"/>
+<tube name="floorTankCap1"
+   rmax="59.6/2"
+   z="20.0"
+   deltaphi="360"
+   aunit="deg"
+   lunit="cm"/>
+<box name="floorTankBox2"
+   x="52.2"
+   y="67"
+   z="52.2"
+   lunit="cm"/>
+<tube name="floorTank2"
+   rmin="40.0/2"
+   rmax="52.1/2"
+   z="53.0"
+   deltaphi="360"
+   aunit="deg"
+   lunit="cm"/>
+<tube name="floorTankCap2"
+   rmax="52.1/2"
+   z="52.1/4"
+   deltaphi="360"
+   aunit="deg"
+   lunit="cm"/>
+
+<box name="Walkway"
+   x="91"
+   y="24"
+   z="1200"
+   lunit="cm"/>
+
+<box name="Pump"
+   x="100"
+   y="196"
+   z="91.7"
+   lunit="cm"/>
+
+<tube name="Cryostat" 
+      rmax="193"
+      z="424.75*2.54+3*2.54+2*2.5 + 200"
+      deltaphi="360"
+      aunit="deg"
+      lunit="cm"/>
+<tube name="SteelTube"
+      rmin="190.46"
+      rmax="193-0.1"
+      z="424.75*2.54+3*2.54"
+      deltaphi="360"
+      aunit="deg"
+      lunit="cm"/>
+<sphere name="EndCap"
+	rmin="144*2.54"
+	rmax="144.5*2.54"
+	deltaphi="360"
+	deltatheta="31.3822"
+	aunit="deg"
+	lunit="cm"/>
+
+<polycone name="OuterCryostatPC" startphi="0" deltaphi="360" aunit="deg" lunit="cm">
+  <zplane rmin="0.0000" rmax="0.1" z="598.0834"/>
+  <zplane rmin="0.0000" rmax="20.9518" z="597.4849"/>
+  <zplane rmin="0.0000" rmax="41.8354" z="595.6914"/>
+  <zplane rmin="0.0000" rmax="62.5824" z="592.7086"/>
+  <zplane rmin="0.0000" rmax="83.1254" z="588.5463"/>
+  <zplane rmin="0.0000" rmax="103.3973" z="583.2182"/>
+  <zplane rmin="0.0000" rmax="123.3319" z="576.7415"/>
+  <zplane rmin="0.0000" rmax="142.8643" z="569.1374"/>
+  <zplane rmin="0.0000" rmax="161.9308" z="560.4307"/>
+  <zplane rmin="0.0000" rmax="180.4692" z="550.6498"/>
+  <zplane rmin="0.0000" rmax="193.0000" z="543.2425"/>
+  <zplane rmin="0.0000" rmax="193.0000" z="0.0000"/>
+  <zplane rmin="0.0000" rmax="193.0000" z="-543.2425"/>
+  <zplane rmin="0.0000" rmax="180.4692" z="-550.6498"/>
+  <zplane rmin="0.0000" rmax="161.9308" z="-560.4307"/>
+  <zplane rmin="0.0000" rmax="142.8643" z="-569.1374"/>
+  <zplane rmin="0.0000" rmax="123.3319" z="-576.7415"/>
+  <zplane rmin="0.0000" rmax="103.3973" z="-583.2182"/>
+  <zplane rmin="0.0000" rmax="83.1254" z="-588.5463"/>
+  <zplane rmin="0.0000" rmax="62.5824" z="-592.7086"/>
+  <zplane rmin="0.0000" rmax="41.8354" z="-595.6914"/>
+  <zplane rmin="0.0000" rmax="20.9518" z="-597.4849"/>
+  <zplane rmin="0.0000" rmax="0.1" z="-598.0834"/>
+</polycone>
+
+<polycone name="InnerCryostatPC" startphi="0" deltaphi="360" aunit="deg" lunit="cm">
+  <zplane rmin="0.0000" rmax="43.1052" z="594.4226"/>
+  <zplane rmin="0.0000" rmax="47.8389" z="593.8315"/>
+  <zplane rmin="0.0000" rmax="59.7871" z="592.0604"/>
+  <zplane rmin="0.0000" rmax="75.4929" z="589.1148"/>
+  <zplane rmin="0.0000" rmax="92.9251" z="585.0043"/>
+  <zplane rmin="0.0000" rmax="111.1042" z="579.7423"/>
+  <zplane rmin="0.0000" rmax="129.5311" z="573.3459"/>
+  <zplane rmin="0.0000" rmax="147.9191" z="565.8358"/>
+  <zplane rmin="0.0000" rmax="166.0823" z="557.2363"/>
+  <zplane rmin="0.0000" rmax="183.8862" z="547.5753"/>
+  <zplane rmin="0.0000" rmax="190.4600" z="543.2425"/>
+  <zplane rmin="0.0000" rmax="190.4600" z="0.0000"/>
+  <zplane rmin="0.0000" rmax="190.4600" z="-543.2425"/>
+  <zplane rmin="0.0000" rmax="183.8862" z="-547.5753"/>
+  <zplane rmin="0.0000" rmax="166.0823" z="-557.2363"/>
+  <zplane rmin="0.0000" rmax="147.9191" z="-565.8358"/>
+  <zplane rmin="0.0000" rmax="129.5311" z="-573.3459"/>
+  <zplane rmin="0.0000" rmax="111.1042" z="-579.7423"/>
+  <zplane rmin="0.0000" rmax="92.9251" z="-585.0043"/>
+  <zplane rmin="0.0000" rmax="75.4929" z="-589.1148"/>
+  <zplane rmin="0.0000" rmax="59.7871" z="-592.0604"/>
+  <zplane rmin="0.0000" rmax="47.8389" z="-593.8315"/>
+  <zplane rmin="0.0000" rmax="43.1052" z="-594.4226"/>
+</polycone>
+
+
+
+<box name="DetEnclosureOLDbig" lunit="cm" x="1483.26+1" y="1060+1" z="1483.26+1" />
+<box name="DetEnclosureOLDsmall" lunit="cm" x="1483.26" y="1060" z="1483.26" />
+<tube name="DetEnclosureNEW" lunit="cm" rmax="292*2.54-0.1" z="1060+10" aunit="deg" deltaphi="360" /> 
+
+<subtraction name="DetSub0">
+  <first ref="DetEnclosureOLDbig"/> <second ref="DetEnclosureNEW"/>
+  <position name="posDetUnion0" unit="cm" x="0" y="0" z="0"/>
+  <rotation name="rotDetUnion0" unit="deg" x="90" y="0" z="0"/>
+</subtraction>
+
+<subtraction name="DetEnclosure">
+  <first ref="DetEnclosureOLDsmall"/> <second ref="DetSub0"/>
+  <position name="posDetEnclosure2" unit="cm" x="0" y="0" z="0"/>
+</subtraction> 
+
+
+<box name="World" 
+     lunit="cm" 
+     x="148326" 
+     y="106000" 
+     z="148326"/>
+<tube name="Ground"
+      rmin="312*2.54"
+      rmax="((50*12)+310)*2.54"
+      z="41*12*2.54"
+      deltaphi="360" 
+      lunit="cm"
+      aunit="deg"/>
+<tube name="GroundBottom"
+      rmax="((50*12)+310)*2.54"
+      z="50*12*2.54"
+      deltaphi="360"
+      lunit="cm"
+      aunit="deg"/>
+<tube name="ConcreteEnclosure"
+      rmin="292*2.54"
+      rmax="310*2.54"
+      z="38*12*2.54"
+      deltaphi="360" 
+      lunit="cm"
+      aunit="deg"/>
+<tube name="PolystyreneEnclosure"
+      rmin="310*2.54"
+      rmax="312*2.54"
+      z="(38*12+36)*2.54"
+      deltaphi="360"
+      lunit="cm"
+      aunit="deg"/>
+<tube name="ConcreteEnclosureBottom"
+      rmin="0"
+      rmax="310*2.54"
+      z="36*2.54"
+      deltaphi="360" 
+      lunit="cm"
+      aunit="deg"/>
+<tube name="PolystyreneEnclosureBottom"
+   rmax="292*2.54"
+   z="2*2.54"
+   deltaphi="360"
+   lunit="cm"
+   aunit="deg"/>
+  <tube name="Roof"
+   rmax="310*2.54"
+   z="6*2.54"
+   deltaphi="360"
+   lunit="cm"
+   aunit="deg"/>
+  <tube name="Overburden"
+    rmin="0"
+    rmax="584*2.54"
+    z="10*12*2.54"
+    deltaphi="360" 
+    lunit="cm"
+    aunit="deg"/>
+</solids>
+<structure>
+    <volume name="volTPCWireCommon">
+      <materialref ref="Titanium"/>
+      <solidref ref="TPCWireCommon"/>
+    </volume>
+    <volume name="volTPCPlane">
+      <materialref ref="LAr"/>
+      <solidref ref="TPCPlane"/>
+  </volume>
+
+  <volume name="volTPCWireVert">
+    <materialref ref="Titanium"/>
+    <solidref ref="TPCWireVert"/>
+  </volume>
+  <volume name="volTPCPlaneVert">
+    <materialref ref="LAr"/>       
+    <solidref ref="TPCPlaneVert"/>
+  </volume>
+
+ <volume name="volGroundPlate">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="GroundPlate"/>
+ </volume>
+
+ <volume name="volCathodePlate">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="CathodePlate"/>
+ </volume>
+ 
+ <volume name="volFieldCageTubeTop"> 
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/> 
+  <solidref ref="FieldCageTubeZ"/> 
+ </volume> 
+ <volume name="volFieldCageTubeBot"> 
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/> 
+  <solidref ref="FieldCageTubeZ"/> 
+ </volume> 
+ <volume name="volFieldCageTubeFront"> 
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/> 
+  <solidref ref="FieldCageTubeY"/> 
+ </volume> 
+ <volume name="volFieldCageTubeBack"> 
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/> 
+  <solidref ref="FieldCageTubeY"/> 
+ </volume>
+ <volume name="volTPCFrame">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="TPCFrame"/>
+ </volume>
+ <volume name="volTPCCross">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="TPCCross"/>
+ </volume>
+
+ <volume name="volTPCActive">
+  <materialref ref="LAr"/>
+  <solidref ref="TPCActive"/>
+ </volume>
+ <volume name="volTPC">
+  <materialref ref="LAr"/>
+  <solidref ref="TPC"/>
+<!--  <physvol>
+   <volumeref ref="volGroundPlate"/>
+   <position name="posGroundPlate" unit="cm" x="9+0.25" y="124" z="0"/>
+  </physvol>-->
+
+   <physvol>
+    <volumeref ref="volTPCFrame"/>
+    <position name="posTPCFrame2" unit="cm" x="-256/2-11/2" y="0" z="0"/>
+   </physvol>
+<!--  <physvol>
+    <volumeref ref="volTPCCross"/>
+    <position name="posTPCCross" unit="cm" x="-256/2" y="-100" z="0"/>
+    <rotation ref="rMinus41AboutX" unit="deg" x="-41.58" y="0" z="0"/> 
+  </physvol>  -->
+
+  <physvol>
+   <volumeref ref="volCathodePlate"/>
+   <position name="posCathodePlate" unit="cm" x="127.45" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volTPCPlaneVert"/>
+   <position name="posTPCPlaneVert" unit="cm" x="-0.5*256.35-0.3-0.15" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volTPCPlane"/>
+   <position name="posTPCPlane" unit="cm" x="-0.5*256.35-0.3" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volTPCPlane"/>
+   <position name="posTPCPlane2" unit="cm" x="-0.5*256.35" y="0" z="0"/>
+   <rotationref ref="rPlus180AboutY"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA1" unit="cm" x="2" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA1" unit="cm" x="2" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA1" unit="cm" x="2" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA1" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA1" unit="cm" x="2" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA1" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB1" unit="cm" x="-2" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB1" unit="cm" x="-2" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB1" unit="cm" x="-2" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB1" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB1" unit="cm" x="-2" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB1" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA2" unit="cm" x="6" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA2" unit="cm" x="6" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA2" unit="cm" x="6" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA2" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA2" unit="cm" x="6" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA2" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB2" unit="cm" x="-6" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB2" unit="cm" x="-6" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB2" unit="cm" x="-6" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB2" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB2" unit="cm" x="-6" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB2" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA3" unit="cm" x="10" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA3" unit="cm" x="10" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA3" unit="cm" x="10" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA3" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA3" unit="cm" x="10" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA3" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB3" unit="cm" x="-10" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB3" unit="cm" x="-10" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB3" unit="cm" x="-10" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB3" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB3" unit="cm" x="-10" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB3" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA4" unit="cm" x="14" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA4" unit="cm" x="14" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA4" unit="cm" x="14" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA4" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA4" unit="cm" x="14" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA4" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB4" unit="cm" x="-14" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB4" unit="cm" x="-14" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB4" unit="cm" x="-14" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB4" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB4" unit="cm" x="-14" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB4" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA5" unit="cm" x="18" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA5" unit="cm" x="18" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA5" unit="cm" x="18" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA5" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA5" unit="cm" x="18" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA5" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB5" unit="cm" x="-18" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB5" unit="cm" x="-18" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB5" unit="cm" x="-18" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB5" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB5" unit="cm" x="-18" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB5" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA6" unit="cm" x="22" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA6" unit="cm" x="22" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA6" unit="cm" x="22" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA6" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA6" unit="cm" x="22" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA6" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB6" unit="cm" x="-22" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB6" unit="cm" x="-22" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB6" unit="cm" x="-22" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB6" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB6" unit="cm" x="-22" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB6" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA7" unit="cm" x="26" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA7" unit="cm" x="26" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA7" unit="cm" x="26" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA7" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA7" unit="cm" x="26" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA7" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB7" unit="cm" x="-26" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB7" unit="cm" x="-26" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB7" unit="cm" x="-26" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB7" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB7" unit="cm" x="-26" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB7" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA8" unit="cm" x="30" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA8" unit="cm" x="30" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA8" unit="cm" x="30" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA8" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA8" unit="cm" x="30" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA8" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB8" unit="cm" x="-30" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB8" unit="cm" x="-30" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB8" unit="cm" x="-30" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB8" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB8" unit="cm" x="-30" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB8" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA9" unit="cm" x="34" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA9" unit="cm" x="34" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA9" unit="cm" x="34" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA9" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA9" unit="cm" x="34" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA9" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB9" unit="cm" x="-34" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB9" unit="cm" x="-34" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB9" unit="cm" x="-34" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB9" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB9" unit="cm" x="-34" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB9" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA10" unit="cm" x="38" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA10" unit="cm" x="38" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA10" unit="cm" x="38" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA10" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA10" unit="cm" x="38" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA10" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB10" unit="cm" x="-38" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB10" unit="cm" x="-38" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB10" unit="cm" x="-38" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB10" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB10" unit="cm" x="-38" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB10" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA11" unit="cm" x="42" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA11" unit="cm" x="42" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA11" unit="cm" x="42" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA11" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA11" unit="cm" x="42" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA11" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB11" unit="cm" x="-42" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB11" unit="cm" x="-42" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB11" unit="cm" x="-42" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB11" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB11" unit="cm" x="-42" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB11" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA12" unit="cm" x="46" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA12" unit="cm" x="46" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA12" unit="cm" x="46" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA12" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA12" unit="cm" x="46" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA12" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB12" unit="cm" x="-46" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB12" unit="cm" x="-46" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB12" unit="cm" x="-46" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB12" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB12" unit="cm" x="-46" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB12" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA13" unit="cm" x="50" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA13" unit="cm" x="50" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA13" unit="cm" x="50" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA13" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA13" unit="cm" x="50" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA13" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB13" unit="cm" x="-50" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB13" unit="cm" x="-50" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB13" unit="cm" x="-50" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB13" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB13" unit="cm" x="-50" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB13" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA14" unit="cm" x="54" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA14" unit="cm" x="54" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA14" unit="cm" x="54" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA14" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA14" unit="cm" x="54" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA14" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB14" unit="cm" x="-54" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB14" unit="cm" x="-54" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB14" unit="cm" x="-54" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB14" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB14" unit="cm" x="-54" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB14" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA15" unit="cm" x="58" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA15" unit="cm" x="58" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA15" unit="cm" x="58" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA15" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA15" unit="cm" x="58" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA15" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB15" unit="cm" x="-58" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB15" unit="cm" x="-58" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB15" unit="cm" x="-58" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB15" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB15" unit="cm" x="-58" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB15" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA16" unit="cm" x="62" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA16" unit="cm" x="62" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA16" unit="cm" x="62" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA16" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA16" unit="cm" x="62" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA16" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB16" unit="cm" x="-62" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB16" unit="cm" x="-62" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB16" unit="cm" x="-62" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB16" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB16" unit="cm" x="-62" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB16" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA17" unit="cm" x="66" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA17" unit="cm" x="66" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA17" unit="cm" x="66" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA17" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA17" unit="cm" x="66" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA17" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB17" unit="cm" x="-66" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB17" unit="cm" x="-66" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB17" unit="cm" x="-66" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB17" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB17" unit="cm" x="-66" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB17" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA18" unit="cm" x="70" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA18" unit="cm" x="70" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA18" unit="cm" x="70" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA18" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA18" unit="cm" x="70" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA18" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB18" unit="cm" x="-70" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB18" unit="cm" x="-70" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB18" unit="cm" x="-70" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB18" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB18" unit="cm" x="-70" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB18" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA19" unit="cm" x="74" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA19" unit="cm" x="74" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA19" unit="cm" x="74" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA19" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA19" unit="cm" x="74" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA19" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB19" unit="cm" x="-74" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB19" unit="cm" x="-74" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB19" unit="cm" x="-74" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB19" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB19" unit="cm" x="-74" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB19" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA20" unit="cm" x="78" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA20" unit="cm" x="78" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA20" unit="cm" x="78" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA20" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA20" unit="cm" x="78" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA20" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB20" unit="cm" x="-78" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB20" unit="cm" x="-78" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB20" unit="cm" x="-78" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB20" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB20" unit="cm" x="-78" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB20" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA21" unit="cm" x="82" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA21" unit="cm" x="82" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA21" unit="cm" x="82" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA21" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA21" unit="cm" x="82" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA21" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB21" unit="cm" x="-82" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB21" unit="cm" x="-82" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB21" unit="cm" x="-82" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB21" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB21" unit="cm" x="-82" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB21" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA22" unit="cm" x="86" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA22" unit="cm" x="86" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA22" unit="cm" x="86" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA22" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA22" unit="cm" x="86" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA22" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB22" unit="cm" x="-86" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB22" unit="cm" x="-86" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB22" unit="cm" x="-86" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB22" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB22" unit="cm" x="-86" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB22" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA23" unit="cm" x="90" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA23" unit="cm" x="90" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA23" unit="cm" x="90" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA23" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA23" unit="cm" x="90" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA23" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB23" unit="cm" x="-90" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB23" unit="cm" x="-90" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB23" unit="cm" x="-90" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB23" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB23" unit="cm" x="-90" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB23" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA24" unit="cm" x="94" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA24" unit="cm" x="94" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA24" unit="cm" x="94" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA24" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA24" unit="cm" x="94" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA24" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB24" unit="cm" x="-94" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB24" unit="cm" x="-94" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB24" unit="cm" x="-94" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB24" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB24" unit="cm" x="-94" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB24" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA25" unit="cm" x="98" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA25" unit="cm" x="98" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA25" unit="cm" x="98" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA25" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA25" unit="cm" x="98" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA25" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB25" unit="cm" x="-98" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB25" unit="cm" x="-98" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB25" unit="cm" x="-98" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB25" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB25" unit="cm" x="-98" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB25" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA26" unit="cm" x="102" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA26" unit="cm" x="102" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA26" unit="cm" x="102" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA26" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA26" unit="cm" x="102" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA26" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB26" unit="cm" x="-102" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB26" unit="cm" x="-102" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB26" unit="cm" x="-102" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB26" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB26" unit="cm" x="-102" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB26" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA27" unit="cm" x="106" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA27" unit="cm" x="106" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA27" unit="cm" x="106" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA27" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA27" unit="cm" x="106" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA27" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB27" unit="cm" x="-106" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB27" unit="cm" x="-106" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB27" unit="cm" x="-106" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB27" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB27" unit="cm" x="-106" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB27" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA28" unit="cm" x="110" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA28" unit="cm" x="110" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA28" unit="cm" x="110" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA28" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA28" unit="cm" x="110" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA28" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB28" unit="cm" x="-110" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB28" unit="cm" x="-110" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB28" unit="cm" x="-110" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB28" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB28" unit="cm" x="-110" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB28" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA29" unit="cm" x="114" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA29" unit="cm" x="114" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA29" unit="cm" x="114" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA29" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA29" unit="cm" x="114" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA29" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB29" unit="cm" x="-114" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB29" unit="cm" x="-114" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB29" unit="cm" x="-114" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB29" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB29" unit="cm" x="-114" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB29" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA30" unit="cm" x="118" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA30" unit="cm" x="118" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA30" unit="cm" x="118" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA30" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA30" unit="cm" x="118" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA30" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB30" unit="cm" x="-118" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB30" unit="cm" x="-118" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB30" unit="cm" x="-118" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB30" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB30" unit="cm" x="-118" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB30" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA31" unit="cm" x="122" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA31" unit="cm" x="122" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA31" unit="cm" x="122" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA31" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA31" unit="cm" x="122" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA31" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB31" unit="cm" x="-122" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB31" unit="cm" x="-122" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB31" unit="cm" x="-122" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB31" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB31" unit="cm" x="-122" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB31" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopA32" unit="cm" x="126" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotA32" unit="cm" x="126" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontA32" unit="cm" x="126" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertPlusA32" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackA32" unit="cm" x="126" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertMinusA32" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeTop"/>
+   <position name="posFieldCageTubeTopB32" unit="cm" x="-126" y="0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBot"/>
+   <position name="posFieldCageTubeBotB32" unit="cm" x="-126" y="-0.5*(238.08-2*1.27)" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeFront"/>
+   <position name="posFieldCageTubeFrontB32" unit="cm" x="-126" y="0" z="0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertFrontB32" unit="deg" x="90" y="0" z="0"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="volFieldCageTubeBack"/>
+   <position name="posFieldCageTubeBackB32" unit="cm" x="-126" y="0" z="-0.5*(1042.08-2*1.27)"/>
+   <rotation name="rFieldCageVertBackB32" unit="deg" x="-90" y="0" z="0"/>
+  </physvol>
+   <physvol>
+    <volumeref ref="volTPCActive"/>
+    <position name="posTPCActive" unit="cm" x="-1.55" y="0" z="0"/>
+   </physvol>
+ </volume> 
+
+ <volume name="volOpDetSensitive">
+  <materialref ref="LAr"/>
+  <solidref ref="PMT_AcrylicPlate"/>
+ </volume>
+ <volume name="vol_PMT_AcrylicPlate">
+  <materialref ref="Acrylic"/>
+  <solidref ref="PMT_AcrylicPlate"/>
+ </volume>
+ <volume name="vol_PMT_Stalk">
+  <materialref ref="Glass"/>
+  <solidref ref="PMT_Stalk"/>
+ </volume>
+ <volume name="vol_PMT_SteelBase">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="PMT_SteelBase"/>
+ </volume>
+ <volume name="vol_PMT_Underside">
+  <materialref ref="Glass"/>
+  <solidref ref="PMT_Underside"/>
+ </volume>
+ <volume name="volPaddle_PMT">
+  <materialref ref="Acrylic"/>
+  <solidref ref="Paddle_PMT"/>
+ </volume>
+ <volume name="vol_PMT_Lens">
+  <materialref ref="LAr"/>
+  <solidref ref="PMT_Lens"/>
+ </volume>
+<!-- Chroma Mod -->
+ <volume name="vol_PMT_InnerLens">
+   <materialref ref="Vacuum"/>
+   <solidref ref="PMT_spherical_InnerLens"/>
+ </volume>
+ <volume name="vol_PMT_HemisphereLens">
+   <materialref ref="Glass"/>
+   <solidref ref="PMT_spherical_OuterLens"/>
+   <physvol name="pv_PMT_InnerLens">
+     <volumeref ref="vol_PMT_InnerLens"/>
+     <position name="pos_PMT_InnerLens" unit="cm" x="0" y="0" z="0"/>
+   </physvol>
+ </volume>
+<!-- xxxxxxxxxxx -->
+ <volume name="volPMT">
+  <materialref ref="LAr"/>
+  <solidref ref="PMTVolume"/>
+  <physvol>
+   <volumeref ref="volOpDetSensitive"/>
+   <position name="posOpDetSensitive" unit="cm" x="0" y="0" z="(5.5 * 2.54) - 0.1"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="vol_PMT_AcrylicPlate"/>
+   <position name="pos_PMT_AcrylicPlate" unit="cm" x="0" y="0" z="(5.5 * 2.54) - 0.3"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="vol_PMT_Stalk"/>
+   <position name="pos_PMT_Stalk" unit="cm" x="0" y="0" z="(3.0 * 2.54)-(5.5 * 2.54)"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="vol_PMT_SteelBase"/>
+   <position name="pos_PMT_SteelBase" unit="cm" x="0" y="0" z="(0.75 * 2.54)-(5.5 * 2.54)"/>
+  </physvol>
+
+<!-- Chroma Mod -->
+<!--
+  <physvol>
+   <volumeref ref="vol_PMT_Lens"/>
+   <position name="pos_PMT_Lens" unit="cm" x="0" y="0" z="(7.0 * 2.54)-(5.5 * 2.54)"/>
+  </physvol>
+  <physvol>
+   <volumeref ref="vol_PMT_Underside"/>
+   <position name="pos_PMT_Underside" unit="cm" x="0" y="0" z="(7.0 * 2.54)-(5.5 * 2.54)"/>
+  </physvol>
+-->
+  <physvol>
+    <volumeref ref="vol_PMT_Underside"/>
+    <position name="pos_PMT_Underside" unit="cm" x="0" y="0" z="( (1.5+3.0+1.25-5.5) * 2.54)"/>
+  </physvol>
+  <physvol name="pv_PMT_HemisphereLens">
+    <volumeref ref="vol_PMT_HemisphereLens"/>
+    <position name="pos_PMT_HemisphereLens" unit="cm" x="0" y="0" z="(-5.5+1.5+3.0+2.5)*2.54"/>
+  </physvol>
+<!-- xxxxxxxxxxxxx -->
+ </volume>
+
+
+
+  <volume name="volInsulation">
+     <materialref ref="PU_foam_light"/>
+     <solidref ref="Insulation"/>
+  </volume>
+    <volume name="volPlatform">
+        <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+        <solidref ref="Platform"/>
+    </volume>
+    <volume name="volColumn">
+        <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+        <solidref ref="Column"/>
+    </volume>
+    <volume name="volTankCap1">
+        <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+        <solidref ref="TankCap1"/>
+    </volume>
+    <volume name="volTank1">
+      <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+      <solidref ref="Tank1"/>
+    </volume>
+    <volume name="volStandSubtraction">
+      <materialref ref="PU_foam_dense"/>
+      <solidref ref="standSubtraction"/>
+    </volume>
+
+    <volume name="volTankBox1">
+      <materialref ref="Air"/>
+      <solidref ref="TankBox1"/>
+      <physvol>
+        <volumeref ref="volTank1"/>
+        <position name="posvolTank1" unit="cm" x="0" y="0" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volTankCap1"/> 
+        <position name="posvolTankCap1_1" unit="cm" x="0" y="90.15+.001" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volTankCap1"/> 
+        <position name="posvolTankCap1_2" unit="cm" x="0" y="-90.15-.001" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+    </volume>
+
+    <volume name="volStandConcrete">
+      <materialref ref="Concrete"/>
+      <solidref ref="standConcrete"/>
+    </volume>
+
+    <volume name="volRackX">
+      <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+      <solidref ref="rackX"/>
+    </volume>
+    <volume name="volRackY">
+      <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+      <solidref ref="rackY"/>
+    </volume>
+    <volume name="volRackZ">
+      <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+      <solidref ref="rackZ"/>
+    </volume>
+	<volume name="volRackInnards">
+	  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+	  <solidref ref="rackInnards"/>
+	</volume>
+
+    <volume name="volRack">
+      <materialref ref="Air"/>
+      <solidref ref="rackBox"/>
+      <physvol>
+        <volumeref ref="volRackX"/>
+        <position name="posRackX1" unit="cm" x="0" y="(212.7-5.8)/2" z="(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackX"/>
+        <position name="posRackX2" unit="cm" x="0" y="-(212.7-5.8)/2" z="(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackX"/>
+        <position name="posRackX3" unit="cm" x="0" y="(212.7-5.8)/2" z="-(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackX"/>
+        <position name="posRackX4" unit="cm" x="0" y="-(212.7-5.8)/2" z="-(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackY"/>
+        <position name="posRackY1" unit="cm" y="0" x="(90.5-5.8)/2" z="(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackY"/>
+        <position name="posRackY2" unit="cm" y="0" x="-(90.5-5.8)/2" z="(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackY"/>
+        <position name="posRackY3" unit="cm" y="0" x="(90.5-5.8)/2" z="-(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackY"/>
+        <position name="posRackY4" unit="cm" y="0" x="-(90.5-5.8)/2" z="-(60.96-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackZ"/>
+        <position name="posRackZ1" unit="cm" z="0" y="(212.7-5.8)/2" x="(90.5-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackZ"/>
+        <position name="posRackZ2" unit="cm" z="0" y="(212.7-5.8)/2" x="-(90.5-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackZ"/>
+        <position name="posRackZ3" unit="cm" z="0" y="-(212.7-5.8)/2" x="(90.5-5.8)/2"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRackZ"/>
+        <position name="posRackZ4" unit="cm" z="0" y="-(212.7-5.8)/2" x="-(90.5-5.8)/2"/>
+      </physvol>  
+	  <physvol>
+		<volumeref ref="volRackInnards"/>
+		<position name="posRackInnards" unit="cm" x="0" y="0" z="0"/>
+	  </physvol>
+    </volume>
+
+  <volume name="volFloorTank1">
+	<materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+	<solidref ref="floorTank1"/>
+  </volume>
+
+  <volume name="volFloorTankCap1">
+	<materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+	<solidref ref="floorTankCap1"/>
+  </volume>
+
+  <volume name="volFloorTank2">
+	<materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+	<solidref ref="floorTank2"/>
+  </volume>
+
+  <volume name="volFloorTankCap2">
+	<materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+	<solidref ref="floorTankCap2"/>
+  </volume>
+
+ <volume name="volFloorTankBox1">
+      <materialref ref="Air"/>
+      <solidref ref="floorTankBox1"/>
+      <physvol>
+        <volumeref ref="volFloorTank1"/>
+        <position name="posFloorTank1" unit="cm" x="0" y="0" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volFloorTankCap1"/> 
+        <position name="posFloorTankCap1_1" unit="cm" x="0" y="89.9001" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volFloorTankCap1"/> 
+        <position name="posFloorTankCap1_2" unit="cm" x="0" y="-89.9001" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+    </volume>
+
+    <volume name="volFloorTankBox2">
+      <materialref ref="Air"/>
+      <solidref ref="floorTankBox2"/>
+      <physvol>
+        <volumeref ref="volFloorTank2"/>
+        <position name="posFloorTank2" unit="cm" x="0" y="6.033" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volFloorTankCap2"/>
+        <position name="posFloorTankCap2" unit="cm" x="0" y="-26.98" z="0"/>
+        <rotationref ref="rPlus90AboutX"/>
+      </physvol>
+    </volume>
+
+     <volume name="volWalkway">
+        <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+        <solidref ref="Walkway"/>
+     </volume>
+
+
+     <volume name="volPump">
+        <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+        <solidref ref="Pump"/>
+     </volume>
+
+
+
+     
+<volume name="volEndCap">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="EndCap"/>
+</volume>
+<volume name="volSteelTube">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="SteelTube"/>
+</volume>
+
+<!-- CryoStat -->
+
+<volume name="volInnerCryostat">
+  <materialref ref="LAr"/>
+  <solidref ref="InnerCryostatPC"/>
+  <physvol>
+   <volumeref ref="volTPC"/>
+   <position name="posTPC" unit="cm" x="0.0" y="0.97" z="0"/>
+  </physvol>
+  <physvol name="pvPMT0">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT0" unit="cm"  x="-141.487" y="55.249" z="108.693 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT1">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT1" unit="cm"  x="-141.342" y="55.249" z="149.287-424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT2">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT2" unit="cm"  x="-141.380" y="27.431"  z="72.034 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT3">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT3" unit="cm"  x="-141.387" y="-0.303" z="194.676 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT4">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT4" unit="cm"  x="-141.098"  y="-28.576"  z="71.407 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT5">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT5" unit="cm"  x="-141.183"  y="-56.615"  z="108.802 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPM6">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT6" unit="cm"  x="-141.2239"  y="-56.203"  z="149.112- 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT7">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT7" unit="cm"  x="-141.363" y="54.646" z="308.909 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT8">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT8" unit="cm"  x="-141.132"  y="54.693"  z="349.145 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT9">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT9" unit="cm"  x="-141.096" y="-0.829" z="262.947 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT10">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT10" unit="cm"  x="-141.031"  y="-0.706"  z="394.771 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT11">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT11" unit="cm"  x="-140.953"  y="-56.261"  z="308.572 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT12">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT12" unit="cm"  x="-140.594"  y="-57.022"  z="349.273 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT13">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT13" unit="cm"  x="-140.929" y="55.771" z="521.066 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT14">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT14" unit="cm"  x="-140.819"  y="55.822"  z="561.862 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT15">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT15" unit="cm"  x="-140.564" y="-0.875" z="474.028 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT16">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT16" unit="cm"  x="-140.597"  y="-0.549"  z="606.217 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT17">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT17" unit="cm"  x="-140.540"  y="-56.323"  z="521.153 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT18">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT18" unit="cm"  x="-140.566"  y="-56.205"  z="561.549 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT19">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT19" unit="cm"  x="-140.607" y="55.800" z="732.006 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT20">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT20" unit="cm"  x="-140.486"  y="55.625"  z="772.816 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT21">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT21" unit="cm"  x="-140.570" y="-0.051" z="685.136 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT22">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT22" unit="cm"  x="-140.250"  y="-0.502"  z="817.141 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT23">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT23" unit="cm"  x="-140.558"  y="-56.408"  z="732.207 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT24">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT24" unit="cm"  x="-140.550"  y="-56.284"  z="772.838 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT25">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT25" unit="cm"  x="-139.780" y="55.822" z="931.998 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT26">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT26" unit="cm"  x="-139.587"  y="55.313"  z="972.794 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT27">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT27" unit="cm"  x="-139.363" y="27.607" z="1010.644 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT28">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT28" unit="cm"  x="-140.122"  y="-0.722"  z="886.531 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT29">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT29" unit="cm"  x="-139.400"  y="-28.625"  z="1011.288 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT30">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT30" unit="cm"  x="-140.004" y="-56.309" z="932.872 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPMT31">
+   <volumeref ref="volPMT"/>
+   <position name="posPMT31" unit="cm"  x="-139.721" y="-56.514" z="972.797 - 424.75*2.54*.5"/>
+   <rotationref ref="rPMTRotation1"/>
+  </physvol>
+  <physvol name="pvPaddle32">
+   <volumeref ref="volPaddle_PMT"/>
+   <position name="posPMT32" unit="cm"  x="-161.341" y="-28.201 + 20/2*2.54" z="287.161 - 424.75*2.54*.5"/>
+  </physvol>
+  <physvol name="pvPaddle33">
+    <volumeref ref="volPaddle_PMT"/>
+   <position name="posPMT33" unit="cm"  x="-160.858" y="-27.994 + 20/2*2.54" z="498.501 - 424.75*2.54*.5"/>
+  </physvol>
+  <physvol name="pvPaddle34">
+    <volumeref ref="volPaddle_PMT"/>
+   <position name="posPMT34" unit="cm"  x="-160.882" y="-28.100 + 20/2*2.54" z="583.333 - 424.75*2.54*.5"/>
+  </physvol>
+  <physvol name="pvPaddle35">
+    <volumeref ref="volPaddle_PMT"/>
+   <position name="posPMT35" unit="cm"  x="-160.654" y="-27.755 + 20/2*2.54" z="794.575 - 424.75*2.54*.5"/>
+  </physvol>
+</volume>
+
+<volume name="volCryostat">
+  <materialref ref="STEEL_STAINLESS_Fe7Cr2Ni"/>
+  <solidref ref="OuterCryostatPC"/>
+  <physvol>
+    <volumeref ref="volInnerCryostat"/>
+    <position name="posInnerCryostatPC" unit="cm" x="0" y="0" z="0"/>
+  </physvol>
+</volume>
+
+<volume name="volDetEnclosure">
+  <materialref ref="Air"/>
+  <solidref ref="DetEnclosure"/>
+  <physvol>
+    <volumeref ref="volCryostat"/>
+    <position name="posCryostat" unit="cm" x="0" y="0" z="0"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volInsulation"/>
+    <position name="posInsulation" unit="cm" x="0" y="0" z="0"/>
+  </physvol> 
+  <physvol>
+    <volumeref ref="volPlatform"/>
+    <position name="posPlatform" unit="cm" x="0" y="292.74" z="0"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volColumn"/>
+    <position name="posColumn1" unit="cm" x="266" y="-121.261" z="0"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volColumn"/>
+    <position name="posColumn2" unit="cm" x="-266" y="-121.261" z="0"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volTankBox1"/>
+    <position name="posTank1_1" unit="cm" x="85" y="419" z="-600"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volTankBox1"/>
+    <position name="posTank1_2" unit="cm" x="-85" y="419" z="-600"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volStandSubtraction"/>
+    <position name="posStand1" unit="cm" x="0" y="-236" z="335.28"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volStandSubtraction"/>
+    <position name="posStand2" unit="cm" x="0" y="-236" z="-335.28"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volStandConcrete"/>
+    <position name="posConcreteStand1" unit="cm" x="0" y="-424" z="335.28"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volStandConcrete"/>
+    <position name="posConcreteStand2" unit="cm" x="0" y="-424" z="-335.28"/>
+  </physvol>
+  <physvol>
+    <volumeref ref="volRack"/>
+    <position name="posRack1" unit="cm" x="-45.25" y="408.91" z="148.52" />
+  </physvol> 
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack2" unit="cm" x="-45.25" y="408.91" z="260.28"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack3" unit="cm" x="-45.25" y="408.91" z="260.28 + 60.96"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack4" unit="cm" x="-45.25" y="408.91" z="260.28 + 2*60.96"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack5" unit="cm" x="-45.25" y="408.91" z="260.28 + 3*60.96 + 22.5*2.54"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack6" unit="cm" x="30.88*2.54 + 90.5/2" y="408.91" z="260.28 + 3*60.96"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack7" unit="cm" x="-45.25" y="408.91" z="-60.96/2"/>
+      </physvol>
+      <physvol>
+	<volumeref ref="volRack"/>
+	<position name="posRack8" unit="cm" x="-45.25" y="408.91" z="-3/2*60.96 - 30.25*2.54" />
+      </physvol>
+      <physvol>
+	<volumeref ref="volRack"/>
+	<position name="posRack9" unit="cm" x="-45.25" y="408.91" z="-5/2*60.96- 46*2.54" />
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack10" unit="cm" x="52*2.54 +90.5/2" y="408.91" z="-5/2*60.96 - 46*2.54"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack11" unit="cm" x="52*2.54 + 90.5/2" y="408.91" z="-7/2*60.96 - 46*2.54"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack12" unit="cm" x="52*2.54 + 90.5/2" y="408.91" z="-9/2*60.96 - 46*2.54"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volRack"/>
+        <position name="posRack13" unit="cm" x="30.88*2.54 + 90.5/2" y="408.91" z="543.49 "/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox1"/>
+         <position name="posfloortankbox1" unit="cm" x="-450" y="100+.001-530" z="335.28"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox1"/>
+         <position name="posfloortankbox1_2" unit="cm" x="100" y="100+.001-530" z="-445"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox1"/>
+         <position name="posfloortankbox1_3" unit="cm" x="100" y="100+.001-530" z="-521.5"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox1"/>
+         <position name="posfloortankbox1_4" unit="cm" x="360" y="100+.001-530" z="-335.28"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox1"/>
+         <position name="posfloortankbox1_5" unit="cm" x="360+60" y="100+.001-530" z="-335.28-60"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volWalkway"/>
+        <position name="posExtraPlatform" unit="cm" x="0" y="268" z="0"/>
+      </physvol>
+      <physvol>
+        <volumeref ref="volWalkway"/>
+        <position name="posWalkway" unit="cm" x="-212" y="181.74" z="0"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox2"/>
+         <position name="posfloortankbox2_1" unit="cm" x="-20" y="100+.001-530" z="-500"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volFloorTankBox2"/>
+         <position name="posfloortankbox2_2" unit="cm" x="-136" y="40+80-530" z="-500"/>
+      </physvol>
+      <physvol>
+         <volumeref ref="volPump"/>
+         <position name="posPump" unit="cm" x="0" y="-424" z="200"/>
+      </physvol> 
+ </volume>
+
+  <volume name="volGround" >
+    <materialref ref="Dirt" />
+    <solidref ref="Ground" />
+  </volume>
+  <volume name="volGroundBottom" >
+     <materialref ref="Dirt" />
+     <solidref ref="GroundBottom" />
+   </volume>
+  <volume name="volOverburden" >
+    <materialref ref="Dirt" />
+    <solidref ref="Overburden" />
+  </volume>
+  <volume name="volPolystyreneEnclosure" >
+    <materialref ref="Polystyrene" />
+    <solidref ref="PolystyreneEnclosure" />
+  </volume>
+  <volume name="volConcreteEnclosure" >
+    <materialref ref="Concrete" />
+    <solidref ref="ConcreteEnclosure" />
+  </volume>
+  <volume name="volPolystyreneEnclosureBottom">
+     <materialref ref="Polystyrene" />
+     <solidref ref="PolystyreneEnclosureBottom"/>
+  </volume>
+  <volume name="volConcreteEnclosureBottom" >
+    <materialref ref="Concrete" />
+    <solidref ref="ConcreteEnclosureBottom" />
+  </volume>
+  <volume name="volRoof" >
+    <materialref ref="Concrete" />
+    <solidref ref="Roof" />
+  </volume>
+  <volume name="volWorld" >
+    <materialref ref="Air"/> 
+    <solidref ref="World"/>
+   <physvol>
+      <volumeref ref="volConcreteEnclosure"/>
+      <position name="posConcreteEnclosure" unit="cm" x="0.5*256.35" y="36*2.54/2" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol>  
+    <physvol>
+      <volumeref ref="volConcreteEnclosureBottom"/>
+      <position name="posConcreteEnclosureBottom" unit="cm" x="0.5*256.35" y="-38*12*2.54/2" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol>
+    <physvol>
+      <volumeref ref="volPolystyreneEnclosure"/>
+      <position name="posPolystyreneEnclosure" unit="cm" x="0.5*256.35" y="0" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol>   
+  <!--  <physvol>
+      <volumeref ref="volRoof"/>
+      <position name="posRoof" unit="cm" x="0.5*256.35" y="38*12*2.54/2 + 36*2.54/2 " z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX" />
+    </physvol>  -->
+    <physvol>
+       <volumeref ref="volGround"/>
+      <position name="posGround" unit="cm" x="0.5*256.35" y="0" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol> 
+    <physvol>
+       <volumeref ref="volGroundBottom"/>
+      <position name="posGroundBottom" unit="cm" x="0.5*256.35" y="-41*12*2.54/2 -50*12*2.54/2" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol>  
+    <!--physvol>
+      <volumeref ref="volOverburden"/>
+      <position name="posOverburden" unit="cm" x="0.5*256.35" y="(41-10)*12*2.54/2" z="0.5*1037"/>
+      <rotationref ref="rPlus90AboutX"/>
+    </physvol-->
+    <physvol>
+      <volumeref ref="volDetEnclosure"/>
+      <position name="posDetEnclosure" unit="cm" x="0.5*256.35" y="0" z="0.5*1037"/>
+    </physvol>
+  </volume> 
+</structure>
+
+<setup name="Default" version="1.0">
+  <!--  <world ref="volWorld" /> -->
+  <!-- <world ref="volDetEnclosure"/> -->
+  <world ref="volCryostat"/>
+</setup>
+
+</gdml>

@@ -779,7 +779,7 @@ void GLG4Scint::MyPhysicsTable::Entry::Build(
     aMaterialPropertiesTable->GetProperty(property_string.str().c_str());
 
   if (theScintillationLightVector && !theReemissionLightVector) {
-    G4cout << "\nWarning! Found a scintillator without Re-emission spectrum";
+    G4cout << "\nWarning! Found a scintillator (" << _name << ") without Re-emission spectrum";
     G4cout << " (probably a scintillator without WLS)" << G4endl;
     G4cout << "I will assume that for this material this spectrum is equal ";
     G4cout << "to the primary scintillation spectrum..." << G4endl;
@@ -790,7 +790,7 @@ void GLG4Scint::MyPhysicsTable::Entry::Build(
     if (aMaterialPropertiesTable->ConstPropertyExists("LIGHT_YIELD"))
       light_yield=aMaterialPropertiesTable->GetConstProperty("LIGHT_YIELD");
     else { 
-      G4cout << "\nWarning! Found a scintillator without LIGHT_YIELD parameter.";
+      G4cout << "\nWarning! Found a scintillator (" << _name << ") without LIGHT_YIELD parameter.";
       G4cout << "\nI will assume that for this material this parameter is ";
       G4cout << "implicit in the scintillation integral..." << G4endl;
 
