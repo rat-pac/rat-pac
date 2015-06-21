@@ -4,21 +4,25 @@
 #include <vector>
 #include <string>
 
+#ifdef _HAS_ZMQ
 #include "ratchromadata.pb.h"
-
 #include "zhelpers.hpp"
+#endif
 
 class G4Track;
 class G4VParticleChange;
 class G4Step;
 
 namespace RAT {
+
 class ChromaInterface {
 
 public:
 
   ChromaInterface();
   ~ChromaInterface();
+
+  bool isActive();
 
   void initializeServerConnection();
   void closeServerConnection();
@@ -34,13 +38,19 @@ public:
   void ReceivePhotonData();
   void SendDetectorConfigData();
   void MakePhotonHitData();
+#ifdef _HAS_ZMQ
   zmq::socket_t * S_Client_Socket (zmq::context_t & context);
+#else
+  void NoSupportWarning();
+#endif
 
 protected:
+#ifdef _HAS_ZMQ
   zmq::socket_t *client;
   zmq::context_t *context;
   ratchroma::ChromaData message; // data we send to Chroma
-  //ratchroma::PMTHitData fChromaResults; // data we get back from Chroma
+#endif
+  bool fActive;
   std::string fStrQueueAddress;
   std::string ClientIdentity;
 };

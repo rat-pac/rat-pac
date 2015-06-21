@@ -17,15 +17,27 @@
 namespace RAT {
 
   ChromaInterface::ChromaInterface() {
+#ifdef _HAS_ZMQ
     GOOGLE_PROTOBUF_VERIFY_VERSION; // checks protobuf version
+    fActive = false;
     ClearData();
+#endif
   }
 
 
   ChromaInterface::~ChromaInterface() {
   }
 
+  bool ChromaInterface::isActive() {
+#ifdef _HAS_ZMQ
+    return fActive;
+#else
+    return false;
+#endif
+  }
+
   void ChromaInterface::initializeServerConnection() {
+#ifdef _HAS_ZMQ
     // Load the Chroma Table
     DB* db = DB::Get();
     DBLinkPtr lChroma = db->GetLink("CHROMA");
@@ -37,7 +49,6 @@ namespace RAT {
     catch ( DBNotFoundError& e) {
       Log::Die( "Chroma interface initialized without specifying Chroma/RAT Queue manager address." );
     }
-
     // Here load appropriate socket
     context =  new zmq::context_t(1);//flag=# of i/o threads, apparently
     client = S_Client_Socket (*context);
@@ -46,16 +57,22 @@ namespace RAT {
     
     // Talk to Server/Handshake/Send out detector data
     SendDetectorConfigData();
+    fActive = true;
+#else
+    NoSupportWarning();
+#endif
   }
 
   void ChromaInterface::closeServerConnection() {
+#ifdef _HAS_ZMQ
     delete client; // close socket
     delete context;
+#endif
+    fActive = false;
   }
 
   void ChromaInterface::readStoreKillCherenkovPhotons( std::vector< G4Track* >* secondaries ) {
-  
-
+#ifdef _HAS_ZMQ
     for (  std::vector< G4Track* >::const_iterator it=secondaries->begin(); it!=secondaries->end(); it++ ) {
 
       if ( (*it)->GetParticleDefinition()->GetParticleName()=="opticalphoton" && (*it)->GetCreatorProcess()->GetProcessName()=="cerenkov" ) {
@@ -76,10 +93,11 @@ namespace RAT {
 	(*it)->SetTrackStatus( fStopAndKill ); // we take this over now!
       }    
     }
+#endif
   }
 
   void ChromaInterface::readStoreKillScintillationPhotons( const G4Step* aStep, G4VParticleChange* scint_photons ) {
-
+#ifdef _HAS_ZMQ
     G4int iSecondary= scint_photons->GetNumberOfSecondaries();
     if ( iSecondary==0 )
       return;
@@ -97,36 +115,47 @@ namespace RAT {
     scintinfo->set_step_end_z( poststep->GetPosition().z() );
     scintinfo->set_material( prestep->GetMaterial()->GetName() );
     scint_photons->Clear();
+#endif
   }
 
   void ChromaInterface::ClearData() {
+#ifdef _HAS_ZMQ
     message.Clear();
+#endif
   }
 
   void ChromaInterface::JoinQueue() {
+#ifdef _HAS_ZMQ
     zhelpers::s_send (*client, "RDY");
+#endif
   }
   //must initialize client before setting its identity
   void ChromaInterface::SetIdentity() {
     //uses zhelpers member function to set a random identity.
     //(this method is thread-safe)
+#ifdef _HAS_ZMQ
     ClientIdentity = zhelpers::s_set_id(*client);
+#endif
   }
   void ChromaInterface::SendPhotonData() {
     // Send data
     //basic implementation, probably want to handshake or do
     //some check first.
+#ifdef _HAS_ZMQ
     std::string *str_msg = NULL;
     message.SerializeToString(str_msg);
     zhelpers::s_send (*client, *str_msg);
+#endif
   }
 
   void ChromaInterface::ReceivePhotonData() {
     //do some check/configrmation first
+#ifdef _HAS_ZMQ
     std::string msg;
     msg = zhelpers::s_recv (*client);
     //data = message.ParseFromString(msg);
     //std::cout << data << "\n" ;
+#endif
   }
 
   void ChromaInterface::SendDetectorConfigData() {
@@ -136,12 +165,15 @@ namespace RAT {
   }
 
   void ChromaInterface::MakePhotonHitData() {
+#ifdef _HAS_ZMQ
     GLG4HitPhoton* hit_photon = new GLG4HitPhoton();
     //hit_photon->SetPMTID((int)iopdet);
     GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
+#endif
   }
 
   //returns a REQ client
+#ifdef _HAS_ZMQ
   zmq::socket_t* ChromaInterface::S_Client_Socket (zmq::context_t & context)
   {
     zmq::socket_t * client = new zmq::socket_t (context, ZMQ_REQ);
@@ -150,6 +182,11 @@ namespace RAT {
     //port) if we need to
     return client;
   }
+#else
+  void ChromaInterface::NoSupportWarning() {
+    std::cout << "[WARNING] NO CHROMA INTERFACE SUPPORT!" << std::endl;
+  }
+#endif
 }// end of namespace RAT
 
 

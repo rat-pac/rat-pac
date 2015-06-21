@@ -30,6 +30,7 @@
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
 #include <RAT/ChromaInterface.hh>
+#include <RAT/ChromaInterfaceMessenger.hh>
 
 #include <RAT/PDFPMTTime.hh>
 #include <RAT/MiniCleanPMTCharge.hh>
@@ -128,11 +129,8 @@ void Gsim::Init() {
   //   to capture particle track information
   // Optional ChromaInterface can be activated to use GPUs to 
   //   accelerate photon transport.
-  fChroma = NULL;
-  kUseChroma = false;
   fChroma = new ChromaInterface();
-  kUseChroma = true;
-  fChroma->initializeServerConnection();
+  theChromaMessenger = new ChromaInterfaceMessenger( fChroma );
   theRunManager->SetUserAction(static_cast<G4UserTrackingAction*>(this));
   theRunManager->SetUserAction(new GLG4SteppingAction( fChroma ));
 
@@ -259,14 +257,14 @@ void Gsim::BeginOfEventAction(const G4Event* anEvent) {
   }
 
   // only necessary if we run chroma interface: clears protobuf data (retains allocation)
-  if ( kUseChroma )
+  if ( fChroma )
     fChroma->ClearData();
 }
 
 void Gsim::EndOfEventAction(const G4Event* anEvent) {
   
   // If we used Chroma, we need to send out photon data and then make photon hits
-  if ( kUseChroma ) {
+  if ( fChroma->isActive() ) {
     fChroma->SendPhotonData();
     fChroma->ReceivePhotonData(); // blocks until data retrieved
     fChroma->MakePhotonHitData();

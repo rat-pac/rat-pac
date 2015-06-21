@@ -25,7 +25,6 @@ public:
 
 private:
   GLG4PrimaryGeneratorAction* myGenerator;
-  bool kUseChroma;
   RAT::ChromaInterface* fChroma;
 };
 

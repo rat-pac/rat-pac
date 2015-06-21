@@ -36,10 +36,6 @@ GLG4SteppingAction::GLG4SteppingAction( RAT::ChromaInterface* chroma )
      G4Exception(__FILE__, "No Primary Generator", FatalException, "GLG4SteppingAction:: no GLG4PrimaryGeneratorAction instance.");
    }
    fChroma = chroma;
-   if (fChroma==NULL)
-     kUseChroma = false;
-   else
-     kUseChroma = true;
 }
 
 #ifdef G4DEBUG
@@ -287,8 +283,7 @@ GLG4SteppingAction::UserSteppingAction(const G4Step* aStep)
 #endif
 
   // before scintillation: check for cerenkov photons. Chroma absorbs them.
-  if ( kUseChroma ) {
-    // danger!
+  if ( !fChroma && fChroma->isActive() ) {
     fChroma->readStoreKillCherenkovPhotons( fpSteppingManager->GetfSecondary() );
   };
 //   std::cout << "prescint secondary list: " << std::endl;
@@ -303,7 +298,7 @@ GLG4SteppingAction::UserSteppingAction(const G4Step* aStep)
       G4VParticleChange * pParticleChange
 	= GLG4Scint::GenericPostPostStepDoIt(aStep);
 
-      if ( !kUseChroma ) {
+      if ( fChroma==NULL || !fChroma->isActive() ) {
 
 	// were any secondaries defined?
 	G4int iSecondary= pParticleChange->GetNumberOfSecondaries();
