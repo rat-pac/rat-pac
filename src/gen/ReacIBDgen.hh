@@ -42,10 +42,10 @@ public:
   //   differential cross-section are factored in.
   void GenInteraction(float &E, float &CosThetaLab);
   
-  void SetU235AmpValue (double U235Am = U235DEFAULT);
-  void SetU238AmpValue (double U238Am = U238DEFAULT);
-  void SetPu239AmpValue (double Pu239Am = Pu239DEFAULT);
-  void SetPu241AmpValue (double Pu241Am = Pu241DEFAULT); 
+  void SetU235Amplitude (double U235Am = U235DEFAULT);
+  void SetU238Amplitude (double U238Am = U238DEFAULT);
+  void SetPu239Amplitude (double Pu239Am = Pu239DEFAULT);
+  void SetPu241Amplitude (double Pu241Am = Pu241DEFAULT); 
 
   // Total cross section for inverse beta decay
   static double CrossSection(float x);

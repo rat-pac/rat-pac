@@ -12,7 +12,7 @@ using namespace CLHEP;
 
 namespace RAT {
 
-#define DEBUG
+//#define DEBUG
 
 // Additional constants
 const double DELTA = neutron_mass_c2 - proton_mass_c2;
@@ -67,7 +67,7 @@ void ReacIBDgen::GenEvent(const Hep3Vector &nu_dir,
   double p0 = sqrt(E0*E0 - electron_mass_c2*electron_mass_c2); 
   double v0 = p0/E0;
 
-  // First order correction for finite nucleon mass
+  // First order correction of positron quantities for finite nucleon mass
   double Ysquared = (DELTA*DELTA - electron_mass_c2*electron_mass_c2)/2;
   double E1 = E0*(1 - Enu/proton_mass_c2*(1 - v0*CosThetaLab))
                - Ysquared/proton_mass_c2;
@@ -101,15 +101,13 @@ void ReacIBDgen::GenEvent(const Hep3Vector &nu_dir,
 void ReacIBDgen::GenInteraction(float &E, float &CosThetaLab)
 {
     // Pick E from the reactor spectrum and cos(theta) uniformly
-    //FIXME: Need to correct cos(theta) with the differential cross-section
-    //eventually
 
     E = GetNuEnergy();
     CosThetaLab = -1.0+2.0*HepUniformRand();
   
 }
 
-void ReacIBDgen::SetU235AmpValue (double U235Am)
+void ReacIBDgen::SetU235Amplitude (double U235Am)
 {
   if ((U235Am < 0.) || (U235Am > 1.))
     {
@@ -121,13 +119,13 @@ void ReacIBDgen::SetU235AmpValue (double U235Am)
 
 void ReacIBDgen::Reset()
 {
-  SetU235AmpValue (U235DEFAULT);
-  SetU238AmpValue (U238DEFAULT);
-  SetPu239AmpValue (Pu239DEFAULT);
-  SetPu241AmpValue (Pu241DEFAULT);
+  SetU235Amplitude (U235DEFAULT);
+  SetU238Amplitude (U238DEFAULT);
+  SetPu239Amplitude (Pu239DEFAULT);
+  SetPu241Amplitude (Pu241DEFAULT);
 }
 
-void ReacIBDgen::SetU238AmpValue (double U238Am)
+void ReacIBDgen::SetU238Amplitude (double U238Am)
 {
   if ((U238Am < 0.) || (U238Am > 1.))
     {
@@ -136,7 +134,8 @@ void ReacIBDgen::SetU238AmpValue (double U238Am)
     }
   U238Amp = U238Am;
 }
-void ReacIBDgen::SetPu239AmpValue (double Pu239Am)
+
+void ReacIBDgen::SetPu239Amplitude (double Pu239Am)
 {
   if ((Pu239Am < 0.) || (Pu239Am > 1.))
     {
@@ -146,7 +145,7 @@ void ReacIBDgen::SetPu239AmpValue (double Pu239Am)
   Pu239Amp = Pu239Am;
 }
 
-void ReacIBDgen::SetPu241AmpValue (double Pu241Am)
+void ReacIBDgen::SetPu241Amplitude (double Pu241Am)
 {
   if ((Pu241Am < 0.) || (Pu241Am > 1.))
     {
@@ -157,11 +156,9 @@ void ReacIBDgen::SetPu241AmpValue (double Pu241Am)
 }
 
 
-float ReacIBDgen::GetNuEnergy()
-{
+float ReacIBDgen::GetNuEnergy(){
       // This method of setting up probability densities as a function of 
-      // Energy is taken from the CfSource.cc file.  We use it to generate
-      // neutrino energies from the energy spectrums provided by Marc Bergevin.
+      // Energy is taken from the CfSource.cc file.
 
       // setup the probability density as a function of energy
 
@@ -189,6 +186,7 @@ float ReacIBDgen::GetNuEnergy()
 	    {
 	      float value = (float(i) + 0.5) * (fhigh - flow) / (float) probDensSize;
 	      fspace[i] = IBDESpectrum(flow + value);
+
 #ifdef DEBUG
 	      std::cout << "   i=" << i << " f="
 			<< fspace[i] << ","
@@ -197,21 +195,19 @@ float ReacIBDgen::GetNuEnergy()
 #endif
 
 #ifdef DEBUG
-	  //Let's write the fspace prob. density function to a text file.
-	  std::ofstream fout("TheProbFunc.txt");
-	  if(fout.is_open())
-	  {
-		std::cout << "Your file is open.  Let's put the probability density function into it..." << std::endl;
-		for(int i = 0; i < probDensSize; i++)
-		{
-			fout << i << " " << fspace[i] << std::endl;
-		}
-	  fout.close();
-	  }
+	  	//Let's write the fspace prob. density function to a text file.
+	 	 std::ofstream fout("TheProbFunc.txt");
+	  	if(fout.is_open())
+	 	 {
+			std::cout << "Your file is open.  Let's put the probability density function into it..." << std::endl;
+			for(int i = 0; i < probDensSize; i++)
+			{
+				fout << i << " " << fspace[i] << std::endl;
+			}
+		 	fout.close();
+	 	 }
 #endif
-    
-	  //printf("PDF: i=%d x:%5.2f y:%5.2f\n",i, value, fspace[i]);
-	    }
+    	   }
 
 	  // Define random-number generators.  First argument has your
 	  // Array of probablility density values, second input has the
@@ -232,50 +228,48 @@ float ReacIBDgen::GetNuEnergy()
 
 
 	  float nuE = fGenerate->shoot() * (fhigh - flow) + flow;
+
 #ifdef DEBUG
 	  std::cout << "Your generated neutrino energy is..." 
 		    << nuE
 		    << std::endl;
 #endif
+
 	  return nuE;
 }
 
-double ReacIBDgen::IBDESpectrum(float x)
-{
-  //I have replaced the CrossSection function that lives in the original IBDgen
-  //With the cross section function given in the original source file from
-  //Marc Bergevin.
-  //double mProton=938.27;
-  //double mNeutron=939.565378;
-  double mElectron=0.511;  
-  double XC=CrossSection(x);
-  double EnergyVal = NuReacSpectrum(x)*XC*sqrt(XC*XC - mElectron*mElectron);
-  std::cout << EnergyVal << " and " << XC << std::endl;
-  return EnergyVal;
-  //The final units output are in MeV and valid from 10 MeV 
-}
 
-
-double ReacIBDgen::CrossSection(float x)
-{
-  //I have replaced the CrossSection function that lives in the original IBDgen
-  //With the parameterized IBD neutrino cross section function given in
-  // the original source file from Marc Bergevin.  
+double ReacIBDgen::IBDESpectrum(float x){
+    //I have replaced the CrossSection function that lives in the original IBDgen
+    //With the cross section function given in the original source file from
+    //Marc Bergevin.
   
-  double mNeutron = 939.565378;
-  double mProton = 938.27;
-  double mElectron = 0.511;
-  double delta = mNeutron - mProton;
-  double A = 0.5;
-  double B = mNeutron*mNeutron;
-  double C = 4.0*mProton;
-  double D = delta+(delta*delta - mElectron*mElectron)/(2*mProton);
-  double E = mNeutron;
-
-  double XC = A*(sqrt(B - C*(D-x)) - E);
+    double mElectron=0.511;  
+    double XC=CrossSection(x);
+    double EnergyVal = NuReacSpectrum(x)*XC*sqrt(XC*XC - mElectron*mElectron);
+    std::cout << EnergyVal << " and " << XC << std::endl;
+    return EnergyVal;
   
-   return XC;  
-}
+    //The final units output are in MeV
+  }
+
+
+double ReacIBDgen::CrossSection(float x){
+    
+    double mNeutron = 939.565378;
+    double mProton = 938.27;
+    double mElectron = 0.511;
+    double delta = mNeutron - mProton;
+    double A = 0.5;
+    double B = mNeutron*mNeutron;
+    double C = 4.0*mProton;
+    double D = delta+(delta*delta - mElectron*mElectron)/(2*mProton);
+    double E = mNeutron;
+
+    double XC = A*(sqrt(B - C*(D-x)) - E);
+  
+    return XC;  
+  }
 
 
 float ReacIBDgen::U235ReacSpectrum(const float& x){
@@ -285,15 +279,11 @@ float ReacIBDgen::U235ReacSpectrum(const float& x){
    
     // Use the current set Amplitude for the U235 contribution 
     double C0 = GetU235Amplitude() ;
-
-#ifdef DEBUG
-    std::cout << "I made it here, and the U235Amp is" << C0 << std::endl;
-#endif
-
     double C1=0.870;
     double C2=0.160;
     double C3=0.091;
-    //double C4=201.92;  //Defined in Marc's file; not sure of function
+    //double C4=201.92;  //Defined in Marc Bergevin's original Reactor neutrino
+			 //generator.  Unsure of purpose
 
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
@@ -312,12 +302,6 @@ float ReacIBDgen::Pu239ReacSpectrum(const float& x){
     double C2=0.239;
     double C3=0.0981;
     //double C4=209.99;  //Defined in Marc's file; not sure of function
-
-#ifdef DEBUG
-    std::cout << "We made it here, and the Pu239 Isotope contribution is" <<
-    C0 << std::endl;
-#endif
-
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
@@ -334,12 +318,6 @@ float ReacIBDgen::U238ReacSpectrum(const float& x){
     double C2=0.162;
     double C3=0.079;
     //double C4=205.52;  //Defined in Marc's file; not sure of function
-
-#ifdef DEBUG
-    std::cout << "We made it here, and the U238 isotope contribution is" <<
-    C0 << std::endl;
-#endif
-
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
@@ -356,12 +334,6 @@ float ReacIBDgen::Pu241ReacSpectrum(const float& x){
     double C2=0.080;
     double C3=0.1085;
     //double C4=213.60;  //Defined in Marc's file; not sure of function
-
-#ifdef DEBUG
-   std::cout << "We made it here, and the Pu241 isotope contribution is" <<
-   C0 << std::endl;
-#endif
-
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
     std::cout << "N " << N << std::endl;
@@ -370,12 +342,12 @@ float ReacIBDgen::Pu241ReacSpectrum(const float& x){
 
 float ReacIBDgen::NuReacSpectrum(const float& x){
 
-  // return the sum of the neutrino flux contributions from each reactor isotope
-  // for a given value x (energy in MeV)
+    // return the sum of the neutrino flux contributions from each reactor isotope
+    // for a given value x (energy in MeV)
 
-  float tot = U235ReacSpectrum(x) + Pu239ReacSpectrum(x) + U238ReacSpectrum(x) + Pu241ReacSpectrum(x);
+    float tot = U235ReacSpectrum(x) + Pu239ReacSpectrum(x) + U238ReacSpectrum(x) + Pu241ReacSpectrum(x);
 
-  return tot;
+    return tot;
   }
 
 } // namespace RAT
