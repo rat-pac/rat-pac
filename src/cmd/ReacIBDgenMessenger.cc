@@ -50,22 +50,22 @@ namespace RAT {
     if ( command == U235AmpCmd )
       {
         G4double U235Ampl = U235AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetU235AmpValue ( U235Ampl );
+        reacibdgen->SetU235Amplitude ( U235Ampl );
       }
     else if ( command == U238AmpCmd )
       {
         G4double U238Ampl = U238AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetU238AmpValue ( U238Ampl );
+        reacibdgen->SetU238Amplitude ( U238Ampl );
       }
     else if ( command == Pu239AmpCmd )
       {
         G4double Pu239Ampl = Pu239AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetPu239AmpValue ( Pu239Ampl );
+        reacibdgen->SetPu239Amplitude ( Pu239Ampl );
       }
     else if ( command == Pu241AmpCmd )
       {
         G4double Pu241Ampl = Pu241AmpCmd->GetNewDoubleValue( newValue );
-        reacibdgen->SetPu241AmpValue ( Pu241Ampl );
+        reacibdgen->SetPu241Amplitude ( Pu241Ampl );
       }
     else
       {
