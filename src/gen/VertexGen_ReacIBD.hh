@@ -23,9 +23,11 @@ public:
 				      G4double dt);
   // generates a primary vertex with given particle type, direction, energy,
   // and consistent polarization.
+
   virtual void SetState( G4String newValues );
   // format: dir_x dir_y dir_z
   // If dir_x==dir_y==dir_z==0, the directions are isotropic.
+
   virtual G4String GetState();
   // returns current state formatted as above
 

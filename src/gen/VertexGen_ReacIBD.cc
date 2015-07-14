@@ -39,7 +39,7 @@ GeneratePrimaryVertex(G4Event *argEvent,
   G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
   
   if (ev_nu_dir.mag2() == 0.0) {
-    // Pick isotropic direction
+    // Pick isotropic direction for incoming neutrino
     double theta = acos(2.0 * G4UniformRand() - 1.0);
     double phi = 2.0 * G4UniformRand() * pi;
     ev_nu_dir.setRThetaPhi(1.0, theta, phi);
@@ -51,7 +51,7 @@ GeneratePrimaryVertex(G4Event *argEvent,
   reacibd.GenEvent(ev_nu_dir, mom_nu, mom_eplus, mom_n);
 
   // -- Create particles
-  // FIXME: Should I also add the neutrino and make these daughters of it?
+  
   // positron
   G4PrimaryParticle* eplus_particle =
     new G4PrimaryParticle(eplus,              // particle code
