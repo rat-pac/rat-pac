@@ -16,6 +16,9 @@
 #END EVENT LOOP
 
 /generator/add combo reacibd:point 
+
+# Adjust reactor isotope contents: All four components'
+# ratios should, but do not have to, add to one.
 /generator/reacibd/U235 0.27
 /generator/reacibd/U238 0.26
 /generator/reacibd/Pu239 0.24
