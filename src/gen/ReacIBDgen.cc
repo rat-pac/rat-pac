@@ -247,7 +247,11 @@ double ReacIBDgen::IBDESpectrum(float x){
     double mElectron=0.511;  
     double XC=CrossSection(x);
     double EnergyVal = NuReacSpectrum(x)*XC*sqrt(XC*XC - mElectron*mElectron);
+
+#ifdef DEBUG
     std::cout << EnergyVal << " and " << XC << std::endl;
+#endif
+
     return EnergyVal;
   
     //The final units output are in MeV
@@ -287,7 +291,6 @@ float ReacIBDgen::U235ReacSpectrum(const float& x){
 
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
-    std::cout << "N " << N << std::endl;
     return N;
   }
 
@@ -304,7 +307,6 @@ float ReacIBDgen::Pu239ReacSpectrum(const float& x){
     //double C4=209.99;  //Defined in Marc's file; not sure of function
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
-    std::cout << "N " << N << std::endl;
     return N;
   }
 
@@ -320,7 +322,6 @@ float ReacIBDgen::U238ReacSpectrum(const float& x){
     //double C4=205.52;  //Defined in Marc's file; not sure of function
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
-    std::cout << "N " << N << std::endl;
     return N;
   }
 
@@ -336,7 +337,6 @@ float ReacIBDgen::Pu241ReacSpectrum(const float& x){
     //double C4=213.60;  //Defined in Marc's file; not sure of function
     N = C0 * exp(C1 - C2*x - C3*x*x);
 
-    std::cout << "N " << N << std::endl;
     return N;
   }
 
