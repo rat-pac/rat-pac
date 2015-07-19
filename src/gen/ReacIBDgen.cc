@@ -330,7 +330,7 @@ float ReacIBDgen::Pu241ReacSpectrum(const float& x){
     // return the the reactor Pu241 Neutrino flux contribution Pu241(x)
     float N = 0.;
 
-    double C0=GetPu241Amplitude();;
+    double C0=GetPu241Amplitude();
     double C1=0.793;
     double C2=0.080;
     double C3=0.1085;
