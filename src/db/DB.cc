@@ -18,7 +18,7 @@ namespace RAT {
 
 DB *DB::primary(0);
 
-const int maxServerBytes = 200000000; // 200 MB
+  //const int maxServerBytes = 200000000; // 200 MB
 
 DB::DB() : server(""), run(1)
 {
