@@ -16,79 +16,55 @@
 #include <RAT/PMTConstruction.hh>
 
 namespace RAT {
-
+  
 
 struct CubicPMTConstructionParams {
-    CubicPMTConstructionParams () { 
-        efficiencyCorrection = 1.0;
-        simpleVis = false;
-    };
+  CubicPMTConstructionParams () { 
+    efficiencyCorrection = 1.0;
+    invisible = false;
+  };
+  
+  bool invisible;
+  
+  // Body
+  double caseThickness; // mm
+  double glassThickness; // mm
+  double pmtWidth; // mm
+  double photocathodeWidth; // mm
+  
+  G4Material *outerCase;
+  G4Material *glass;
+  G4Material *vacuum;
+  
+  G4OpticalSurface *photocathode;
+  
+  double efficiencyCorrection; // default to 1.0 for no correction
 
-    bool simpleVis;
-
-    // Envelope control
-    bool useEnvelope;
-    double faceGap;
-    double minEnvelopeRadius;
-
-    // Body
-    std::vector<double> zEdge; // n+1
-    std::vector<double> rhoEdge; // n+1
-    std::vector<double> zOrigin; // n
-    double wallThickness; // mm
-
-    double dynodeRadius; // mm
-    double dynodeTop; // mm
-
-    G4Material *exterior;
-    G4Material *glass;
-    G4Material *vacuum;
-    G4Material *dynode;
-
-    G4OpticalSurface *photocathode;
-    G4OpticalSurface *mirror;
-    G4OpticalSurface *dynode_surface;
-
-    double efficiencyCorrection; // default to 1.0 for no correction
 };
 
-// Construction for PMTs based on GLG4TorusStack
 class CubicPMTConstruction : public PMTConstruction {
 public:
-    CubicPMTConstruction(DBLinkPtr params, G4LogicalVolume *mother);
-    virtual ~CubicPMTConstruction() { }
-    
-    virtual G4LogicalVolume *BuildVolume(const std::string &prefix);
-    virtual G4VSolid *BuildSolid(const std::string &prefix);
-    virtual G4PVPlacement* PlacePMT(
-            G4RotationMatrix *pmtrot, 
-            G4ThreeVector pmtpos, 
-            const std::string &name, 
-            G4LogicalVolume *logi_pmt, 
-            G4VPhysicalVolume *mother_phys, 
-            bool booleanSolid, int copyNo);
-            
-protected:
-    G4VSolid *NewEnvelopeSolid(const std::string &name);
+  CubicPMTConstruction(DBLinkPtr params, G4LogicalVolume *mother);
+  virtual ~CubicPMTConstruction() { }
   
-    void CalcInnerParams(GLG4TorusStack *body,
-                         std::vector<double> &innerZEdge, 
-                         std::vector<double> &innerRhoEdge,
-                         int &equatorIndex, 
-                         double &zLowestDynode); 
-                          
-    // phyiscal volumes 
-    G4PVPlacement* body_phys;
-    G4PVPlacement* inner1_phys;
-    G4PVPlacement* inner2_phys;
-    G4PVPlacement* central_gap_phys; 
-    G4PVPlacement* dynode_phys;       
-    
-    G4LogicalVolume *log_pmt;        
+  virtual G4LogicalVolume *BuildVolume(const std::string &prefix);
+  virtual G4VSolid *BuildSolid(const std::string &prefix);
+  virtual G4PVPlacement* PlacePMT(G4RotationMatrix *pmtrot, 
+				  G4ThreeVector pmtpos, 
+				  const std::string &name, 
+				  G4LogicalVolume *logi_pmt, 
+				  G4VPhysicalVolume *mother_phys, 
+				  bool booleanSolid, int copyNo);
+  
+protected:
+  
+  // physical volumes
+  G4PVPlacement* glass_phys;
+  G4PVPlacement* vacuum_phys;
+  
+  G4LogicalVolume *log_pmt;
+  CubicPMTConstructionParams fParams;
 
-    WaveguideFactory *fWaveguideFactory;
-    
-    CubicPMTConstructionParams fParams;
 };
 
 } // namespace RAT

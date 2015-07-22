@@ -12,6 +12,7 @@
 
 #include <RAT/ToroidalPMTConstruction.hh>
 #include <RAT/RevolutionPMTConstruction.hh>
+#include <RAT/CubicPMTConstruction.hh>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ PMTConstruction* PMTConstruction::NewConstruction(DBLinkPtr table, G4LogicalVolu
     } else if (construction == "revolution") {
         return new RevolutionPMTConstruction(table,mother);
     } else if (construction == "cubic") {
-        Log::Die("Cubic PMTs are not yet implemented!");
+        return new CubicPMTConstruction(table,mother);
     }
     return NULL;
 }

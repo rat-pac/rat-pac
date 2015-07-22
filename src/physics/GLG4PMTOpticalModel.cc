@@ -12,6 +12,7 @@
 
 #include "GLG4PMTOpticalModel.hh"
 #include "GLG4HitPhoton.hh"
+#include "GLG4VEventAction.hh"
 
 #include "G4LogicalBorderSurface.hh"
 #include "G4MaterialPropertiesTable.hh"
@@ -224,7 +225,7 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
   int ipmt= -1;
 
   // find which pmt we are in
-  ipmt=fastTrack.GetEnvelopePhysicalVolume()->GetCopyNo();
+  ipmt = GetPMTID(fastTrack);
     
   // get position and direction in local coordinates
   pos=  fastTrack.GetPrimaryTrackLocalPosition();
@@ -428,6 +429,9 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
       hit_photon->SetCount(N_pe);
       hit_photon->SetTrackID(fastTrack.GetPrimaryTrack()->GetTrackID());
       hit_photon->SetPrepulse(prepulse);
+
+      GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
+
       if(prepulse)
 	    break;
       if (_verbosity >= 2) 
@@ -731,4 +735,20 @@ GLG4PMTOpticalModel::GetCurrentValue(G4UIcommand * command)
    else {
      return (commandName+" is not a valid PMTOpticalModel command");
    }
+}
+
+int
+GLG4PMTOpticalModel::GetPMTID( const G4FastTrack& fastTrack )
+{
+  int iDepth;
+  for( iDepth = 0; iDepth < fastTrack.GetPrimaryTrack()->GetTouchableHandle()->GetHistoryDepth(); iDepth++ )
+    {
+      const std::string volName = fastTrack.GetPrimaryTrack()->GetTouchableHandle()->GetVolume( iDepth )->GetName();
+      const size_t envelopeHistory = volName.find( "_pmtenv_" );
+      if( envelopeHistory != std::string::npos )
+        return fastTrack.GetPrimaryTrack()->GetTouchableHandle()->GetCopyNumber( iDepth );
+    }
+  // Should never get here
+  RAT::Log::Die( "OpticalModelBase::GetPMTID: Cannot decode PMT ID." );
+  return -1;
 }

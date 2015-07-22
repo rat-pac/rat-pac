@@ -217,3 +217,24 @@ rho_edge: [ 67.50 ,	 	67.50, 67.50,  67.50,     25.75, 25.75, 25.75],   // this 
 z_origin: [ -1000000.00,  	0.00,   0.00,  10000.00,  84.50, 0.00],      // and wraps back another 1mm, in reality the photocathode diameter is ~115mm 
 }
 
+{
+name: "PMT",
+index: "h11934",
+
+valid_begin: [0,0],
+valid_end: [0,0],
+
+construction: "cubic",
+
+case_material: "acrylic_black",
+glass_material: "glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode_H11934",
+
+case_thickness: 2.0, // mm
+glass_thickness: 1.0, // mm
+
+pmt_width: 15.0, //mm
+photocathode_width: 11.5, //mm
+
+}

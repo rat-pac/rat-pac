@@ -475,6 +475,31 @@ PROPERTY_LIST: ["EFFICIENCY", "RINDEX", "KINDEX", "THICKNESS", ]
 
 {
 name: "OPTICS",
+index: "photocathode_H11934",
+valid_begin : [0, 0],
+valid_end : [0, 0],
+photocathode: 1,
+
+EFFICIENCY_option: "wavelength",
+EFFICIENCY_value1: [60d, 200d, 260d, 270d, 280d, 285d, 290d, 300d, 310d, 330d, 370d, 420d, 475d, 500d, 530d, 570d, 600d, 630d, 670d, 700d, 800d, ],
+EFFICIENCY_value2: [0.0d, 0.0d, 0.0d, 0.19d, 0.23d, 0.30d, 0.32d, 0.38d, 0.40d, 0.41d, 0.41d, 0.39d, 0.30d, 0.25d, 0.12d, 0.07d, 0.05d, 0.02d, 0.004d, 0.0005d, 0.0d, ],
+
+
+RINDEX_option: "wavelength",
+RINDEX_value1: [60d, 200d, 380d, 395d, 410d, 425d, 440d, 455d, 470d, 485d, 500d, 515d, 530d, 545d, 560d, 575d, 590d, 605d, 620d, 635d, 650d, 665d, 680d, 800d, ],
+RINDEX_value2: [1.d, 1.d, 1.92d, 2.18d, 2.38d, 2.61d, 2.70d, 2.87d, 3.00d, 3.00d, 3.00d, 3.09d, 3.26d, 3.20d, 3.12d, 3.06d, 3.01d, 2.98d, 2.96d, 2.95d, 2.95d, 2.95d, 2.96d, 3.d, ],
+
+KINDEX_option: "wavelength",
+KINDEX_value1: [60d, 200d, 380d, 395d, 410d, 425d, 440d, 455d, 470d, 485d, 500d, 515d, 530d, 545d, 560d, 575d, 590d, 605d, 620d, 635d, 650d, 665d, 680d, 800d, ],
+KINDEX_value2: [3.d, 3.d, 1.69d, 1.69d, 1.71d, 1.53d, 1.50d, 1.44d, 1.34d, 1.11d, 1.06d, 1.05d, 0.86d, 0.63d, 0.53d, 0.46d, 0.42d, 0.38d, 0.37d, 0.35d, 0.34d, 0.34d, 0.33d, 0.1d, ],
+
+THICKNESS_value1: [188d, 0d, ],
+THICKNESS_value2: [26d-6, 26d-6, ],
+PROPERTY_LIST: ["EFFICIENCY", "RINDEX", "KINDEX", "THICKNESS", ]
+}
+
+{
+name: "OPTICS",
 index: "pmt_vacuum",
 valid_begin : [0, 0],
 valid_end : [0, 0],

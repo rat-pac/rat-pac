@@ -128,6 +128,7 @@ private:
   void CalculateCoefficients(); // calculate and set fR_s, etc.
   void Reflect(G4ThreeVector &dir, G4ThreeVector &pol, G4ThreeVector &norm);
   void Refract(G4ThreeVector &dir, G4ThreeVector &pol, G4ThreeVector &norm);
+  int GetPMTID( const G4FastTrack& fastTrack );
 
   static double surfaceTolerance;
   

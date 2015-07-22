@@ -201,7 +201,7 @@ G4VPhysicalVolume *PMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   // id - the nth pmt that PMTFactoryBase has built
   for (size_t i = 0, id = pmtinfo.GetPMTCount(); i < pmt_pos.size(); i++, id++) {
   
-    string pmtname = volume_name + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
+    string pmtname = volume_name + "_pmtenv_" + ::to_string(id); //internally PMTs are represented by the nth pmt built, not pmtid
     
     G4ThreeVector pmtpos = pmt_pos[i];
     G4ThreeVector pmtdir = pmt_dir[i];
@@ -305,16 +305,23 @@ G4VPhysicalVolume *PMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     construction->PlacePMT(pmtrot, pmtpos, pmtname, log_pmt, phys_mother, false, id);
     
   } // end loop over id
-
+  
   // finally pass the efficiency table to GLG4PMTOpticalModel
   const G4String modname(volume_name+"_optical_model");
-  for (size_t i = 0; i < log_pmt->GetFastSimulationManager()->GetFastSimulationModelList().size(); i++) {
-    if (log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i]->GetName() == modname) {
-      ((GLG4PMTOpticalModel*)log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i])->SetEfficiencyCorrection(EfficiencyCorrection);
+
+  //In case the main pmt volume doesn't correspond to the fastsim region
+  G4LogicalVolume *fastsim_log_pmt = log_pmt;
+  if(fastsim_log_pmt->GetFastSimulationManager() == NULL){
+    fastsim_log_pmt = log_pmt->GetDaughter(0)->GetLogicalVolume(); //Get the glass region
+  }
+
+  for (size_t i = 0; i < fastsim_log_pmt->GetFastSimulationManager()->GetFastSimulationModelList().size(); i++) {
+    if (fastsim_log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i]->GetName() == modname) {
+      ((GLG4PMTOpticalModel*)fastsim_log_pmt->GetFastSimulationManager()->GetFastSimulationModelList()[i])->SetEfficiencyCorrection(EfficiencyCorrection);
       break;
     }
   }
   return 0; // There is no specific physical volume to return
 }
-
+  
 } // namespace RAT
