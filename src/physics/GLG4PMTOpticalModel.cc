@@ -11,6 +11,7 @@
 */
 
 #include "GLG4PMTOpticalModel.hh"
+#include "GLG4VEventAction.hh"
 #include "GLG4HitPhoton.hh"
 
 #include "G4LogicalBorderSurface.hh"
@@ -428,6 +429,7 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
       hit_photon->SetCount(N_pe);
       hit_photon->SetTrackID(fastTrack.GetPrimaryTrack()->GetTrackID());
       hit_photon->SetPrepulse(prepulse);
+      GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
       if(prepulse)
 	    break;
       if (_verbosity >= 2) 
