@@ -25,8 +25,8 @@
 #/vis/scene/endOfEventAction accumulate
 /tracking/FillPointCont true
 
-/tracking/storeTrajectory 1
-/vis/viewer/refresh
+/tracking/storeTrajectory
+1/vis/viewer/refresh
 /vis/viewer/flush
 
 
