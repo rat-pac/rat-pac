@@ -238,3 +238,23 @@ pmt_width: 15.0, //mm
 photocathode_width: 11.5, //mm
 
 }
+
+{
+name: "PMT",
+index: "lappd_test",
+
+valid_begin: [0,0],
+valid_end: [0,0],
+
+construction: "lappd",
+
+glass_material: "glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode_lappd_test",
+
+glass_thickness: 2.0, // mm
+
+width: 105.5, //mm
+thick: 9.25, //mm
+
+}

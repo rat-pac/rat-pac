@@ -37,6 +37,7 @@ env.Default(copy_headers)
 #### Target: CINT dictionary for data structure classes
 cint_cls= Split('DS/Root DS/MC DS/EV DS/MCParticle DS/MCPhoton '
                 'DS/MCPMT DS/MCSummary DS/PMT '
+                'DS/LAPPD DS/LAPPDHit '
                 'DS/RunStore DS/Run '
                 'DS/PosFit DS/PMTInfo '
                 'DS/MCTrack DS/MCTrackStep DS/Calib '

@@ -19,6 +19,7 @@
 #include <TObject.h>
 #include <TTimeStamp.h>
 #include <RAT/DS/PMT.hh>
+#include <RAT/DS/LAPPD.hh>
 #include <RAT/DS/Centroid.hh>
 #include <RAT/DS/PathFit.hh>
 #include <vector>
@@ -48,9 +49,18 @@ public:
   }
   virtual void PrunePMT() { pmt.resize(0); }
   
-  /** Number of PMTs which were hit at least once. (Convenience method) */
-  virtual Int_t Nhits() const { return GetPMTCount(); }
+  /** Number of LAPPDs which were hit at least once. (Convenience method) */
+  virtual Int_t Nhits() const { return GetLAPPDCount(); }
 
+  /** List of LAPPDs with at least one charge sample in this event. */
+  virtual LAPPD* GetLAPPD(Int_t i) { return &lappd[i]; }
+  virtual Int_t GetLAPPDCount() const { return lappd.size(); }
+  virtual LAPPD* AddNewLAPPD() {
+    lappd.resize(lappd.size() + 1);
+    return &lappd.back();
+  }
+  virtual void PruneLAPPD() { lappd.resize(0); }
+  
   /** Time since last trigger in ns. */
   Float_t GetDeltaT() const { return deltat; }
   void SetDeltaT(Float_t _deltat) { deltat = _deltat; }
@@ -90,6 +100,7 @@ protected:
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;
   std::vector<PathFit> pathfit;
+  std::vector<LAPPD> lappd;
 };
 
   } // namespace DS

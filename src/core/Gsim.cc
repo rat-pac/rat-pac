@@ -520,6 +520,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //the index of the last element represents the index of the PMT we just added
     rat_mcpmt->SetID(a_pmt->GetID());
     rat_mcpmt->SetType(fPMTInfo->GetType(a_pmt->GetID()));
+    rat_mcpmt->SetModelName( fPMTInfo->GetModelName( fPMTInfo->GetModel(a_pmt->GetID() ) ) );
 
     numPE += a_pmt->GetEntries();
 

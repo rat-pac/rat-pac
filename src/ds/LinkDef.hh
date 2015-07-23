@@ -14,6 +14,8 @@
 
 #pragma link C++ class RAT::DS::EV+;
 #pragma link C++ class RAT::DS::PMT+;
+#pragma link C++ class RAT::DS::LAPPD+;
+#pragma link C++ class RAT::DS::LAPPDHit+;
 
 #pragma link C++ class RAT::DS::PosFit+;
 #pragma link C++ class RAT::DS::Centroid+;
@@ -64,12 +66,16 @@
 #pragma link C++ class vector<RAT::DS::Calib>;
 #pragma link C++ class vector<RAT::DS::EV>;
 #pragma link C++ class vector<RAT::DS::PMT>;
+#pragma link C++ class vector<RAT::DS::LAPPD>;
+#pragma link C++ class vector<RAT::DS::LAPPDHit>;
 #pragma link C++ class vector< pair<string, int> >;
 #pragma link C++ class vector<RAT::DBTable*>;
 
 #pragma link C++ class vector<RAT::TrackNode*>;
 #pragma link C++ class vector<RAT::DS::EV*>;
 #pragma link C++ class vector<RAT::DS::PMT*>;
+#pragma link C++ class vector<RAT::DS::LAPPD*>;
+#pragma link C++ class vector<RAT::DS::LAPPDHit*>;
 #pragma link C++ class vector<RAT::DS::MCParticle*>;
 #pragma link C++ class vector<RAT::DS::MCTrack*>;
 #pragma link C++ class vector<RAT::DS::MCPMT*>;

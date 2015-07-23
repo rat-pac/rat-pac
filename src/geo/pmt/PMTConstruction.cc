@@ -13,6 +13,7 @@
 #include <RAT/ToroidalPMTConstruction.hh>
 #include <RAT/RevolutionPMTConstruction.hh>
 #include <RAT/CubicPMTConstruction.hh>
+#include <RAT/LAPPDConstruction.hh>
 
 using namespace std;
 
@@ -26,6 +27,10 @@ PMTConstruction* PMTConstruction::NewConstruction(DBLinkPtr table, G4LogicalVolu
         return new RevolutionPMTConstruction(table,mother);
     } else if (construction == "cubic") {
         return new CubicPMTConstruction(table,mother);
+    } else if (construction == "lappd") {
+        return new LAPPDConstruction(table,mother);
+    } else{
+      Log::Die("PMT construction \'" + construction + "\' do not exist.");
     }
     return NULL;
 }
