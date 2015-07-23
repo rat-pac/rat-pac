@@ -47,7 +47,7 @@ CubicPMTConstruction::CubicPMTConstruction(DBLinkPtr table, G4LogicalVolume *mot
     Log::Assert(fParams.photocathodeWidth>0, "CubicPMTConstruction: " + pmt_model + " photocathode width must be postive");
     Log::Assert(fParams.caseThickness>0, "CubicPMTConstruction: " + pmt_model + " case thickness must be postive");
     Log::Assert(fParams.glassThickness>0, "CubicPMTConstruction: " + pmt_model + " glass thickness must be postive");
-    Log::Assert(fParams.pmtWidth > fParams.caseThickness + fParams.photocathodeWidth>0, "CubicPMTConstruction: " + pmt_model + " width is too small");
+    Log::Assert(fParams.pmtWidth > fParams.caseThickness + fParams.photocathodeWidth, "CubicPMTConstruction: " + pmt_model + " width is too small");
     Log::Assert(fParams.outerCase, "CubicPMTConstruction: " + pmt_model + " has an invalid case material");
     Log::Assert(fParams.glass, "CubicPMTConstruction: " + pmt_model + " has an invalid glass material");
     Log::Assert(fParams.vacuum, "CubicPMTConstruction: " + pmt_model + " has an invalid vacuum material");
