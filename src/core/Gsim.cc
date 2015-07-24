@@ -14,6 +14,7 @@
 #include <RAT/VertexGen_IBD.hh>
 #include <RAT/Gen_LED.hh>
 #include <RAT/VertexGen_ES.hh>
+#include <RAT/VertexGen_ES_2.hh>
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
@@ -99,6 +100,9 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("es",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_ES>);
+  GlobalFactory<GLG4VertexGen>::Register("es_2",
+                                           new Alloc<GLG4VertexGen,
+                                           VertexGen_ES_2>);
   GlobalFactory<GLG4VertexGen>::Register("spectrum",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_Spectrum>);
@@ -113,6 +117,7 @@ void Gsim::Init() {
                                    new Alloc<GLG4Gen,Coincidence_Gen>);
   GlobalFactory<GLG4Gen>::Register("vertexfile",
                                    new Alloc<GLG4Gen,VertexFile_Gen>);
+
 
   // An additional "messenger" class for user diagnostics
   theDebugMessenger = new GLG4DebugMessenger(theDetectorConstruction);
