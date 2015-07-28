@@ -1,3 +1,6 @@
+// Created by Daniel Hellfeld (07/2015)
+// Directly follows from VertexGen_ES.hh
+
 #ifndef __RAT_VertexGen_ES_2__
 #define __RAT_VertexGen_ES_2__
 

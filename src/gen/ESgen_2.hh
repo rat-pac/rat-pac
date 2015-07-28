@@ -1,3 +1,6 @@
+// Created by Daniel Hellfeld (07/2015)
+// Directly follows from ESgen.hh
+
 #ifndef __RAT_ESgen_2__
 #define __RAT_ESgen_2__
 
@@ -10,6 +13,7 @@ namespace RAT {
   class ESgenMessenger_2;
 
   class ESgen_2 {
+	  
   public:
     ESgen_2();
     ~ESgen_2();

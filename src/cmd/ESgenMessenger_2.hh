@@ -1,3 +1,6 @@
+// Created by Daniel Hellfeld (07/2015)
+// Directly follows from ESgenMessenger.hh
+
 #ifndef RAT_ESgenMessenger_hh
 #define RAT_ESgenMessenger_hh
 
@@ -13,8 +16,8 @@ namespace RAT {
   // Foward declarations in namespace
   class ESgen_2;
 
-  class ESgenMessenger_2: public G4UImessenger
-  {
+  class ESgenMessenger_2: public G4UImessenger{
+	  
   public:
     ESgenMessenger_2(ESgen_2*);
     ~ESgenMessenger_2();
@@ -29,8 +32,7 @@ namespace RAT {
     G4UIcmdWithADouble* ffU238Cmd;
     G4UIcmdWithADouble* ffPu239Cmd;
     G4UIcmdWithADouble* ffPu241Cmd;
-      
-      
+
   };
 
 } // namespace RAT

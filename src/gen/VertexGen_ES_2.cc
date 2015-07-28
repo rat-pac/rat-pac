@@ -1,3 +1,6 @@
+// Created by Daniel Hellfeld (07/2015)
+// Directly follows from VertexGen_ES.cc
+
 #include <RAT/VertexGen_ES_2.hh>
 #include <RAT/ESgen_2.hh>
 
