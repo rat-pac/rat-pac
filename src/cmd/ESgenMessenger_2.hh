@@ -20,6 +20,7 @@ namespace RAT {
     ~ESgenMessenger_2();
     
     void SetNewValue(G4UIcommand* command, G4String newValues);
+	G4String GetCurrentValue(G4UIcommand* command);
       
   private:
     ESgen_2* esgen_2;

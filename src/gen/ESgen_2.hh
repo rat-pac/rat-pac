@@ -16,13 +16,21 @@ namespace RAT {
 
     CLHEP::HepLorentzVector GenerateEvent(const G4ThreeVector& nu_dir);
   
-    void SetFissionFractions(G4double, G4double, G4double, G4double);
-    void DefaultValues();
+    void SetDefaultFissionFractions();
+	void CheckFissionFractions();
+	void SetU235FissionFrac(G4double);
+	void SetU238FissionFrac(G4double);
+	void SetPu239FissionFrac(G4double);
+	void SetPu241FissionFrac(G4double);
+	G4double GetU235FissionFrac();
+	G4double GetU238FissionFrac();
+	G4double GetPu239FissionFrac();
+	G4double GetPu241FissionFrac();
 
   protected:
       G4double GetAntiNuEnergy();
       G4double GetElectronEnergy(G4double);
-      G4ThreeVector GetScatteringAngle(G4double, G4double);
+      CLHEP::HepLorentzVector GetEmomentum(G4double, G4double, G4ThreeVector);
       
       double m_e;
       double sigma_0;

@@ -38,7 +38,7 @@ namespace RAT {
   ESgenMessenger_2::~ESgenMessenger_2() {;}
   
   void ESgenMessenger_2::SetNewValue(G4UIcommand* command, G4String newValue){
-/*
+
        
     if ( command == ffU235Cmd ){
         
@@ -62,22 +62,31 @@ namespace RAT {
         
         G4double ffPu241 = ffPu241Cmd->GetNewDoubleValue( newValue );
         esgen_2->SetPu241FissionFrac( ffPu241 );
+		esgen_2->CheckFissionFractions();
     }
-      
-*/
-      G4double ffU235  = ffU235Cmd ->GetNewDoubleValue(newValue);
-      G4double ffU238  = ffU238Cmd ->GetNewDoubleValue(newValue);
-      G4double ffPu239 = ffPu239Cmd->GetNewDoubleValue(newValue);
-      G4double ffPu241 = ffPu241Cmd->GetNewDoubleValue(newValue);
-
-      
-      if (ffU235 + ffU238 + ffPu239 + ffPu241 == 1){
-          esgen_2->SetFissionFractions(ffU235, ffU238, ffPu239, ffPu241);
-      }
-      
-      else {
-          G4cerr << "Error: Your fission fractions do not add up to 1" << G4endl;
-      }
+	  
+	else
+		G4cerr << "\nError: Invalid EsgenMessenger_2 \"set\" command\n";
+	  
   }
+	
+	
+  G4String ESgenMessenger_2::GetCurrentValue(G4UIcommand* command){
+	  
+	  if (command == ffU235Cmd)
+		  return ffU235Cmd->ConvertToString(esgen_2->GetU235FissionFrac());
+	  
+	  else if (command == ffU238Cmd)
+		  return ffU238Cmd->ConvertToString(esgen_2->GetU238FissionFrac());
+	  
+	  else if (command == ffPu239Cmd)
+		  return ffPu239Cmd->ConvertToString(esgen_2->GetPu239FissionFrac());
+	  
+	  else if (command == ffPu241Cmd)
+		  return ffPu241Cmd->ConvertToString(esgen_2->GetPu241FissionFrac());
+	  
+	  else
+		  return G4String("Error: Invalid EsgenMessenger_2 \"get\" command");
+	}
 
 } // namespace RAT

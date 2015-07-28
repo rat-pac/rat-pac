@@ -26,7 +26,7 @@ namespace RAT {
         // Create a messenger to allow the user to change some ES parameters.
         messenger = new ESgenMessenger_2(this);
       
-        DefaultValues();
+        SetDefaultFissionFractions();
       
         m_e     = 0.51099891;
         sigma_0 = 88.06*(pow(10,-46));
@@ -49,47 +49,52 @@ namespace RAT {
     
         G4double E_nu		    = (GetAntiNuEnergy()) * MeV;
         G4double E_e		    = (GetElectronEnergy(E_nu)) * MeV;
-        G4ThreeVector direction = GetScatteringAngle(E_nu, E_e);
-      
-        CLHEP::HepLorentzVector theElectron;
-        theElectron.setPx(E_e*direction.x());
-        theElectron.setPy(E_e*direction.y());
-        theElectron.setPz(E_e*direction.z());
-        theElectron.setE(E_e);
-
+		
+        CLHEP::HepLorentzVector theElectron = GetEmomentum(E_nu, E_e, theNeutrino);
+	
         return theElectron;
     }
 
     
-    void ESgen_2::DefaultValues(){
+    void ESgen_2::SetDefaultFissionFractions(){
         
-        SetFissionFractions(0.496, 0.087, 0.351, 0.066);
+        U235fraction = 0.496;
+		U238fraction = 0.087;
+		Pu239fraction = 0.351;
+		Pu241fraction = 0.066;
     }
     
     
-    void ESgen_2::SetFissionFractions(G4double u235, G4double u238, G4double pu239, G4double pu241) {
+	void ESgen_2::SetU235FissionFrac(G4double u235){U235fraction = u235;}
+	
+	void ESgen_2::SetU238FissionFrac(G4double u238){U238fraction = u238;}
+	
+	void ESgen_2::SetPu239FissionFrac(G4double pu239){Pu239fraction = pu239;}
+	
+	void ESgen_2::SetPu241FissionFrac(G4double pu241){Pu241fraction = pu241;}
+	
+	G4double ESgen_2::GetU235FissionFrac(){return U235fraction;}
+	
+	G4double ESgen_2::GetU238FissionFrac(){return U238fraction;}
+	
+	G4double ESgen_2::GetPu239FissionFrac(){return Pu239fraction;}
+	
+	G4double ESgen_2::GetPu241FissionFrac(){return Pu241fraction;}
+	
+	
+    void ESgen_2::CheckFissionFractions() {
         
-        if (u235 + u238 + pu239 + pu241 == 1.0){
-            U235fraction  = u235;
-            U238fraction  = u238;
-            Pu239fraction = pu239;
-            Pu241fraction = pu241;
-        }
-        
-        else {
-            
-           // cout << "Your inputted fission fractions did not add up to one. I will use the default values (......blah......)\n";
+        if (U235fraction + U238fraction + Pu239fraction + Pu241fraction != 1.0){
+
+			G4cout << "\n\n******* WARNING *********\nYour inputted fission fractions did not add up to one. I will instead use the default values (49.6% U235, 8.7% U238, 35.1% Pu239, 6.6% Pu241\n\n";
            
-            U235fraction  = 0.496;
-            U238fraction  = 0.087;
-            Pu239fraction = 0.351;
-            Pu241fraction = 0.066;
-            
+            SetDefaultFissionFractions();
         }
+		
+		else {G4cout << "\n\nNice work, your fission fractions add up to one. I can proceed accordingly\n\n";}
     }
     
-    
-    
+	
     G4double ESgen_2::GetAntiNuEnergy() {
         
         G4double E_neutrino;
@@ -131,23 +136,28 @@ namespace RAT {
     }
  
     
-    G4ThreeVector ESgen_2::GetScatteringAngle(G4double enu, G4double eelectron) {
+    CLHEP::HepLorentzVector ESgen_2::GetEmomentum(G4double enu, G4double eelectron, G4ThreeVector neutrino_dir) {
         
         G4double theta = acos((sqrt(((eelectron*(pow((m_e+enu),2)))/((2*m_e*(pow(enu,2)))+((pow(enu,2))*eelectron))))));
         
-        G4double phi      = G4UniformRand()*(2*pi);
-        G4ThreeVector dir = G4ThreeVector(sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta));
+        G4double phi = G4UniformRand()*(2*pi);
+
+		
+		G4ThreeVector rotation_axis = neutrino_dir.orthogonal();
+		rotation_axis.rotate(phi, neutrino_dir);
+		G4ThreeVector e_direction = neutrino_dir.rotate(theta, rotation_axis);
+		
+		
+		
+        //G4ThreeVector dir = G4ThreeVector(sin(theta)*cos(phi),sin(theta)*sin(phi),cos(theta));
+		
+		CLHEP::HepLorentzVector e_momentum;
+		e_momentum.setPx(eelectron * e_direction.x());
+        e_momentum.setPy(eelectron * e_direction.y());
+        e_momentum.setPz(eelectron * e_direction.z());
+        e_momentum.setE(eelectron);
         
-        // This direction vector is assuming that the antineutrinos are coming from the -Z direction and
-        // and travelling in the +Z direction.
-        // This was done because the sampling in spherical coordinates was much easier.
-        // This can be changed later.
-        
-        return(dir);
+        return(e_momentum);
     }
-    
-    
-    
-    
 
 } // namespace RAT
