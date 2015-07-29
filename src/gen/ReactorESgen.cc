@@ -23,8 +23,8 @@
 #include "TRandom3.h"
 
 // RAT includes
-#include <RAT/ESgen_2.hh>
-#include <RAT/ESgenMessenger_2.hh>
+#include <RAT/ReactorESgen.hh>
+#include <RAT/ReactorESgenMessenger.hh>
 #include <RAT/DB.hh>
 
 // G4 includes
@@ -38,11 +38,13 @@
 #include <cmath>
 
 namespace RAT {
+    
+#define DEBUG
  
-    ESgen_2::ESgen_2(){
+    ReactorESgen::ReactorESgen(){
         
         // Create a messenger to allow the user to change some ES parameters.
-        messenger = new ESgenMessenger_2(this);
+        messenger = new ReactorESgenMessenger(this);
       
 		// Function title is fairly straightforward
         SetDefaultFissionFractions();
@@ -56,7 +58,7 @@ namespace RAT {
   }
 
 
-    ESgen_2::~ESgen_2(){
+    ReactorESgen::~ReactorESgen(){
 		
 		// Delete messenger pointer
         if ( messenger != 0 ){
@@ -66,7 +68,7 @@ namespace RAT {
     }
 
 
-    CLHEP::HepLorentzVector ESgen_2::GenerateEvent(const G4ThreeVector& theNeutrino) {
+    CLHEP::HepLorentzVector ReactorESgen::GenerateEvent(const G4ThreeVector& theNeutrino) {
     
 		// Get a random antineutrino energy from the observable energy spectrum
         G4double E_nu = (GetAntiNuEnergy()) * MeV;
@@ -81,24 +83,24 @@ namespace RAT {
     }
 
     
-    void ESgen_2::SetDefaultFissionFractions(){
+    void ReactorESgen::SetDefaultFissionFractions(){
         
 		// Values are taken from G. Zacek, et. al., Physical Review D 34 (2621) 1986.
         U235fraction = 0.496; U238fraction = 0.087; Pu239fraction = 0.351; Pu241fraction = 0.066;
     }
     
-	void ESgen_2::SetU235FissionFrac (G4double u235) {U235fraction  = u235; }
-	void ESgen_2::SetU238FissionFrac (G4double u238) {U238fraction  = u238; }
-	void ESgen_2::SetPu239FissionFrac(G4double pu239){Pu239fraction = pu239;}
-	void ESgen_2::SetPu241FissionFrac(G4double pu241){Pu241fraction = pu241;}
+	void ReactorESgen::SetU235FissionFrac (G4double u235) {U235fraction  = u235; }
+	void ReactorESgen::SetU238FissionFrac (G4double u238) {U238fraction  = u238; }
+	void ReactorESgen::SetPu239FissionFrac(G4double pu239){Pu239fraction = pu239;}
+	void ReactorESgen::SetPu241FissionFrac(G4double pu241){Pu241fraction = pu241;}
 	
-	G4double ESgen_2::GetU235FissionFrac() {return U235fraction;}
-	G4double ESgen_2::GetU238FissionFrac() {return U238fraction;}
-	G4double ESgen_2::GetPu239FissionFrac(){return Pu239fraction;}
-	G4double ESgen_2::GetPu241FissionFrac(){return Pu241fraction;}
+	G4double ReactorESgen::GetU235FissionFrac() {return U235fraction;}
+	G4double ReactorESgen::GetU238FissionFrac() {return U238fraction;}
+	G4double ReactorESgen::GetPu239FissionFrac(){return Pu239fraction;}
+	G4double ReactorESgen::GetPu241FissionFrac(){return Pu241fraction;}
 	
 	
-    void ESgen_2::CheckFissionFractions() {
+    void ReactorESgen::CheckFissionFractions() {
         
         if (U235fraction + U238fraction + Pu239fraction + Pu241fraction != 1.0){
 			
@@ -110,7 +112,7 @@ namespace RAT {
     }
     
 	
-    G4double ESgen_2::GetAntiNuEnergy() {
+    G4double ReactorESgen::GetAntiNuEnergy() {
 
 		// We add up the energy spectra for U235, U238, Pu239, and Pu241, with their respective fractions...then multiply all by the scattering cross section.
 		// The parameter values used in the exponential polynomials for each isotope are taken from P. Vogel, J. Engel, Physical Review D 39 (3378) 1989.
@@ -126,11 +128,16 @@ namespace RAT {
 		// Randomly sample from the distribution
         G4double E_neutrino = foldedenergyspectrum->GetRandom();
         
+        #ifdef DEBUG
+            G4cout << "-----------------------------------------\n";
+            G4cout << "Antineutrino energy = " << E_neutrino << " MeV\n";
+        #endif
+        
         return E_neutrino;
     }
     
     
-    G4double ESgen_2::GetElectronEnergy(G4double enu){
+    G4double ReactorESgen::GetElectronEnergy(G4double enu){
 
 		// Define the maximum allowable scattered electron energy based off the antineutrino energy
         G4double TeMax = ((2*(pow(enu,2)))/(m_e+(2*enu)));
@@ -150,15 +157,24 @@ namespace RAT {
 		// Randomly sample from the distribution
         G4double E_electron = sigma_Te->GetRandom();
         
+        #ifdef DEBUG
+            G4cout << "Electron energy = " << E_electron << " MeV\n";
+        #endif
+        
         return E_electron;
     }
  
     
-    CLHEP::HepLorentzVector ESgen_2::GetEmomentum(G4double enu, G4double eelectron, G4ThreeVector neutrino_dir) {
+    CLHEP::HepLorentzVector ReactorESgen::GetEmomentum(G4double enu, G4double eelectron, G4ThreeVector neutrino_dir) {
         
 		// Calculate scattering angle from neutrino and scattered electron energy
         G4double theta = acos((sqrt(((eelectron*(pow((m_e+enu),2)))/((2*m_e*(pow(enu,2)))+((pow(enu,2))*eelectron))))));
 		
+        #ifdef DEBUG
+            G4cout << "Neutrino vector = {" << neutrino_dir.x() << ", " << neutrino_dir.y() << ", " << neutrino_dir.z() << "}\n";
+            G4cout << "Cosine scattering angle (cos(theta)) = " << cos(theta) << "\n";
+        #endif
+        
 		// Randomly sample phi from 0 to 2pi
         G4double phi = G4UniformRand()*(2*pi);
 		
@@ -173,6 +189,11 @@ namespace RAT {
         e_momentum.setPy(eelectron * e_direction.y());
         e_momentum.setPz(eelectron * e_direction.z());
         e_momentum.setE(eelectron);
+        
+        #ifdef DEBUG
+            G4cout << "Electron vector = {" << e_direction.x() << ", " << e_direction.y() << ", " << e_direction.z() << "}\n";
+            G4cout << "-----------------------------------------\n";
+        #endif
         
         return(e_momentum);
     }

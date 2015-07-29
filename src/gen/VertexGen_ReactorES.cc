@@ -1,8 +1,8 @@
 // Created by Daniel Hellfeld (07/2015)
 // Directly follows from VertexGen_ES.cc
 
-#include <RAT/VertexGen_ES_2.hh>
-#include <RAT/ESgen_2.hh>
+#include <RAT/VertexGen_ReactorES.hh>
+#include <RAT/ReactorESgen.hh>
 
 #include <RAT/GLG4PosGen.hh>
 #include <RAT/GLG4StringUtil.hh>
@@ -23,16 +23,16 @@
 
 namespace RAT {
 
-  VertexGen_ES_2::VertexGen_ES_2(const char *arg_dbname): GLG4VertexGen(arg_dbname), nu_dir(0.,0.,0.){
+  VertexGen_ReactorES::VertexGen_ReactorES(const char *arg_dbname): GLG4VertexGen(arg_dbname), nu_dir(0.,0.,0.){
       
     electron = G4ParticleTable::GetParticleTable()->FindParticle("e-");  
     m_electron = electron->GetPDGMass();
   }
 
-  VertexGen_ES_2::~VertexGen_ES_2() {}
+  VertexGen_ReactorES::~VertexGen_ReactorES() {}
 
 
-  void VertexGen_ES_2:: GeneratePrimaryVertex(G4Event* argEvent, G4ThreeVector& dx, G4double dt){
+  void VertexGen_ReactorES:: GeneratePrimaryVertex(G4Event* argEvent, G4ThreeVector& dx, G4double dt){
       
     G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt);
     G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
@@ -45,7 +45,7 @@ namespace RAT {
     }
 
     // Generate elastic-scattering interaction using ESgen.
-    CLHEP::HepLorentzVector mom_electron = esgen_2.GenerateEvent( ev_nu_dir );
+    CLHEP::HepLorentzVector mom_electron = reactoresgen.GenerateEvent( ev_nu_dir );
 
     // -- Create particle at vertex
     G4PrimaryParticle* electron_particle =
@@ -60,7 +60,7 @@ namespace RAT {
   }
 
 
-  void VertexGen_ES_2::SetState(G4String newValues) {
+  void VertexGen_ReactorES::SetState(G4String newValues) {
       
     newValues = util_strip_default(newValues); // from GLG4StringUtil
     if (newValues.length() == 0) {
@@ -89,7 +89,7 @@ namespace RAT {
   }
 
 
-  G4String VertexGen_ES_2::GetState(){
+  G4String VertexGen_ReactorES::GetState(){
       
     std::ostringstream os;
 

@@ -1,10 +1,10 @@
 // Created by Daniel Hellfeld (07/2015)
 // Directly follows from VertexGen_ES.hh
 
-#ifndef __RAT_VertexGen_ES_2__
-#define __RAT_VertexGen_ES_2__
+#ifndef __RAT_VertexGen_ReactorES__
+#define __RAT_VertexGen_ReactorES__
 
-#include <RAT/ESgen_2.hh>
+#include <RAT/ReactorESgen.hh>
 #include <RAT/GLG4VertexGen.hh>
 
 #include <G4Event.hh>
@@ -13,7 +13,7 @@
 
 namespace RAT {
 
-  class VertexGen_ES_2 : public GLG4VertexGen {
+  class VertexGen_ReactorES : public GLG4VertexGen {
   public:
 
     // Note that the database named is "ibd" by default in the
@@ -21,8 +21,8 @@ namespace RAT {
     // is the same for both inverse beta-decay (IBD) and elastic
     // scattering (ES)... at least for now.
 
-    VertexGen_ES_2(const char* arg_dbname="ibd");
-    virtual ~VertexGen_ES_2();
+    VertexGen_ReactorES(const char* arg_dbname="ibd");
+    virtual ~VertexGen_ReactorES();
      
     // generates a primary vertex with given particle type, direction, and energy.
     virtual void GeneratePrimaryVertex(G4Event* argEvent, G4ThreeVector& dx, G4double dt);
@@ -40,7 +40,7 @@ namespace RAT {
 
     // Separate class to generate the elastic-scattering event.
     // Concrete definition; will invoke the ESgen() constructor.
-    ESgen_2 esgen_2;
+    ReactorESgen reactoresgen;
 
     // Electron mass
     G4double m_electron;

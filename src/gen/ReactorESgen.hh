@@ -1,8 +1,8 @@
 // Created by Daniel Hellfeld (07/2015)
 // Directly follows from ESgen.hh
 
-#ifndef __RAT_ESgen_2__
-#define __RAT_ESgen_2__
+#ifndef __RAT_ReactorESgen__
+#define __RAT_ReactorESgen__
 
 #include <RAT/LinearInterp.hh>
 #include <G4ThreeVector.hh>
@@ -10,13 +10,13 @@
 
 namespace RAT {
 
-  class ESgenMessenger_2;
+  class ReactorESgenMessenger;
 
-  class ESgen_2 {
+  class ReactorESgen {
 	  
   public:
-    ESgen_2();
-    ~ESgen_2();
+    ReactorESgen();
+    ~ReactorESgen();
 
     CLHEP::HepLorentzVector GenerateEvent(const G4ThreeVector& nu_dir);
   
@@ -46,7 +46,7 @@ namespace RAT {
       double Pu239fraction;
       double Pu241fraction;
     
-      ESgenMessenger_2* messenger;
+      ReactorESgenMessenger* messenger;
   };
 
 } // namespace RAT

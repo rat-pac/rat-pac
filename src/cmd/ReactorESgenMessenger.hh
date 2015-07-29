@@ -1,8 +1,8 @@
 // Created by Daniel Hellfeld (07/2015)
 // Directly follows from ESgenMessenger.hh
 
-#ifndef RAT_ESgenMessenger_hh
-#define RAT_ESgenMessenger_hh
+#ifndef RAT_ReactorESgenMessenger_hh
+#define RAT_ReactorESgenMessenger_hh
 
 #include "G4UImessenger.hh"
 #include "G4String.hh"
@@ -14,19 +14,19 @@ class G4UIcmdWithADouble;
 namespace RAT {
 
   // Foward declarations in namespace
-  class ESgen_2;
+  class ReactorESgen;
 
-  class ESgenMessenger_2: public G4UImessenger{
+  class ReactorESgenMessenger: public G4UImessenger{
 	  
   public:
-    ESgenMessenger_2(ESgen_2*);
-    ~ESgenMessenger_2();
+    ReactorESgenMessenger(ReactorESgen*);
+    ~ReactorESgenMessenger();
     
     void SetNewValue(G4UIcommand* command, G4String newValues);
 	G4String GetCurrentValue(G4UIcommand* command);
       
   private:
-    ESgen_2* esgen_2;
+    ReactorESgen* reactoresgen;
     
     G4UIcmdWithADouble* ffU235Cmd;
     G4UIcmdWithADouble* ffU238Cmd;
@@ -37,4 +37,4 @@ namespace RAT {
 
 } // namespace RAT
 
-#endif // RAT_ESgenMessenger_hh
+#endif // RAT_ReactorESgenMessenger_hh

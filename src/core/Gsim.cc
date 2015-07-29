@@ -14,7 +14,7 @@
 #include <RAT/VertexGen_IBD.hh>
 #include <RAT/Gen_LED.hh>
 #include <RAT/VertexGen_ES.hh>
-#include <RAT/VertexGen_ES_2.hh>
+#include <RAT/VertexGen_ReactorES.hh>
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
@@ -100,9 +100,9 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("es",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_ES>);
-  GlobalFactory<GLG4VertexGen>::Register("es_2",
+  GlobalFactory<GLG4VertexGen>::Register("reactor_es",
                                            new Alloc<GLG4VertexGen,
-                                           VertexGen_ES_2>);
+                                           VertexGen_ReactorES>);
   GlobalFactory<GLG4VertexGen>::Register("spectrum",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_Spectrum>);
