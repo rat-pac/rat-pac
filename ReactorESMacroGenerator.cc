@@ -3,7 +3,6 @@
     bool condition, visualization;
     double power, energyperfission, standoff, time, watervolume;
     double x, y, z;
-    
     string choice;
     
     do {
@@ -67,11 +66,14 @@
     double prefactor = num_electrons/(4. * 3.14159 * (standoff*pow(10,5)) * (standoff*pow(10,5)));
     
     double result = prefactor * ((U235fissionrate*U235_integral) + (U238fissionrate*U238_integral) + (Pu239fissionrate*Pu239_integral) + (Pu241fissionrate*Pu241_integral)) * (time*3600.*24.*365.);
+        
     
-    //cout << "\n==> Number of expected interactions = " << result  << "\n\n";
-    
-    
-    cout << "\n\nI will now write the ES macro file for WATCHMAN...\n\n";
+        
+// ------------------------------------------------------------------------------------
+        
+        
+    cout << "\n------------------------------------------------\n";
+    cout << "\n\nI will now write the reactor ES macro file for WATCHMAN and put it in the macro folder...\n\n";
     cout << "Would you like visualization included? (y/n): ";
     
     cin >> choice;
@@ -88,7 +90,7 @@
     cout << "z: "; cin >> z;
     
     fstream myfile;
-    myfile.open("watchman_reactor_es.mac",ios::in | ios::out | ios::trunc);
+    myfile.open("mac/watchman_reactor_es.mac",ios::in | ios::out | ios::trunc);
     myfile << fixed << setprecision(4);
     
     myfile << "#Set the detector parameters\n";
@@ -146,7 +148,7 @@
 
     myfile.close();
 
-    
+// ------------------------------------------------------------------------------------
     
     gROOT->ProcessLine(".q");
 }
