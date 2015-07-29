@@ -39,7 +39,7 @@
 
 namespace RAT {
     
-#define DEBUG
+//#define DEBUG
  
     ReactorESgen::ReactorESgen(){
         
