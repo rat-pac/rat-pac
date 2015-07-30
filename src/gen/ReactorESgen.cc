@@ -89,10 +89,37 @@ namespace RAT {
         U235fraction = 0.496; U238fraction = 0.087; Pu239fraction = 0.351; Pu241fraction = 0.066;
     }
     
-	void ReactorESgen::SetU235FissionFrac (G4double u235) {U235fraction  = u235; }
-	void ReactorESgen::SetU238FissionFrac (G4double u238) {U238fraction  = u238; }
-	void ReactorESgen::SetPu239FissionFrac(G4double pu239){Pu239fraction = pu239;}
-	void ReactorESgen::SetPu241FissionFrac(G4double pu241){Pu241fraction = pu241;}
+	void ReactorESgen::SetU235FissionFrac (G4double u235) {
+		U235fraction  = u235;
+		
+		#ifdef DEBUG
+			G4cout << "U235 fission fraction = " << U235fraction << "\n";
+		#endif
+	}
+	
+	void ReactorESgen::SetU238FissionFrac (G4double u238) {
+		U238fraction  = u238;
+		
+		#ifdef DEBUG
+			G4cout << "U238 fission fraction = " << U238fraction << "\n";
+		#endif
+	}
+	
+	void ReactorESgen::SetPu239FissionFrac(G4double pu239){
+		Pu239fraction = pu239;
+		
+		#ifdef DEBUG
+			G4cout << "Pu239 fission fraction = " << Pu239fraction << "\n";
+		#endif
+	}
+	
+	void ReactorESgen::SetPu241FissionFrac(G4double pu241){
+		Pu241fraction = pu241;
+		
+		#ifdef DEBUG
+			G4cout << "Pu241 fission fraction = " << Pu241fraction << "\n";
+		#endif
+	}
 	
 	G4double ReactorESgen::GetU235FissionFrac() {return U235fraction;}
 	G4double ReactorESgen::GetU238FissionFrac() {return U238fraction;}
