@@ -4,6 +4,8 @@
 #include <G4UnionSolid.hh>
 #include <G4Box.hh>
 #include <G4Tubs.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 #include <vector>
 
 #include <RAT/UnionSolidArray.hh>
@@ -16,23 +18,23 @@ G4VSolid *GeoPerfSphereFactory::ConstructSolid(DBLinkPtr table)
 {
   string volume_name = table->GetIndex();
   
-  G4double r_max = table->GetD("r_max") * mm;
+  G4double r_max = table->GetD("r_max") * CLHEP::mm;
 
   // Optional parameters
   G4double r_min = 0.0;
-  try { r_min = table->GetD("r_min") * mm; } 
+  try { r_min = table->GetD("r_min") * CLHEP::mm; } 
   catch (DBNotFoundError &e) { };
   G4double phi_start = 0.0;
-  try { phi_start = table->GetD("phi_start") * deg; } 
+  try { phi_start = table->GetD("phi_start") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
-  G4double phi_delta = twopi;
-  try { phi_delta = table->GetD("phi_delta") * deg; } 
+  G4double phi_delta = CLHEP::twopi;
+  try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
   G4double theta_start = 0.0;
-  try { theta_start = table->GetD("theta_start") * deg; } 
+  try { theta_start = table->GetD("theta_start") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
-  G4double theta_delta = pi;
-  try { theta_delta = table->GetD("theta_delta") * deg; } 
+  G4double theta_delta = CLHEP::pi;
+  try { theta_delta = table->GetD("theta_delta") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
   //  end optional parms
   
@@ -62,7 +64,7 @@ G4VSolid *GeoPerfSphereFactory::ConstructSolid(DBLinkPtr table)
        G4double cutter_r2 = r_max;
        G4double size_z_hole = (cutter_r2 - cutter_r1)*1.02;
 
-      G4VSolid* hole_cutter = new G4Tubs("temp_" + ::to_string(holeID), 0.0, r_hole, size_z_hole, 0.0, twopi);  // the hole cutter
+      G4VSolid* hole_cutter = new G4Tubs("temp_" + ::to_string(holeID), 0.0, r_hole, size_z_hole, 0.0, CLHEP::twopi);  // the hole cutter
       
       G4ThreeVector solidpos(pos_x[holeID], pos_y[holeID], pos_z[holeID]);
       solidpos.setMag((cutter_r1 + cutter_r2)/2.0);

@@ -26,6 +26,7 @@
 #include "G4GeometryTolerance.hh"
 #include "G4Version.hh"
 #include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 #include "local_g4compat.hh"
 #include <complex>
@@ -267,7 +268,7 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
   else
     {
       _photon_energy= energy;
-      _wavelength= twopi*hbarc / energy;
+      _wavelength= CLHEP::twopi*CLHEP::hbarc / energy;
       n_glass= _rindex_glass->Value( energy );
       _n1= n_glass; // just in case we exit before setting _n1
       _n2= _rindex_photocathode->Value( energy );
@@ -318,11 +319,11 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
 		  dist= dist1;
 	      }
 	    pos += dist*dir;
-	    time += dist*n_glass/c_light;
+	    time += dist*n_glass/CLHEP::c_light;
 	    break;
 	  }
 	pos += dist*dir;
-	time += dist*n_glass/c_light;
+	time += dist*n_glass/CLHEP::c_light;
 	_n1= n_glass;
 	_n3= 1.0;
       }
@@ -338,7 +339,7 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
 	    dist= 0.0;
 	  }
 	pos += dist*dir;
-	time += dist/c_light;
+	time += dist/CLHEP::c_light;
 	if ( pos.z() < surfaceTolerance ) // we're passing through the equator
 	  break;
 	_n1= 1.0;
@@ -425,8 +426,8 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
     bool prepulse = false;
     if(N_pe == 0 && whereAmI == kInVacuum && 
        _prepulseProb > 0.0 && dir.z() < 0.0){
-      double dist = (_dynodeTop - pos.z()) / dir.z();
-      G4ThreeVector posAtDynodeZ = pos + dist * dir;
+      double ddist = (_dynodeTop - pos.z()) / dir.z();
+      G4ThreeVector posAtDynodeZ = pos + ddist * dir;
       if(sqrt(pow(posAtDynodeZ.x(),2)+pow(posAtDynodeZ.y(),2)) < _dynodeRadius)
 	if(G4UniformRand() < _prepulseProb / fT_n){
 	  N_pe = 1;
@@ -578,7 +579,7 @@ GLG4PMTOpticalModel::CalculateCoefficients()
   
   // declare some useful constants
   G4complex _n2comp(_n2,-_k2); //complex photocathode refractive index
-  G4complex eta=twopi*_n2comp*_thickness/_wavelength;
+  G4complex eta=CLHEP::twopi*_n2comp*_thickness/_wavelength;
   G4complex zi(0.,1.); //imaginary unit
 
   // declare local variables

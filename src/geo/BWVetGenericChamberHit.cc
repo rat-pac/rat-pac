@@ -9,6 +9,7 @@
 #include <G4Colour.hh>
 #include <G4VisAttributes.hh>
 #include <G4ios.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 namespace RAT {
 
@@ -68,7 +69,7 @@ void BWVetGenericChamberHit::Draw()
 void BWVetGenericChamberHit::Print()
 {
   int deb=0;
-  if(deb!=0)G4cout << "  BWVetGenericChamber[" << id << "] " << time/ns << " (nsec)" << G4endl;
+  if(deb!=0)G4cout << "  BWVetGenericChamber[" << id << "] " << time/CLHEP::ns << " (nsec)" << G4endl;
 }
 
 

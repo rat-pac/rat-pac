@@ -9,7 +9,7 @@ using namespace std;
 
 namespace RAT {
 
-    void WatchmanDetectorFactory::DefineDetector(DBLinkPtr detector) {
+    void WatchmanDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
         DB *db = DB::Get();
         DBLinkPtr params = db->GetLink("WATCHMAN_PARAMS");
         const double photocathode_coverage = params->GetD("photocathode_coverage");

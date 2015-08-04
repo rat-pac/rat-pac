@@ -21,6 +21,7 @@
 #include <G4ThreeVector.hh>
 #include <Randomize.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <cmath>
 
@@ -28,7 +29,7 @@ namespace RAT {
 
   // WGS: Constants copied from various places to make the code work.
   const double XMaxDefault  = 1e-45; // Reasonable minimum for x-section (cm^2).
-  const double GFERMI = 1.16639e-11 / MeV / MeV;
+  const double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
   const double XcMeVtoCmsqrd = 0.389379292e-21;
 
   // WGS: We have to start from some value of sin2theta; use the stanard-model value:
@@ -193,7 +194,7 @@ namespace RAT {
     XC *= Sigma0 ;
 
     //  Add term due to neutrino magnetic moment.
-    static const double alphainv = 1./fine_structure_const;
+    static const double alphainv = 1./CLHEP::fine_structure_const;
     if (T > 0.) XC += (M_PI / pow(alphainv,2) * pow(vMu,2) / pow(massElectron,2)) * (1. - T/Enu)/T;
 
     //  Convert to detector units and return.

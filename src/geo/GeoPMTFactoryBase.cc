@@ -4,6 +4,8 @@
 
 #include <G4SDManager.hh>
 #include <G4PVPlacement.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <RAT/Materials.hh>
 #include <RAT/GLG4PMTSD.hh>
@@ -80,7 +82,7 @@ G4VPhysicalVolume *GeoPMTFactoryBase::ConstructPMTs(DBLinkPtr table,
   DBLinkPtr lpmt = DB::Get()->GetLink("PMT", pmt_model);
 
   PMTConstructionParams pmtParam;
-  pmtParam.faceGap = 0.1 * mm;
+  pmtParam.faceGap = 0.1 * CLHEP::mm;
   pmtParam.zEdge = lpmt->GetDArray("z_edge");
   pmtParam.rhoEdge = lpmt->GetDArray("rho_edge");
   pmtParam.zOrigin = lpmt->GetDArray("z_origin");
