@@ -17,6 +17,7 @@
 #include <globals.hh>
 
 #include <CLHEP/Vector/LorentzVector.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 #include <sstream>
 #include <cmath>
@@ -40,7 +41,7 @@ namespace RAT {
     if (ev_nu_dir.mag2() == 0.0) {
       // Pick isotropic direction
       double theta = acos(2.0 * G4UniformRand() - 1.0);
-      double phi = 2.0 * G4UniformRand() * pi;
+		double phi = 2.0 * G4UniformRand() * CLHEP::pi;
       ev_nu_dir.setRThetaPhi(1.0, theta, phi);
     }
 

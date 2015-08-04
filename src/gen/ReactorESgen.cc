@@ -33,6 +33,7 @@
 #include <G4ThreeVector.hh>
 #include <Randomize.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 // Other includes
 #include <cmath>
@@ -71,10 +72,10 @@ namespace RAT {
     CLHEP::HepLorentzVector ReactorESgen::GenerateEvent(const G4ThreeVector& theNeutrino) {
     
 		// Get a random antineutrino energy from the observable energy spectrum
-        G4double E_nu = (GetAntiNuEnergy()) * MeV;
+        G4double E_nu = (GetAntiNuEnergy()) * CLHEP::MeV;
 		
 		// Use antineutrino energy to randomly sample an electron energy
-        G4double E_e = (GetElectronEnergy(E_nu)) * MeV;
+        G4double E_e = (GetElectronEnergy(E_nu)) * CLHEP::MeV;
 		
 		// Use antineutrino energy, electron energy, and original antineutrino direction to construct the scattered electrons momentum vector
         CLHEP::HepLorentzVector theElectron = GetEmomentum(E_nu, E_e, theNeutrino);

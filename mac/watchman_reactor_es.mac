@@ -3,31 +3,31 @@
 /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
 
 /run/initialize
-/process/activate Cerenkov
+#/process/activate Cerenkov
 
-#/vis/open OGLSX 1000x1000
-##/vis/open VRML2FILE
-#/vis/scene/create
-#/vis/scene/add/volume
-#/vis/sceneHandler/attach
-#/vis/scene/add/trajectories smooth
-#/vis/modeling/trajectories/create/drawByCharge
-#/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
-#/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
-#/vis/scene/add/trajectories
-#/vis/scene/add/hits
-#/vis/viewer/set/viewpointVector 1 0.5 0.5
-#/vis/modeling/trajectories/create/drawByParticleID
-#/vis/modeling/trajectories/drawByParticleID-0/set e- blue
-#/vis/modeling/trajectories/drawByParticleID-0/set geantino green
-#/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton yellow
-#/vis/viewer/set/autoRefresh true
-##/vis/scene/endOfEventAction accumulate
-#/tracking/FillPointCont true
+/vis/open OGLSX 1000x1000
+#/vis/open VRML2FILE
+/vis/scene/create
+/vis/scene/add/volume
+/vis/sceneHandler/attach
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+/vis/scene/add/trajectories
+/vis/scene/add/hits
+/vis/viewer/set/viewpointVector 1 0.5 0.5
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set e- blue
+/vis/modeling/trajectories/drawByParticleID-0/set geantino green
+/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton yellow
+/vis/viewer/set/autoRefresh true
+#/vis/scene/endOfEventAction accumulate
+/tracking/FillPointCont true
 
-#/tracking/storeTrajectory 1
-#/vis/viewer/refresh
-#/vis/viewer/flush
+/tracking/storeTrajectory 1
+/vis/viewer/refresh
+/vis/viewer/flush
 
 # BEGIN EVENT LOOP
 /rat/proc simpledaq
