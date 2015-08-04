@@ -4,6 +4,8 @@
 #include <G4UnionSolid.hh>
 #include <G4SubtractionSolid.hh>
 #include <G4Tubs.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -34,9 +36,9 @@ G4VSolid *GeoRevolutionChimneyFactory::ConstructSolid(DBLinkPtr table) {
 
   // Optional parameters
   G4double phi_start = 0.0;
-  try { phi_start = table->GetD("phi_start") * deg; } catch (DBNotFoundError &e) { };
-  G4double phi_delta = twopi;
-  try { phi_delta = table->GetD("phi_delta") * deg; } catch (DBNotFoundError &e) { };
+  try { phi_start = table->GetD("phi_start") * CLHEP::deg; } catch (DBNotFoundError &e) { };
+  G4double phi_delta = CLHEP::twopi;
+  try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; } catch (DBNotFoundError &e) { };
 
   G4double *z_array;
   G4double *r_array;
@@ -47,18 +49,18 @@ G4VSolid *GeoRevolutionChimneyFactory::ConstructSolid(DBLinkPtr table) {
   r_min_array = new G4double[numZPlanes];
 
   for ( G4int i=0; i < numZPlanes; ++i ) {
-    z_array[i] = z[i] * mm;
-    r_array[i] = fabs(r_max[i]) * mm;
-    r_min_array[i] = fabs(r_min[i]) * mm;
+    z_array[i] = z[i] * CLHEP::mm;
+    r_array[i] = fabs(r_max[i]) * CLHEP::mm;
+    r_min_array[i] = fabs(r_min[i]) * CLHEP::mm;
   }
   ///This is the revolution
   G4Polycone *vessel = new G4Polycone("vessel", phi_start, phi_delta, numZPlanes,
                                       z_array, r_min_array, r_array);
 
   ///Here comes the chimney
-  G4Tubs *chimney  = new G4Tubs("chimney",0, rout_chim, (z_top-z_bot)*.5, 0., twopi);
+  G4Tubs *chimney  = new G4Tubs("chimney",0, rout_chim, (z_top-z_bot)*.5, 0., CLHEP::twopi);
   G4RotationMatrix* rot = new G4RotationMatrix();
-  rot->rotateY(90. * deg);
+  rot->rotateY(90. * CLHEP::deg);
 
   if (rin_chim != 0.0) {
     G4VSolid* temp=0;
@@ -66,7 +68,7 @@ G4VSolid *GeoRevolutionChimneyFactory::ConstructSolid(DBLinkPtr table) {
       temp = new G4UnionSolid ("union", vessel, chimney, rot, offset);
     else 
       temp = vessel;
-    G4Tubs *empty = new G4Tubs("chimney",0, rin_chim, z_top, 0., twopi);
+    G4Tubs *empty = new G4Tubs("chimney",0, rin_chim, z_top, 0., CLHEP::twopi);
     return new G4SubtractionSolid (volume_name, temp, empty, rot, offset);
   } else
     return new G4UnionSolid (volume_name, vessel, chimney, rot, offset);

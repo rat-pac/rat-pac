@@ -9,6 +9,7 @@
 #include <G4VisAttributes.hh>
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalSkinSurface.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 using namespace std;
 
@@ -115,7 +116,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     G4Tubs* dynode_solid = new G4Tubs(prefix+"_dynode_solid",
                                       0.0, fParams.dynodeRadius,// solid cylinder (FIXME?)
                                       hhDynode,                // half height of cylinder
-                                      0., twopi );            // cylinder complete in phi
+                                      0., CLHEP::twopi );            // cylinder complete in phi
     
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
     G4double hhgap = 0.5e-7 ;                                            // half the needed gap between the front and back of the PMT
@@ -125,7 +126,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     G4Tubs* central_gap_solid = new G4Tubs(prefix+"_central_gap_solid",
                                       0.0 , toleranceGapRadius,        // solid cylinder with same radius as PMT
                                       hhgap,                           // half height of cylinder
-                                      0., twopi );                   // cylinder complete in phi 
+                                      0., CLHEP::twopi );                   // cylinder complete in phi 
 
     // ------------ Logical Volumes -------------
     G4LogicalVolume *envelope_log=0, *body_log, *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
@@ -346,9 +347,9 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     else subCylOffset = zBottom - subCylHalfHeight;
     
     G4Tubs *mainEnvelope = new G4Tubs(name+"_main", 0.0, rho, mainCylHalfHeight, 
-                                      0.0, twopi);
+                                      0.0, CLHEP::twopi);
     G4Tubs *subEnvelope  = new G4Tubs(name+"_sub", 0.0, rho*1.1, subCylHalfHeight, 
-                                      0.0, twopi);
+                                      0.0, CLHEP::twopi);
                                       
     return new G4SubtractionSolid(name, mainEnvelope, subEnvelope, 
                                   0, G4ThreeVector(0.0, 0.0, subCylOffset));

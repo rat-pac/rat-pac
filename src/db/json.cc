@@ -24,10 +24,10 @@
 
 namespace json {
 
-    void Value::reset(Type type_) {
+    void Value::reset(Type _type) {
         decref();
-        this->type = type_;
-        switch (type) {
+        this->type = _type;
+        switch (_type) {
             case TSTRING:
                 data.string = new TString();
                 refcount = new TUInteger(0);

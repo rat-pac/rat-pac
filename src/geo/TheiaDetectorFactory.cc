@@ -9,7 +9,7 @@ using namespace std;
 
 namespace RAT {
 
-void TheiaDetectorFactory::DefineDetector(DBLinkPtr detector) {
+void TheiaDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
     const std::string geo_template = "Theia/Theia.geo";
     DB *db = DB::Get();
     if (db->Load(geo_template) == 0) {

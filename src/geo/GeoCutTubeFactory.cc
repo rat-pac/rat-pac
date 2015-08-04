@@ -1,5 +1,7 @@
 #include <RAT/GeoCutTubeFactory.hh>
 #include <G4CutTubs.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -8,18 +10,18 @@ namespace RAT {
 G4VSolid *GeoCutTubeFactory::ConstructSolid(DBLinkPtr table)
 {
   string volume_name = table->GetIndex();
-  G4double r_max = table->GetD("r_max") * mm;
-  G4double size_z = table->GetD("size_z") * mm;
+  G4double r_max = table->GetD("r_max") * CLHEP::mm;
+  G4double size_z = table->GetD("size_z") * CLHEP::mm;
 
   // Optional parameters
   G4double r_min = 0.0;
-  try { r_min = table->GetD("r_min") * mm; } 
+  try { r_min = table->GetD("r_min") * CLHEP::mm; } 
   catch (DBNotFoundError &e) { };
   G4double phi_start = 0.0;
-  try { phi_start = table->GetD("phi_start") * deg; } 
+  try { phi_start = table->GetD("phi_start") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
-  G4double phi_delta = twopi;
-  try { phi_delta = table->GetD("phi_delta") * deg; } 
+  G4double phi_delta = CLHEP::twopi;
+  try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; } 
   catch (DBNotFoundError &e) { };
   
   G4ThreeVector low_norm = G4ThreeVector( 0.0, 0.0, -1.0);

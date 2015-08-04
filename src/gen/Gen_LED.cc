@@ -41,7 +41,7 @@ Gen_LED::~Gen_LED()
 void Gen_LED::GenerateEvent(G4Event *event)
 {
   // Get information on next LED to fire
-  G4ThreeVector pos(led_x[next_led]*mm, led_y[next_led]*mm, led_z[next_led]*mm);
+  G4ThreeVector pos(led_x[next_led]*CLHEP::mm, led_y[next_led]*CLHEP::mm, led_z[next_led]*CLHEP::mm);
   G4ThreeVector normal = -pos.unit();
   G4ThreeVector perp = normal.orthogonal().unit();
 
@@ -65,7 +65,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
   next_led = (next_led + 1) % led_x.size();
 	if(!oneLED){//fire all LEDs in same event
 		for(int iLED=0;iLED<int(led_x.size());iLED++){
-			pos.set(led_x[iLED]*mm,led_y[iLED]*mm,led_z[iLED]*mm);
+			pos.set(led_x[iLED]*CLHEP::mm,led_y[iLED]*CLHEP::mm,led_z[iLED]*CLHEP::mm);
   		normal=-pos.unit();
   		perp=normal.orthogonal().unit();
 
@@ -79,7 +79,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
   	    	wavelength=led_wavelength[iLED]; // nm
 	    	else
       		wavelength=rand_wl->shoot()*(wl_max-wl_min)+wl_min;
-				double energy=hbarc*twopi/(wavelength*nm);
+				double energy=CLHEP::hbarc*CLHEP::twopi/(wavelength*CLHEP::nm);
 				double theta;
 	    	if(iso_mode)
       		theta=acos(0.9999*(2.0*G4UniformRand()-1.0));
@@ -91,7 +91,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
 					warn<<"Warning: missing "<<next_led<<"-th angular distr., only "<<rand_angles.size()<<" exist! Reusing last distrib.\n";
 					theta=rand_angles[rand_angles.size()-1]->shoot()*(angle_maxs[rand_angles.size()-1]-angle_mins[rand_angles.size()-1])+angle_mins[rand_angles.size()-1];
 				}
-				double phi=twopi*G4UniformRand();
+				double phi=CLHEP::twopi*G4UniformRand();
 
 				G4ThreeVector mom(normal);
  	   		mom.rotate(theta,perp);
@@ -101,7 +101,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
 	    	G4PrimaryParticle* particle=new G4PrimaryParticle(photonDef,
 					mom.x(),mom.y(),mom.z());
     	//set polarization
-    	phi=(G4UniformRand()*2.0-1.0)*pi;
+    	phi=(G4UniformRand()*2.0-1.0)*CLHEP::pi;
     	G4ThreeVector e1=mom.orthogonal().unit();
     	G4ThreeVector e2=mom.unit().cross(e1);
     	G4ThreeVector pol=e1*cos(phi)+e2*sin(phi);
@@ -129,7 +129,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
 	    else
       	wavelength = rand_wl->shoot() * (wl_max - wl_min) + wl_min;
 
-    	float energy = hbarc * twopi / (wavelength * nm);
+    	float energy = CLHEP::hbarc * CLHEP::twopi / (wavelength * CLHEP::nm);
     	float momentum = energy; // GEANT uses momentum in same units as energy
 
   	  double theta;
@@ -144,7 +144,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
 				theta=rand_angles[rand_angles.size()-1]->shoot()*(angle_maxs[rand_angles.size()-1]-angle_mins[rand_angles.size()-1])+angle_mins[rand_angles.size()-1];
 			}
 
-	    double phi = twopi * G4UniformRand();
+	    double phi = CLHEP::twopi * G4UniformRand();
 
     	// Calc momentum
   	  G4ThreeVector mom(normal);
@@ -158,7 +158,7 @@ void Gen_LED::GenerateEvent(G4Event *event)
 								mom.y(),
 								mom.z());
     	// Generate random polarization
-    	phi = (G4UniformRand()*2.0-1.0)*pi;
+    	phi = (G4UniformRand()*2.0-1.0)*CLHEP::pi;
     	G4ThreeVector e1 = mom.orthogonal().unit();
     	G4ThreeVector e2 = mom.unit().cross(e1);
     	G4ThreeVector pol = e1*cos(phi)+e2*sin(phi);

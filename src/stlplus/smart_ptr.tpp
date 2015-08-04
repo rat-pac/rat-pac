@@ -1055,13 +1055,13 @@ private:
   T* m_data;
   
   // disallow copying because the holder doesn't know how to copy
-  smart_ptr_holder(const smart_ptr_holder& s) :
+  smart_ptr_holder(const smart_ptr_holder& /*s*/) :
     m_count(0), m_data(0)
     {
       DEBUG_ASSERT(false);
     }
 
-  smart_ptr_holder& operator=(const smart_ptr_holder& s)
+  smart_ptr_holder& operator=(const smart_ptr_holder& /*s*/)
     {
       DEBUG_ASSERT(false);
       return *this;

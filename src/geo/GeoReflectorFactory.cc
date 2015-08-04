@@ -13,6 +13,8 @@
 #include <G4LogicalBorderSurface.hh>
 #include <G4OpticalSurface.hh>
 #include <G4LogicalVolume.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 
 
@@ -35,13 +37,13 @@ G4VPhysicalVolume *GeoReflectorFactory::Construct(DBLinkPtr table)
     Log::Die("GeoBuilder error: PMT mother physical volume " + mother_name
                 +" not found");
 
-  G4double r_min = table->GetD("r_min") * mm;
+  G4double r_min = table->GetD("r_min") * CLHEP::mm;
   G4double phi_start = 0.0;
-  G4double phi_delta = twopi;
+  G4double phi_delta = CLHEP::twopi;
   G4double theta_start = 0.0;
-  G4double theta_delta = pi;
-  G4double r_mid = r_min + 1.0 * mm;
-  G4double r_max = r_min + 2.0 * mm;
+  G4double theta_delta = CLHEP::pi;
+  G4double r_mid = r_min + 1.0 * CLHEP::mm;
+  G4double r_max = r_min + 2.0 * CLHEP::mm;
 
   G4Material *inMaterial = G4Material::GetMaterial(table->GetS("inmaterial"));
   G4Material *outMaterial = G4Material::GetMaterial(table->GetS("outmaterial"));

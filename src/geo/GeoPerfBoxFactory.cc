@@ -7,6 +7,8 @@
 #include <G4Box.hh>
 #include <cmath>
 #include <sstream>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -18,10 +20,10 @@ namespace RAT{
     // get the base box
     vector<double> size = table->GetDArray("size");
     double thickness = 0.0;
-    try{ thickness = table->GetD("thickness") * mm; }
+    try{ thickness = table->GetD("thickness") * CLHEP::mm; }
     catch(DBNotFoundError& e){}
     for(unsigned i=0; i<size.size(); i++){
-      size[i] *= mm;
+      size[i] *= CLHEP::mm;
       if(size[i] < thickness)
 	Log::Die("GeoPerfBoxFactory: thickness larger than dimension");
     }
@@ -40,13 +42,13 @@ namespace RAT{
     if(rhole.size() != xhole.size() || rhole.size() != yhole.size())
       Log::Die("GetPerfBoxFactory: hole parameter arrays not same size");
     for(unsigned i=0; i<rhole.size(); i++){
-      rhole[i] *= mm;
-      xhole[i] *= mm;
-      yhole[i] *= mm;
+      rhole[i] *= CLHEP::mm;
+      xhole[i] *= CLHEP::mm;
+      yhole[i] *= CLHEP::mm;
       stringstream ss;
       ss << i;
       G4VSolid* tube = new G4Tubs(volumeName + ss.str(),
-				  0.0, rhole[i], size[2]*1.01, 0.0, twopi);
+				  0.0, rhole[i], size[2]*1.01, 0.0, CLHEP::twopi);
       box = new G4SubtractionSolid(volumeName, box, tube,
 				   0, G4ThreeVector(xhole[i], yhole[i], 0.0));
     }
