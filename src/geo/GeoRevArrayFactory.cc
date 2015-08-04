@@ -2,6 +2,8 @@
 #include <RAT/PMTConstruction.hh>
 #include <RAT/GeoPMTParser.hh>
 #include <RAT/Log.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <G4SubtractionSolid.hh>
 #include <G4Polycone.hh>
@@ -32,22 +34,22 @@ namespace RAT {
 	
 	// Optional parameters
 	G4double phi_start = 0.0;
-	try { phi_start = table->GetD("phi_start") * deg; }
+	try { phi_start = table->GetD("phi_start") * CLHEP::deg; }
 	catch (DBNotFoundError &e) { };
-	G4double phi_delta = twopi;
-	try { phi_delta = table->GetD("phi_delta") * deg; }
+	G4double phi_delta = CLHEP::twopi;
+	try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; }
 	catch (DBNotFoundError &e) { };
 
 	// can cut out a sphereical region from all the solids of 
 	// radius sphere_cut_r
 	G4double s_cut_r = -1.0;
-	try { s_cut_r = table->GetD("sphere_cut_r") * mm; } 
+	try { s_cut_r = table->GetD("sphere_cut_r") * CLHEP::mm; } 
 	catch (DBNotFoundError &e) { };
 	
 	// can rescale Solid radius from mother volume center for
 	// case where Solids have spherical layout symmetry
 	G4double rescale_r = -1.0;
-	try { rescale_r = table->GetD("rescale_radius") * mm; } 
+	try { rescale_r = table->GetD("rescale_radius") * CLHEP::mm; } 
 	catch (DBNotFoundError &e) { };
 
 	int preflip=0;
@@ -66,9 +68,9 @@ namespace RAT {
 
 	for ( G4int i=0; i < numZPlanes; ++i )
 	{
-        	z_array[i] = z[i] * mm;
-        	r_array[i] = fabs(r_max[i]) * mm;
-        	r_min_array[i] = fabs(r_min[i]) * mm;
+        	z_array[i] = z[i] * CLHEP::mm;
+        	r_array[i] = fabs(r_max[i]) * CLHEP::mm;
+        	r_min_array[i] = fabs(r_min[i]) * CLHEP::mm;
 	}
 
     	G4VSolid *BaseSolid = new G4Polycone("temp_lg_1", phi_start, phi_delta, numZPlanes, z_array, r_min_array, r_array);
@@ -85,7 +87,7 @@ namespace RAT {
 	}
 
   if(preflip){
-    G4RotationMatrix* fliprot=new G4RotationMatrix(G4ThreeVector(1,0,0),pi);
+    G4RotationMatrix* fliprot=new G4RotationMatrix(G4ThreeVector(1,0,0),CLHEP::pi);
     BaseSolid=new G4DisplacedSolid(volume_name+"flipped",BaseSolid,fliprot,G4ThreeVector(0,0,0));
   }
 

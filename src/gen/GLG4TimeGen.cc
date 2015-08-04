@@ -1,7 +1,7 @@
 #include "GLG4TimeGen.hh"
 #include <Randomize.hh>
 #include "GLG4StringUtil.hh"
-#include "CLHEP/Units/SystemOfUnits.h"
+#include <CLHEP/Units/SystemOfUnits.h>
 
 void GLG4TimeGen_Uniform::SetState(G4String state)
 {
@@ -17,7 +17,7 @@ void GLG4TimeGen_Uniform::SetState(G4String state)
     return;
   }
 
-  rate = util_to_double(state) / s;
+  rate = util_to_double(state) / CLHEP::s;
 }
 
 G4String GLG4TimeGen_Uniform::GetState() const

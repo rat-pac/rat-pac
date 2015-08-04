@@ -106,7 +106,6 @@ public:
     void                DescribeYourselfTo (G4VGraphicsScene& scene) const ;
     G4VisExtent         GetExtent          () const ;
     G4Polyhedron*       CreatePolyhedron   () const ;
-    G4NURBS*            CreateNURBS        () const ;
 
     // other generally useful functions -- public so others can use them!
 

@@ -9,6 +9,7 @@
 #include <G4LogicalSkinSurface.hh>
 #include <G4PVPlacement.hh>
 #include <G4LogicalBorderSurface.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 namespace RAT {
 
@@ -49,7 +50,7 @@ G4VSolid *ConeWaveguideConstruction::NewBodySolid(const std::string &name, G4VSo
   G4VSolid *cone_solid_whole = new G4Cons(name+"_solid_whole", 
                                     fInnerRadiusTop, OuterRadiusTop +1.0,
                                     fInnerRadiusBottom, OuterRadiusBottom +1.0,
-                                    (fZTop - fZBottom)/2.0, 0.0, twopi);
+                                    (fZTop - fZBottom)/2.0, 0.0, CLHEP::twopi);
 /*
   cone_solid_in->SetName(name+"_in");
   cone_solid_in = new G4SubtractionSolid(name, cone_solid_in, fPMTBody, 0, -GetPlacementOffset());

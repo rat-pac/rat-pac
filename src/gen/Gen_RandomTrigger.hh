@@ -14,7 +14,7 @@ public:
   virtual void ResetTime(double offset=0.0);
   virtual bool IsRepeatable() const { return true; };
 
-  virtual void SetState(G4String state) { };
+  virtual void SetState(G4String /*state*/) { };
   virtual G4String GetState() const { return ""; };
 
   virtual void SetTimeState(G4String state);

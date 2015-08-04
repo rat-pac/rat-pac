@@ -12,6 +12,7 @@
 #include <G4VPhysicalVolume.hh>
 #include <G4OpticalSurface.hh>
 #include <G4LogicalBorderSurface.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <vector>
 
@@ -66,8 +67,8 @@ G4VPhysicalVolume *GeoWatchmanShieldFactory::Construct(DBLinkPtr table) {
     
     //Build the pmt covers
   
-    G4Ellipsoid *backFilledSolid = new G4Ellipsoid(volumeName+"_back_filled_solid", backSemiX, backSemiY, backSemiZ, -backSemiZ, 0.*cm);
-    G4Ellipsoid *backKnockoutSolid = new G4Ellipsoid(volumeName+"_back_knockout_solid", backSemiX-backThickness, backSemiY-backThickness, backSemiZ-backThickness, -backSemiZ,0.*cm);
+    G4Ellipsoid *backFilledSolid = new G4Ellipsoid(volumeName+"_back_filled_solid", backSemiX, backSemiY, backSemiZ, -backSemiZ, 0.*CLHEP::cm);
+    G4Ellipsoid *backKnockoutSolid = new G4Ellipsoid(volumeName+"_back_knockout_solid", backSemiX-backThickness, backSemiY-backThickness, backSemiZ-backThickness, -backSemiZ,0.*CLHEP::cm);
     G4SubtractionSolid *backSolid = new G4SubtractionSolid(volumeName+"_back_solid",backFilledSolid,backKnockoutSolid,NULL,G4ThreeVector());
     
     G4LogicalVolume *innerBackLog = new G4LogicalVolume(backSolid, backMaterial,volumeName+"_inner_back_log");
@@ -126,9 +127,9 @@ G4VPhysicalVolume *GeoWatchmanShieldFactory::Construct(DBLinkPtr table) {
     G4double rInnerInSide[2] = {cablePosRadius-4.*steelThickness,cablePosRadius-4.*steelThickness};
     G4double rInnerOutSide[2] = {cablePosRadius-3.*steelThickness,cablePosRadius-3.*steelThickness};
 
-    G4Polyhedra *bottopSolid = new G4Polyhedra(volumeName+"_bottop_solid",0,2.*pi,numCols,2,zPlaneBottop,rInnerBottop,rOuterBottop);
-    G4Polyhedra *insideSolid = new G4Polyhedra(volumeName+"_inside_solid",0,2.*pi,numCols,2,zPlaneSide,rInnerInSide,rOuterInside);
-    G4Polyhedra *outsideSolid = new G4Polyhedra(volumeName+"_outside_solid",0,2.*pi,numCols,2,zPlaneSide,rInnerOutSide,rOuterOutside);
+    G4Polyhedra *bottopSolid = new G4Polyhedra(volumeName+"_bottop_solid",0,2.*CLHEP::pi,numCols,2,zPlaneBottop,rInnerBottop,rOuterBottop);
+    G4Polyhedra *insideSolid = new G4Polyhedra(volumeName+"_inside_solid",0,2.*CLHEP::pi,numCols,2,zPlaneSide,rInnerInSide,rOuterInside);
+    G4Polyhedra *outsideSolid = new G4Polyhedra(volumeName+"_outside_solid",0,2.*CLHEP::pi,numCols,2,zPlaneSide,rInnerOutSide,rOuterOutside);
     
     //Do we need to knock out holes for the PMTs or can the geometry gracefully handle the overlap?
     //Apparently it can...

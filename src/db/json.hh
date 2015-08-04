@@ -182,10 +182,10 @@ namespace json {
             static void wrongType(Type actual, Type requested);
         
             // Throws a runtime_error if the type of the Value does not match the given Type
-            inline void checkType(Type type) const { if (this->type != type) { wrongType(this->type,type); } } 
+            inline void checkType(Type _type) const { if (this->type != _type) { wrongType(this->type, _type); } }
             
             // Resets the type of Value of the current type does not match the given Type
-            inline void checkTypeReset(Type type) { if (this->type != type) reset(TOBJECT); }
+            inline void checkTypeReset(Type _type) { if (this->type != _type) reset(TOBJECT); }
             
             // Decreases the refcount of the Value and cleans up if necessary
             inline void decref() { if (refcount && !((*refcount)--)) clean(); }

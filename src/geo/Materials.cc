@@ -6,6 +6,8 @@
 #include <G4NistManager.hh>
 #include <RAT/Materials.hh>
 #include <RAT/Log.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 using namespace::std;
 
@@ -130,18 +132,18 @@ void Materials::ConstructMaterials() {
 
   DB* db = DB::Get();
 
-  DBLinkGroup elem = db->GetLinkGroup("ELEMENT");
+  DBLinkGroup lelem = db->GetLinkGroup("ELEMENT");
   DBLinkGroup::iterator i_table;
-  for (i_table=elem.begin(); i_table!=elem.end(); i_table++) {
+  for (i_table=lelem.begin(); i_table!=lelem.end(); i_table++) {
     std::string namedb = i_table->first;
     DBLinkPtr table = i_table->second;
     double adb;
     int zdb = 0;
-    string symbol;
+    string csymbol;
 
     // Get common fields
     try {
-      symbol= table->GetS("SYMBOL");
+      csymbol= table->GetS("SYMBOL");
       zdb = table->GetI("z");
     }
     catch (DBNotFoundError &e) {
@@ -153,7 +155,7 @@ void Materials::ConstructMaterials() {
       const vector<int>& isotopes = table->GetIArray("isotopes");
       const vector<double>& isotopes_frac = table->GetDArray("isotopes_frac");
 
-      G4Element* elem = new G4Element(namedb, symbol, isotopes.size());
+      G4Element* elem = new G4Element(namedb, csymbol, isotopes.size());
       for (unsigned i_isotope=0; i_isotope<isotopes.size(); i_isotope++) {
         // Leave out last field of constructor so mass/mole of isotope
         // is pulled from NIST database.
@@ -170,7 +172,7 @@ void Materials::ConstructMaterials() {
 
     try {
       adb = table->GetD("a");
-      new G4Element(namedb, symbol, zdb, adb*g/mole);
+      new G4Element(namedb, csymbol, zdb, adb*CLHEP::g/CLHEP::mole);
     }
     catch (DBNotFoundError &e) {
       G4cout << "Materials error: Could not construct elements" << G4endl;
@@ -267,7 +269,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
   double pressure;
 
   try {
-    densitydb = table->GetD("density") * g / cm3;
+    densitydb = table->GetD("density") * CLHEP::g / CLHEP::cm3;
     nelementsdb = table->GetI("nelements");
     nmaterialsdb = table->GetI("nmaterials");
   }
@@ -293,14 +295,14 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     temperature = table->GetD("temperature");
   }
   catch (DBNotFoundError &e) {
-    temperature = STP_Temperature;
+    temperature = CLHEP::STP_Temperature;
   }
 
   try {
-    pressure = table->GetD("pressure") * STP_Pressure;
+    pressure = table->GetD("pressure") * CLHEP::STP_Pressure;
   }
   catch (DBNotFoundError &e) {
-    pressure = STP_Pressure;
+    pressure = CLHEP::STP_Pressure;
   }
 
   G4Material* tempptr = 
@@ -330,7 +332,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
 
   if (formula != "BAD") {
     MPT = new G4MaterialPropertiesTable();
-    MPT->AddConstProperty("MOL", mol/g);
+    MPT->AddConstProperty("MOL", mol/CLHEP::g);
     tempptr->SetMaterialPropertiesTable(MPT);
   }
 
@@ -443,7 +445,7 @@ Materials::LoadProperty(DBLinkPtr table, std::string name) {
     if (wavelength_opt) {
       if (E_value != 0.0) {
         double lam = E_value;
-        E_value = twopi * hbarc / (lam * nanometer);
+        E_value = CLHEP::twopi * CLHEP::hbarc / (lam * CLHEP::nanometer);
         if (wavelength_opt == 2)
           p_value *= lam / E_value;
       }
@@ -613,19 +615,19 @@ void Materials::LoadOptics() {
       std::map<G4String,
                G4MaterialPropertyVector*>::const_iterator it;
       for (it=cpm->begin(); it!=cpm->end(); it++) {
-        std::string name = it->first;
-        if (name.find("REEMITWAVEFORM") != std::string::npos    ||
-            name.find("SCINTILLATION_WLS") != std::string::npos ||
-            name.find("ABSLENGTH") != std::string::npos) {
-          Log::Assert(mpm->find(name) == mpm->end(),
+        std::string pname = it->first;
+        if (pname.find("REEMITWAVEFORM") != std::string::npos    ||
+            pname.find("SCINTILLATION_WLS") != std::string::npos ||
+            pname.find("ABSLENGTH") != std::string::npos) {
+          Log::Assert(mpm->find(pname) == mpm->end(),
                       "Materials: Composite material cannot contain the same properties as components");
-          G4cout << compname << " has " << name << "!" << G4endl;
-          std::stringstream ss;
-          ss << name << i + 1;
-          mpt->AddProperty(ss.str().c_str(), it->second);
+          G4cout << compname << " has " << pname << "!" << G4endl;
+          std::stringstream ss2;
+          ss << pname << i + 1;
+          mpt->AddProperty(ss2.str().c_str(), it->second);
 
           // Also compute total absorption length
-          if (name.find("ABSLENGTH") != std::string::npos) {
+          if (pname.find("ABSLENGTH") != std::string::npos) {
             if (!absorption_coeff_x) {
               G4MaterialPropertyVector* tempv = it->second;
               size_t entries = tempv->GetVectorLength();
@@ -646,8 +648,8 @@ void Materials::LoadOptics() {
         }
 
         // The scattering lengths are combined
-        else if (name.find("RSLENGTH") != std::string::npos) {
-          Log::Assert(mpm->find(name) == mpm->end(),
+        else if (pname.find("RSLENGTH") != std::string::npos) {
+          Log::Assert(mpm->find(pname) == mpm->end(),
                       "Materials: Composite material cannot contain the same properties as components");
           if (!rayleigh_coeff_x) {
             G4MaterialPropertyVector* tempv = it->second;
@@ -674,14 +676,14 @@ void Materials::LoadOptics() {
       std::map<G4String,
                G4double>::const_iterator itc;
       for (itc=cpmc->begin(); itc!=cpmc->end(); itc++) {
-        std::string name = itc->first;
-        if (name.find("REEMISSION_PROB") != std::string::npos) {
+        std::string cname = itc->first;
+        if (cname.find("REEMISSION_PROB") != std::string::npos) {
           Log::Assert(mpmc->find(name) == mpmc->end(),
                       "Materials: Composite material cannot contain the same properties as components");
-          G4cout << compname << " has " << name << G4endl;
-          std::stringstream ss;
-          ss << name << i + 1;
-          mpt->AddConstProperty(ss.str().c_str(), itc->second);
+          G4cout << compname << " has " << cname << G4endl;
+          std::stringstream ss2;
+          ss2 << cname << i + 1;
+          mpt->AddConstProperty(ss2.str().c_str(), itc->second);
         }
       }
     }

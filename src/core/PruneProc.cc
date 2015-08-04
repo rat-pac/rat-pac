@@ -70,26 +70,26 @@ Processor::Result PruneProc::DSEvent(DS::Root *ds) {
     ds->PruneMC();
     
   if (ds->ExistMC()) {
-    DS::MC *mc = ds->GetMC();
+    DS::MC *pmc = ds->GetMC();
     
     if (mc_particle)
-      mc->PruneMCParticle();
+      pmc->PruneMCParticle();
 
     if (mc_track) {
       if (track_cut.size() == 0)
-        mc->PruneMCTrack();
+        pmc->PruneMCTrack();
       else { // remove each listed particle name
 	for (unsigned i=0; i < track_cut.size(); i++)
-	  mc->PruneMCTrack(track_cut[i]);
+	  pmc->PruneMCTrack(track_cut[i]);
       }
     }
 
     if (mc_pmt)
-      mc->PrunePMT();
+      pmc->PrunePMT();
 
     if (mc_pmt_photon) {
-      for (int i=0; i < mc->GetMCPMTCount(); i++)
-        mc->GetMCPMT(i)->PruneMCPhoton();
+      for (int i=0; i < pmc->GetMCPMTCount(); i++)
+        pmc->GetMCPMT(i)->PruneMCPhoton();
     }
   }
   

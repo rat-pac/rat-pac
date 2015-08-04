@@ -18,7 +18,7 @@
 /////////////
 
 #include "G4OpAbsorption.hh"
-#include "RAT/GLG4DummyProcess.hh"
+#include "RAT/DummyProcess.hh"
 
 /////////////////////
 // Class Definition
@@ -35,8 +35,8 @@ private:
 
         // GLG4OpAttenuation& operator=(const GLG4OpAttenuation &right);
 
-        static GLG4DummyProcess fgAttenuation;
-        static GLG4DummyProcess fgScattering;
+        static DummyProcess fgAttenuation;
+        static DummyProcess fgScattering;
 
 public: // Without description
 

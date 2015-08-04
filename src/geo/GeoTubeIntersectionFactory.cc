@@ -30,10 +30,10 @@ namespace RAT{
       zeror = true;
     }    
     double phiStart = 0.0;
-    try{phiStart = table->GetD("phi_start") * deg;}
+    try{phiStart = table->GetD("phi_start") * CLHEP::deg;}
     catch(DBNotFoundError &e){};
-    double phiDelta = twopi;
-    try{phiDelta = table->GetD("phi_delta") * deg;}
+    double phiDelta = CLHEP::twopi;
+    try{phiDelta = table->GetD("phi_delta") * CLHEP::deg;}
     catch(DBNotFoundError &e){};
     if(posz.size() != rmax.size() || posz.size() != rmin.size())
       Log::Die("GeoTubeIntersectionFactory: base tube arrays"
@@ -41,9 +41,9 @@ namespace RAT{
     if(posz.size() < 2)
       Log::Die("GeoTubeIntersectionFactory: tube arrays must have length > 1");
     for(unsigned i=0; i<posz.size(); i++){
-      posz[i] *= mm;
-      rmax[i] *= mm;
-      rmin[i] *= mm;
+      posz[i] *= CLHEP::mm;
+      rmax[i] *= CLHEP::mm;
+      rmin[i] *= CLHEP::mm;
     }
 
     // parameters for the intersecting tubes
@@ -100,12 +100,12 @@ namespace RAT{
 			       posz.size(), poszArray, rminArray, rmaxArray);
 
     for(unsigned i=0; i<poszInter.size(); i++){
-      sizezInter[i] *= mm;
-      rmaxInter[i] *= mm;
-      rminInter[i] *= mm;
-      poszInter[i] *= mm;
-      dispInter[i] *= mm;
-      phiInter[i] *= deg;
+      sizezInter[i] *= CLHEP::mm;
+      rmaxInter[i] *= CLHEP::mm;
+      rminInter[i] *= CLHEP::mm;
+      poszInter[i] *= CLHEP::mm;
+      dispInter[i] *= CLHEP::mm;
+      phiInter[i] *= CLHEP::deg;
 
       int j1 = -1;
       int j2 = -1;
@@ -143,18 +143,18 @@ namespace RAT{
       ss << i;
       G4VSolid* interTube = new G4Tubs(volumeName + "_inter_" + ss.str(),
 				      rminInter[i],rmaxInter[i], sizezInter[i],
-				      0.0, twopi);
+				      0.0, CLHEP::twopi);
       double cutz = sizezInter[i];
       if(dispInter[i] == 0.0)
 	cutz *= 1.0 + 1e-6;
       G4VSolid* cutTube = new G4Tubs(volumeName + "_cut_" + ss.str(),
 				     0.0, rmaxInter[i], cutz,
-				     0.0, twopi);
+				     0.0, CLHEP::twopi);
 				
       // put the inter on the x-axis, then rotate
       G4RotationMatrix* rotate = new G4RotationMatrix();
       rotate->rotateZ(-phiInter[i]);
-      rotate->rotateY(90 * deg);
+      rotate->rotateY(90 * CLHEP::deg);
       G4ThreeVector translate((rcenter+sizezInter[i]-dr) * cos(phiInter[i]), 
 			      (rcenter+sizezInter[i]-dr) * sin(phiInter[i]),
 			      poszInter[i]);

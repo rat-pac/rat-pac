@@ -31,13 +31,10 @@
 #include "G4ParticleChange.hh"
 #include "G4UImessenger.hh"
 
-#include "TGraph.h"
-#include "TSpline.h"
 #include "G4VProcess.hh"
 
-#include "RAT/GLG4DummyProcess.hh"
+#include "RAT/DummyProcess.hh"
 
-#include "TF1.h"
 #include "G4hParametrisedLossModel.hh"
 
 class G4UIcommand;
@@ -260,8 +257,8 @@ protected:
   static G4ThreeVector scintCentroidSum;
 
   // Bogus processes used to tag photons created in GLG4Scint
-  static GLG4DummyProcess scintProcess;
-  static GLG4DummyProcess reemissionProcess;
+  static DummyProcess scintProcess;
+  static DummyProcess reemissionProcess;
 
   // Quenching Factor
   static G4double QuenchingFactor;
@@ -271,7 +268,7 @@ protected:
 
   static G4String fPrimaryName;
   static G4double fPrimaryEnergy;
-  static G4std::vector<GLG4DummyProcess*> reemissionProcessVector;
+  static G4std::vector<DummyProcess*> reemissionProcessVector;
   static G4int fPhotonCount;
  
   //precision goal for the iterative time delay
