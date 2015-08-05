@@ -67,13 +67,13 @@ public:
 /** Exception: Error finding RATDB file. */
 class FileNotFoundError : public FileError { 
 public :
-  FileNotFoundError(std::string filename) : FileError(filename) { };
+  FileNotFoundError(std::string _filename) : FileError(_filename) { };
 };
 
 /** Exception: Insufficient access privileges to read file. */
 class FileAccessError : public FileError { 
 public :
-  FileAccessError(std::string filename) : FileError(filename) { };
+  FileAccessError(std::string _filename) : FileError(_filename) { };
 };
 
 } // namespace RAT
