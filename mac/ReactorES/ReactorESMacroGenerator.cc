@@ -101,7 +101,7 @@
     
 	// Open up macro file (** will delete prior contents **)
     fstream myfile;
-    myfile.open("mac/watchman_reactor_es.mac",ios::in | ios::out | ios::trunc);
+    myfile.open("watchman_reactor_es.mac",ios::in | ios::out | ios::trunc);
     myfile << fixed << setprecision(4);
     
     myfile << "#Set the detector parameters\n";

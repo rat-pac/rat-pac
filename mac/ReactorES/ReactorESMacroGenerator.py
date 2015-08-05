@@ -89,7 +89,7 @@ y = float(raw_input('y: '))
 z = float(raw_input('z: '))
 
 # Open up macro file (** will delete prior contents **)
-myfile = open('mac/watchman_reactor_es.mac','w')
+myfile = open('watchman_reactor_es.mac','w')
 
 myfile.write('#Set the detector parameters\n')
 myfile.write('/rat/db/set DETECTOR experiment \"Watchman\"\n')
