@@ -243,15 +243,15 @@ namespace RAT {
   CfSource::~CfSource()
   {;}
 
-  CfSource::CfSource(const CfSource& CfSource)
+  CfSource::CfSource(const CfSource& _CfSource)
   {
-    Isotope   = CfSource.Isotope;
-    Nneutron  = CfSource.Nneutron;
-    Ngamma    = CfSource.Ngamma;
-    neutronE  = CfSource.neutronE;
-    Tneutron  = CfSource.Tneutron;
-    gammaE    = CfSource.gammaE;
-    Tgamma    = CfSource.Tgamma;
+    Isotope   = _CfSource.Isotope;
+    Nneutron  = _CfSource.Nneutron;
+    Ngamma    = _CfSource.Ngamma;
+    neutronE  = _CfSource.neutronE;
+    Tneutron  = _CfSource.Tneutron;
+    gammaE    = _CfSource.gammaE;
+    Tgamma    = _CfSource.Tgamma;
   }    
 
   CfSource& CfSource::operator=(const CfSource& rhs){

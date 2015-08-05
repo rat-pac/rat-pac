@@ -62,7 +62,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
       if (db->Load(geo_file) == 0) {
         Log::Die("DetectorConstruction: Could not open detector geometry");
       }
-    } catch (DBNotFoundError &e) {
+    } catch (DBNotFoundError &_e) {
         Log::Die("DetectorConstruction: Could not open geo_file or detector_factory");
     }
   }

@@ -127,9 +127,9 @@ std::string otext::error_string(void) const
   return m_buffer ? m_buffer->error_string() : textio_error_string(textio_uninitialised);
 }
 
-void otext::set_error(int error)
+void otext::set_error(int _error)
 {
-  if (m_buffer) m_buffer->set_error(error);
+  if (m_buffer) m_buffer->set_error(_error);
 }
 
 void otext::clear_error (void)
@@ -692,9 +692,9 @@ std::string itext::error_string(void) const
   return m_buffer ? m_buffer->error_string() : textio_error_string(textio_uninitialised);
 }
 
-void itext::set_error(int error)
+void itext::set_error(int _error)
 {
-  if (m_buffer) m_buffer->set_error(error);
+  if (m_buffer) m_buffer->set_error(_error);
 }
 
 void itext::clear_error (void)
@@ -865,9 +865,9 @@ itext& itext::operator >> (std::string& s)
   return *this;
 }
 
-bool itext::getline(std::string& line)
+bool itext::getline(std::string& _line)
 {
-  line.erase();
+  _line.erase();
   bool result = false;
   for (;;)
   {
@@ -876,7 +876,7 @@ bool itext::getline(std::string& line)
     result = true;
     ch = get();
     if (ch == newline) break;
-    line += (char)ch;
+    _line += (char)ch;
   }
   return result;
 }
@@ -884,9 +884,9 @@ bool itext::getline(std::string& line)
 itext& itext::operator >> (std::vector<std::string>& d)
 {
   d.clear();
-  std::string line;
-  while(getline(line))
-    d.push_back(line);
+  std::string _line;
+  while(getline(_line))
+    d.push_back(_line);
   return *this;
 }
 
@@ -1082,8 +1082,8 @@ void close (itext& it)
 ////////////////////////////////////////////////////////////////////////////////
 // obuff
 
-obuff::obuff (bool line_buffer, otext::newline_t _newline) : 
-  m_line_buffer(line_buffer), 
+obuff::obuff (bool _line_buffer, otext::newline_t _newline) : 
+  m_line_buffer(_line_buffer), 
   m_newline(_newline),
   m_bytes(0),
   m_line(1),

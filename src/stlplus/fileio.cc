@@ -12,26 +12,26 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Output
 
-ofbuff::ofbuff (FILE* fh, bool line_buffer) : 
+ofbuff::ofbuff (FILE* fh, bool _line_buffer) : 
   // for unmanaged files, just pump raw bytes to the file - it is not TextIO's job to do line-endings
-  obuff(line_buffer,otext::binary_mode),
+  obuff(_line_buffer,otext::binary_mode),
   m_managed(false),
   m_handle(fh)
 {
 }
 
-ofbuff::ofbuff (const char* fname, size_t bufsize, otext::open_t mode, bool line_buffer) :
+ofbuff::ofbuff (const char* fname, size_t bufsize, otext::open_t mode, bool _line_buffer) :
   m_managed(false),
   m_handle(0)
 {
-  open(std::string(fname ? fname : ""), bufsize, mode, line_buffer);
+  open(std::string(fname ? fname : ""), bufsize, mode, _line_buffer);
 }
 
-ofbuff::ofbuff (const std::string& fname, size_t bufsize, otext::open_t mode, bool line_buffer) :
+ofbuff::ofbuff (const std::string& fname, size_t bufsize, otext::open_t mode, bool _line_buffer) :
   m_managed(false),
   m_handle(0)
 {
-  open(fname, bufsize, mode, line_buffer);
+  open(fname, bufsize, mode, _line_buffer);
 }
 
 std::string ofbuff::error_string(void) const
@@ -43,7 +43,7 @@ std::string ofbuff::error_string(void) const
     return obuff::error_string();
 }
 
-void ofbuff::open(const std::string& fname, size_t bufsize, otext::open_t mode, bool line_buffer)
+void ofbuff::open(const std::string& fname, size_t bufsize, otext::open_t mode, bool _line_buffer)
 {
   // open a managed file
   if (fname.empty())
@@ -73,7 +73,7 @@ void ofbuff::open(const std::string& fname, size_t bufsize, otext::open_t mode, 
         set_error(textio_open_failed);
     }
   }
-  set_line_buffer(line_buffer);
+  set_line_buffer(_line_buffer);
 }
 
 void ofbuff::flush (void)
