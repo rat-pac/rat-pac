@@ -77,11 +77,11 @@ public:
   callback_map m_callbacks;
   interface_map m_interfaces;
 
-  dump_context_body(const otext& device, unsigned char version) throw(persistent_dump_failed) : 
-    m_max_key(0), m_version(version), m_little_endian(::little_endian()), m_device(device)
+  dump_context_body(const otext& _device, unsigned char _version) throw(persistent_dump_failed) : 
+    m_max_key(0), m_version(_version), m_little_endian(::little_endian()), m_device(_device)
     {
       m_device.set_binary_mode();
-      put(version);
+      put(_version);
       // map a null pointer onto magic number zero
       m_pointers[0] = 0;
       if (m_version != 1 && m_version != 2)
@@ -175,10 +175,10 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-dump_context::dump_context(const otext& device, unsigned char version) throw(persistent_dump_failed) : 
+dump_context::dump_context(const otext& _device, unsigned char _version) throw(persistent_dump_failed) : 
   m_body(0)
 {
-  m_body = new dump_context_body(device,version);
+  m_body = new dump_context_body(_device,_version);
 }
 
 dump_context::~dump_context(void)
@@ -278,8 +278,8 @@ public:
   callback_map m_callbacks;
   interface_map m_interfaces;
 
-  restore_context_body(const itext& device) throw(persistent_restore_failed) : 
-    m_max_key(0), m_little_endian(::little_endian()), m_device(device)
+  restore_context_body(const itext& _device) throw(persistent_restore_failed) : 
+    m_max_key(0), m_little_endian(::little_endian()), m_device(_device)
     {
       m_device.set_binary_mode();
       // map a null pointer onto magic number zero
@@ -379,10 +379,10 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-restore_context::restore_context(const itext& device) throw(persistent_restore_failed) : 
+restore_context::restore_context(const itext& _device) throw(persistent_restore_failed) : 
   m_body(0)
 {
-  m_body = new restore_context_body(device);
+  m_body = new restore_context_body(_device);
 }
 
 restore_context::~restore_context(void)
