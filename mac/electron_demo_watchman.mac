@@ -1,0 +1,20 @@
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR detector_factory "Watchman"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+
+/rat/proclast outroot
+/rat/procset file "watchman.root"
+#END EVENT LOOP
+
+/generator/add combo gun2:point
+/generator/vtx/set e-  0 0 0 0 10.0 10.0
+/generator/pos/set 0 0 0
+
+/run/beamOn 100
+
