@@ -40,6 +40,36 @@ namespace RAT {
     ffPu241Cmd->SetGuidance("Sets the Pu241 fission fraction");
     ffPu241Cmd->SetParameterName("pu241",false);
     ffPu241Cmd->SetDefaultValue(0.066); // See ReactorESgen.cc for reason behind this value
+	  
+	// Set up ability to specify the reactor power level
+	ReactorPowerCmd = new G4UIcmdWithADouble("/generator/reactor_es/ReactorPower", this);
+	ReactorPowerCmd->SetGuidance("Sets the reactor power level (in GWth)");
+	ReactorPowerCmd->SetParameterName("reactorpower",false);
+	ReactorPowerCmd->SetDefaultValue(3.758); // Power level of Perry reactor in Ohio
+	
+	// Set up ability to specify the average energy released per fission
+	EperFissCmd = new G4UIcmdWithADouble("/generator/reactor_es/EperFission", this);
+	EperFissCmd->SetGuidance("Sets the average energy released per fission (in MeV)");
+	EperFissCmd->SetParameterName("EperFiss",false);
+	EperFissCmd->SetDefaultValue(200); // Energy released per fission of U235
+	
+	// Set up ability to specify detector-reactor distance
+	StandoffCmd = new G4UIcmdWithADouble("/generator/reactor_es/Standoff", this);
+	StandoffCmd->SetGuidance("Sets the detector-reactor standoff (in km)");
+	StandoffCmd->SetParameterName("standoff",false);
+	StandoffCmd->SetDefaultValue(13); // Distance from Watchman to Perry reactor
+	
+	// Set up ability to specify the data acquisition time
+	TimeCmd = new G4UIcmdWithADouble("/generator/reactor_es/Time", this);
+	TimeCmd->SetGuidance("Sets the acquisition time (in years)");
+	TimeCmd->SetParameterName("acqTime",false);
+	TimeCmd->SetDefaultValue(5); // I have been using 5 years
+	
+	// Set up ability to specify the size of the sample water volume
+	WvolumeCmd = new G4UIcmdWithADouble("/generator/reactor_es/WaterVol", this);
+	WvolumeCmd->SetGuidance("Sets the size of the water volume in which we are sampling (in kilotons)");
+	WvolumeCmd->SetParameterName("Wvol",false);
+	WvolumeCmd->SetDefaultValue(1); // Watchman default fiducial volume
   }
 
   ReactorESgenMessenger::~ReactorESgenMessenger() {;}
@@ -75,6 +105,39 @@ namespace RAT {
 		reactoresgen->CheckFissionFractions();
     }
 	  
+	else if ( command == ReactorPowerCmd ){
+		
+	    G4double power_ = ReactorPowerCmd->GetNewDoubleValue( newValue );
+		reactoresgen->SetReactorPower(power_);
+	}
+	  
+	else if ( command == EperFissCmd ){
+		  
+		G4double eperfission_ = EperFissCmd->GetNewDoubleValue( newValue );
+		reactoresgen->SetEnergyPerFission(eperfission_);
+	}
+	  
+	else if ( command == StandoffCmd ){
+		  
+		G4double standoff_ = StandoffCmd->GetNewDoubleValue( newValue );
+		reactoresgen->SetDetectorStandoff(standoff_);
+	}
+	  
+	else if ( command == TimeCmd ){
+		  
+		G4double time_ = TimeCmd->GetNewDoubleValue( newValue );
+		reactoresgen->SetAcquisitionTime(time_);
+	}
+	  
+	else if ( command == WvolumeCmd ){
+		  
+		G4double watervol_ = WvolumeCmd->GetNewDoubleValue( newValue );
+		reactoresgen->SetWaterVolume(watervol_);
+		
+		// We force this to be the last command so that once it is run, it will calculate the number of events and use beamOn
+		reactoresgen->CalculateNumEvents();
+	}
+	    
 	else
 		G4cerr << "\nError: Invalid ReactorESgenMessenger \"set\" command\n";
 	  
@@ -95,6 +158,21 @@ namespace RAT {
 	  else if (command == ffPu241Cmd)
 		  return ffPu241Cmd->ConvertToString(reactoresgen->GetPu241FissionFrac());
 	  
+	  else if (command == ReactorPowerCmd)
+		  return ReactorPowerCmd->ConvertToString(reactoresgen->GetReactorPower());
+	  
+	  else if (command == EperFissCmd)
+		  return EperFissCmd->ConvertToString(reactoresgen->GetEnergyPerFission());
+	  
+	  else if (command == StandoffCmd)
+		  return StandoffCmd->ConvertToString(reactoresgen->GetDetectorStandoff());
+	  
+	  else if (command == TimeCmd)
+		  return TimeCmd->ConvertToString(reactoresgen->GetAcquisitionTime());
+	  
+	  else if (command == WvolumeCmd)
+		  return WvolumeCmd->ConvertToString(reactoresgen->GetWaterVolume());
+		  
 	  else
 		  return G4String("Error: Invalid ReactorESgenMessenger \"get\" command");
 	}

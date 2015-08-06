@@ -32,6 +32,11 @@ namespace RAT {
     G4UIcmdWithADouble* ffU238Cmd;
     G4UIcmdWithADouble* ffPu239Cmd;
     G4UIcmdWithADouble* ffPu241Cmd;
+	G4UIcmdWithADouble* ReactorPowerCmd;
+	G4UIcmdWithADouble* EperFissCmd;
+	G4UIcmdWithADouble* StandoffCmd;
+	G4UIcmdWithADouble* TimeCmd;
+	G4UIcmdWithADouble* WvolumeCmd;
 
   };
 

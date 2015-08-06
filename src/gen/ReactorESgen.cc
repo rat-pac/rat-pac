@@ -140,6 +140,36 @@ namespace RAT {
     }
     
 	
+	
+	
+	void ReactorESgen::SetReactorPower(G4double _power){reactorpower = _power;}
+	
+	void ReactorESgen::SetEnergyPerFission(G4double _eperfiss){energyperfission = _eperfiss;}
+	
+	void ReactorESgen::SetDetectorStandoff(G4double _standoff){detectorstandoff = _standoff;}
+	
+	void ReactorESgen::SetAcquisitionTime(G4double _time){acquisitiontime = _time;}
+	
+	void ReactorESgen::SetWaterVolume(G4double _watervol){watervolume = _watervol;}
+	
+	void ReactorESgen::CalculateNumEvents(){
+		
+		
+		// use all messenerg class set parameters to calculate the expected number of events to run
+		// then pass that number to the UI pointer and run beamOn for that many events
+		
+		
+		
+		
+		
+		G4string runcommand = "/run/beamOn " + string(num_events);
+		G4UImanager* UI = G4UImanager::GetUIpointer();
+		UI->ApplyCommand(runcommand);
+	}
+	
+	
+	
+	
     G4double ReactorESgen::GetAntiNuEnergy() {
 
 		// We add up the energy spectra for U235, U238, Pu239, and Pu241, with their respective fractions...then multiply all by the scattering cross section.
