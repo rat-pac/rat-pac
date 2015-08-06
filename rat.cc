@@ -83,6 +83,8 @@ int main(int argc, char** argv) {
     time_t start_time = time(NULL);
     if (options.seed == -1) // No override by command switch
       options.seed = start_time ^ (pid << 16);
+	if (options.seed == 0)
+		G4cout << "WARNING: Setting a seed of 0 will produce a random set of random numbers in ROOT. If you want to generate the same set of random numbers, use a positive integer.\n";
     detail << "Seeding random number generator: " << options.seed << newline;
     CLHEP::HepRandom::setTheSeed(options.seed);
     gRandom->SetSeed(options.seed);
