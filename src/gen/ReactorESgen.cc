@@ -143,20 +143,51 @@ namespace RAT {
 	
 	
 	
-	void ReactorESgen::SetReactorPower(G4double _power){reactorpower = _power;}
-    G4double ReactorESgen::GetReactorPower(){return reactorpower;}
+	void ReactorESgen::SetReactorPower(G4double _power){
+        reactorpower = _power;
+        
+        #ifdef DEBUG
+            G4cout << "Reactor power level (in GWth) = " << reactorpower << "\n";
+        #endif
+    }
 
-	void ReactorESgen::SetEnergyPerFission(G4double _eperfiss){energyperfission = _eperfiss;}
+	void ReactorESgen::SetEnergyPerFission(G4double _eperfiss){
+        energyperfission = _eperfiss;
+        
+        #ifdef DEBUG
+            G4cout << "Average energy released per fission (in MeV) = " << energyperfission << "\n";
+        #endif
+    }
+
+	void ReactorESgen::SetDetectorStandoff(G4double _standoff){
+        detectorstandoff = _standoff;
+        
+        #ifdef DEBUG
+            G4cout << "Reactor-detector distance (in km) = " << detectorstandoff << "\n";
+        #endif
+    }
+
+	void ReactorESgen::SetAcquisitionTime(G4double _time){
+        acquisitiontime = _time;
+        
+        #ifdef DEBUG
+            G4cout << "Acquisition time (in years) = " << acquisitiontime << "\n";
+        #endif
+    }
+
+	void ReactorESgen::SetWaterVolume(G4double _watervol){
+        watervolume = _watervol;
+        
+        #ifdef DEBUG
+            G4cout << "Water volume size (in kilotons) = " << watervolume << "\n";
+        #endif
+    }
+
+    G4double ReactorESgen::GetReactorPower()    {return reactorpower;}
     G4double ReactorESgen::GetEnergyPerFission(){return energyperfission;}
-
-	void ReactorESgen::SetDetectorStandoff(G4double _standoff){detectorstandoff = _standoff;}
     G4double ReactorESgen::GetDetectorStandoff(){return detectorstandoff;}
-
-	void ReactorESgen::SetAcquisitionTime(G4double _time){acquisitiontime = _time;}
-    G4double ReactorESgen::GetAcquisitionTime(){return acquisitiontime;}
-
-	void ReactorESgen::SetWaterVolume(G4double _watervol){watervolume = _watervol;}
-    G4double ReactorESgen::GetWaterVolume(){return watervolume;}
+    G4double ReactorESgen::GetAcquisitionTime() {return acquisitiontime;}
+    G4double ReactorESgen::GetWaterVolume()     {return watervolume;}
 
 	void ReactorESgen::CalculateNumEvents(){
 		
@@ -190,22 +221,18 @@ namespace RAT {
         double Pu239_integral = Pu239foldedspectrum->Integral(0,8);
         double Pu241_integral = Pu241foldedspectrum->Integral(0,8);
         
-        // Calculate the number of expected interactions
+        // Calculate the number of expected interactions - force to integer
         int result = int((num_electrons/(4. * 3.14159 * (detectorstandoff*pow(10,5)) * (detectorstandoff*pow(10,5)))) * ((U235fissionrate*U235_integral) + (U238fissionrate*U238_integral) + (Pu239fissionrate*Pu239_integral) + (Pu241fissionrate*Pu241_integral)) * (acquisitiontime*3600.*24.*365.));
 		  
+        // Append the results to the "/run/beamOn" command and then send to the UI manager
         std::string result_string;
         std::string runstring = "/run/beamOn ";
         std::stringstream sstm;
         sstm << runstring << result;
         result_string = sstm.str();
-        
-		//G4string runcommand = "/run/beamOn " + string(num_events);
-		G4UImanager* UI = G4UImanager::GetUIpointer();
-		//UI->ApplyCommand(runcommand);
+        G4UImanager* UI = G4UImanager::GetUIpointer();
         UI->ApplyCommand(result_string);
     }
-	
-	
 	
 	
     G4double ReactorESgen::GetAntiNuEnergy() {
