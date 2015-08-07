@@ -26,10 +26,21 @@ namespace RAT {
 	void SetU238FissionFrac(G4double);
 	void SetPu239FissionFrac(G4double);
 	void SetPu241FissionFrac(G4double);
+	void SetReactorPower(G4double);
+	void SetEnergyPerFission(G4double);
+	void SetDetectorStandoff(G4double);
+	void SetAcquisitionTime(G4double);
+	void SetWaterVolume(G4double);
+	void CalculateNumEvents();
 	G4double GetU235FissionFrac();
 	G4double GetU238FissionFrac();
 	G4double GetPu239FissionFrac();
 	G4double GetPu241FissionFrac();
+	G4double GetReactorPower();
+	G4double GetEnergyPerFission();
+	G4double GetDetectorStandoff();
+	G4double GetAcquisitionTime();
+	G4double GetWaterVolume();
 
   protected:
       G4double GetAntiNuEnergy();
@@ -45,6 +56,12 @@ namespace RAT {
       double U238fraction;
       double Pu239fraction;
       double Pu241fraction;
+	  double reactorpower;
+	  double energyperfission;
+	  double detectorstandoff;
+	  double acquisitiontime;
+	  double watervolume;
+	  double num_events;
     
       ReactorESgenMessenger* messenger;
   };
