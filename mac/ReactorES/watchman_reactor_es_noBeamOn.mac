@@ -1,0 +1,32 @@
+#Set the detector parameters
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+
+/run/initialize
+/process/activate Cerenkov
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+#/rat/proc fitbonsai
+/rat/proc count
+/rat/procset update 10
+
+/rat/proclast outroot
+/rat/procset file "watchman.root"
+#END EVENT LOOP
+
+/generator/add combo reactor_es:fill
+/generator/vtx/set  0.00  0.00  1.00
+/generator/pos/set 0 0 0
+/generator/reactor_es/U235 0.496
+/generator/reactor_es/U238 0.087
+/generator/reactor_es/Pu239 0.351
+/generator/reactor_es/Pu241 0.066
+/generator/reactor_es/ReactorPower 3.758
+/generator/reactor_es/EperFission 200
+/generator/reactor_es/Standoff 13
+/generator/reactor_es/Time 1
+/generator/reactor_es/WaterVol 1
+
+
+

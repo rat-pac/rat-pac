@@ -71,6 +71,7 @@ result = (num_electrons/(4. * 3.14159 * ((standoff*(1e5))**2))) * ((U235fissionr
 # Start process of printing information to macro file
 print '\n------------------------------------------------\n'
 print '\n\nI will now write the reactor ES macro file for WATCHMAN and put it in the macro folder...\n\n'
+outputfilename = raw_input('Enter the name of the output file for the simulation (do no include extention): ')
 
 # Do you want to include the visualization commands?
 choice = raw_input('Would you like visualization included? (y/n): ')
@@ -127,10 +128,10 @@ myfile.write('#/rat/proc fitbonsai\n')
 myfile.write('/rat/proc count\n')
 myfile.write('/rat/procset update 10\n\n')
 myfile.write('/rat/proclast outroot\n')
-myfile.write('/rat/procset file \"watchman.root\"\n')
+myfile.write('/rat/procset file \"%s.root\"\n' %outputfilename)
 myfile.write('#END EVENT LOOP\n\n')
 
-myfile.write('/generator/add combo reactor_es:point\n')
+myfile.write('/generator/add combo reactor_es:fill\n')
 myfile.write('/generator/vtx/set %5.2f %5.2f %5.2f\n' %(x/(math.fabs(x+y+z)), y/(math.fabs(x+y+z)), z/(math.fabs(x+y+z))))
 myfile.write('/generator/pos/set 0 0 0\n')
 myfile.write('/generator/reactor_es/U235 %5.3f\n'  %U235concentration)
@@ -142,5 +143,5 @@ myfile.write('\n/run/beamOn %d\n\n' %result)
 
 myfile.close()
 
-print '\n\n'
+print '\n'
 

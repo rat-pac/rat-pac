@@ -31,6 +31,7 @@
 #include <G4ParticleDefinition.hh>
 #include <G4ParticleTable.hh>
 #include <G4ThreeVector.hh>
+#include <G4UIManager.hh>
 #include <Randomize.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -143,29 +144,66 @@ namespace RAT {
 	
 	
 	void ReactorESgen::SetReactorPower(G4double _power){reactorpower = _power;}
-	
+    G4double ReactorESgen::GetReactorPower(){return reactorpower;}
+
 	void ReactorESgen::SetEnergyPerFission(G4double _eperfiss){energyperfission = _eperfiss;}
-	
+    G4double ReactorESgen::GetEnergyPerFission(){return energyperfission;}
+
 	void ReactorESgen::SetDetectorStandoff(G4double _standoff){detectorstandoff = _standoff;}
-	
+    G4double ReactorESgen::GetDetectorStandoff(){return detectorstandoff;}
+
 	void ReactorESgen::SetAcquisitionTime(G4double _time){acquisitiontime = _time;}
-	
+    G4double ReactorESgen::GetAcquisitionTime(){return acquisitiontime;}
+
 	void ReactorESgen::SetWaterVolume(G4double _watervol){watervolume = _watervol;}
-	
+    G4double ReactorESgen::GetWaterVolume(){return watervolume;}
+
 	void ReactorESgen::CalculateNumEvents(){
 		
-		
-		// use all messenerg class set parameters to calculate the expected number of events to run
-		// then pass that number to the UI pointer and run beamOn for that many events
-		
-		
-		
-		
-		
-		G4string runcommand = "/run/beamOn " + string(num_events);
+        // Construct antineutrino spectra for each isotope. Fold with scattering cross-section
+        TF1 * U235foldedspectrum  = new TF1("U235spectrum", "(exp(0.870+(-0.160*x)+(-0.0910*x*x)))*(7.8*pow(10,-45)*0.511*x)",0,8);
+        TF1 * U238foldedspectrum  = new TF1("U238spectrum", "(exp(0.976+(-0.162*x)+(-0.0790*x*x)))*(7.8*pow(10,-45)*0.511*x)",0,8);
+        TF1 * Pu239foldedspectrum = new TF1("Pu239spectrum","(exp(0.896+(-0.239*x)+(-0.0981*x*x)))*(7.8*pow(10,-45)*0.511*x)",0,8);
+        TF1 * Pu241foldedspectrum = new TF1("Pu241spectrum","(exp(0.793+(-0.080*x)+(-0.1085*x*x)))*(7.8*pow(10,-45)*0.511*x)",0,8);
+        
+        // Set some parameters for the functions above
+        U235foldedspectrum-> SetNpx(10000);
+        U238foldedspectrum-> SetNpx(10000);
+        Pu239foldedspectrum->SetNpx(10000);
+        Pu241foldedspectrum->SetNpx(10000);
+        
+        // Calculate the total fission rate based off the power and energy released per fission
+        double fissionrate = (reactorpower*pow(10,9)) * 6.241509*pow(10,12) * (1./energyperfission);
+        
+        // Break up the fission rate into the 4 isotopes
+        double U235fissionrate  = fissionrate * U235fraction;
+        double U238fissionrate  = fissionrate * U238fraction;
+        double Pu239fissionrate = fissionrate * Pu239fraction;
+        double Pu241fissionrate = fissionrate * Pu241fraction;
+        
+        // Calculate the total number of availeble electrons in our water volume
+        double num_electrons = (watervolume*pow(10,9)) * (1./18.01528) * (6.022*pow(10,23)) * 10.;
+        
+        // Integrate the folded spectra over the entire energy range
+        double U235_integral  = U235foldedspectrum-> Integral(0,8);
+        double U238_integral  = U238foldedspectrum-> Integral(0,8);
+        double Pu239_integral = Pu239foldedspectrum->Integral(0,8);
+        double Pu241_integral = Pu241foldedspectrum->Integral(0,8);
+        
+        // Calculate the number of expected interactions
+        int result = int((num_electrons/(4. * 3.14159 * (detectorstandoff*pow(10,5)) * (detectorstandoff*pow(10,5)))) * ((U235fissionrate*U235_integral) + (U238fissionrate*U238_integral) + (Pu239fissionrate*Pu239_integral) + (Pu241fissionrate*Pu241_integral)) * (acquisitiontime*3600.*24.*365.));
+		  
+        std::string result_string;
+        std::string runstring = "/run/beamOn ";
+        std::stringstream sstm;
+        sstm << runstring << result;
+        result_string = sstm.str();
+        
+		//G4string runcommand = "/run/beamOn " + string(num_events);
 		G4UImanager* UI = G4UImanager::GetUIpointer();
-		UI->ApplyCommand(runcommand);
-	}
+		//UI->ApplyCommand(runcommand);
+        UI->ApplyCommand(result_string);
+    }
 	
 	
 	

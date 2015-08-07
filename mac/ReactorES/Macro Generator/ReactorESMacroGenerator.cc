@@ -83,6 +83,9 @@
      // Start process of printing information to macro file
     cout << "\n------------------------------------------------\n";
     cout << "\n\nI will now write the reactor ES macro file for WATCHMAN and put it in the macro folder...\n\n";
+    cout << "Enter the name of the output file for the simulation (do no include extention): ";
+    std::string outputfilename;
+    cin >> outputfilename;
     
 	// Do you want to include the visualization commands?
 	cout << "Would you like visualization included? (y/n): "; cin >> choice;
@@ -144,10 +147,10 @@
     myfile << "/rat/procset update 10\n\n";
     
     myfile << "/rat/proclast outroot\n";
-    myfile << "/rat/procset file \"watchman.root\"\n";
+    myfile << "/rat/procset file \"" << outputfilename << ".root\"\n";
     myfile << "#END EVENT LOOP\n\n";
     
-    myfile << "/generator/add combo reactor_es:point\n";
+    myfile << "/generator/add combo reactor_es:fill\n";
     myfile << "/generator/vtx/set " << x/(fabs(x+y+z)) << " " << y/(fabs(x+y+z)) << " " << z/(fabs(x+y+z)) << "\n";
     myfile << "/generator/pos/set 0 0 0\n";
     myfile << "/generator/reactor_es/U235 "  << U235concentration  <<"\n";
@@ -158,6 +161,8 @@
     myfile << "/run/beamOn " << int(result) << "\n";
 
     myfile.close();
+        
+    cout << "\n";
     
 	// Delete pointers
 	delete U235foldedspectrum;
