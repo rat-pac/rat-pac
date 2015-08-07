@@ -100,7 +100,6 @@ myfile.write('/process/activate Cerenkov\n\n')
     
 if (visualization):
 	myfile.write('/vis/open OGLSX 1000x1000\n')
-	myfile.write('#/vis/open VRML2FILE\n')
 	myfile.write('/vis/scene/create\n')
 	myfile.write('/vis/scene/add/volume\n')
 	myfile.write('/vis/sceneHandler/attach\n')

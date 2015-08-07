@@ -116,7 +116,6 @@
     
     if (visualization){
         myfile << "/vis/open OGLSX 1000x1000\n";
-        myfile << "#/vis/open VRML2FILE\n";
         myfile << "/vis/scene/create\n";
         myfile << "/vis/scene/add/volume\n";
         myfile << "/vis/sceneHandler/attach\n";
