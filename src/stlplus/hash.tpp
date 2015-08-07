@@ -675,7 +675,7 @@ void hash<K,T,H,E>::debug_report(otext& str, unsigned indent) const
   {
     if (m_values[i]) occupied++;
     unsigned _count = 0;
-    for (hash_element<K,T>* item = m_values[i]; item; item = item->m_next) count++;
+    for (hash_element<K,T>* item = m_values[i]; item; item = item->m_next) _count++;
     if (_count > max_in_bin) max_in_bin = _count;
     if (_count < min_in_bin) min_in_bin = _count;
   }
@@ -741,6 +741,7 @@ otext& operator << (otext& str, const hash<K,T,H,E>& table)
 
 template<typename K, typename T, class H, class E>
 void dump_hash(dump_context& context, const hash<K,T,H,E>& data)
+
   throw(persistent_dump_failed)
 {
   data.dump(context);
