@@ -41,7 +41,7 @@
 
 namespace RAT {
     
-//#define DEBUG
+#define DEBUG
  
     ReactorESgen::ReactorESgen(){
         
@@ -95,6 +95,9 @@ namespace RAT {
 		U235fraction  = u235;
 		
 		#ifdef DEBUG
+            G4cout << "\n\n--------------------------------\n";
+            G4cout << "Reactor ES generator parameters\n";
+            G4cout << "--------------------------------\n";
 			G4cout << "U235 fission fraction = " << U235fraction << "\n";
 		#endif
 	}
@@ -119,7 +122,7 @@ namespace RAT {
 		Pu241fraction = pu241;
 		
 		#ifdef DEBUG
-			G4cout << "Pu241 fission fraction = " << Pu241fraction << "\n";
+			G4cout << "Pu241 fission fraction = " << Pu241fraction << "\n\n";
 		#endif
 	}
 	
@@ -140,8 +143,6 @@ namespace RAT {
         }
     }
     
-	
-	
 	
 	void ReactorESgen::SetReactorPower(G4double _power){
         reactorpower = _power;
@@ -212,7 +213,7 @@ namespace RAT {
         double Pu239fissionrate = fissionrate * Pu239fraction;
         double Pu241fissionrate = fissionrate * Pu241fraction;
         
-        // Calculate the total number of availeble electrons in our water volume
+        // Calculate the total number of available electrons in our water volume
         double num_electrons = (watervolume*pow(10,9)) * (1./18.01528) * (6.022*pow(10,23)) * 10.;
         
         // Integrate the folded spectra over the entire energy range
@@ -223,7 +224,13 @@ namespace RAT {
         
         // Calculate the number of expected interactions - force to integer
         int result = int((num_electrons/(4. * 3.14159 * (detectorstandoff*pow(10,5)) * (detectorstandoff*pow(10,5)))) * ((U235fissionrate*U235_integral) + (U238fissionrate*U238_integral) + (Pu239fissionrate*Pu239_integral) + (Pu241fissionrate*Pu241_integral)) * (acquisitiontime*3600.*24.*365.));
-		  
+        
+        #ifdef DEBUG
+            G4cout << "Fission rate in the core = " << fissionrate << "\n";
+            G4cout << "Number of available electrons in sampling volume = " << num_electrons << "\n";
+            G4cout << "Number of expected events over " << acquisitiontime << " years = " << result << "\n\n";
+        #endif
+        
         // Append the results to the "/run/beamOn" command and then send to the UI manager
         std::string result_string;
         std::string runstring = "/run/beamOn ";
@@ -232,6 +239,7 @@ namespace RAT {
         result_string = sstm.str();
         G4UImanager* UI = G4UImanager::GetUIpointer();
         UI->ApplyCommand(result_string);
+        
     }
 	
 	

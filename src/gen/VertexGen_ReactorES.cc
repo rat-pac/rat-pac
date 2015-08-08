@@ -1,5 +1,5 @@
 // Created by Daniel Hellfeld (07/2015)
-// Directly follows from VertexGen_ES.cc
+// Follows directly from VertexGen_ES.cc
 
 #include <RAT/VertexGen_ReactorES.hh>
 #include <RAT/ReactorESgen.hh>

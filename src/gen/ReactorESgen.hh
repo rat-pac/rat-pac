@@ -1,5 +1,5 @@
 // Created by Daniel Hellfeld (07/2015)
-// Directly follows from ESgen.hh
+// Follows directly from ESgen.hh
 
 #ifndef __RAT_ReactorESgen__
 #define __RAT_ReactorESgen__
