@@ -19,7 +19,7 @@
 /generator/vtx/set  0 0 1
 /generator/pos/set 0 0 0
 
-# The user can adjust the isotopic fission fractions here. They must add up to one, or the defaults will be used.
+# The user can adjust the isotopic fission fractions here. They must add up to one, or the defaults will be used
 /generator/reactor_es/U235 0.496
 /generator/reactor_es/U238 0.087
 /generator/reactor_es/Pu239 0.351
