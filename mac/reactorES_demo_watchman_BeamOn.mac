@@ -1,0 +1,31 @@
+# SET THE DETECTOR PARAMTERS
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+
+/run/initialize
+/process/activate Cerenkov
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+
+/rat/proclast outroot
+/rat/procset file "watchman.root"
+# END EVENT LOOP
+
+# SETTING UP THE GENERATOR
+/generator/add combo reactor_es:fill
+/generator/vtx/set  0 0 1
+/generator/pos/set 0 0 0
+
+# The user can adjust the isotopic fission fractions here. They must add up to one, or the defaults will be used.
+/generator/reactor_es/U235 0.496
+/generator/reactor_es/U238 0.087
+/generator/reactor_es/Pu239 0.351
+/generator/reactor_es/Pu241 0.066
+
+# Number of events to run
+/run/beamOn 100
+
+

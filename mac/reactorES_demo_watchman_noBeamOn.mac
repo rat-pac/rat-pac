@@ -1,4 +1,4 @@
-#Set the detector parameters
+# SET THE DETECTOR PARAMTERS
 /rat/db/set DETECTOR experiment "Watchman"
 /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
 
@@ -7,26 +7,31 @@
 
 # BEGIN EVENT LOOP
 /rat/proc simpledaq
-#/rat/proc fitbonsai
 /rat/proc count
 /rat/procset update 10
 
 /rat/proclast outroot
 /rat/procset file "watchman.root"
-#END EVENT LOOP
+# END EVENT LOOP
 
+# SETTING UP THE GENERATOR
 /generator/add combo reactor_es:fill
-/generator/vtx/set  0.00  0.00  1.00
+/generator/vtx/set  0 0 1
 /generator/pos/set 0 0 0
+
+# The user can adjust the isotopic fission fractions here. They must add up to one, or the defaults will be used.
 /generator/reactor_es/U235 0.496
 /generator/reactor_es/U238 0.087
 /generator/reactor_es/Pu239 0.351
 /generator/reactor_es/Pu241 0.066
+
+# If the user does not want to include a /run/beamOn command, the following 5 commands can be used (in this order) to calculate
+# and run the number of expected events in the sampling volume over a specified period of time. If these commands are used, the
+# /run/beamOn command should not be included
 /generator/reactor_es/ReactorPower 3.758
 /generator/reactor_es/EperFission 200
 /generator/reactor_es/Standoff 13
 /generator/reactor_es/Time 1
 /generator/reactor_es/WaterVol 1
-
 
 
