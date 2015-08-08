@@ -234,16 +234,16 @@ This command sets the value of sine-squared of the weak mixing angle; the defaul
 
 This command sets the value of the neutrino magnetic moment (units are Bohr magnetons); the default is 0.
 
-reactor_e
-'''''''''
+reactor_es
+''''''''''
 
 ::
 
     /generator/vtx/set  dir_x dir_y dir_z
 
-Elastic-scattering events caused by the interaction of a neutrino with an electron.  The event is initialized with the product of the reaction, an electron.  The initial direction of the neutrino is along the (dir_x, dir_y, dir_z) vector.  The neutrino energy is drawn from the spectrum dependent on the user specified fission fractions in the reactor core, and the electron direction distribution is weighted by the differential cross section of the interaction.
+Elastic-scattering events caused by the interaction of a nuclear reactor based antineutrino with an electron in a water detector.  The event is initialized with the product of the reaction, an electron.  The initial direction of the neutrino is along the (dir_x, dir_y, dir_z) vector.  The neutrino energy is drawn from the spectrum dependent on the user specified fission fractions in the reactor core, and the electron direction distribution is weighted by the differential cross section of the interaction.
 
-There are four fissionable isotopes that contribute to the antineutrino energy spectrum. The fission fractions can be controlled by the following macro commands:
+There are four fissionable isotopes that contribute to the antineutrino flux and energy spectrum. The fission fractions can be controlled by the following macro commands:
 
 ::
 
@@ -275,6 +275,7 @@ This command sets the value of the Pu-241 fission fraction in the core; the defa
 
 The four fission fractions must add up to 1, or the default values will be used. The defaults correspond to the typical fission fractions in a mid-cycle pressurized light water reactor.  
 
+
 The generator also has the ability to calculate and run the number of expected events based on the reactor power level, the average energy released per fission, the reactor-detector distance (standoff), the acquisition time, and the size of the sampling volume. The parameters can be controlled by the following macro commands:
 
 ::
@@ -282,37 +283,37 @@ The generator also has the ability to calculate and run the number of expected e
     /generator/reactor_es/ReactorPower reactor_power
 
 
-This command sets the value of reactors power level in GWth; the default is 3.758 GWth.
+This command sets the value of reactor power level (in GWth); the default is 3.758.
 
 ::
 
     /generator/reactor_es/EperFission energy_per_fission
 
 
-This command sets the average energy released per fission in MeV; the default is 200 MeV.
+This command sets the average energy released per fission (in MeV); the default is 200.
 
 ::
 
     /generator/reactor_es/Standoff reactor_detector_distance
 
 
-This command sets the distance between the reactor and detector in km; the default is 13 km.
+This command sets the distance between the reactor and detector (in km); the default is 13.
 
 ::
 
     /generator/reactor_es/Time _time
 
 
-This command sets the length of the data acquisition time in years; the default is 5.
+This command sets the length of the data acquisition time (in years); the default is 5.
 
 ::
 
     /generator/reactor_es/WaterVol water_volume
 
 
-This command sets the size of the water volume in kilotons in which the sampling is being done; the default is 1.
+This command sets the size of the water volume in which the sampling is being done (in kilotons); the default is 1.
 
-The above five commands should be used in this order because once the /generator/es/WaterVol is called, the expected number of events will be calculated and the "/run/beamOn" command will be called. Also, if these commands are used, the /run/beamOn statement should not be included in the macro file.
+The above five commands must be used together and used in the order presented here (once the /generator/reactor_es/WaterVol is called, the expected number of events will be calculated and the "/run/beamOn" command will be called). Also, if these commands are used, the /run/beamOn statement should not be included in the macro file.
 
 pbomb
 '''''
