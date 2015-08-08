@@ -313,7 +313,7 @@ This command sets the length of the data acquisition time (in years); the defaul
 
 This command sets the size of the water volume in which the sampling is being done (in kilotons); the default is 1.
 
-The above five commands must be used together and used in the order presented here (once the /generator/reactor_es/WaterVol is called, the expected number of events will be calculated and the "/run/beamOn" command will be called). Also, if these commands are used, the /run/beamOn statement should not be included in the macro file.
+The above five commands must be used together and used in the order presented here (once the "/generator/reactor_es/WaterVol" is called, the expected number of events will be calculated and the "/run/beamOn" command will be called). Therefore, if these five commands are used, the "/run/beamOn" statement should not be included in the macro file.
 
 pbomb
 '''''
