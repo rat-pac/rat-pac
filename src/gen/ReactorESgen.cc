@@ -12,7 +12,8 @@
 //
 // ========================================================================================
 
-// ROOT includes (I use root to randomly sample the neutrino energy spectrum and differential scattering cross-section)
+// ROOT includes (I use ROOT to randomly sample the neutrino energy spectrum and differential scattering cross-section)
+// ...might be able to remove some of these
 #include "TApplication.h"
 #include "TROOT.h"
 #include "TF1.h"
@@ -41,7 +42,7 @@
 
 namespace RAT {
     
-#define DEBUG
+//#define DEBUG
  
     ReactorESgen::ReactorESgen(){
         
@@ -88,11 +89,15 @@ namespace RAT {
     void ReactorESgen::SetDefaultFissionFractions(){
         
 		// Values are taken from G. Zacek, et. al., Physical Review D 34 (2621) 1986.
-        U235fraction = 0.496; U238fraction = 0.087; Pu239fraction = 0.351; Pu241fraction = 0.066;
+        U235fraction  = 0.496;
+        U238fraction  = 0.087;
+        Pu239fraction = 0.351;
+        Pu241fraction = 0.066;
     }
     
 	void ReactorESgen::SetU235FissionFrac (G4double u235) {
-		U235fraction  = u235;
+		
+        U235fraction  = u235;
 		
 		#ifdef DEBUG
             G4cout << "\n\n--------------------------------\n";
@@ -103,7 +108,8 @@ namespace RAT {
 	}
 	
 	void ReactorESgen::SetU238FissionFrac (G4double u238) {
-		U238fraction  = u238;
+		
+        U238fraction  = u238;
 		
 		#ifdef DEBUG
 			G4cout << "U238 fission fraction = " << U238fraction << "\n";
@@ -111,7 +117,8 @@ namespace RAT {
 	}
 	
 	void ReactorESgen::SetPu239FissionFrac(G4double pu239){
-		Pu239fraction = pu239;
+		
+        Pu239fraction = pu239;
 		
 		#ifdef DEBUG
 			G4cout << "Pu239 fission fraction = " << Pu239fraction << "\n";
@@ -119,18 +126,29 @@ namespace RAT {
 	}
 	
 	void ReactorESgen::SetPu241FissionFrac(G4double pu241){
-		Pu241fraction = pu241;
+		
+        Pu241fraction = pu241;
 		
 		#ifdef DEBUG
 			G4cout << "Pu241 fission fraction = " << Pu241fraction << "\n\n";
 		#endif
 	}
 	
-	G4double ReactorESgen::GetU235FissionFrac() {return U235fraction;}
-	G4double ReactorESgen::GetU238FissionFrac() {return U238fraction;}
-	G4double ReactorESgen::GetPu239FissionFrac(){return Pu239fraction;}
-	G4double ReactorESgen::GetPu241FissionFrac(){return Pu241fraction;}
-	
+	G4double ReactorESgen::GetU235FissionFrac(){
+        return U235fraction;
+    }
+    
+	G4double ReactorESgen::GetU238FissionFrac(){
+        return U238fraction;
+    }
+    
+	G4double ReactorESgen::GetPu239FissionFrac(){
+        return Pu239fraction;
+    }
+    
+	G4double ReactorESgen::GetPu241FissionFrac(){
+        return Pu241fraction;
+    }
 	
     void ReactorESgen::CheckFissionFractions() {
         
@@ -143,8 +161,8 @@ namespace RAT {
         }
     }
     
-	
 	void ReactorESgen::SetReactorPower(G4double _power){
+        
         reactorpower = _power;
         
         #ifdef DEBUG
@@ -153,6 +171,7 @@ namespace RAT {
     }
 
 	void ReactorESgen::SetEnergyPerFission(G4double _eperfiss){
+       
         energyperfission = _eperfiss;
         
         #ifdef DEBUG
@@ -161,6 +180,7 @@ namespace RAT {
     }
 
 	void ReactorESgen::SetDetectorStandoff(G4double _standoff){
+        
         detectorstandoff = _standoff;
         
         #ifdef DEBUG
@@ -169,6 +189,7 @@ namespace RAT {
     }
 
 	void ReactorESgen::SetAcquisitionTime(G4double _time){
+       
         acquisitiontime = _time;
         
         #ifdef DEBUG
@@ -177,6 +198,7 @@ namespace RAT {
     }
 
 	void ReactorESgen::SetWaterVolume(G4double _watervol){
+       
         watervolume = _watervol;
         
         #ifdef DEBUG
@@ -184,11 +206,25 @@ namespace RAT {
         #endif
     }
 
-    G4double ReactorESgen::GetReactorPower()    {return reactorpower;}
-    G4double ReactorESgen::GetEnergyPerFission(){return energyperfission;}
-    G4double ReactorESgen::GetDetectorStandoff(){return detectorstandoff;}
-    G4double ReactorESgen::GetAcquisitionTime() {return acquisitiontime;}
-    G4double ReactorESgen::GetWaterVolume()     {return watervolume;}
+    G4double ReactorESgen::GetReactorPower(){
+        return reactorpower;
+    }
+    
+    G4double ReactorESgen::GetEnergyPerFission(){
+        return energyperfission;
+    }
+    
+    G4double ReactorESgen::GetDetectorStandoff(){
+        return detectorstandoff;
+    }
+    
+    G4double ReactorESgen::GetAcquisitionTime(){
+        return acquisitiontime;
+    }
+    
+    G4double ReactorESgen::GetWaterVolume(){
+        return watervolume;
+    }
 
 	void ReactorESgen::CalculateNumEvents(){
 		
@@ -242,10 +278,9 @@ namespace RAT {
         
     }
 	
-	
     G4double ReactorESgen::GetAntiNuEnergy() {
 
-		// We add up the energy spectra for U235, U238, Pu239, and Pu241, with their respective fractions...then multiply all by the scattering cross section.
+		// We add up the energy spectra for U235, U238, Pu239, and Pu241, with their respective fractions...then multiply by the scattering cross section.
 		// The parameter values used in the exponential polynomials for each isotope are taken from P. Vogel, J. Engel, Physical Review D 39 (3378) 1989.
         TF1 * foldedenergyspectrum = new TF1("energyspectrum", "(7.8*pow(10,-45)*0.511*x)*(((((([0]*exp(0.870+(-0.160*x)+(-0.0910*x*x)))+([1]*exp(0.896+(-0.239*x)+(-0.0981*x*x)))+([2]*exp(0.793+(-0.080*x)+(-0.1085*x*x)))+([3]*exp(0.976+(-0.162*x)+(-0.0790*x*x))))))))",0,8);
         
@@ -266,7 +301,6 @@ namespace RAT {
         
         return E_neutrino;
     }
-    
     
     G4double ReactorESgen::GetElectronEnergy(G4double enu){
 
@@ -294,7 +328,6 @@ namespace RAT {
         
         return E_electron;
     }
- 
     
     CLHEP::HepLorentzVector ReactorESgen::GetEmomentum(G4double enu, G4double eelectron, G4ThreeVector neutrino_dir) {
         

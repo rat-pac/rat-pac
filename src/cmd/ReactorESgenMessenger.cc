@@ -15,31 +15,31 @@ namespace RAT {
       
     // Commands will in a /generator/reactor_es/ directory
     G4UIdirectory* dir = new G4UIdirectory("/generator/reactor_es/");
-    dir->SetGuidance("Control the physics parameters of the D.Hellfeld elastic-scattering generator");
+    dir->SetGuidance("Control the physics parameters of the reactor antineutrino elastic-scattering generator");
 
 	// Set up ability to specify U235 fission fraction
     ffU235Cmd = new G4UIcmdWithADouble("/generator/reactor_es/U235", this);
     ffU235Cmd->SetGuidance("Sets the U235 fission fraction");
     ffU235Cmd->SetParameterName("u235",false);
-    ffU235Cmd->SetDefaultValue(0.496); // See ReactorESgen.cc for reason behind this value
+    ffU235Cmd->SetDefaultValue(0.496); // Typical mid-cycle PWR value
       
 	// Set up ability to specify U238 fission fraction
     ffU238Cmd = new G4UIcmdWithADouble("/generator/reactor_es/U238", this);
     ffU238Cmd->SetGuidance("Sets the U238 fission fraction");
     ffU238Cmd->SetParameterName("u238",false);
-    ffU238Cmd->SetDefaultValue(0.087); // See ReactorESgen.cc for reason behind this value
+    ffU238Cmd->SetDefaultValue(0.087); // Typical mid-cycle PWR value
       
 	// Set up ability to specify Pu239 fission fraction
     ffPu239Cmd = new G4UIcmdWithADouble("/generator/reactor_es/Pu239", this);
     ffPu239Cmd->SetGuidance("Sets the Pu239 fission fraction");
     ffPu239Cmd->SetParameterName("pu239",false);
-    ffPu239Cmd->SetDefaultValue(0.351); // See ReactorESgen.cc for reason behind this value
+    ffPu239Cmd->SetDefaultValue(0.351); // Typical mid-cycle PWR value
       
 	// Set up ability to specify Pu241 fission fraction
     ffPu241Cmd = new G4UIcmdWithADouble("/generator/reactor_es/Pu241", this);
     ffPu241Cmd->SetGuidance("Sets the Pu241 fission fraction");
     ffPu241Cmd->SetParameterName("pu241",false);
-    ffPu241Cmd->SetDefaultValue(0.066); // See ReactorESgen.cc for reason behind this value
+    ffPu241Cmd->SetDefaultValue(0.066); // Typical mid-cycle PWR value
 	  
 	// Set up ability to specify the reactor power level
 	ReactorPowerCmd = new G4UIcmdWithADouble("/generator/reactor_es/ReactorPower", this);
@@ -77,8 +77,7 @@ namespace RAT {
   void ReactorESgenMessenger::SetNewValue(G4UIcommand* command, G4String newValue){
 
     if ( command == ffU235Cmd ){
-        
-		// Retrieve and set value
+
         G4double ffU235 = ffU235Cmd->GetNewDoubleValue( newValue );
         reactoresgen->SetU235FissionFrac( ffU235 );
     }

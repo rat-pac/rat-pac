@@ -32,6 +32,7 @@ namespace RAT {
 	void SetAcquisitionTime(G4double);
 	void SetWaterVolume(G4double);
 	void CalculateNumEvents();
+      
 	G4double GetU235FissionFrac();
 	G4double GetU238FissionFrac();
 	G4double GetPu239FissionFrac();
