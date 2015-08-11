@@ -83,7 +83,9 @@ int main(int argc, char** argv) {
     time_t start_time = time(NULL);
     if (options.seed == -1) // No override by command switch
       options.seed = start_time ^ (pid << 16);
-	if (options.seed == 0)
+      // Added by D. Hellfeld (8/15). Calling gRandom->(0) will set a random seed and
+      // generate a random set of random numbers in ROOT. If the user uses "-s0", we print out a warning.
+    if (options.seed == 0)
 		G4cout << "\n\nWARNING: Setting a seed of 0 will produce a random set of random numbers in ROOT. If you want to generate the same set of random numbers, use a positive integer.\n\n";
     detail << "Seeding random number generator: " << options.seed << newline;
     CLHEP::HepRandom::setTheSeed(options.seed);
