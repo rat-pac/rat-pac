@@ -25,9 +25,9 @@
 /generator/reactor_es/Pu239 0.351
 /generator/reactor_es/Pu241 0.066
 
-# If the user does not want to include a /run/beamOn command, the following 5 commands can be used (in this order) to calculate
-# and run the number of expected events in the sampling volume over a specified period of time. If these commands are used, the
-# /run/beamOn command should not be included
+# If the user does not want to include a /run/beamOn command, the following 5 commands can be used 
+# (in this order) to calculate and run the number of expected events in the sampling volume over a specified 
+# period of time. If these commands are used, the /run/beamOn command should not be included
 /generator/reactor_es/ReactorPower 3.758
 /generator/reactor_es/EperFission 200
 /generator/reactor_es/Standoff 13
