@@ -7,6 +7,7 @@
 #include <G4UIcommand.hh>
 #include <G4UIdirectory.hh>
 #include <G4UIcmdWithADouble.hh>
+#include <G4UIcmdWithoutParameter.hh>
 #include <G4String.hh>
 
 namespace RAT {
@@ -70,7 +71,11 @@ namespace RAT {
 	WvolumeCmd->SetGuidance("Sets the size of the water volume in which we are sampling (in kilotons)");
 	WvolumeCmd->SetParameterName("Wvol",false);
 	WvolumeCmd->SetDefaultValue(1); // Watchman default fiducial volume
-  }
+	  
+	// Command to calculate and run the expected number of events
+	reactorESrunCmd = new G4UIcmdWithoutParameter("/generator/reactor_es/run", this);
+	reactorESrunCmd->SetGuidance("Calculates and run the number of events expected with user inputted parameters");
+ }
 
   ReactorESgenMessenger::~ReactorESgenMessenger() {;}
   
@@ -132,8 +137,10 @@ namespace RAT {
 		  
 		G4double watervol_ = WvolumeCmd->GetNewDoubleValue( newValue );
 		reactoresgen->SetWaterVolume(watervol_);
+	}
+	  
+	else if ( command == reactorESrunCmd ){
 		
-		// We force this to be the last command so that once it is run, it will calculate the number of events and use beamOn
 		reactoresgen->CalculateNumEvents();
 	}
 	    

@@ -276,7 +276,7 @@ This command sets the value of the Pu-241 fission fraction in the core; the defa
 The four fission fractions must add up to 1, or the default values will be used. The defaults correspond to the typical fission fractions in a mid-cycle pressurized light water reactor.  
 
 
-The generator also has the ability to calculate and run the number of expected events based on the reactor power level, the average energy released per fission, the reactor-detector distance (standoff), the acquisition time, and the size of the sampling volume. The parameters can be controlled by the following macro commands:
+The generator also has the ability to calculate and run the number of expected events based on the reactor power level, the average energy released per fission, the reactor-detector distance (standoff), the acquisition time, and the size of the sampling volume. The parameters can be controlled by the following five macro commands:
 
 ::
 
@@ -313,7 +313,14 @@ This command sets the length of the data acquisition time (in years); the defaul
 
 This command sets the size of the water volume in which the sampling is being done (in kilotons); the default is 1.
 
-The above five commands must be used together and used in the order presented here (once the "/generator/reactor_es/WaterVol" command is called, the expected number of events will be calculated and the "/run/beamOn" command will be called). Therefore, if these five commands are used, the "/run/beamOn" statement should not be included in the macro file.
+Once the five commands above have been called, the following command must be called to start the simulation:
+
+::
+
+    /generator/reactor_es/run
+
+
+If this command is used, the typicall “/run/beamOn” command should not be used in the macro.
 
 pbomb
 '''''

@@ -10,6 +10,7 @@
 // Forward declarations
 class G4UIcommand;
 class G4UIcmdWithADouble;
+class G4UIcmdWithoutParameter;
 
 namespace RAT {
 
@@ -37,6 +38,7 @@ namespace RAT {
 	G4UIcmdWithADouble* StandoffCmd;
 	G4UIcmdWithADouble* TimeCmd;
 	G4UIcmdWithADouble* WvolumeCmd;
+	G4UIcmdWithoutParameter* reactorESrunCmd;
 
   };
 
