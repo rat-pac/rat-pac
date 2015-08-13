@@ -313,14 +313,14 @@ This command sets the length of the data acquisition time (in years); the defaul
 
 This command sets the size of the water volume in which the sampling is being done (in kilotons); the default is 1.
 
-Once the five commands above have been called, the following command must be called to start the simulation:
+Once the five commands above have been called, the following command must be called to start the simulation (note there is no parameter):
 
 ::
 
     /generator/reactor_es/run
 
 
-If this command is used, the typicall “/run/beamOn” command should not be used in the macro.
+If this command is used, the typical “/run/beamOn” command should not be used in the macro.
 
 pbomb
 '''''
