@@ -26,12 +26,12 @@
 /generator/reactor_es/Pu241 0.066
 
 # If the user does not want to include a /run/beamOn command, the following 5 commands can be used 
-# (in this order) to calculate and run the number of expected events in the sampling volume over a specified 
+#  to calculate and run the number of expected events in the sampling volume over a specified 
 # period of time. 
 /generator/reactor_es/ReactorPower 3.758
 /generator/reactor_es/EperFission 200
 /generator/reactor_es/Standoff 13
-/generator/reactor_es/Time 0.1
+/generator/reactor_es/Time 5
 /generator/reactor_es/WaterVol 1
 
 # Tell the generator to calculate the number of expected events and start the simulation. Using this replaces
