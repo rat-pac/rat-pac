@@ -34,7 +34,7 @@
 /generator/reactor_es/Time 5
 /generator/reactor_es/WaterVol 1
 
-# Tell the generator to calculate the number of expected events and start the simulation. Using this replaces
-# the need to include the “/run/beamOn” command
+# Tell the generator to calculate the number of expected events and start the simulation. Using this (in
+# conjuction with the 5 commands above) replaces the need to include the “/run/beamOn” command
 /generator/reactor_es/run
 
