@@ -237,11 +237,14 @@ This command sets the value of the neutrino magnetic moment (units are Bohr magn
 reactor_es
 ''''''''''
 
+Elastic-scattering events caused by the interaction of a nuclear reactor based antineutrino with an electron in a water detector.  The event is initialized with the product of the reaction, an electron.  The initial direction of the neutrino is along the (dir_x, dir_y, dir_z) vector, set by the following command:
+
 ::
 
     /generator/vtx/set  dir_x dir_y dir_z
 
-Elastic-scattering events caused by the interaction of a nuclear reactor based antineutrino with an electron in a water detector.  The event is initialized with the product of the reaction, an electron.  The initial direction of the neutrino is along the (dir_x, dir_y, dir_z) vector.  The neutrino energy is drawn from the spectrum dependent on the user specified fission fractions in the reactor core, and the electron direction distribution is weighted by the differential cross section of the interaction.
+
+The neutrino energy is drawn from the spectrum dependent on the user specified fission fractions in the reactor core, and the electron direction distribution is weighted by the differential cross section of the interaction.
 
 There are four fissionable isotopes that contribute to the antineutrino flux and energy spectrum. The fission fractions can be controlled by the following macro commands:
 
