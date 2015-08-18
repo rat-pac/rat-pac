@@ -332,6 +332,7 @@ namespace RAT {
     CLHEP::HepLorentzVector ReactorESgen::GetEmomentum(G4double enu, G4double eelectron, G4ThreeVector neutrino_dir) {
         
 		// Calculate scattering angle from neutrino and scattered electron energy
+		// Taken from C. Giunti, C. Kim, Fundamentals of Neutrino Physics and Astrophysics, Oxford University Press, Oxford, 2007.
         G4double theta = acos((sqrt(((eelectron*(pow((m_e+enu),2)))/((2*m_e*(pow(enu,2)))+((pow(enu,2))*eelectron))))));
 		
         #ifdef DEBUG
