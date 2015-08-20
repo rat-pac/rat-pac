@@ -159,11 +159,18 @@ std::vector<double> DBTable::GetDArray(const std::string &name) const {
     me->datbl_deferred.erase(name);
   }
     
-  if (!table.isMember(name))
+  if (!table.isMember(name)) {
     throw DBNotFoundError(tblname, index, name);
-  else if (GetFieldType(name) != DOUBLE_ARRAY)
+  } else if (GetFieldType(name) == INTEGER_ARRAY) {
+    const std::vector<int> iv = GetIArray(name);
+    std::vector<double> v(iv.size());
+    for (size_t i = 0; i < iv.size(); i++) {
+        v[i] = iv[i];
+    }
+    return v;
+  } else if (GetFieldType(name) != DOUBLE_ARRAY) {
     throw DBWrongTypeError(tblname, index, name, DOUBLE_ARRAY, GetFieldType(name));
-  else {
+  } else {
     const json::Value &json_array = table[name];
     return json_array.toVector<double>();
   }    
