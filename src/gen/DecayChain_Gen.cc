@@ -14,7 +14,7 @@
 #include <G4Event.hh>
 #include <G4PrimaryVertex.hh>
 #include <G4PrimaryParticle.hh>
-#include <G4ParticleTable.hh>
+#include <G4IonTable.hh>
 #include <G4Electron.hh>
 #include <G4Gamma.hh>
 #include <G4Alpha.hh>
@@ -78,8 +78,7 @@ namespace RAT {
 	    G4int A = (pid-100000000)/1000;
 	    G4int Z = (pid-100000000) - A*1000;
 	    G4double excitationEnergy = 0.0; // assume all in ground state
-	    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-	    particleDef = particleTable->GetIon(Z, A, excitationEnergy);
+	    particleDef = G4IonTable::GetIonTable()->GetIon(Z, A, excitationEnergy);
 	  }
 	else {
 	  if( pid == DecayBeta ) 

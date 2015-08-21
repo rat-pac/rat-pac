@@ -32,10 +32,10 @@ public:
 // checks
 
 template<typename K, typename T, class H, class E, typename V>
-void hash_iterator<K,T,H,E,V>::check_owner(const hash<K,T,H,E>* owner) const
+void hash_iterator<K,T,H,E,V>::check_owner(const hash<K,T,H,E>* _owner) const
   throw(wrong_object)
 {
-  if (owner != m_owner)
+  if (_owner != m_owner)
     throw wrong_object("hash iterator");
 }
 
@@ -64,11 +64,11 @@ void hash_iterator<K,T,H,E,V>::check_valid(void) const
 }
 
 template<typename K, typename T, class H, class E, typename V>
-void hash_iterator<K,T,H,E,V>::check(const hash<K,T,H,E>* owner) const
+void hash_iterator<K,T,H,E,V>::check(const hash<K,T,H,E>* _owner) const
   throw(wrong_object,null_dereference,end_dereference)
 {
   check_valid();
-  if (owner) check_owner(owner);
+  if (_owner) check_owner(_owner);
 }
 
 // null constructor
@@ -85,10 +85,10 @@ hash_iterator<K,T,H,E,V>::hash_iterator(void) :
 // if the hash is empty, m_bin gets set to m_bins, so this becomes an end() iterator
 
 template<typename K, typename T, class H, class E, typename V>
-hash_iterator<K,T,H,E,V>::hash_iterator(const hash<K,T,H,E>* owner, unsigned bin, hash_element<K,T>* element) :
-  m_owner(owner), m_bin(bin), m_element(element)
+hash_iterator<K,T,H,E,V>::hash_iterator(const hash<K,T,H,E>* _owner, unsigned bin, hash_element<K,T>* element) :
+  m_owner(_owner), m_bin(bin), m_element(element)
 {
-  DEBUG_ASSERT(owner);
+  DEBUG_ASSERT(_owner);
   if (!element)
   {
     for (; m_bin < m_owner->m_bins; m_bin++)
@@ -651,9 +651,9 @@ void hash<K,T,H,E>::restore(restore_context& context)
   throw(persistent_restore_failed)
 {
   erase();
-  size_t size = 0;
-  ::restore(context,size);
-  for (size_t j = 0; j < size; j++)
+  size_t _size = 0;
+  ::restore(context,_size);
+  for (size_t j = 0; j < _size; j++)
   {
     K key;
     ::restore(context,key);
@@ -674,10 +674,10 @@ void hash<K,T,H,E>::debug_report(otext& str, unsigned indent) const
   for (unsigned i = 0; i < m_bins; i++)
   {
     if (m_values[i]) occupied++;
-    unsigned count = 0;
-    for (hash_element<K,T>* item = m_values[i]; item; item = item->m_next) count++;
-    if (count > max_in_bin) max_in_bin = count;
-    if (count < min_in_bin) min_in_bin = count;
+    unsigned _count = 0;
+    for (hash_element<K,T>* item = m_values[i]; item; item = item->m_next) _count++;
+    if (_count > max_in_bin) max_in_bin = _count;
+    if (_count < min_in_bin) min_in_bin = _count;
   }
   // now print the table
   print_indent(str, indent); str << "------------------------------------------------------------------------" << endl;
@@ -701,12 +701,12 @@ void hash<K,T,H,E>::debug_report(otext& str, unsigned indent) const
       print_indent(str, indent); 
       str << "| " << pad(::to_string(j/10*10), align_right, 6) << " |";
     }
-    unsigned count = 0;
-    for (hash_element<K,T>* item = m_values[j]; item; item = item->m_next) count++;
-    if (!count)
+    unsigned _count = 0;
+    for (hash_element<K,T>* item = m_values[j]; item; item = item->m_next) _count++;
+    if (!_count)
       str << "     .";
     else
-      str << pad(::to_string(count), align_right, 6);
+      str << pad(::to_string(_count), align_right, 6);
   }
   str << endl;
   print_indent(str, indent); str << "------------------------------------------------------------------------" << endl;
@@ -741,6 +741,7 @@ otext& operator << (otext& str, const hash<K,T,H,E>& table)
 
 template<typename K, typename T, class H, class E>
 void dump_hash(dump_context& context, const hash<K,T,H,E>& data)
+
   throw(persistent_dump_failed)
 {
   data.dump(context);

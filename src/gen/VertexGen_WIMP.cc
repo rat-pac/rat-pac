@@ -5,7 +5,7 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <G4Event.hh>
-#include <G4ParticleTable.hh>
+#include <G4IonTable.hh>
 #include <G4PrimaryParticle.hh>
 #include <G4PrimaryVertex.hh>
 #include <G4ThreeVector.hh>
@@ -73,9 +73,9 @@ namespace RAT {
       Log::Die("VertexGen_WIMP: Incorrect vertex setting " + newValues);
 
     if (fNucleusName == "Ar40")
-      fNucleus = G4ParticleTable::GetParticleTable()->GetIon(18, 40, 0.0);
+      fNucleus = G4IonTable::GetIonTable()->GetIon(18, 40, 0.0);
     else if (fNucleusName == "Ne20")
-      fNucleus = G4ParticleTable::GetParticleTable()->GetIon(10, 20, 0.0);
+      fNucleus = G4IonTable::GetIonTable()->GetIon(10, 20, 0.0);
     else
       Log::Die("VertexGen_WIMP: Unknown nucleus " + fNucleusName);
 

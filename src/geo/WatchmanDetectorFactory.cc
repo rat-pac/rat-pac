@@ -9,12 +9,13 @@ using namespace std;
 
 namespace RAT {
 
-    void WatchmanDetectorFactory::DefineDetector(DBLinkPtr detector) {
-        const double photocathode_coverage = detector->GetD("photocathode_coverage");
-        const double veto_coverage = detector->GetD("veto_coverage");
+    void WatchmanDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
+        DB *db = DB::Get();
+        DBLinkPtr params = db->GetLink("WATCHMAN_PARAMS");
+        const double photocathode_coverage = params->GetD("photocathode_coverage");
+        const double veto_coverage = params->GetD("veto_coverage");
         const double veto_offset = 700;
         const std::string geo_template = "Watchman/Watchman.geo";
-        DB *db = DB::Get();
         if (db->Load(geo_template) == 0) {
             Log::Die("WatchmanDetectorFactory: could not load template Watchman/Watchman.geo");
         }
