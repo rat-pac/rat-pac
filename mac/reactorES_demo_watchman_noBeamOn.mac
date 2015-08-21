@@ -8,10 +8,10 @@
 # BEGIN EVENT LOOP
 /rat/proc simpledaq
 /rat/proc count
-/rat/procset update 10
+/rat/procset update 200
 
 /rat/proclast outroot
-/rat/procset file "watchman.root"
+/rat/procset file "watchman_5years_comparetoRMSim_2.root"
 # END EVENT LOOP
 
 # SETTING UP THE GENERATOR

@@ -58,6 +58,7 @@ namespace RAT {
         g_1     = 0.23;
         g_2     = 0.73;
         pi	    = 3.141592653589793238;
+		
   }
 
 
@@ -275,6 +276,11 @@ namespace RAT {
         result_string = sstm.str();
         G4UImanager* UI = G4UImanager::GetUIpointer();
         UI->ApplyCommand(result_string);
+		
+		delete U235foldedspectrum;
+		delete U238foldedspectrum;
+		delete Pu239foldedspectrum;
+		delete Pu241foldedspectrum;
         
     }
 	
@@ -293,13 +299,16 @@ namespace RAT {
         
 		// Randomly sample from the distribution
         G4double E_neutrino = foldedenergyspectrum->GetRandom();
-        
+		
         #ifdef DEBUG
             G4cout << "-----------------------------------------\n";
             G4cout << "Antineutrino energy = " << E_neutrino << " MeV\n";
         #endif
+		
+		delete foldedenergyspectrum;
         
         return E_neutrino;
+		
     }
     
     G4double ReactorESgen::GetElectronEnergy(G4double enu){
@@ -326,6 +335,8 @@ namespace RAT {
             G4cout << "Electron energy = " << E_electron << " MeV\n";
         #endif
         
+		delete sigma_Te;
+		
         return E_electron;
     }
     
@@ -348,12 +359,13 @@ namespace RAT {
 		rotation_axis.rotate(phi, neutrino_dir);
 		G4ThreeVector e_direction = neutrino_dir.rotate(theta, rotation_axis);
 		
-		// Set up electron momentum vector to generate event
+		// Set up electron 4 vector to generate event
+		G4double p_mag = sqrt(pow(eelectron,2)+(2*m_e*eelectron));
 		CLHEP::HepLorentzVector e_momentum;
-		e_momentum.setPx(eelectron * e_direction.x());
-        e_momentum.setPy(eelectron * e_direction.y());
-        e_momentum.setPz(eelectron * e_direction.z());
-        e_momentum.setE(eelectron);
+		e_momentum.setPx(p_mag * e_direction.x());
+        e_momentum.setPy(p_mag * e_direction.y());
+        e_momentum.setPz(p_mag * e_direction.z());
+        e_momentum.setE(eelectron + m_e);
         
         #ifdef DEBUG
             G4cout << "Electron vector = {" << e_direction.x() << ", " << e_direction.y() << ", " << e_direction.z() << "}\n";

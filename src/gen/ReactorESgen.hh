@@ -42,7 +42,7 @@ namespace RAT {
 	G4double GetDetectorStandoff();
 	G4double GetAcquisitionTime();
 	G4double GetWaterVolume();
-
+	  
   protected:
       G4double GetAntiNuEnergy();
       G4double GetElectronEnergy(G4double);

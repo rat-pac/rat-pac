@@ -53,7 +53,7 @@ namespace RAT {
       new G4PrimaryParticle(electron,           // particle code
 			    mom_electron.px(),              // x component of momentum
 			    mom_electron.py(),              // y component of momentum
-			    mom_electron.pz());             // z component of momentum
+				mom_electron.pz());             // z component of momentum
     electron_particle->SetMass(m_electron);     // This seems to help in VertexGen_IBD
     vertex->SetPrimary( electron_particle );  
 
