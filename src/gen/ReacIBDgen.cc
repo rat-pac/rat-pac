@@ -16,7 +16,6 @@ namespace RAT {
 
 // Additional constants
 const double DELTA = neutron_mass_c2 - proton_mass_c2;
-const double GFERMI = 1.16639e-11 / MeV / MeV;
 
 //We start with the Reactor Isotope components given in Marc Bergevin's original
 //IBDgenerator file
