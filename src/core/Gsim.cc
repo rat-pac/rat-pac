@@ -12,6 +12,7 @@
 #include <RAT/Factory.hh>
 #include <RAT/GLG4VertexGen.hh>
 #include <RAT/VertexGen_IBD.hh>
+#include <RAT/VertexGen_ReacIBD.hh>
 #include <RAT/Gen_LED.hh>
 #include <RAT/VertexGen_ES.hh>
 #include <RAT/VertexGen_ReactorES.hh>
@@ -20,6 +21,7 @@
 #include <RAT/Coincidence_Gen.hh>
 #include <RAT/VertexFile_Gen.hh>
 #include <RAT/CfGen.hh>
+#include <RAT/ReacIBDgen.hh>
 #include <RAT/EventInfo.hh>
 #include <RAT/TrackInfo.hh>
 #include <RAT/PrimaryVertexInformation.hh>
@@ -98,7 +100,10 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("ibd",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_IBD>);
-  GlobalFactory<GLG4VertexGen>::Register("es",
+  GlobalFactory<GLG4VertexGen>::Register("reacibd",
+                                         new Alloc<GLG4VertexGen,
+                                         VertexGen_ReacIBD>);
+   GlobalFactory<GLG4VertexGen>::Register("es",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_ES>);
   GlobalFactory<GLG4VertexGen>::Register("reactor_es",

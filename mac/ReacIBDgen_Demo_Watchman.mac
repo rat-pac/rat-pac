@@ -1,0 +1,31 @@
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes 0 
+
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+#END EVENT LOOP
+
+/generator/add combo reacibd:point 
+
+# Adjust reactor isotope contents: All four components'
+# ratios should, but do not have to, add to one.
+/generator/reacibd/U235 0.27
+/generator/reacibd/U238 0.26
+/generator/reacibd/Pu239 0.24
+/generator/reacibd/Pu241 0.23
+
+/generator/vtx/set 0 0 1.0
+/generator/pos/set 0 0 0
+
+/run/beamOn 100
+
