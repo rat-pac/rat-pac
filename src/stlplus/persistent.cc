@@ -252,10 +252,10 @@ unsigned short dump_context::lookup_interface(const std::type_info& info) const 
   return m_body->lookup_interface(info);
 }
 
-void dump_context::register_all(dump_context::installer installer)
+void dump_context::register_all(dump_context::installer _installer)
 {
   DEBUG_ASSERT(m_body);
-  if (installer) installer(*this);
+  if (_installer) _installer(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -462,10 +462,10 @@ const persistent& restore_context::lookup_interface(unsigned short key) const th
   return m_body->lookup_interface(key);
 }
 
-void restore_context::register_all(restore_context::installer installer)
+void restore_context::register_all(restore_context::installer _installer)
 {
   DEBUG_ASSERT(m_body);
-  if (installer) installer(*this);
+  if (_installer) _installer(*this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
