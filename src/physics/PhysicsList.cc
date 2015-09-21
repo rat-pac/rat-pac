@@ -1,3 +1,5 @@
+#include <string>
+#include <stdexcept>
 #include <Shielding.hh>
 #include <G4FastSimulationManagerProcess.hh>
 #include <G4OpticalPhoton.hh>
@@ -5,14 +7,20 @@
 #include <G4ProcessManager.hh>
 #include <G4Cerenkov.hh>
 #include <G4OpBoundaryProcess.hh>
+#include <G4RunManager.hh>
 #include <RAT/GLG4OpAttenuation.hh>
 #include <RAT/GLG4Scint.hh>
 #include <RAT/GLG4SteppingAction.hh>
+#include <RAT/G4OpWLSBuilder.hh>
+#include <RAT/BNLOpWLSBuilder.hh>
+#include <RAT/PhysicsListMessenger.hh>
 #include <RAT/PhysicsList.hh>
 
 namespace RAT {
 
-PhysicsList::PhysicsList() : Shielding() {}
+PhysicsList::PhysicsList() : Shielding(), wlsModel(NULL) {
+  new PhysicsListMessenger(this);
+}
 
 PhysicsList::~PhysicsList() {}
 
@@ -27,6 +35,28 @@ void PhysicsList::ConstructProcess() {
   ConstructOpticalProcesses();
 }
 
+void PhysicsList::SetOpWLSModel(std::string model) {
+  this->wlsModelName = model;
+  delete this->wlsModel;
+
+  if (model == "g4") {
+    this->wlsModel = new G4OpWLSBuilder();
+  }
+  else if (model == "bnl") {
+    this->wlsModel = new BNLOpWLSBuilder();
+  }
+  else {
+    std::cerr << "PhysicsList::SetOpWLSModel: Unknown model \""
+              << model << "\"" << std::endl;
+    throw std::runtime_error("Unknown WLS model in PhysicsList");
+  }
+
+  std::cout << "PhysicsList::SetOpWLSModel: Set WLS model to \""
+            << model << "\"" << std::endl;
+
+  G4RunManager::GetRunManager()->PhysicsHasBeenModified();
+}
+
 void PhysicsList::ConstructOpticalProcesses() {
   // Cherenkov: default G4Cerenkov
   //
@@ -39,9 +69,6 @@ void PhysicsList::ConstructOpticalProcesses() {
   // Attenuation: RAT's GLG4OpAttenuation
   //
   // GLG4OpAttenuation implements Rayleigh scattering.
-  // G4OpRayleigh is not used for the following two reasons:
-  //   1) It doesn't even try to work for anything other than water.
-  //   2) It doesn't actually work for water, either.
   GLG4OpAttenuation* attenuationProcess = new GLG4OpAttenuation();
 
   // Scintillation: RAT's GLG4Scint
@@ -55,6 +82,11 @@ void PhysicsList::ConstructOpticalProcesses() {
 
   // Optical boundary processes: default G4
   G4OpBoundaryProcess* opBoundaryProcess = new G4OpBoundaryProcess();
+
+  // Wavelength shifting: User-selectable via PhysicsListMessenger
+  if (this->wlsModel) {
+    wlsModel->ConstructProcess();
+  }
 
   // Set verbosity
   if (verboseLevel > 0) {
