@@ -1,0 +1,14 @@
+{
+name: "PMTINFO_innerSingle",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+//These positions are relative to the GLOBAL origin
+x: [0.0000],
+y: [0.0000],
+z: [-482.2500],
+dir_x: [0.0],
+dir_y: [0.0],
+dir_z: [1.0],
+type: [0],
+}
+

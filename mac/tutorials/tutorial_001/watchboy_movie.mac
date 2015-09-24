@@ -1,0 +1,30 @@
+#set the detector parameters
+/rat/db/set DETECTOR experiment "Watchboy"
+/rat/db/set DETECTOR geo_file "Watchboy/Watchboy.geo"
+
+/run/initialize
+
+#initialize the visualizer
+/vis/open OGLIQt
+/vis/scene/create
+
+/vis/scene/add/volume
+/vis/scene/add/trajectories
+/vis/viewer/reset
+/vis/viewer/set/style surface
+/vis/viewer/set/upVector 1 0 0
+/vis/drawVolume
+
+# remove the # from the following to lines to export the detector geometry to a .png file
+/vis/ogl/set/exportFormat png
+#/vis/ogl/export
+
+/control/loop mac/tutorials/tutorial_001/movieStep001.loop theta -90 0 5
+/control/loop mac/tutorials/tutorial_001/movieStep003.loop theta 0 -90 -5
+
+
+/generator/add combo gun:point
+/generator/vtx/set e-  0 0 1 7 # pname dir_x dir_y dir_z energy
+/generator/pos/set 0 0 0       # x y z
+
+/run/beamOn 1
