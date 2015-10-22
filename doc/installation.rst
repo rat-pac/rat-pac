@@ -33,24 +33,22 @@ These software packages should be installed in the order presented before you at
 
  * `GEANT4 10.01.p02 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ `tar file <http://geant4.cern.ch/support/source/geant4.10.01.p02.tar.gz>`_- Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=ON`` to download the interaction cross-section files (or download them manually).
 
-     :For begining GEANT4 users:  In the directory you want to install Geant4 (referenced as ``[InstallDir]`` below), type the following commands
+     :For begining GEANT4 users:
+     In the directory you want to install Geant4 (referenced as ``[InstallDir]`` below), type the following commands::
   
-      - ``DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )``
-      - ``wget http://geant4.cern.ch/support/source/geant4.10.01.p02.tar.gz``
-      - ``tar -zxvf geant4.10.01.p02.tar.gz``
-      - ``mkdir $DIR/geant4.10.01.p02-build``
-      - ``cd geant4.10.01.p02-build``
-      - ``cmake -DCMAKE_INSTALL_PREFIX=$DIR/geant4.10.01.p02-build $DIR/geant4.10.01.p02 -DGEANT4_USE_SYSTEM_EXPAT=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON``
-      - ``make -j1``
-      - ``make install``
-      - ``cd ..``
-      - ``mkdir envSetupScripts``
-      - ``cp $DIR/geant4.10.01.p02-build/InstallTreeFiles/geant4.sh ./envSetupScripts``
-      - ``cp $DIR/geant4.10.01.p02-build/InstallTreeFiles/geant4make.sh ./envSetupScripts``
-      - ``cp $DIR/geant4.10.01.p02-build/InstallTreeFiles/geant4.csh ./envSetupScripts``
-      - ``cp $DIR/geant4.10.01.p02-build/InstallTreeFiles/geant4make.csh ./envSetupScripts``
+            DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+            wget http://geant4.cern.ch/support/source/geant4.10.01.p02.tar.gz
+            tar -zxvf geant4.10.01.p02.tar.gz
+            mkdir $DIR/geant4.10.01.p02-build
+            cd geant4.10.01.p02-build
+            cmake -DCMAKE_INSTALL_PREFIX=$DIR/geant4.10.01.p02-build $DIR/geant4.10.01.p02 -DGEANT4_USE_SYSTEM_EXPAT=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON
+            make -j1
+            make install
+            cd ..
+            mkdir envSetupScripts
 
-     The enviroment variable files referenced below will be located in [InstallDir]/envSetupScripts
+
+     The geant4 enviroment variable files referenced below will be located in [InstallDir]/geant4.10.01.p02-build/InstallTreeFiles/
 
  * `SCons <http://www.scons.org/doc/2.1.0/HTML/scons-user/x121.html>`_ - Using common package managers, type
 
