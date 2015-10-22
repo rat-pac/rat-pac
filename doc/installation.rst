@@ -66,7 +66,7 @@ Build Steps
     - for bash shell ``geant4.sh``
     - for C shell ``geant4.csh``
 
-   Source the GEANT4 enviroment variable files
+   Source the ROOT enviroment variable files
     - for bash shell ``thisroot.sh``
     - for C shell ``thisroot.csh``
 
