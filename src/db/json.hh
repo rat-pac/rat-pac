@@ -31,8 +31,8 @@ namespace json {
     class Writer;
 
     //types used by Value
-    typedef int TInteger;
-    typedef unsigned int TUInteger;
+    typedef long int TInteger;
+    typedef unsigned long int TUInteger;
     typedef double TReal;
     typedef bool TBool;
     typedef std::string TString;
@@ -83,9 +83,9 @@ namespace json {
             explicit inline Value(TReal real) : refcount(NULL), type(TREAL) { data.real = real; }
             explicit inline Value(TBool boolean) : refcount(NULL), type(TBOOL) { data.boolean = boolean; }
 
-            // All these integer types... force them to 32 bits
-            explicit inline Value(long unsigned int uinteger) : refcount(NULL), type(TUINTEGER) { data.uinteger = (unsigned int)uinteger; }
-            explicit inline Value(long int uinteger) : refcount(NULL), type(TINTEGER) { data.integer = (unsigned int)uinteger; }
+            // All these integer types... force them into our types
+            explicit inline Value(unsigned int uinteger) : refcount(NULL), type(TUINTEGER) { data.uinteger = (TUInteger)uinteger; }
+            explicit inline Value(int integer) : refcount(NULL), type(TINTEGER) { data.integer = (TInteger)integer; }
 
             // Construct structured types. These values are copied into the Value and subsequently passed by reference with refcount.
             explicit inline Value(TString string) : refcount(new TUInteger(0)), type(TSTRING) { data.string = new TString(string); }
@@ -189,11 +189,11 @@ namespace json {
             static void wrongType(Type actual, Type requested);
 
             // Throws a runtime_error if the type of the Value does not match the given Type
-            inline void checkType(Type _type) const { if (this->type != _type) { wrongType(this->type, _type); } }
-            
+            inline void checkType(Type type_) const { if (this->type != type_) { wrongType(this->type,type_); } }
+
             // Resets the type of Value of the current type does not match the given Type
-            inline void checkTypeReset(Type _type) { if (this->type != _type) reset(TOBJECT); }
-            
+            inline void checkTypeReset(Type type_) { if (this->type != type_) reset(TOBJECT); }
+
             // Decreases the refcount of the Value and cleans up if necessary
             inline void decref() { if (refcount && !((*refcount)--)) clean(); }
 
@@ -249,7 +249,7 @@ namespace json {
         }
     }
 
-    // Only integer Values can be cast as ints
+    // Only integer Values can be cast as ints (typically 32 bits)
     template <> inline int Value::cast<int>() const {
         switch (type) {
             case TUINTEGER:
