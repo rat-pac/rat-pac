@@ -20,6 +20,8 @@ These software packages should be installed in the order presented before you at
           
           #you will need to add [InstallDir]/python/lib to the LD_LIBRARY_PATH, this can be done on the command line, or in your .bashrc file
           LD_LIBRARY_PATH=[InstallDir]/python/lib:$LD_LIBRARY_PATH
+          
+          
 
       NOTE: The PATH and LD_LIBRARY_PATH will need to be set in this manner whenever you are using rat-pac
     - on Ubuntu: . . . . . . ``sudo apt-get install python-dev``
@@ -29,26 +31,24 @@ These software packages should be installed in the order presented before you at
  * `ROOT 5.34 <http://root.cern.ch/drupal/content/downloading-root>`_ - Used for object serialization and network processors. (other versions of ROOT 5 are okay too).  RAT-PAC requires the python development libraries and Minuit2 minimization libraries thus when configuring the root make use the ``--enable-python --enable-minuit2`` options i.e.
     - ``./configure --enable-python --enable-minuit2``
 
- * `GEANT4 9.6.p03 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ `tar file <http://geant4.cern.ch/support/source/geant4.9.6.p03.tar.gz>`_- Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=ON`` to download the interaction cross-section files (or download them manually).
+ * `GEANT4 10.01.p02 <http://geant4.web.cern.ch/geant4/support/download.shtml>`_ `tar file <http://geant4.cern.ch/support/source/geant4.10.01.p02.tar.gz>`_- Toolkit used by the Monte Carlo simulation.  When running ``cmake`` to configure GEANT4, be sure to use ``-DGEANT4_INSTALL_DATA=ON`` to download the interaction cross-section files (or download them manually).
 
-     :For begining GEANT4 users:  In the directory you want to install Geant4 (referenced as ``[InstallDir]`` below), type the following commands
+     :For begining GEANT4 users:
+     In the directory you want to install Geant4 (referenced as ``[InstallDir]`` below), type the following commands::
   
-      - ``DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )``
-      - ``wget http://geant4.cern.ch/support/source/geant4.9.6.p03.tar.gz``
-      - ``tar -zxvf geant4.9.6.p03.tar.gz``
-      - ``mkdir $DIR/geant4.9.6.p03-build``
-      - ``cd geant4.9.6.p03-build``
-      - ``cmake -DCMAKE_INSTALL_PREFIX=$DIR/geant4.9.6.p03-build $DIR/geant4.9.6.p03 -DGEANT4_USE_SYSTEM_EXPAT=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON``
-      - ``make -j1``
-      - ``make install``
-      - ``cd ..``
-      - ``mkdir envSetupScripts``
-      - ``cp $DIR/geant4.9.6.p03-build/InstallTreeFiles/geant4.sh ./envSetupScripts``
-      - ``cp $DIR/geant4.9.6.p03-build/InstallTreeFiles/geant4make.sh ./envSetupScripts``
-      - ``cp $DIR/geant4.9.6.p03-build/InstallTreeFiles/geant4.csh ./envSetupScripts``
-      - ``cp $DIR/geant4.9.6.p03-build/InstallTreeFiles/geant4make.csh ./envSetupScripts``
+            DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+            wget http://geant4.cern.ch/support/source/geant4.10.01.p02.tar.gz
+            tar -zxvf geant4.10.01.p02.tar.gz
+            mkdir $DIR/geant4.10.01.p02-build
+            cd geant4.10.01.p02-build
+            cmake -DCMAKE_INSTALL_PREFIX=$DIR/geant4.10.01.p02-build $DIR/geant4.10.01.p02 -DGEANT4_USE_SYSTEM_EXPAT=OFF -DGEANT4_INSTALL_DATA=ON -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_QT=ON
+            make -j1
+            make install
+            cd ..
+            mkdir envSetupScripts
 
-     The enviroment variable files referenced below will be located in [InstallDir]/envSetupScripts
+
+     The geant4 enviroment variable files referenced below will be located in [InstallDir]/geant4.10.01.p02-build/InstallTreeFiles/
 
  * `SCons <http://www.scons.org/doc/2.1.0/HTML/scons-user/x121.html>`_ - Using common package managers, type
 
@@ -64,7 +64,7 @@ Build Steps
     - for bash shell ``geant4.sh``
     - for C shell ``geant4.csh``
 
-   Source the GEANT4 enviroment variable files
+   Source the ROOT enviroment variable files
     - for bash shell ``thisroot.sh``
     - for C shell ``thisroot.csh``
 
@@ -202,4 +202,4 @@ You should get a plot of particle x coordinates similar to the plot below.
 
 :Note: that with the RAT environment sourced, you are getting a special copy of ROOT that automatically loads the RAT ROOT event library.
 report errors to Derek Rountree -- rountree@vt.edu
-page update Feb. 24 2015
+page update Sept. 9 2015
