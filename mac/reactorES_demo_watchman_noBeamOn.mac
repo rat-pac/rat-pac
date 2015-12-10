@@ -1,9 +1,10 @@
 # SET THE DETECTOR PARAMTERS
 /rat/db/set DETECTOR experiment "Watchman"
-/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+/rat/db/set DETECTOR detector_factory "Watchman"
 
 /run/initialize
 /process/activate Cerenkov
+
 
 # BEGIN EVENT LOOP
 /rat/proc simpledaq
@@ -11,7 +12,7 @@
 /rat/procset update 200
 
 /rat/proclast outroot
-/rat/procset file "watchman_5years_comparetoRMSim_2.root"
+/rat/procset file "watchman_5years_comparetoRMSim_40coverage_12HQE.root"
 # END EVENT LOOP
 
 # SETTING UP THE GENERATOR

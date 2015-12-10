@@ -1,6 +1,6 @@
 # SET THE DETECTOR PARAMTERS
 /rat/db/set DETECTOR experiment "Watchman"
-/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+/rat/db/set DETECTOR detector_factory "Watchman"
 
 /run/initialize
 /process/activate Cerenkov
