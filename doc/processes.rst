@@ -117,6 +117,10 @@ This model also requires OPTICS properties `QUANTUMYIELD` (vector, decides
 how many secondary photons to generate) and `WLSCOMPONENT` (vector, WLS
 wavelength intensity) for WLS materials.
 
+This WLS model has been validated by Chao Zhang of BNL. See
+these slides for details:
+:download:`bnl_wls_validation.pdf <bnl_wls_validation.pdf>`.
+
 RATDB Fields
 ````````````
 This section needs work!
