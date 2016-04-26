@@ -11,6 +11,7 @@
 #ifndef __RAT_PhysicsList__
 #define __RAT_PhysicsList__
 
+#include <string>
 #include <G4VUserPhysicsList.hh>
 #include <Shielding.hh>
 
@@ -28,12 +29,21 @@ public:
   // Instantiate desired Processes
   void ConstructProcess();
 
+  // Set the WLS model by name
+  void SetOpWLSModel(std::string model);
+
+  // Get the WLS model name
+  std::string GetOpWLSModelName() { return this->wlsModelName; }
+
 private:
   // Construct and register optical processes
   void ConstructOpticalProcesses();
 
   // Register opticalphotons with the PMT G4FastSimulationManagerProcess
   void AddParameterization();
+
+  std::string wlsModelName;  // The name of the WLS model
+  G4VPhysicsConstructor* wlsModel;  // The WLS model constructor
 };
 
 }  // namespace RAT
