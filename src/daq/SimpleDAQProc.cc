@@ -50,8 +50,8 @@ Processor::Result SimpleDAQProc::DSEvent(DS::Root *ds) {
         double charge = 0;
 
         for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
-          if (time > mcpmt->GetMCPhoton(i)->GetHitTime())
-            time = mcpmt->GetMCPhoton(i)->GetHitTime();
+          if (time > mcpmt->GetMCPhoton(i)->GetFrontEndTime())
+            time = mcpmt->GetMCPhoton(i)->GetFrontEndTime();
           charge += mcpmt->GetMCPhoton(i)->GetCharge();
         }
         
