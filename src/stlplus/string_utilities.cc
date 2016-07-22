@@ -191,7 +191,7 @@ static std::string simage (T i, unsigned radix, radix_display_t display, unsigne
     // create a representation of the magnitude by successive division
     do
     {
-      T ch = abs(i % t_radix);
+      T ch = abs(int(i % t_radix));
       i /= t_radix;
       result.insert((std::string::size_type)0, 1, to_char[ch]);
     }
