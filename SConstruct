@@ -18,6 +18,7 @@ import glob
 from buildhelp import RATENVFILE, src_module, build_list
 
 # Get build environment for making RAT applications
+SetOption('num_jobs', 4)
 env = SConscript(RATENVFILE)
 
 # Collect list of object files from source directories and prepare
@@ -28,6 +29,7 @@ ratobj = []
 for m in modules:
     ratobj += src_module(env, m)
 ratobj += src_module(env, 'ds', header_subdir='DS')
+ratobj += src_module(env, 'fit/bonsai', header_subdir='BONSAI')
 
 #### Target: Copy RAT header files to $RATROOT/include
 # Define an alias so one can just type "scons headers" to only copy headers.
@@ -40,7 +42,8 @@ cint_cls= Split('DS/Root DS/MC DS/EV DS/MCParticle DS/MCPhoton '
                 'DS/RunStore DS/Run '
                 'DS/PosFit DS/PMTInfo '
                 'DS/MCTrack DS/MCTrackStep DS/Calib '
-                'DS/Centroid DS/PathFit '
+                'DS/Centroid DS/BonsaiFit DS/PathFit '
+                'DS/Centroid DS/PathFit DS/BonsaiFit '
                 'DSReader DSWriter TrackNav TrackNode TrackCursor DB DBLink '
                 'DBTextLoader DBJsonLoader HTTPDownloader Log ObjInt ObjDbl '
                 'DS/LinkDef')
