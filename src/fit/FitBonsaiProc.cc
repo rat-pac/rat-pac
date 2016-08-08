@@ -12,7 +12,7 @@ using namespace std;
 using namespace BONSAI;
 
 FitBonsaiProc::FitBonsaiProc() : Processor::Processor("BONSAI"), bonsai_geometry(NULL), bonsai_likelihood(NULL), bonsai_fit(NULL) {
-
+    
 }
 
 FitBonsaiProc::~FitBonsaiProc() {
@@ -23,7 +23,7 @@ FitBonsaiProc::~FitBonsaiProc() {
 
 
 Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
-
+    
     DS::Run *run = DS::RunStore::Get()->GetRun(ds);
     DS::PMTInfo *pmtinfo = run->GetPMTInfo();
     
@@ -34,21 +34,21 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
         size_t bonsai_idx = 0;
         for (size_t i = 0; i < totalPMTs; i++) {
             //if (pmtinfo->GetType(i) == 1) { //is normal PMT
-                TVector3 pos = pmtinfo->GetPosition(i);
-                packedPos.push_back(pos.X()/10.0);
-                packedPos.push_back(pos.Y()/10.0);
-                packedPos.push_back(pos.Z()/10.0);
-                
-                pmtmap[i] = bonsai_idx++;
+            TVector3 pos = pmtinfo->GetPosition(i);
+            packedPos.push_back(pos.X()/10.0);
+            packedPos.push_back(pos.Y()/10.0);
+            packedPos.push_back(pos.Z()/10.0);
+            
+            pmtmap[i] = bonsai_idx++;
             //}
         }
         bonsai_geometry = new BONSAI::pmt_geometry(packedPos.size()/3,&packedPos[0]);
         bonsai_likelihood = new BONSAI::likelihood(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height());
         goodness.resize(bonsai_likelihood->sets());
         bonsai_fit = new BONSAI::bonsaifit(bonsai_likelihood);
-    } 
+    }
     
-    const size_t nhit = ev->GetPMTCount(); 
+    const size_t nhit = ev->GetPMTCount();
     hit_time.resize(nhit);
     hit_charge.resize(nhit);
     hit_pmtid.resize(nhit);
@@ -65,57 +65,75 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev) {
      * The following is based on the WCsim implementation of BONSAI. Vague comments
      * where comments might be appropriate.
      */
+    if(nhit>0){
+        //uses magic to select "good" hits
+        BONSAI::goodness hitselection(bonsai_likelihood->sets(), bonsai_likelihood->chargebins(), bonsai_geometry, nhit, &hit_pmtid[0], &hit_time[0], &hit_charge[0]);
+        
+        //probably something to do with combanatorics
+        BONSAI::fourhitgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(), &hitselection);
+        
+        //BONSAI::searchgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(),0.0);
+        
+        //use the selected hits
+        bonsai_likelihood->set_hits(&hitselection);
+        
+        //do some sort of fitting
+        bonsai_likelihood->maximize(bonsai_fit,&grid);
+        
+        //we got a position fit result
+        float vtx[4]; // (x,y,z,t)
+        vtx[0] = bonsai_fit->xfit();
+        vtx[1] = bonsai_fit->yfit();
+        vtx[2] = bonsai_fit->zfit();
+        
+        //something internal to bonsai / unsure what this does
+        bonsai_fit->fitresult();
+        
+        //now we have a time result
+        vtx[3] = bonsai_likelihood->get_zero();
+        
+        //and a direction result
+        float dir[6]; //why 6 / what is dirx,diry,dirz,?,?,ll0
+        bonsai_likelihood->get_dir(dir);
+        dir[5] = bonsai_likelihood->get_ll0(); //loglikelihood w/o angle constraint (?)
+        
+        //reset likelihood
+        bonsai_likelihood->set_hits(NULL);
+        
+        //now fit the time
+        bonsai_likelihood->set_hits(&hitselection);
+        float dt; // called dt in bonsai / apparently related to loglikelihood of time fit
+        bonsai_likelihood->fittime(0,vtx,dir,dt); //probably modifies vtx[3]
+        
+        //reset likelihood
+        bonsai_likelihood->set_hits(NULL);
+        
+        DS::BonsaiFit *result = ev->GetBonsaiFit();
+        
+        TVector3 pos(vtx[0]*10.0,vtx[1]*10.0,vtx[2]*10.0);
+        result->SetPosition(pos);
+        result->SetTime(vtx[3]-400.0);
+        
+        TVector3 direct(dir[0],dir[1],dir[2]);
+        result->SetDirection(direct);
+        result->SetLogLike(bonsai_likelihood->get_ll());
+        result->SetLogLike0(bonsai_likelihood->get_ll0());
+
+        
+        
+    }else{
     
-    //uses magic to select "good" hits
-    BONSAI::goodness hitselection(bonsai_likelihood->sets(), bonsai_likelihood->chargebins(), bonsai_geometry, nhit, &hit_pmtid[0], &hit_time[0], &hit_charge[0]);
-    
-    //probably something to do with combanatorics 
-    BONSAI::fourhitgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(), &hitselection);
-    
-    //BONSAI::searchgrid grid(bonsai_geometry->cylinder_radius(), bonsai_geometry->cylinder_height(),0.0);
-    
-    //use the selected hits
-    bonsai_likelihood->set_hits(&hitselection);
-    
-    //do some sort of fitting
-    bonsai_likelihood->maximize(bonsai_fit,&grid);
-    
-    //we got a position fit result
-    float vtx[4]; // (x,y,z,t)
-    vtx[0] = bonsai_fit->xfit();
-    vtx[1] = bonsai_fit->yfit();
-    vtx[2] = bonsai_fit->zfit();
-    
-    //something internal to bonsai / unsure what this does
-    bonsai_fit->fitresult(); 
-    
-    //now we have a time result
-    vtx[3] = bonsai_likelihood->get_zero();
-    
-    //and a direction result
-    float dir[6]; //why 6 / what is dirx,diry,dirz,?,?,ll0
-    bonsai_likelihood->get_dir(dir);
-    dir[5] = bonsai_likelihood->get_ll0(); //loglikelihood w/o angle constraint (?)
-    
-    //reset likelihood
-    bonsai_likelihood->set_hits(NULL);
-    
-    //now fit the time
-    bonsai_likelihood->set_hits(&hitselection);
-    float dt; // called dt in bonsai / apparently related to loglikelihood of time fit
-    bonsai_likelihood->fittime(0,vtx,dir,dt); //probably modifies vtx[3]
-    
-    //reset likelihood
-    bonsai_likelihood->set_hits(NULL);
-    
-    DS::BonsaiFit *result = ev->GetBonsaiFit();
-    
-    TVector3 pos(vtx[0]*10.0,vtx[1]*10.0,vtx[2]*10.0);
-    result->SetPosition(pos);
-    result->SetTime(vtx[3]-400.0);
-    
-    TVector3 direct(dir[0],dir[1],dir[2]);
-    result->SetDirection(direct);
+        DS::BonsaiFit *result = ev->GetBonsaiFit();
+        
+        TVector3 pos(-10000,-10000,-10000);
+        result->SetPosition(pos);
+        result->SetTime(-10000);
+        result->SetLogLike(-100);
+        result->SetLogLike0(-100);
+        
+        TVector3 direct(0,0,0);
+        result->SetDirection(direct);
+    }
     
     return OK;
     

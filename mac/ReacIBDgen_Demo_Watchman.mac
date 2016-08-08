@@ -1,4 +1,4 @@
-/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_muon_processes  0
 /glg4debug/glg4param omit_hadronic_processes 0 
 
 /rat/db/set DETECTOR experiment "Watchman"
@@ -7,7 +7,10 @@
 /run/initialize
 
 # BEGIN EVENT LOOP
-/rat/proc simpledaq
+/rat/proc lesssimpledaq
+/rat/proc fitbonsai
+/rat/proc fitcentroid
+/rat/proc fitpath
 /rat/proc count
 /rat/procset update 10
 
@@ -27,5 +30,5 @@
 /generator/vtx/set 0 0 1.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 100
+/run/beamOn 1000
 
