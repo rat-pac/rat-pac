@@ -6,9 +6,9 @@
   gStyle->SetCanvasColor(0);
   gStyle->SetLegendFillColor(0);
   gStyle->SetLegendBorderSize(1);
-  gStyle->SetLegendFont(132);
-  gStyle->SetLabelFont(132);
-  gStyle->SetTitleFont(132);
+  //gStyle->SetLegendFont(132);
+  //gStyle->SetLabelFont(132);
+  //gStyle->SetTitleFont(132);
 
   gSystem->Load("libRATEvent");
   gSystem->AddIncludePath(" -I$RATROOT/include");
