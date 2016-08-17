@@ -53,8 +53,12 @@ void trackExtraction(const char *file) {
     
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
-    
 
+    TFile *f_out = new TFile(Form("ntuple_%s",file),"Recreate");
+    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
+                                  "pe:r_pathfit_true:r_bonsai_true:r_pathfit_bonsai:sub_ev:sub_ev_cnt");
+    
+    
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
     
@@ -104,6 +108,7 @@ void trackExtraction(const char *file) {
                 
             }
             totQB = sqrt(q2/totPE**2-1./pmtCount);
+            data->Fill(totPE,reconstructedRadiusFP,reconstructedRadiusFB,reconstructedRadiusFPMinusFB,Double_t(k),Double_t(pmtCount));
             if(k ==0 && totPE> 8){
                 hPhotoelectron1->Fill(totPE);
                 hqBalance1->Fill(totQB);
@@ -207,5 +212,20 @@ void trackExtraction(const char *file) {
     hPos1FP->Draw();
     hPos1FB->Draw("same");
     c1->Update();
+    
+//    f_out->cd();
+    data->Write();
+
+    hPhotoelectron1->Write();
+    hPhotoelectron2->Write();
+    hqBalance1->Write();
+    hqBalance2->Write();
+    hPos0FP->Write();
+    hPos0FB->Write();
+    hPos1FP->Write();
+    hPos1FB->Write();
+    c1->Write();
+    
+    f_out->Close();
 
 }
