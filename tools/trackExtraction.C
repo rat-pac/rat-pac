@@ -54,7 +54,7 @@ void trackExtraction(const char *file) {
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
 
-    TFile *f_out = new TFile(Form("ntuple_%s",file),"Recreate");
+    TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
                                   "pe:r_pathfit_true:r_bonsai_true:r_pathfit_bonsai:sub_ev:sub_ev_cnt");
     
@@ -108,7 +108,7 @@ void trackExtraction(const char *file) {
                 
             }
             totQB = sqrt(q2/totPE**2-1./pmtCount);
-            data->Fill(totPE,reconstructedRadiusFP,reconstructedRadiusFB,reconstructedRadiusFPMinusFB,Double_t(k),Double_t(pmtCount));
+            data->Fill(totPE,reconstructedRadiusFP,reconstructedRadiusFB,reconstructedRadiusFPMinusFB,Double_t(k),Double_t(subevents));
             if(k ==0 && totPE> 8){
                 hPhotoelectron1->Fill(totPE);
                 hqBalance1->Fill(totQB);
