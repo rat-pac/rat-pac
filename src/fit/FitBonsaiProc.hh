@@ -28,6 +28,16 @@ namespace RAT {
             std::vector<float> goodness;
             std::vector<float> hit_time, hit_charge;
             std::vector<int> hit_pmtid;
+        
+            size_t nhit;
+            DS::PMT *pmt;
+            TVector3 pos;
+            float vtx[4];
+            float dir[6];
+            float dt; // called dt in bonsai / apparently related to loglikelihood of time fit
+            DS::BonsaiFit *result;
+
+        
     };
 
 }
