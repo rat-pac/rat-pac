@@ -9,10 +9,10 @@
 # BEGIN EVENT LOOP
 /rat/proc lesssimpledaq
 /rat/proc fitbonsai
-/rat/proc fitcentroid
-/rat/proc fitpath
+#/rat/proc fitcentroid
+#/rat/proc fitpath
 /rat/proc count
-/rat/procset update 100
+/rat/procset update 1
 
 # Use IO.default_output_filename
 /rat/proclast outroot
@@ -20,7 +20,7 @@
 #END EVENT LOOP
 
 /generator/add combo gun2:fill
-/generator/vtx/set e-  0 0 0 0 0.0 10.0
+/generator/vtx/set e-  0 0 0 0 30.0 30.0
 /generator/pos/set 0 0 0
 
 #/generator/add combo gun2:fill

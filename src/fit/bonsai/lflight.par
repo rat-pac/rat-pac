@@ -3,7 +3,7 @@ C speed of light and derived parameters for LE-fitting:
 C***********************************************************************
       REAL cns2cm,cm2ns,cm2ns2,cns2cm2,cos_theta
 
-      PARAMETER (cns2cm = 21.58333)           ! speed of light (cm/ns)
+      PARAMETER (cns2cm = 21.8)               ! speed of light (cm/ns)
       PARAMETER (cns2cm2= cns2cm**2)          ! square of speed of light
       PARAMETER (cm2ns  = 1./cns2cm)          ! conversion cm to ns
       PARAMETER (cm2ns2 = cm2ns**2)           ! square of that

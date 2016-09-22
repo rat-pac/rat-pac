@@ -1,336 +1,74 @@
 #ifndef CENTROID
 #define CENTROID
 
-#include "RAT/BONSAI/hitsel.h"
+#include "hitsel.h"
 
-namespace BONSAI {
-    
-    
-    class centroid;
-    
-    class axes
-    {
-        double vectors[9];
-    public:
-        inline axes(void);
-        inline axes(double theta,double phi,double alpha);
-        inline void set(double theta,double phi,double alpha);
-        inline void set(short int comp,short int vect,double value);
-        inline void set(short int vect,double val1,double val2,double val3);
-        inline double get(short int comp,short int vect);
-        inline void get(double *val);
-        inline void get(float *val);
-        inline void get(double &theta,double &phi,double &alpha);
-        inline void get(float &theta,float &phi,float &alpha);
-        inline void get(double *val,short int comp);
-        inline void get(float *val,short int comp);
-        inline double getx(double *comp);
-        inline float getx(float *comp);
-        inline double gety(double *comp);
-        inline float gety(float *comp);
-        inline double getz(double *comp);
-        inline float getz(float *comp);
-        inline void rotate(short int vect,double si,double co);
-        short int align(double *nor);
-        inline short int align(centroid &c,double *vec);
-        inline short int align(centroid &c,float *vec);
-    };
-    
-    // **********************************************
-    // generate the center of gravity of an array of
-    // points (matrix[0] to matrix[2]) as well as the
-    // variation matrix (matrix[3] to matrix[8])
-    // **********************************************
-    class centroid
-    {
-        double centr[9],*matrix;
-        
-        inline double pythag(double a,double b);
-        inline int iszero(int sta);
-        void tridiag(axes &ax);
-        int planegivens(axes &ax,double shift);
-        
-    public:
-        centroid(int n,float *points,float *weight);
-        centroid(hitsel *h);
-        inline double x(void);
-        inline double y(void);
-        inline double z(void);
-        inline void centre(double *vec);
-        inline void centre(float *vec);
-        inline double xx(void);
-        inline double yy(void);
-        inline double zz(void);
-        inline double trace(void);
-        inline double xy(void);
-        inline double yz(void);
-        inline double xz(void);
-        inline double rxy(void);
-        inline double r(void);
-        void eigen(axes &ax);
-        inline void eigen(float *axes);
-        inline void eigen(axes &ax,float *values);
-        inline void eigen(float *axes,float *values);
-    };
-    
-    // **********************************************
-    // operations with unitary rotation matrices
-    // **********************************************
-    
-    // **********************************************
-    // initialize vectors as unit vectors
-    // **********************************************
-    inline axes::axes(void)
-    {
-        vectors[0]=vectors[4]=vectors[8]=1;
-        vectors[1]=vectors[2]=vectors[3]=0;
-        vectors[5]=vectors[6]=vectors[7]=0;
-    }
-    // **********************************************
-    // initialize vectors from three angles
-    // **********************************************
-    inline axes::axes(double theta,double phi,double alpha)
-    {
-        set(theta,phi,alpha);
-    }
-    
-    inline void axes::set(double theta,double phi,double alpha)
-    {
-        double cth=cos(theta),  sth=sin(theta);
-        double cph=cos(phi),    sph=sin(phi);
-        double cal=cos(alpha),  sal=sin(alpha);
-        
-        vectors[0]= cth*cph*cal+sph*sal; vectors[1]= cth*cph*sal-sph*cal; vectors[2]=sth*cph;
-        vectors[3]= cth*sph*cal-cph*sal; vectors[4]= cth*sph*sal+cph*cal; vectors[5]=sth*sph;
-        vectors[6]=-sth*cal;             vectors[7]=-sth*sal;             vectors[8]=cth;
-    }
-    inline void axes::set(short int comp,short int vect,double value)
-    {
-        vectors[vect+3*comp]=value;
-    }
-    inline void axes::set(short int vect,double val1,double val2,double val3)
-    {
-        vectors[vect]=val1;
-        vectors[vect+3]=val2;
-        vectors[vect+6]=val3;
-    }
-    inline double axes::get(short int comp,short int vect)
-    {
-        return(vectors[vect+3*comp]);
-    }
-    inline void axes::get(double *val)
-    {
-        int i;
-        
-        for(i=0; i<9; i++) val[i]=vectors[i];
-    }
-    inline void axes::get(float *val)
-    {
-        int i;
-        
-        for(i=0; i<9; i++) val[i]=vectors[i];
-    }
-    // **********************************************
-    // calculate angles from vectors
-    // **********************************************
-    inline void axes::get(double &theta,double &phi,double &alpha)
-    {
-        theta=acos(vectors[8]);
-        if (fabs(vectors[5])+fabs(vectors[2])+fabs(vectors[7])+fabs(vectors[6])<1e-10)
-        {
-            alpha=0;
-            phi=atan2(-vectors[1],vectors[4]);
-            return;
-        }
-        phi=atan2(vectors[5],vectors[2]);
-        alpha=atan2(-vectors[7],-vectors[6]);
-    }
-    inline void axes::get(float &theta,float &phi,float &alpha)
-    {
-        theta=acos(vectors[8]);
-        if (fabs(vectors[5])+fabs(vectors[2])+fabs(vectors[7])+fabs(vectors[6])<1e-10)
-        {
-            alpha=0;
-            phi=atan2(-vectors[1],vectors[4]);
-            return;
-        }
-        phi=atan2(vectors[5],vectors[2]);
-        alpha=atan2(-vectors[7],-vectors[6]);
-    }
-    inline void axes::get(double *val,short int comp)
-    {
-        *val=vectors[comp];
-        val[1]=vectors[comp+3];
-        val[2]=vectors[comp+6];
-    }
-    inline void axes::get(float *val,short int comp)
-    {
-        *val=vectors[comp];
-        val[1]=vectors[comp+3];
-        val[2]=vectors[comp+6];
-    }
-    inline double axes::getx(double *comp)
-    {
-        return(*comp*(*vectors)+comp[1]*vectors[1]+comp[2]*vectors[2]);
-    }
-    inline float axes::getx(float *comp)
-    {
-        return(*comp*(*vectors)+comp[1]*vectors[1]+comp[2]*vectors[2]);
-    }
-    inline double axes::gety(double *comp)
-    {
-        return(*comp*vectors[3]+comp[1]*vectors[4]+comp[2]*vectors[5]);
-    }
-    inline float axes::gety(float *comp)
-    {
-        return(*comp*vectors[3]+comp[1]*vectors[4]+comp[2]*vectors[5]);
-    }
-    inline double axes::getz(double *comp)
-    {
-        return(*comp*vectors[6]+comp[1]*vectors[7]+comp[2]*vectors[8]);
-    }
-    inline float axes::getz(float *comp)
-    {
-        return(*comp*vectors[6]+comp[1]*vectors[7]+comp[2]*vectors[8]);
-    }
-    
-    inline void axes::rotate(short int vect,double si,double co)
-    {
-        double save;
-        
-        /* correct trafo matrix */
-        save=vectors[vect+1];
-        vectors[vect+1]=si*vectors[vect]+co*save;
-        vectors[vect]  =co*vectors[vect]-si*save;
-        save=vectors[vect+4];
-        vectors[vect+4]=si*vectors[vect+3]+co*save;
-        vectors[vect+3]=co*vectors[vect+3]-si*save;
-        save=vectors[vect+7];
-        vectors[vect+7]=si*vectors[vect+6]+co*save;
-        vectors[vect+6]=co*vectors[vect+6]-si*save;
-    }
-    
-    inline short int axes::align(centroid &c,double *vec)
-    {
-        short int maxprod;
-        
-        c.centre(vec);
-        maxprod=align(vec);
-        get(vec[0],vec[1],vec[2]);
-        return(maxprod);
-    }
-    
-    inline short int axes::align(centroid &c,float *vec)
-    {
-        double    dir[4];
-        short int maxprod;
-        
-        c.centre(dir);
-        maxprod=align(dir);
-        get(vec[0],vec[1],vec[2]);
-        vec[3]=dir[3];
-        return(maxprod);
-    }
-    
-    // **********************************************
-    // calculate centroid and variation matrix of points
-    // **********************************************
-    
-    // **********************************************
-    // return centroid  and variation matrix
-    // **********************************************
-    inline double centroid::x(void)
-    {
-        return(*centr);
-    }
-    inline double centroid::y(void)
-    {
-        return(centr[1]);
-    }
-    inline double centroid::z(void)
-    {
-        return(centr[2]);
-    }
-    inline void centroid::centre(double *vec)
-    {
-        *vec=*centr; vec[1]=centr[1]; vec[2]=centr[2];
-    }
-    inline void centroid::centre(float *vec)
-    {
-        *vec=*centr; vec[1]=centr[1]; vec[2]=centr[2];
-    }
-    inline double centroid::xx(void)
-    {
-        return(*matrix);
-    }
-    inline double centroid::yy(void)
-    {
-        return(matrix[1]);
-    }
-    inline double centroid::zz(void)
-    {
-        return(matrix[2]);
-    }
-    inline double centroid::trace(void)
-    {
-        return(*matrix+matrix[1]+matrix[2]);
-    }
-    inline double centroid::xy(void)
-    {
-        return(matrix[3]);
-    }
-    inline double centroid::yz(void)
-    {
-        return(matrix[4]);
-    }
-    inline double centroid::xz(void)
-    {
-        return(matrix[5]);
-    }
-    inline double centroid::rxy(void)
-    {
-        return(sqrt(*centr*(*centr)+centr[1]*centr[1]));
-    }
-    inline double centroid::r(void)
-    {
-        return(sqrt(*centr*(*centr)+centr[1]*centr[1]+centr[2]*centr[2]));
-    }
-    
-    // **********************************************
-    // calculate eigenvectors
-    // **********************************************
-    inline void centroid::eigen(float *faxes)
-    {
-        axes ax;
-        
-        eigen(ax);
-        ax.get(faxes);
-        return;
-    }
-    
-    // **********************************************
-    // calculate eigenvectors
-    // **********************************************
-    inline void centroid::eigen(axes &ax,float *values)
-    {
-        eigen(ax);
-        values[0]=matrix[0];
-        values[1]=matrix[1];
-        values[2]=matrix[2];
-        return;
-    }
-    
-    // **********************************************
-    // calculate eigenvectors
-    // **********************************************
-    inline void centroid::eigen(float *faxes,float *values)
-    {
-        axes ax;
-        
-        eigen(ax,values);
-        ax.get(faxes);
-        return;
-    }
-    
-}
+class centroid;
+
+class axes
+{
+  double vectors[9];
+ public:
+  inline axes(void);
+  inline axes(double theta,double phi,double alpha);
+  inline void set(double theta,double phi,double alpha);
+  inline void set(short int comp,short int vect,double value);
+  inline void set(short int vect,double val1,double val2,double val3);
+  inline double get(short int comp,short int vect);
+  inline void get(double *val);
+  inline void get(float *val);
+  inline void get(double &theta,double &phi,double &alpha);
+  inline void get(float &theta,float &phi,float &alpha);
+  inline void get(double *val,short int comp);
+  inline void get(float *val,short int comp);
+  inline double getx(double *comp);
+  inline float getx(float *comp);
+  inline double gety(double *comp);
+  inline float gety(float *comp);
+  inline double getz(double *comp);
+  inline float getz(float *comp);
+  inline void rotate(short int vect,double si,double co);
+  short int align(double *nor);
+  inline short int align(centroid &c,double *vec);
+  inline short int align(centroid &c,float *vec);
+};
+
+// **********************************************
+// generate the center of gravity of an array of
+// points (matrix[0] to matrix[2]) as well as the
+// variation matrix (matrix[3] to matrix[8])
+// **********************************************
+class centroid
+{
+  double centr[9],*matrix;
+
+  inline double pythag(double a,double b);
+  inline int iszero(int sta);
+  void tridiag(axes &ax);
+  int planegivens(axes &ax,double shift);
+
+ public:
+  centroid(int n,float *points,float *weight);
+  centroid(hitsel *h);
+  inline double x(void);
+  inline double y(void);
+  inline double z(void);
+  inline void centre(double *vec);
+  inline void centre(float *vec);
+  inline double xx(void);
+  inline double yy(void);
+  inline double zz(void);
+  inline double trace(void);
+  inline double xy(void);
+  inline double yz(void);
+  inline double xz(void);
+  inline double rxy(void);
+  inline double r(void);
+  void eigen(axes &ax);
+  inline void eigen(float *axes);
+  inline void eigen(axes &ax,float *values);
+  inline void eigen(float *axes,float *values);
+};
+
+#include "centroid.inline"
 #endif

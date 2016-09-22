@@ -1,7 +1,3 @@
-#include "RAT/BONSAI/hits.h"
+#include "hits.h"
 
-namespace BONSAI {
-    
-    void ariadne(float *vertex,hits *event,float *direct,float &goodness);
-    
-}
+void ariadne(float *vertex,hits *event,float *direct,float &goodness);

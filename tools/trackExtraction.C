@@ -13,42 +13,29 @@ void trackExtraction(const char *file) {
     Double_t reconstructedRadius = 0.0;
     TH1D *hPos0C = new TH1D("hPos0C","centroid",1000,0.01,10);
     hPos0C->SetLineColor(4);
-    hPos0C->SetXTitle("centroid ");
     TH1D *hPos1C = new TH1D("hPos1C","centroid",1000,0.01,10);
     
     TH1D *hPos0FP = new TH1D("hPos0FP","fit path",1000,0.01,10);
-    hPos0FP->SetXTitle("3D reconstructed vertex (m)");
-
     hPos0FP->SetLineColor(kGreen+3);
     TH1D *hPos1FP = new TH1D("hPos1FP","fit path",1000,0.01,10);
     hPos1FP->SetLineColor(kGreen+3);
-    hPos1FP->SetXTitle("3D reconstructed vertex (m)");
-
+    
     TH1D *hPos0FB = new TH1D("hPos0FB","bonsai",1000,0.01,10);
-    hPos0FB->SetXTitle("3D reconstructed vertex (m)");
-
     hPos0FB->SetLineColor(kRed+3);
     TH1D *hPos1FB = new TH1D("hPos1FB","bonsai",1000,0.01,10);
     hPos1FB->SetLineColor(kRed+3);
-    hPos1FB->SetXTitle("3D reconstructed vertex (m)");
-
     
     
     TH2D *hPos0FPFB = new TH2D("hPos0FPFB","fitpath:bonsai",1000,0.01,10,1000,0.01,10);
     hPos0FPFB->SetMarkerColor(kRed+3);
     hPos0FPFB->SetMarkerStyle(3);
-    hPos0FPFB->SetXTitle("3D reconstructed vertex (m)");
-    hPos0FPFB->SetYTitle("3D reconstructed vertex (m)");
 
-    
     hPos0FPFB->SetMarkerSize(1.5);
     
     TH2D *hPos1FPFB = new TH2D("hPos1FPFB","fitpath:bonsai",1000,0.01,10,1000,0.01,10);
     hPos1FPFB->SetMarkerColor(kRed+3);
     hPos1FPFB->SetMarkerStyle(3);
     hPos1FPFB->SetMarkerSize(1.5);
-    hPos1FPFB->SetXTitle("3D reconstructed vertex (m)");
-    hPos1FPFB->SetYTitle("3D reconstructed vertex (m)");
     
     hPos0FPFB->SetXTitle("r_{fitpath}(m)");
     hPos0FPFB->SetYTitle("r_{bonsai}(m)");
@@ -58,7 +45,7 @@ void trackExtraction(const char *file) {
     TH1D *hPhotoelectron1 = new TH1D("hPhotoelectron1","hPhotoelectron1",200,0,200);
     hPhotoelectron1->SetLineColor(4);
     TH1D *hPhotoelectron2 = new TH1D("hPhotoelectron2","hPhotoelectron2",200,0,200);
-    
+
     TH1D *hqBalance1 = new TH1D("hqBalance1","hqBalance1",100,0,1);
     hqBalance1->SetLineColor(4);
     TH1D *hqBalance2 = new TH1D("hqBalance2","hqBalance2",100,0,1);
@@ -66,10 +53,10 @@ void trackExtraction(const char *file) {
     
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
-    
+
     TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
-                                "pe:r_pathfit_true:r_bonsai_true:r_pathfit_bonsai:sub_ev:sub_ev_cnt");
+                                  "pe:r_pathfit_true:r_bonsai_true:r_pathfit_bonsai:sub_ev:sub_ev_cnt");
     
     
     RAT::DS::Root *rds = new RAT::DS::Root();
@@ -84,7 +71,7 @@ void trackExtraction(const char *file) {
     
     for (int i = 0; i < nEvents; i++) {
         
-//        printf("###################### event %4d ############################\n",i );
+        printf("###################### event %4d ############################\n",i );
         tree->GetEntry(i);
         RAT::DS::MC *mc = rds->GetMC();
         RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
@@ -114,10 +101,10 @@ void trackExtraction(const char *file) {
             for (int j = 0; j<ev->GetPMTCount();j++) {
                 RAT::DS::PMT *pmt = ev->GetPMT(j);
                 
-                //               printf("EV %2d PMT %2d: (pmtID, charge,time) (%3.0d, %8.2f, %8.2f)\n", k,j,pmt-
-                //                       >GetID(),pmt->GetCharge(),pmt->GetTime());
-                totPE+=pmt->GetCharge();
-                q2+= (pmt->GetCharge())**2;
+               printf("EV %2d PMT %2d: (pmtID, charge,time) (%3.0d, %8.2f, %8.2f)\n", k,j,pmt-
+                       >GetID(),pmt->GetCharge(),pmt->GetTime());
+                                    totPE+=pmt->GetCharge()/1.6;
+                    q2+= (pmt->GetCharge())**2;
                 
             }
             totQB = sqrt(q2/totPE**2-1./pmtCount);
@@ -131,16 +118,18 @@ void trackExtraction(const char *file) {
                 hPos0FP->Fill(reconstructedRadiusFP);
                 hPos0FB->Fill(reconstructedRadiusFB);
                 hPos0FPFB->Fill(reconstructedRadiusFP,reconstructedRadiusFB);
-                
+
             }
             if(k > 0 &&  totPE> 12 ){
                 hPhotoelectron2->Fill(totPE);
                 hqBalance2->Fill(totQB);
+                
+                
                 hPos1C->Fill(reconstructedRadiusFC);
                 hPos1FP->Fill(reconstructedRadiusFP);
                 hPos1FB->Fill(reconstructedRadiusFB);
                 hPos1FPFB->Fill(reconstructedRadiusFP,reconstructedRadiusFB);
-                
+
             }
             
         }
@@ -173,15 +162,15 @@ void trackExtraction(const char *file) {
             c1->Update();
         }
         
-        //        printf("MC PE     : %8.0f\n", mc->GetNumPE());
-        //        printf("MC PMT Cnt: %8.0f\n", mc->GetMCPMTCount());
-        //        printf("MC Trk Cnt: %8.0f\n", mc->GetMCTrackCount());
-        //        printf("MCPart Cnt: %8.0f\n", mc->GetMCParticleCount());
-        //        printf("Kin E     : %8.2f\n", prim->GetKE());
-        //        printf("position  : %8.2f %8.2f %8.2f\n", prim->GetPosition().X(), prim->GetPosition().Y(), prim->GetPosition().Z());
-        //        printf("momentum  : %8.3f %8.3f %8.3f\n", prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
-        //        printf("fit position  : %8.2f %8.2f %8.2f\n", pFit.X(), pFit.Y(), pFit.Z());
-        //
+        printf("MC PE     : %8.0f\n", mc->GetNumPE());
+        printf("MC PMT Cnt: %8.0f\n", mc->GetMCPMTCount());
+        printf("MC Trk Cnt: %8.0f\n", mc->GetMCTrackCount());
+        printf("MCPart Cnt: %8.0f\n", mc->GetMCParticleCount());
+        printf("Kin E     : %8.2f\n", prim->GetKE());
+//        printf("position  : %8.2f %8.2f %8.2f\n", prim->GetPosition().X(), prim->GetPosition().Y(), prim->GetPosition().Z());
+//        printf("momentum  : %8.3f %8.3f %8.3f\n", prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
+//        printf("fit position  : %8.2f %8.2f %8.2f\n", pFit.X(), pFit.Y(), pFit.Z());
+//        
         
         int nTracks = mc->GetMCTrackCount();
         
@@ -196,7 +185,7 @@ void trackExtraction(const char *file) {
             
             if((track->GetParticleName() != "opticalphoton" ) ){
                 if(first->ke>1.0 || track->pdgcode>22){//!((last->GetProcess()=="eIoni")||(last->GetProcess()=="hIoni"))){//
-                    // printf("%7d  %7d %7d %7d %10d %8.3f %10.3f\n",i,j,pid,tid,track->pdgcode, first->ke,first->globalTime);//
+                    printf("%7d  %7d %7d %7d %10d %8.3f %10.3f\n",i,j,pid,tid,track->pdgcode, first->ke,first->globalTime);//
                 }
             }// if((track->GetParticleName() != "opticalphoton" ) ){
             int nSteps = track->GetMCTrackStepCount();
@@ -214,19 +203,19 @@ void trackExtraction(const char *file) {
     hqBalance1->Draw();
     hqBalance2->Draw("same");
     c1->cd(3);
-    //    hPos0C->Draw();
+//    hPos0C->Draw();
     hPos0FP->Draw();
     hPos0FB->Draw("same");
-    
+
     c1->cd(4);
-    //    hPos1C->Draw();
+//    hPos1C->Draw();
     hPos1FP->Draw();
     hPos1FB->Draw("same");
     c1->Update();
     
-    //    f_out->cd();
+//    f_out->cd();
     data->Write();
-    
+
     hPhotoelectron1->Write();
     hPhotoelectron2->Write();
     hqBalance1->Write();
@@ -238,5 +227,5 @@ void trackExtraction(const char *file) {
     c1->Write();
     
     f_out->Close();
-    
+
 }

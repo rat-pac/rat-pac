@@ -16,6 +16,7 @@
 #include <RAT/Gen_LED.hh>
 #include <RAT/VertexGen_ES.hh>
 #include <RAT/VertexGen_Spectrum.hh>
+#include <RAT/VertexGen_SN.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
 #include <RAT/VertexFile_Gen.hh>
@@ -108,6 +109,9 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("spectrum",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_Spectrum>);
+    GlobalFactory<GLG4VertexGen>::Register("supernova",
+                                           new Alloc<GLG4VertexGen,
+                                           VertexGen_SN>);
 
   GlobalFactory<GLG4Gen>::Register("decaychain",
                                    new Alloc<GLG4Gen,DecayChain_Gen>);
