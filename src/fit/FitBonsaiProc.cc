@@ -52,7 +52,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
         n=pmtinfo->GetPMTCount();
         float xyz[3*n+1];
         
-        printf("have %d PMTs for BONSAI\n",n);
+//        printf("have %d PMTs for BONSAI\n",n);
         for(i=0; i<n; i++)
         {
             TVector3 pos=pmtinfo->GetPosition(i);
@@ -68,7 +68,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
     }
     
     int nhit=ev->GetPMTCount();
-    printf("Number of pmt hit %d\n",nhit);
+//    printf("Number of pmt hit %d\n",nhit);
     
     if ((nhit>0) && (nhit<maxnhit))
     {
@@ -80,7 +80,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
         {
             RAT::DS::PMT *pmt=ev->GetPMT(hit);
             cables[hit]=pmt->GetID()+1;
-            times[hit]=pmt->GetTime()+800;
+            times[hit]=float(pmt->GetTime()+800);
             charges[hit]=pmt->GetCharge();
         }
         int npmt=pmtinfo->GetPMTCount();
@@ -170,7 +170,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             }
             lfariadne_(bonsai_vtxfit,&n10,apmt,
                        adir,&agoodn,&aqual,&nscat,&cosscat);
-            printf("result %f %f %f %f\n",adir[0],adir[1],adir[2],agoodn);
+//            printf("result %f %f %f %f\n",adir[0],adir[1],adir[2],agoodn);
             result->SetDirection(TVector3(adir[0],adir[1],adir[2]));
             result->SetDirGoodness(agoodn);
         }

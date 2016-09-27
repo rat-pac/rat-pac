@@ -9,7 +9,7 @@
 #include <TFile.h>
 #include <TTree.h>
 
-void trackExtraction(const char *file) {
+void supernovaAnalysis(const char *file) {
     Double_t reconstructedRadius = 0.0;
     TH1D *hPos0C = new TH1D("hPos0C","centroid",1000,0.01,10);
     hPos0C->SetLineColor(4);
@@ -71,20 +71,39 @@ void trackExtraction(const char *file) {
     
     for (int i = 0; i < nEvents; i++) {
         
-        printf("###################### event %4d ############################\n",i );
+//        printf("###################### event %4d ############################\n",i );
         tree->GetEntry(i);
         RAT::DS::MC *mc = rds->GetMC();
         Int_t particleCountMC = mc->GetMCParticleCount();
         for (int mcP =0; mcP < particleCountMC; mcP++) {
             RAT::DS::MCParticle *prim = mc->GetMCParticle(mcP);
-            printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
+//            printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
             
         }
+        if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
+            printf("ES Interaction       ... ");
+        }
+        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==1000080169){
+            printf("NC Interaction       ... ");
+        }
+        else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
+            printf("IBD Interaction      ... ");
+        }
+        else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==1000090160){
+            printf("CC (16F) Interaction ... ");
+        }
+        else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==1000070160){
+            printf("CC (16N) Interaction ... ");
+        }else{
+            printf("What is this interaction (particles %d, %d ) ... ",particleCountMC, mc->GetMCParticle(1)->GetPDGCode());
+        }
+        
+        
         RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
         
         //Find out how many subevents:
         Int_t subevents = rds->GetEVCount();
-        printf("Found %d subevents.\n",subevents);
+        printf("Found %d detector subevents.\n",subevents);
         for (int k = 0; k<subevents; k++) {
             
             RAT::DS::EV *ev = rds->GetEV(k);

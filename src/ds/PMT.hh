@@ -27,15 +27,15 @@ public:
   virtual Float_t GetCharge() { return charge; }
 
   /** Hit time in ns */
-  virtual void SetTime(Float_t _time) { this->time = _time; }
-  virtual Float_t GetTime() { return time; }
+  virtual void SetTime(Double_t _time) { this->time = _time; }
+  virtual Double_t GetTime() { return time; }
 
  ClassDef(PMT, 1);
 
 protected:
   Int_t id;
   Float_t charge;
-  Float_t time;
+  Double_t time;
 };
 
   } // namespace DS

@@ -38,8 +38,8 @@ public:
   }
 
   /** Initial time of particle (ns). */
-  virtual Float_t GetTime() const { return t; }
-  virtual void SetTime(Float_t _t) { t = _t; }
+  virtual Double_t GetTime() const { return t; }
+  virtual void SetTime(Double_t _t) { t = _t; }
 
   /** Initial location of particle (mm). */
   virtual TVector3 GetPosition() const { return pos; }
@@ -61,7 +61,7 @@ public:
 
 protected:
   Int_t pdgcode;
-  Float_t t;
+  Double_t t;
   Float_t ke; 
   TVector3 pos;
   TVector3 mom;  

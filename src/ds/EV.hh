@@ -53,8 +53,8 @@ public:
   virtual Int_t Nhits() const { return GetPMTCount(); }
 
   /** Time since last trigger in ns. */
-  Float_t GetDeltaT() const { return deltat; }
-  void SetDeltaT(Float_t _deltat) { deltat = _deltat; }
+  Double_t GetDeltaT() const { return deltat; }
+  void SetDeltaT(Double_t _deltat) { deltat = _deltat; }
 
   /** Total charge in all PMT waveforms (pC). */
   Float_t GetTotalCharge() const { return qTotal; }
@@ -96,7 +96,7 @@ protected:
   Int_t id;
   Float_t qTotal;
   Float_t calibratedTriggerTime;
-  Float_t deltat;
+  Double_t deltat;
   TTimeStamp utc;
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;

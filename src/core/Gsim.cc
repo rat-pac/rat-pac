@@ -22,6 +22,7 @@
 #include <RAT/VertexFile_Gen.hh>
 #include <RAT/CfGen.hh>
 #include <RAT/ReacIBDgen.hh>
+#include <RAT/SNgen.hh>
 #include <RAT/EventInfo.hh>
 #include <RAT/TrackInfo.hh>
 #include <RAT/PrimaryVertexInformation.hh>
@@ -109,7 +110,7 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("spectrum",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_Spectrum>);
-    GlobalFactory<GLG4VertexGen>::Register("supernova",
+  GlobalFactory<GLG4VertexGen>::Register("supernova",
                                            new Alloc<GLG4VertexGen,
                                            VertexGen_SN>);
 
@@ -426,7 +427,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   for (int ivert=0; ivert<g4ev->GetNumberOfPrimaryVertex(); ivert++) {
     G4PrimaryVertex* pv = g4ev->GetPrimaryVertex(ivert);
 
-    float t = pv->GetT0();
+    double t = pv->GetT0();
     TVector3 pos(pv->GetX0(), pv->GetY0(), pv->GetZ0());
     
     for (int ipart=0; ipart<pv->GetNumberOfParticle(); ipart++) {
@@ -597,7 +598,7 @@ void Gsim::AddMCPhoton(DS::MCPMT* rat_mcpmt, const GLG4HitPhoton* photon,
   // parameters relevant only for actual photon hits, not noise hits
   if (!isDarkHit) {
     rat_mcphoton->SetLambda(photon->GetWavelength());
-    float x,y,z;
+    double x,y,z;
     photon->GetPosition(x,y,z);
     rat_mcphoton->SetPosition(TVector3(x,y,z));
     photon->GetMomentum(x,y,z);

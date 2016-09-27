@@ -6,10 +6,7 @@
 // J. Formaggio (UW) -02/09/2005
 
 #include <RAT/VertexGen_SN.hh>
-//#include <RAT/ESgen.hh>
-#include <RAT/Log.hh>
-
-#include "TF1.h"
+#include <RAT/SNgen.hh>
 
 #include <RAT/GLG4PosGen.hh>
 #include <RAT/GLG4StringUtil.hh>
@@ -22,41 +19,46 @@
 #include <G4Event.hh>
 #include <Randomize.hh>
 #include <globals.hh>
-#include "G4IonTable.hh"
-
 
 #include <CLHEP/Vector/LorentzVector.h>
 #include <CLHEP/Units/PhysicalConstants.h>
 
 #include <sstream>
 #include <cmath>
-//#####include <assert>
+
+
+#include "TF1.h"
+#include "TGraph.h"
+#include "G4IonTable.hh"
+
 
 namespace RAT {
     
     VertexGen_SN::VertexGen_SN(const char *arg_dbname)
     : GLG4VertexGen(arg_dbname), nu_dir(0.,0.,0.)
     {
+        
         electron = G4ParticleTable::GetParticleTable()->FindParticle("e-");
         m_electron = electron->GetPDGMass();
         nu = G4ParticleTable::GetParticleTable()->FindParticle("anti_nu_e");
         eplus = G4ParticleTable::GetParticleTable()->FindParticle("e+");
         n = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
         _lspec    = DB::Get()->GetLink("SN_SPECTRUM", _spectrum);	// default
+        SNgen.LoadSpectra();
+        
     }
     
     VertexGen_SN::~VertexGen_SN() {}
+    
     
     void VertexGen_SN::
     GeneratePrimaryVertex(G4Event* argEvent,
                           G4ThreeVector& dx,
                           G4double dt)
     {
-        
-        //Obtain user input for vertex and direction
         //        G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt);
-        
         G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
+        
         if (ev_nu_dir.mag2() == 0.0) {
             // Pick isotropic direction
             G4double theta = acos(2.0 * G4UniformRand() - 1.0);
@@ -65,30 +67,35 @@ namespace RAT {
             G4cout << "You have chosen an isotropic configuration, for supernovae this does not make sense.\n Picking a new direction for you. (" << theta << " " << phi << ")"<< G4endl;
         }
         
-        //Choose which type of interaction will occur 1-livermore, 2-gkvm
-        int model = 1;
-        
         //Pick an interaction for the supernova and then randomly pick a neutrino energy
-        G4int interactionCode         =  ChooseInteraction(model);// Fill in specname
-        G4double neutrinoEnergy    =  pickEnergyFromSpectrum();
+        G4int interactionCode         =  ChooseInteraction();// Fill in specname
+        G4double neutrinoEnergy;
         
-        G4cout << specname << " (NuCode,theta,phi,Enu): " << interactionCode << " (" << nu_dir.getTheta() << ", " << nu_dir.getPhi() << ") "  <<  " " << neutrinoEnergy << G4endl;
+        //        Double_t NC_Energy = SNgen.GetNCRandomEnergy();
+        //        Double_t IBD_Energy = SNgen.GetIBDRandomEnergy();
+        //
+        //        G4cout << neutrinoEnergy << " a bon " << SNgen.GetIBDAmplitude() << " " << IBD_Energy << " " << NC_Energy << G4endl;
         
         if (        interactionCode ==1) {
-            
+            neutrinoEnergy = SNgen.GetIBDRandomEnergy();
             GenerateIBDVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if (  interactionCode ==2 ) {
-            
+            neutrinoEnergy = SNgen.GetESRandomEnergy();
             GenerateESVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if(   interactionCode ==3){
-            
+            neutrinoEnergy = SNgen.GetCCRandomEnergy();
             GenerateCCVertex(argEvent,dx,dt,neutrinoEnergy);
             
-        }else if(interactionCode ==4){
-           
-            GenerateNCVertex(argEvent,dx,dt,neutrinoEnergy);
+        }else if(   interactionCode ==4){
+            neutrinoEnergy = SNgen.GetICCRandomEnergy();
+            GenerateICCVertex(argEvent,dx,dt,neutrinoEnergy);
+            
+        }else if(interactionCode ==5){
+            Double_t gammaEnergy = SNgen.GetCCRandomEnergy();
+            
+            GenerateNCVertex(argEvent,dx,dt,gammaEnergy);
             
         }else{
             G4cout << "No interactions was chosen, something is wrong with the code" << G4endl;
@@ -97,7 +104,7 @@ namespace RAT {
         }
     }
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    
     void VertexGen_SN::SetState(G4String newValues)
     {
         newValues = util_strip_default(newValues); // from GLG4StringUtil
@@ -115,7 +122,7 @@ namespace RAT {
         }
         
         std::istringstream is(newValues.c_str());
-        G4double x, y, z;
+        double x, y, z;
         is >> x >> y >> z;
         if (is.fail())
             return;
@@ -126,7 +133,7 @@ namespace RAT {
             nu_dir = G4ThreeVector(x, y, z).unit();
     }
     
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    
     G4String VertexGen_SN::GetState()
     {
         std::ostringstream os;
@@ -136,47 +143,34 @@ namespace RAT {
         G4String rv(os.str());
         return rv;
     }
-    
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    int VertexGen_SN::ChooseInteraction(int model){
-        float rand = G4UniformRand();
+    int VertexGen_SN::ChooseInteraction(){
         
-        if (model==1) {
-            if (rand < 0.88){
-                specname = "livermore_ibd";
-                return 1;
-            }else if(rand < 0.905){
-                specname = "livermore_nue_e";
-                return 2;
-            }else if (rand< 0.945){
-                specname = "livermore_nue_O16";
-                return 3;
-            }else{
-                specname = "livermore_nc_nue_O16";
-                return 4;
-            }
+        double rand = G4UniformRand();
+        
+        double a1 = SNgen.GetIBDAmplitude() ;
+        double a2 = a1 + SNgen.GetESAmplitude() ;
+        double a3 = a2 + SNgen.GetCCAmplitude() ;
+        double a4 = a3 + SNgen.GetICCAmplitude() ;
+        double a5 = a4 + SNgen.GetNCAmplitude() ;
+        if (a5!=1.0){
+            G4cout << "Something is wrong " << a1 << " " << a2 << " " << a3 << " " << a4<< " " << a5 <<   G4endl;
         }
-        else if (model==2) {
-            if (rand < 0.89){
-                specname = "gvkm_ibd";
-                return 1;
-            }else if(rand < 0.915){
-                specname = "gvkm_nue_e";
-                return 2;
-            }else if (rand < 0.935){
-                specname = "gvkm_nue_O16";
-                return 3;
-            }else{
-                specname = "gvkm_nc_nue_O16";
-                return 4;
-                
-            }
-            
-            
+        if (rand < a1){
+            return 1;
+        }else if(rand < a2){
+            return 2;
+        }else if (rand< a3){
+            return 3;
+        }else if (rand< a4){
+            return 4;
         }else{
-            return -1; //Added to make rat stop complaining
+            return 5;
         }
+        
     }
+    
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////
     double  VertexGen_SN::pickEnergyFromSpectrum(){
@@ -189,23 +183,32 @@ namespace RAT {
         spec_E   = _lspec->GetDArray("spec_e");
         spec_mag = _lspec->GetDArray("spec_mag");
         
-        float magsumTot = 0;
-        for(unsigned int istep = 1; istep<spec_E.size(); ++istep){
-            magsumTot+=(spec_mag[istep] + spec_mag[istep-1])/2.0 * (spec_E[istep] - spec_E[istep-1]);
+        TGraph *tempGraph = new TGraph();
+        
+        float magsumTot = 0.0;
+        
+        for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+            magsumTot+=(spec_mag[istep]);
+        }
+        float tot = 0.0;
+        for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+            tot+=spec_mag[istep]/magsumTot;
+            tempGraph->SetPoint(istep,spec_E[istep],tot);
         }
         
-        float pickEnergy = G4UniformRand(), foundEnergy = 0.0;
-        float magsum = 0;
+        float pickEnergy = G4UniformRand();
         
-        for(unsigned int istep = 1; istep<spec_E.size(); ++istep){
-            magsum+=(spec_mag[istep] + spec_mag[istep-1])/2.0 * (spec_E[istep] - spec_E[istep-1]);
-            if (magsum/magsumTot>pickEnergy) {
-                foundEnergy = (spec_E[istep] + spec_E[istep-1])/2.0;
+        //        float magsum = 0;
+        for (float foundEnergy=0.0; foundEnergy<100.0; foundEnergy+=0.01) {
+            if(tempGraph->Eval(foundEnergy)>pickEnergy){
+                tempGraph->Delete();
                 return foundEnergy;
-                break;
             }
         }
-        return foundEnergy;
+        G4cout << "Something is wrong with the energy picker" << G4endl;
+        
+        tempGraph->Delete();
+        return 0;
         
     }
     
@@ -219,8 +222,8 @@ namespace RAT {
         
 #ifdef DEBUG
         G4cout << "Neutrino " << ev_nu_dir << "" << G4endl;
-        G4cout << "Positron " << positron << "" << G4endl;
-        G4cout << "Neutron "  << neutron << "" << G4endl;
+        G4cout << "Positron " << primair << "" << G4endl;
+        G4cout << "Neutron "  << secondaire << "" << G4endl;
 #endif
         
         // -- Create particles
@@ -228,18 +231,18 @@ namespace RAT {
         // positron
         G4PrimaryParticle* eplus_particle =
         new G4PrimaryParticle(eplus,              // particle code
-                              positron.px(),     // x component of momentum
-                              positron.py(),     // y component of momentum
-                              positron.pz());    // z component of momentum
+                              primair.px(),     // x component of momentum
+                              primair.py(),     // y component of momentum
+                              primair.pz());    // z component of momentum
         eplus_particle->SetMass(eplus->GetPDGMass()); // Geant4 is silly.
         vertex->SetPrimary( eplus_particle );
         
         // neutron
         G4PrimaryParticle* n_particle =
         new G4PrimaryParticle(n,                  // particle code
-                              neutron.px(),         // x component of momentum
-                              neutron.py(),         // y component of momentum
-                              neutron.pz());        // z component of momentum
+                              secondaire.px(),         // x component of momentum
+                              secondaire.py(),         // y component of momentum
+                              secondaire.pz());        // z component of momentum
         n_particle->SetMass(n->GetPDGMass()); // Geant4 is silly.
         vertex->SetPrimary( n_particle );
         
@@ -309,8 +312,8 @@ namespace RAT {
         
 #ifdef DEBUG
         G4cout << "Neutrino " << ev_nu_dir << "" << G4endl;
-        G4cout << "Positron " << positron << "" << G4endl;
-        G4cout << "Neutron "  << neutron << "" << G4endl;
+        G4cout << "Positron " << primair << "" << G4endl;
+        G4cout << "Neutron "  << secondaire << "" << G4endl;
 #endif
         
         // -- Create particles
@@ -318,9 +321,9 @@ namespace RAT {
         // positron
         G4PrimaryParticle* eplus_particle =
         new G4PrimaryParticle(electron,              // particle code
-                              positron.px(),     // x component of momentum
-                              positron.py(),     // y component of momentum
-                              positron.pz());    // z component of momentum
+                              primair.px(),     // x component of momentum
+                              primair.py(),     // y component of momentum
+                              primair.pz());    // z component of momentum
         eplus_particle->SetMass(eplus->GetPDGMass()); // Geant4 is silly.
         vertex->SetPrimary( eplus_particle );
         
@@ -329,9 +332,9 @@ namespace RAT {
         
         G4PrimaryParticle* n_particle =
         new G4PrimaryParticle(f16F,                  // particle code
-                              neutron.px(),         // x component of momentum
-                              neutron.py(),         // y component of momentum
-                              neutron.pz());        // z component of momentum
+                              secondaire.px(),         // x component of momentum
+                              secondaire.py(),         // y component of momentum
+                              secondaire.pz());        // z component of momentum
         n_particle->SetMass(f16F->GetPDGMass()); // Geant4 is silly.
         vertex->SetPrimary( n_particle );
         
@@ -350,35 +353,54 @@ namespace RAT {
         
     }
     
-    
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    void VertexGen_SN::GenerateNCVertex( G4Event* argEvent,G4ThreeVector& dx,G4double dt,G4double e_nu){
+    void VertexGen_SN::GenerateICCVertex( G4Event* argEvent,G4ThreeVector& dx,G4double dt,G4double e_nu){
+        
         
         G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt);
         G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
         
+        Eval2BodyKinematicICC(e_nu, ev_nu_dir);
+        //G4cout << "Breakpoint 4 ICC" << e_nu << G4endl;
+        
 #ifdef DEBUG
         G4cout << "Neutrino " << ev_nu_dir << "" << G4endl;
-        G4cout << "Neutron "  << neutron << "" << G4endl;
+        G4cout << "Positron " << primair << "" << G4endl;
+        G4cout << "Neutron "  << secondaire << "" << G4endl;
 #endif
         
-        // Need to find a way to split the recoil and excitation energy
-        //
-        // Excited nuclei
-        G4ParticleDefinition *fNC = G4IonTable::GetIonTable()->GetIon(8, 16, e_nu/2.0);
+        // -- Create particles
+        // FIXME: Should I also add the neutrino and make these daughters of it?
+        // positron
+        G4PrimaryParticle* eplus_particle =
+        new G4PrimaryParticle(electron,              // particle code
+                              primair.px(),     // x component of momentum
+                              primair.py(),     // y component of momentum
+                              primair.pz());    // z component of momentum
+        eplus_particle->SetMass(eplus->GetPDGMass()); // Geant4 is silly.
+        vertex->SetPrimary( eplus_particle );
+        //G4cout << "Breakpoint 5 ICC" << e_nu << G4endl;
+        
+        
+        // Due to issues with Nitrogen 16, Nitrogen 15 (stable) is used instead
+        G4ParticleDefinition *f16N = G4IonTable::GetIonTable()->GetIon(7, 16, 0.0);
+        //G4cout << "Breakpoint 6 ICC" << e_nu << G4endl;
         
         G4PrimaryParticle* n_particle =
-        new G4PrimaryParticle(fNC,                  // particle code
-                              e_nu*ev_nu_dir.x(),         // x component of momentum
-                              e_nu*ev_nu_dir.y(),         // y component of momentum
-                              e_nu*ev_nu_dir.z());        // z component of momentum
-        n_particle->SetMass(fNC->GetPDGMass()); // Geant4 is silly.
+        new G4PrimaryParticle(f16N,                  // particle code
+                              secondaire.px(),         // x component of momentum
+                              secondaire.py(),         // y component of momentum
+                              secondaire.pz());        // z component of momentum
+        n_particle->SetMass(f16N->GetPDGMass()); // Geant4 is silly.
+        //G4cout << "Breakpoint 7 ICC" << e_nu << G4endl;
+        
         vertex->SetPrimary( n_particle );
         
+        //G4cout << "Breakpoint 8 ICC" << e_nu << G4endl;
         
         //Adding neutrino to see what happens M.B.
         G4PrimaryParticle* nu_particle =
-        new G4PrimaryParticle(nu,                  // particle code
+        new G4PrimaryParticle(14,                  // particle code
                               e_nu*ev_nu_dir.x(),         // x component of momentum
                               e_nu*ev_nu_dir.y(),         // y component of momentum
                               e_nu*ev_nu_dir.z());        // z component of momentum
@@ -386,11 +408,90 @@ namespace RAT {
         vertex->SetPrimary( nu_particle );
         
         argEvent->AddPrimaryVertex(vertex);
+        //G4cout << "Breakpoint 9 ICC" << e_nu << G4endl;
+        
+        
+        
     }
     
     
     
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    void VertexGen_SN::GenerateNCVertex( G4Event* argEvent,G4ThreeVector& dx,G4double dt,G4double e_g){
+        
+        G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt);
+        G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
+        
+        
+        
+#ifdef DEBUG
+        G4cout << "Neutrino " << ev_nu_dir << "" << G4endl;
+        G4cout << "Neutron "  << secondaire << "" << G4endl;
+#endif
+        
+        // Need to find a way to split the recoil and excitation energy
+        //
+        // Excited nuclei
+        //        G4ParticleDefinition *fNC = G4IonTable::GetIonTable()->GetIon(8, 16, e_g/2.0);
+        
+        G4PrimaryParticle* n_particle =
+        new G4PrimaryParticle(22,                  // particle code
+                              e_g*ev_nu_dir.x(),         // x component of momentum
+                              e_g*ev_nu_dir.y(),         // y component of momentum
+                              e_g*ev_nu_dir.z());        // z component of momentum
+        n_particle->SetMass(0.0); // Geant4 is silly.
+        vertex->SetPrimary( n_particle );
+        
+        
+        //Adding neutrino to see what happens M.B.
+        G4PrimaryParticle* nu_particle =
+        new G4PrimaryParticle(16,                  // particle code
+                              e_g*ev_nu_dir.x(),         // x component of momentum
+                              e_g*ev_nu_dir.y(),         // y component of momentum
+                              e_g*ev_nu_dir.z());        // z component of momentum
+        nu_particle->SetMass(0.0); // Geant4 is silly.
+        vertex->SetPrimary( nu_particle );
+        
+        argEvent->AddPrimaryVertex(vertex);
+    }
     
+    void VertexGen_SN::GenerateINCVertex( G4Event* argEvent,G4ThreeVector& dx,G4double dt,G4double e_g){
+        
+        G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt);
+        G4ThreeVector ev_nu_dir(nu_dir); // By default use specified direction
+        
+        
+        
+#ifdef DEBUG
+        G4cout << "Neutrino " << ev_nu_dir << "" << G4endl;
+        G4cout << "Neutron "  << secondaire << "" << G4endl;
+#endif
+        
+        // Need to find a way to split the recoil and excitation energy
+        //
+        // Excited nuclei
+        //        G4ParticleDefinition *fNC = G4IonTable::GetIonTable()->GetIon(8, 16, e_g/2.0);
+        
+        G4PrimaryParticle* n_particle =
+        new G4PrimaryParticle(22,                  // particle code
+                              e_g*ev_nu_dir.x(),         // x component of momentum
+                              e_g*ev_nu_dir.y(),         // y component of momentum
+                              e_g*ev_nu_dir.z());        // z component of momentum
+        n_particle->SetMass(0.0); // Geant4 is silly.
+        vertex->SetPrimary( n_particle );
+        
+        
+        //Adding neutrino to see what happens M.B.
+        G4PrimaryParticle* nu_particle =
+        new G4PrimaryParticle(16,                  // particle code
+                              e_g*ev_nu_dir.x(),         // x component of momentum
+                              e_g*ev_nu_dir.y(),         // y component of momentum
+                              e_g*ev_nu_dir.z());        // z component of momentum
+        nu_particle->SetMass(0.0); // Geant4 is silly.
+        vertex->SetPrimary( nu_particle );
+        
+        argEvent->AddPrimaryVertex(vertex);
+    }
     
     
     
@@ -488,6 +589,7 @@ namespace RAT {
         G4double recoilMass =  CLHEP::neutron_mass_c2;
         //Taken from IBDGen.cc
         G4double DELTA = recoilMass - targetMass;
+        //        G4cout << "Delta value " << DELTA << G4endl;
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
         G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
@@ -520,12 +622,12 @@ namespace RAT {
         rotation_axis.rotate(phi, ev_nu_dir);
         pos_momentum.rotate(theta, rotation_axis);
         
-        positron.setVect(pos_momentum);
-        positron.setE(E1);
+        primair.setVect(pos_momentum);
+        primair.setE(E1);
         
         // Compute neutron 4-momentum
-        neutron.setVect(neutrino.vect() - positron.vect());
-        neutron.setE(sqrt(neutron.vect().mag2() + recoilMass*recoilMass));
+        secondaire.setVect(neutrino.vect() - primair.vect());
+        secondaire.setE(sqrt(secondaire.vect().mag2() + recoilMass*recoilMass));
         
     }
     
@@ -539,6 +641,9 @@ namespace RAT {
         G4double recoilMass =  fRecoil->GetPDGMass(); // Mass of nitrogen16
         //Taken from IBDGen.cc
         G4double DELTA = recoilMass - targetMass;
+        
+//        G4cout << "Delta value CC " << DELTA << G4endl;
+        
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
         G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
@@ -571,16 +676,16 @@ namespace RAT {
         rotation_axis.rotate(phi, ev_nu_dir);
         pos_momentum.rotate(theta, rotation_axis);
         
-        positron.setVect(pos_momentum);
-        positron.setE(E1);
+        primair.setVect(pos_momentum);
+        primair.setE(E1);
         
         // Compute neutron 4-momentum
-        neutron.setVect(neutrino.vect() - positron.vect());
-        neutron.setE(sqrt(neutron.vect().mag2() + recoilMass*recoilMass));
+        secondaire.setVect(neutrino.vect() - primair.vect());
+        secondaire.setE(sqrt(secondaire.vect().mag2() + recoilMass*recoilMass));
         
     }
     
-    void VertexGen_SN::Eval2BodyKinematicCCbar(G4double enu, G4ThreeVector ev_nu_dir) {
+    void VertexGen_SN::Eval2BodyKinematicICC(G4double enu, G4ThreeVector ev_nu_dir) {
         G4ParticleDefinition *fTarget = G4IonTable::GetIonTable()->GetIon(8, 16, 0.0);
         G4ParticleDefinition *fRecoil = G4IonTable::GetIonTable()->GetIon(7, 16, 0.0);
         
@@ -588,6 +693,9 @@ namespace RAT {
         G4double recoilMass =  fRecoil->GetPDGMass(); // Mass of nitrogen16
         //Taken from IBDGen.cc
         G4double DELTA = recoilMass - targetMass;
+        
+//        G4cout << "Delta value ICC " << DELTA << G4endl;
+        
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
         G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
@@ -604,6 +712,7 @@ namespace RAT {
         G4double E1 = E0*(1-enu/targetMass*(1-v0*CosThetaLab))
         - Ysquared/targetMass;
         G4double p1 = sqrt(E1*E1-CLHEP::electron_mass_c2*CLHEP::electron_mass_c2);
+        //G4cout << "Breakpoint 1 ICC" << DELTA << G4endl;
         
         // Compute nu 4-momentum
         CLHEP::HepLorentzVector neutrino;
@@ -620,12 +729,18 @@ namespace RAT {
         rotation_axis.rotate(phi, ev_nu_dir);
         pos_momentum.rotate(theta, rotation_axis);
         
-        positron.setVect(pos_momentum);
-        positron.setE(E1);
+        //G4cout << "Breakpoint 2 ICC" << DELTA << G4endl;
+        
+        
+        primair.setVect(pos_momentum);
+        primair.setE(E1);
         
         // Compute neutron 4-momentum
-        neutron.setVect(neutrino.vect() - positron.vect());
-        neutron.setE(sqrt(neutron.vect().mag2() + recoilMass*recoilMass));
+        secondaire.setVect(neutrino.vect() - primair.vect());
+        secondaire.setE(sqrt(secondaire.vect().mag2() + recoilMass*recoilMass));
+        
+        //G4cout << "Breakpoint 3 ICC" << sqrt(secondaire.vect().mag2() + recoilMass*recoilMass) << G4endl;
+        
         
     }
     
