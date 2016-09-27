@@ -112,7 +112,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
 //                printf("already have hit %lf/%lf ",times[hit],charges[hit]);
                 if (darkt<times[hit]) times[hit]=darkt;
                 charges[hit]++;
-                printf("now %lf/%lf\n",times[hit],charges[hit]);
+//                printf("now %lf/%lf\n",times[hit],charges[hit]);
             }
         }
         
