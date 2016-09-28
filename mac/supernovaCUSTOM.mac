@@ -25,7 +25,7 @@
 /generator/vtx/set e+ 0 0 0 
 /generator/pos/set 0 0 0
 
-/generator/supernova/model 1
+/generator/supernova/model 2
 /generator/supernova/ibd   0.2
 /generator/supernova/es    0.2
 /generator/supernova/cc    0.2

@@ -31,6 +31,7 @@ TGraph *graphCC;
 TGraph *graphICC;
 TGraph *graphNC;
 TGraph *graphINC;
+TGraph *graphNCRate;
 
 namespace RAT {
     
@@ -338,24 +339,25 @@ namespace RAT {
     
     void SNgen::LoadSpectra(){
         int model = GetModel();
-        float magsumTot,totIBD,totES,totCC,totICC,totNC;
+        Double_t magsumTot,totIBD,totES,totCC,totICC,totNC,x,y;
+        
         G4cout << "\n===================== Supernova information ======================" << G4endl;
 
         //Load in the Livermore model
         if (model == 1){
-            G4cout << "\nUsing the livermore model. Within the Livermore model the following rates are present.\nThese rates are not used in the processing of these events, but may be set by the user\nmanualy\n " << G4endl;
-            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_ibd");
+            G4cout << "\nUsing the livermore model. Within the this model the following rates are present.\nThese rates are not used in the processing of these events, but may be set by the user\nmanualy " << G4endl;
             
+            
+            //////////////////////////// IBD //////////////////////////////////////////////////////
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_ibd");
             // Flux function
             spec_E.clear();
             spec_mag.clear();
             spec_E   = _lspec->GetDArray("spec_e");
             spec_mag = _lspec->GetDArray("spec_mag");
-            
-            
             magsumTot = 0.0;
             graphIBD = new TGraph();
-            
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
                 graphIBD->SetPoint(istep,spec_E[istep],spec_mag[istep]);
@@ -363,21 +365,10 @@ namespace RAT {
             G4cout << "Total IBD integrate spectra is  " << magsumTot<<G4endl;
             totIBD = magsumTot;
             
-            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nue_e");
-            // Flux function
-            spec_E.clear();
-            spec_mag.clear();
-            spec_E   = _lspec->GetDArray("spec_e");
-            spec_mag = _lspec->GetDArray("spec_mag");
-            magsumTot = 0.0;
-            graphES = new TGraph();
-            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
-                magsumTot+=(spec_mag[istep]);
-                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
-            }
-            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
-            totES = magsumTot;
-
+            
+            //////////////////////////// CC //////////////////////////////////////////////////////
+            
+        
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nue_O16");
             // Flux function
             spec_E.clear();
@@ -393,7 +384,8 @@ namespace RAT {
             G4cout << "Total CC integrate spectra is  " << magsumTot<<G4endl;
             totCC = magsumTot;
 
-            
+            //////////////////////////// ICC //////////////////////////////////////////////////////
+
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nuebar_O16");
             // Flux function
             spec_E.clear();
@@ -408,6 +400,10 @@ namespace RAT {
             }
             G4cout << "Total ICC integrate spectra is  " << magsumTot<<G4endl;
             totICC = magsumTot;
+            
+            
+            //////////////////////////// NC //////////////////////////////////////////////////////
+
 
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_nue_O16");
             // Flux function
@@ -415,20 +411,207 @@ namespace RAT {
             spec_mag.clear();
             spec_E   = _lspec->GetDArray("spec_e");
             spec_mag = _lspec->GetDArray("spec_mag");
+            graphNCRate = new TGraph();
+
             magsumTot = 0.0;
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
+//            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
             totNC = magsumTot;
+        
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_numu_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_nutau_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+        
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_nuebar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_numubar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_nutaubar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            //////////////////////////// ES //////////////////////////////////////////////////////
+
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nue_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            graphES = new TGraph();
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                magsumTot+=(spec_mag[istep]);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
+            }
+//            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nuebar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+//            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_numu_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+//            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_numubar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+//            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nutau_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+//            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nutaubar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            //////////////////////////// TALLY //////////////////////////////////////////////////////
+
+            
+            
             Double_t tot = totIBD+totES+totCC+totICC+totNC;
             G4cout << "(ibd,es,cc,icc,nc): " << "("<< totIBD/tot <<", "<< totES/tot <<", "<< totCC/tot <<", "<< totICC/tot <<", "<< totNC/tot <<")\n" <<G4endl;
-        }// GVKM MODEL
+        }// GVKM MODELgvkm
         else if (model ==2){
+            G4cout << "\nUsing the gvkm model. Within the this model the following rates are present.\nThese rates are not used in the processing of these events, but may be set by the user\nmanualy  " << G4endl;
             
-            G4cout << "Using gvkm model " << G4endl;
             
-            // EXTRACT THE IBD information
+            //////////////////////////// IBD //////////////////////////////////////////////////////
+            
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_ibd");
             // Flux function
             spec_E.clear();
@@ -442,20 +625,11 @@ namespace RAT {
                 graphIBD->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
             G4cout << "Total IBD integrate spectra is  " << magsumTot<<G4endl;
+            totIBD = magsumTot;
             
-            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nue_e");
-            // Flux function
-            spec_E.clear();
-            spec_mag.clear();
-            spec_E   = _lspec->GetDArray("spec_e");
-            spec_mag = _lspec->GetDArray("spec_mag");
-            magsumTot = 0.0;
-            graphES = new TGraph();
-            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
-                magsumTot+=(spec_mag[istep]);
-                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
-            }
-            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            
+            //////////////////////////// CC //////////////////////////////////////////////////////
+            
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nue_O16");
             // Flux function
@@ -470,7 +644,9 @@ namespace RAT {
                 graphCC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
             G4cout << "Total CC integrate spectra is  " << magsumTot<<G4endl;
+            totCC = magsumTot;
             
+            //////////////////////////// ICC //////////////////////////////////////////////////////
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nuebar_O16");
             // Flux function
@@ -485,6 +661,11 @@ namespace RAT {
                 graphICC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
             G4cout << "Total ICC integrate spectra is  " << magsumTot<<G4endl;
+            totICC = magsumTot;
+            
+            
+            //////////////////////////// NC //////////////////////////////////////////////////////
+            
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_nue_O16");
             // Flux function
@@ -492,12 +673,200 @@ namespace RAT {
             spec_mag.clear();
             spec_E   = _lspec->GetDArray("spec_e");
             spec_mag = _lspec->GetDArray("spec_mag");
+            graphNCRate = new TGraph();
+            
             magsumTot = 0.0;
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
+            //            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
             
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_numu_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_nutau_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_nuebar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_numubar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_nutaubar_O16");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphNCRate->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphNCRate->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            
+            //////////////////////////// ES //////////////////////////////////////////////////////
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nue_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            graphES = new TGraph();
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                magsumTot+=(spec_mag[istep]);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nuebar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_numu_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_numubar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nutau_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            
+            
+            _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nutaubar_e");
+            // Flux function
+            spec_E.clear();
+            spec_mag.clear();
+            spec_E   = _lspec->GetDArray("spec_e");
+            spec_mag = _lspec->GetDArray("spec_mag");
+            magsumTot = 0.0;
+            for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
+                graphES->GetPoint(istep,x,y);
+                magsumTot+=(spec_mag[istep]+y);
+                graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
+            }
+            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+            
+            //////////////////////////// TALLY //////////////////////////////////////////////////////
+            
+            
+            
+            Double_t tot = totIBD+totES+totCC+totICC+totNC;
+            G4cout << "(ibd,es,cc,icc,nc): " << "("<< totIBD/tot <<", "<< totES/tot <<", "<< totCC/tot <<", "<< totICC/tot <<", "<< totNC/tot <<")\n" <<G4endl;
             
         }
         
