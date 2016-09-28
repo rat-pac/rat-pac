@@ -107,7 +107,7 @@ namespace RAT {
         
         // Separate class to generate the elastic-scattering event.
         // Concrete definition; will invoke the SNgen() constructor.
-        SNgen SNgen;
+        SNgen sngen;
         
         // Electron mass
         G4double m_electron;

@@ -74,7 +74,7 @@ namespace RAT {
         void SetICCAmplitude(double ICCAm = ICCDEFAULT);
         void SetNCAmplitude ( double NCAm = NCDEFAULT);
         void SetINCAmplitude ( double INCAm = INCDEFAULT);
-        void SetModel ( double ModelTmp= MODELDEFAULT);
+        void SetModel ( double ModelTm= MODELDEFAULT);
         
         void LoadSpectra();
         

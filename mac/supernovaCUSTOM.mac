@@ -25,12 +25,14 @@
 /generator/vtx/set e+ 0 0 0 
 /generator/pos/set 0 0 0
 
+###  GVKM(ibd,es,cc,icc,nc): (0.840591, 0.0149344, 0.00291923, 0.0223892, 0.119166)
 /generator/supernova/model 2
-/generator/supernova/ibd   0.2
-/generator/supernova/es    0.2
-/generator/supernova/cc    0.2
-/generator/supernova/icc   0.2
-/generator/supernova/nc	   0.2
-/run/beamOn 500
+/generator/supernova/ibd   0.840591
+/generator/supernova/es    0.0149344
+/generator/supernova/cc    0.00291923
+/generator/supernova/icc   0.0223892
+/generator/supernova/nc	   0.119166
+
+/run/beamOn 50000
 
 

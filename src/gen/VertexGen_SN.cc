@@ -44,7 +44,7 @@ namespace RAT {
         eplus = G4ParticleTable::GetParticleTable()->FindParticle("e+");
         n = G4ParticleTable::GetParticleTable()->FindParticle("neutron");
         _lspec    = DB::Get()->GetLink("SN_SPECTRUM", _spectrum);	// default
-        SNgen.LoadSpectra();
+        sngen.LoadSpectra();
         
     }
     
@@ -72,19 +72,19 @@ namespace RAT {
         G4double neutrinoEnergy;
         
         if (        interactionCode ==1) {
-            neutrinoEnergy = SNgen.GetIBDRandomEnergy();
+            neutrinoEnergy = sngen.GetIBDRandomEnergy();
             GenerateIBDVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if (  interactionCode ==2 ) {
-            neutrinoEnergy = SNgen.GetESRandomEnergy();
+            neutrinoEnergy = sngen.GetESRandomEnergy();
             GenerateESVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if(   interactionCode ==3){
-            neutrinoEnergy = SNgen.GetCCRandomEnergy();
+            neutrinoEnergy = sngen.GetCCRandomEnergy();
             GenerateCCVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if(   interactionCode ==4){
-            neutrinoEnergy = SNgen.GetICCRandomEnergy();
+            neutrinoEnergy = sngen.GetICCRandomEnergy();
             GenerateICCVertex(argEvent,dx,dt,neutrinoEnergy);
             
         }else if(interactionCode ==5){
@@ -92,10 +92,10 @@ namespace RAT {
             //Fifty fifty chance of going 15N or 15O. There are different potential energy gamma
             //associate with the different choice.
             if (rand<0.5) {
-                Double_t gammaEnergy = SNgen.GetNCRandomEnergy();
+                Double_t gammaEnergy = sngen.GetNCRandomEnergy();
                 GenerateNCVertex(argEvent,dx,dt,gammaEnergy);
             }else {
-                Double_t gammaEnergy = SNgen.GetINCRandomEnergy();
+                Double_t gammaEnergy = sngen.GetINCRandomEnergy();
                 GenerateINCVertex(argEvent,dx,dt,gammaEnergy);
             }
         }else{
@@ -149,12 +149,12 @@ namespace RAT {
         
         double rand = G4UniformRand();
         
-        double a1 = SNgen.GetIBDAmplitude() ;
-        double a2 = a1 + SNgen.GetESAmplitude() ;
-        double a3 = a2 + SNgen.GetCCAmplitude() ;
-        double a4 = a3 + SNgen.GetICCAmplitude() ;
-        double a5 = a4 + SNgen.GetNCAmplitude() ;
-        if (a5!=1.0){
+        double a1 = sngen.GetIBDAmplitude() ;
+        double a2 = a1 + sngen.GetESAmplitude() ;
+        double a3 = a2 + sngen.GetCCAmplitude() ;
+        double a4 = a3 + sngen.GetICCAmplitude() ;
+        double a5 = a4 + sngen.GetNCAmplitude() ;
+        if (std::abs(a5-1.0)>0.01){
             G4cout << "Something is wrong " << a1 << " " << a2 << " " << a3 << " " << a4<< " " << a5 <<   G4endl;
         }
         if (rand < a1){
