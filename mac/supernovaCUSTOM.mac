@@ -26,11 +26,11 @@
 /generator/pos/set 0 0 0
 
 /generator/supernova/model 1
-/generator/supernova/ibd   0.
-/generator/supernova/es    0.
-/generator/supernova/cc    0.
-/generator/supernova/icc   1.
-/generator/supernova/nc	   0.
+/generator/supernova/ibd   0.2
+/generator/supernova/es    0.2
+/generator/supernova/cc    0.2
+/generator/supernova/icc   0.2
+/generator/supernova/nc	   0.2
 /run/beamOn 500
 
 

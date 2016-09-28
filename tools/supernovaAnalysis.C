@@ -68,7 +68,7 @@ void supernovaAnalysis(const char *file) {
     c1->Divide(2,3);
     Double_t totPE = 0.0;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
-    
+    Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0;
     for (int i = 0; i < nEvents; i++) {
         
 //        printf("###################### event %4d ############################\n",i );
@@ -82,18 +82,23 @@ void supernovaAnalysis(const char *file) {
         }
         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
             printf("ES Interaction       ... ");
+            es+=1;
         }
-        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==1000080169){
+        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==22){
             printf("NC Interaction       ... ");
+            nc+=1;
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
             printf("IBD Interaction      ... ");
+            ibd+=1;
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==1000090160){
             printf("CC (16F) Interaction ... ");
+            cc+=1;
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==1000070160){
-            printf("CC (16N) Interaction ... ");
+            printf("ICC (16N) Interaction ... ");
+            icc+=1;;
         }else{
             printf("What is this interaction (particles %d, %d ) ... ",particleCountMC, mc->GetMCParticle(1)->GetPDGCode());
         }
@@ -253,5 +258,10 @@ void supernovaAnalysis(const char *file) {
     c1->Write();
     
     f_out->Close();
+    
+    Double_t tot = ibd+es+cc+icc+nc;
+    
+    printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
+    
     
 }

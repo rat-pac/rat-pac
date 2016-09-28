@@ -338,11 +338,12 @@ namespace RAT {
     
     void SNgen::LoadSpectra(){
         int model = GetModel();
-        float magsumTot;
-        
+        float magsumTot,totIBD,totES,totCC,totICC,totNC;
+        G4cout << "\n===================== Supernova information ======================" << G4endl;
+
         //Load in the Livermore model
         if (model == 1){
-            G4cout << "Using following model "<< GetModel() << G4endl;
+            G4cout << "\nUsing the livermore model. Within the Livermore model the following rates are present.\nThese rates are not used in the processing of these events, but may be set by the user\nmanualy\n " << G4endl;
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_ibd");
             
             // Flux function
@@ -359,8 +360,8 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphIBD->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total IBD cross-section is " << magsumTot<<G4endl;
-            
+            G4cout << "Total IBD integrate spectra is  " << magsumTot<<G4endl;
+            totIBD = magsumTot;
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nue_e");
             // Flux function
@@ -374,8 +375,9 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total ES cross-section is " << magsumTot<<G4endl;
-            
+            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
+            totES = magsumTot;
+
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nue_O16");
             // Flux function
             spec_E.clear();
@@ -388,8 +390,9 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphCC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total CC cross-section is " << magsumTot<<G4endl;
-            
+            G4cout << "Total CC integrate spectra is  " << magsumTot<<G4endl;
+            totCC = magsumTot;
+
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nuebar_O16");
             // Flux function
@@ -403,8 +406,9 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphICC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total ICC cross-section is " << magsumTot<<G4endl;
-            
+            G4cout << "Total ICC integrate spectra is  " << magsumTot<<G4endl;
+            totICC = magsumTot;
+
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "livermore_nc_nue_O16");
             // Flux function
             spec_E.clear();
@@ -415,12 +419,14 @@ namespace RAT {
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
             }
-            G4cout << "Total NC cross-section is " << magsumTot<<G4endl;
-            
+            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
+            totNC = magsumTot;
+            Double_t tot = totIBD+totES+totCC+totICC+totNC;
+            G4cout << "(ibd,es,cc,icc,nc): " << "("<< totIBD/tot <<", "<< totES/tot <<", "<< totCC/tot <<", "<< totICC/tot <<", "<< totNC/tot <<")\n" <<G4endl;
         }// GVKM MODEL
         else if (model ==2){
             
-            G4cout << "Using following model "<< GetModel() << G4endl;
+            G4cout << "Using gvkm model " << G4endl;
             
             // EXTRACT THE IBD information
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_ibd");
@@ -435,7 +441,7 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphIBD->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total IBD cross-section is " << magsumTot<<G4endl;
+            G4cout << "Total IBD integrate spectra is  " << magsumTot<<G4endl;
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nue_e");
             // Flux function
@@ -449,7 +455,7 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total ES cross-section is " << magsumTot<<G4endl;
+            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nue_O16");
             // Flux function
@@ -463,7 +469,7 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphCC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total CC cross-section is " << magsumTot<<G4endl;
+            G4cout << "Total CC integrate spectra is  " << magsumTot<<G4endl;
             
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nuebar_O16");
@@ -478,7 +484,7 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]);
                 graphICC->SetPoint(istep,spec_E[istep],spec_mag[istep]);
             }
-            G4cout << "Total ICC cross-section is " << magsumTot<<G4endl;
+            G4cout << "Total ICC integrate spectra is  " << magsumTot<<G4endl;
             
             _lspec = DB::Get()->GetLink("SN_SPECTRUM", "gvkm_nc_nue_O16");
             // Flux function
@@ -490,7 +496,7 @@ namespace RAT {
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
             }
-            G4cout << "Total NC cross-section is " << magsumTot<<G4endl;
+            G4cout << "Total NC integrate spectra is  " << magsumTot<<G4endl;
             
             
         }
