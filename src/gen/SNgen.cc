@@ -513,7 +513,7 @@ namespace RAT {
             for(unsigned int istep = 0; istep<spec_E.size(); ++istep){
                 magsumTot+=(spec_mag[istep]);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]);
-                G4cout << "ES nue " << spec_E[istep]  << " " <<spec_mag[istep] << G4endl;
+                //G4cout << "ES nue " << spec_E[istep]  << " " <<spec_mag[istep] << G4endl;
             }
             //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             totES = magsumTot;
@@ -530,7 +530,7 @@ namespace RAT {
                 graphES->GetPoint(istep,x,y);
                 magsumTot+=(spec_mag[istep]+y);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
-                G4cout << "ES nuebar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
+                //G4cout << "ES nuebar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
                 
             }
             //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
@@ -549,7 +549,7 @@ namespace RAT {
                 magsumTot+=(spec_mag[istep]+y);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
                 
-                G4cout << "ES numu x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
+                //G4cout << "ES numu x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
             }
             //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             totES = magsumTot;
@@ -567,7 +567,7 @@ namespace RAT {
                 graphES->GetPoint(istep,x,y);
                 magsumTot+=(spec_mag[istep]+y);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
-                G4cout << "ES numubar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
+                //G4cout << "ES numubar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
             }
             //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             totES = magsumTot;
@@ -584,7 +584,7 @@ namespace RAT {
                 graphES->GetPoint(istep,x,y);
                 magsumTot+=(spec_mag[istep]+y);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
-                G4cout << "ES nutau x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
+                //G4cout << "ES nutau x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
             }
             //            G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             totES = magsumTot;
@@ -602,7 +602,7 @@ namespace RAT {
                 graphES->GetPoint(istep,x,y);
                 magsumTot+=(spec_mag[istep]+y);
                 graphES->SetPoint(istep,spec_E[istep],spec_mag[istep]+y);
-                G4cout << "ES nutaubar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
+                //G4cout << "ES nutaubar x:(" << spec_E[istep]  << ", " <<x << "), E:("<< spec_mag[istep] << " + " << y <<" = " << spec_mag[istep]+y << ")" <<G4endl;
             }
             G4cout << "Total ES integrate spectra is  " << magsumTot<<G4endl;
             totES = magsumTot;
@@ -880,50 +880,50 @@ namespace RAT {
         
         //Neutral current event get a special treatment.
         
-        graphNC= new TGraph();
-        graphNC->SetPoint(0,0,0.0);
-        graphNC->SetPoint(1,5.25,0.0);
-        graphNC->SetPoint(2,5.30,0.73);
-        graphNC->SetPoint(3,5.35,0.0);
-        graphNC->SetPoint(4,6.28,0);
-        graphNC->SetPoint(5,6.33,0.84);
-        graphNC->SetPoint(6,6.38,0.0);
-        graphNC->SetPoint(7,7.18,0);
-        graphNC->SetPoint(8,7.23,0.29);
-        graphNC->SetPoint(9,7.28,0.0);
-        graphNC->SetPoint(10,7.51,0);
-        graphNC->SetPoint(11,7.56,0.05);
-        graphNC->SetPoint(12,7.61,0.0);
-        graphNC->SetPoint(13,8.27,0);
-        graphNC->SetPoint(14,8.32,0.07);
-        graphNC->SetPoint(15,8.37,0.0);
-        graphNC->SetPoint(16,8.52,0);
-        graphNC->SetPoint(17,8.57,0.05);
-        graphNC->SetPoint(18,8.62,0.0);
-        graphNC->SetPoint(19,9.11,0);
-        graphNC->SetPoint(20,9.16,0.31);
-        graphNC->SetPoint(21,9.21,0.0);
-        graphNC->SetPoint(22,9.78,0);
-        graphNC->SetPoint(23,9.83,0.14);
-        graphNC->SetPoint(24,9.88,0.0);
-        graphNC->SetPoint(25,10.0,0.0);
-        
-        
         graphINC= new TGraph();
         graphINC->SetPoint(0,0,0.0);
-        graphINC->SetPoint(1,5.20,0.0);
-        graphINC->SetPoint(2,5.25,  0.28);
-        graphINC->SetPoint(3,5.30,0.0);
-        graphINC->SetPoint(4,6.13,0);
-        graphINC->SetPoint(5,6.18,  0.21);
-        graphINC->SetPoint(6,6.23,0.0);
-        graphINC->SetPoint(7,6.71,0);
-        graphINC->SetPoint(8,6.76,  0.14);
-        graphINC->SetPoint(9,6.81,0.0);
-        graphINC->SetPoint(10,7.23,0);
-        graphINC->SetPoint(11,7.28,  0.02);
-        graphINC->SetPoint(12,7.31,0.0);
-        graphINC->SetPoint(13,10.0,0.0);
+        graphINC->SetPoint(1,5.25,0.0);
+        graphINC->SetPoint(2,5.30,0.73);
+        graphINC->SetPoint(3,5.35,0.0);
+        graphINC->SetPoint(4,6.28,0);
+        graphINC->SetPoint(5,6.33,0.84);
+        graphINC->SetPoint(6,6.38,0.0);
+        graphINC->SetPoint(7,7.18,0);
+        graphINC->SetPoint(8,7.23,0.29);
+        graphINC->SetPoint(9,7.28,0.0);
+        graphINC->SetPoint(10,7.51,0);
+        graphINC->SetPoint(11,7.56,0.05);
+        graphINC->SetPoint(12,7.61,0.0);
+        graphINC->SetPoint(13,8.27,0);
+        graphINC->SetPoint(14,8.32,0.07);
+        graphINC->SetPoint(15,8.37,0.0);
+        graphINC->SetPoint(16,8.52,0);
+        graphINC->SetPoint(17,8.57,0.05);
+        graphINC->SetPoint(18,8.62,0.0);
+        graphINC->SetPoint(19,9.11,0);
+        graphINC->SetPoint(20,9.16,0.31);
+        graphINC->SetPoint(21,9.21,0.0);
+        graphINC->SetPoint(22,9.78,0);
+        graphINC->SetPoint(23,9.83,0.14);
+        graphINC->SetPoint(24,9.88,0.0);
+        graphINC->SetPoint(25,10.0,0.0);
+        
+        
+        graphNC= new TGraph();
+        graphNC->SetPoint(0,0,0.0);
+        graphNC->SetPoint(1,5.20,0.0);
+        graphNC->SetPoint(2,5.25,  0.28);
+        graphNC->SetPoint(3,5.30,0.0);
+        graphNC->SetPoint(4,6.13,0);
+        graphNC->SetPoint(5,6.18,  0.21);
+        graphNC->SetPoint(6,6.23,0.0);
+        graphNC->SetPoint(7,6.71,0);
+        graphNC->SetPoint(8,6.76,  0.14);
+        graphNC->SetPoint(9,6.81,0.0);
+        graphNC->SetPoint(10,7.23,0);
+        graphNC->SetPoint(11,7.28,  0.02);
+        graphNC->SetPoint(12,7.31,0.0);
+        graphNC->SetPoint(13,10.0,0.0);
         
         
         

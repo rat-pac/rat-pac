@@ -94,7 +94,7 @@ namespace RAT {
         // returns current state formatted as above
         
     private:
-        G4ParticleDefinition *electron, *nu, *n, *eplus;
+        G4ParticleDefinition *electron, *nu, *n, *p, *eplus,*gamma;
         G4ThreeVector nu_dir;
         
         G4String	_particle;			// name of the particle type

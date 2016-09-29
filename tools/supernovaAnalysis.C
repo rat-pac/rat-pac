@@ -109,15 +109,6 @@ void supernovaAnalysis(const char *file) {
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
         }
-        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==22){
-//            printf("NC Interaction       ... ");
-            nc+=1;
-            interaction_type = 5;
-            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-            hNuP->Fill(prim->ke);
-            mcmomv_particle = prim->GetMomentum();
-
-        }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
 //            printf("IBD Interaction      ... ");
             ibd+=1;
@@ -143,8 +134,42 @@ void supernovaAnalysis(const char *file) {
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
 
-        }else{
-            printf("What is this interaction (particles %d, %d ) ... ",particleCountMC, mc->GetMCParticle(1)->GetPDGCode());
+        }
+        else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2112){
+            printf("NC Interaction       ... 5\n");
+            nc+=1;
+            interaction_type = 5;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            hNuP->Fill(0.0);
+            mcmomv_particle = prim->GetMomentum();
+        }
+        else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2212){
+            printf("NC Interaction       ... 7\n");
+            nc+=1;
+            interaction_type = 7;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            hNuP->Fill(0.0);
+            mcmomv_particle = prim->GetMomentum();
+        }
+        else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2112){
+            printf("NC Interaction       ... 6\n");
+            nc+=1;
+            interaction_type = 6;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
+            hNuP->Fill(prim->ke);
+            mcmomv_particle = prim->GetMomentum();
+        
+        }
+        else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2212){
+            printf("NC Interaction       ... 8\n");
+            nc+=1;
+            interaction_type = 8;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
+            hNuP->Fill(prim->ke);
+            mcmomv_particle = prim->GetMomentum();
+        }
+        else{
+            printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
         }
         
         RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
