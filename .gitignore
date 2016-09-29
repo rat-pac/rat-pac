@@ -23,3 +23,5 @@ rootfiles
 watchman_supernova.root
 *.log
 .DS_Store
+*.root
+*.gif

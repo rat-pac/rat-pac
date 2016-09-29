@@ -43,25 +43,42 @@ void supernovaAnalysis(const char *file) {
     hCos0FB_SN->SetXTitle("cos #theta_{SN}");
     hCos0FB_SN->SetYTitle("Counts");
     
+    TH1D *hNuE = new TH1D("hNuE","neutrino energy",1000,0,100);
+    hNuE->SetLineColor(4);
+    hNuE->SetXTitle("neutrino energy (MeV)");
+    hNuE->SetYTitle("Counts");
+
+    TH1D *hNuP = new TH1D("hNuP","particle energy (e^{#pm} or #gamma)",1000,0,100);
+    hNuP->SetLineColor(4);
+    hNuP->SetXTitle("Cherenkov-inducing particle Energy (MeV)");
+    hNuP->SetYTitle("Counts");
+    
 
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
     
     TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
     TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
-                                "pe:r_bonsai_true:cosTheta:cosThetaSN:sub_ev:sub_ev_cnt:interaction");
+                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
     
     
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
     
-    
     int nEvents = tree->GetEntries();
-    TCanvas *c1 = new TCanvas("c1","c1",1200,800);
+    
+    TCanvas *c1 = new TCanvas("c1","Detector Reconstruction Information",1200,800);
     c1->Divide(2,2);
+    
+    TCanvas *c2 = new TCanvas("c2","MC truth",1200,800);
+    c2->Divide(2,2);
+    
+    
+
+    
     Double_t totPE = 0.0;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
-    Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN;
+    Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN,local_time;
 
     Int_t interaction_type;
     TVector3 mcmomv_nu, mcmomv_particle;
@@ -80,6 +97,7 @@ void supernovaAnalysis(const char *file) {
         //Get the direction of the neutrino. Saved as last particle
         RAT::DS::MCParticle *prim = mc->GetMCParticle(particleCountMC-1);
         mcmomv_nu=prim->GetMomentum();
+        hNuE->Fill(prim->ke);
         
         interaction_type = 0.0;
         
@@ -88,7 +106,7 @@ void supernovaAnalysis(const char *file) {
             es+=1;
             interaction_type = 1;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-
+            hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
         }
         else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==22){
@@ -96,7 +114,7 @@ void supernovaAnalysis(const char *file) {
             nc+=1;
             interaction_type = 5;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-
+            hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
 
         }
@@ -105,7 +123,7 @@ void supernovaAnalysis(const char *file) {
             ibd+=1;
             interaction_type = 2;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-
+            hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
 
         }
@@ -113,6 +131,7 @@ void supernovaAnalysis(const char *file) {
 //            printf("CC (16F) Interaction ... ");
             cc+=1;
             interaction_type = 3;
+            hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
 
         }
@@ -121,7 +140,7 @@ void supernovaAnalysis(const char *file) {
             icc+=1;;
             interaction_type = 4;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
-
+            hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
 
         }else{
@@ -139,6 +158,8 @@ void supernovaAnalysis(const char *file) {
             totPE = totQB = q2 = 0.0;
             pmtCount = float(ev->GetPMTCount());
             
+            local_time = ev->GetDeltaT();
+            
             RAT::DS::BonsaiFit *pb = ev->GetBonsaiFit();
             TVector3 pFitFB = pb->GetPosition();
             reconstructedRadiusFB = sqrt(pow(pFitFB.X()-prim->GetPosition().X(),2)+ pow(pFitFB.Y()-prim->GetPosition().Y(),2)+ pow(pFitFB.Z()-prim->GetPosition().Z(),2))/1000.;
@@ -150,7 +171,7 @@ void supernovaAnalysis(const char *file) {
             cosTheta   =    (pb->GetDirection()* mcmomv_particle)/mcmomv_particle.Mag();
             cosThetaSN =    (pb->GetDirection()* mcmomv_nu      )/mcmomv_nu.Mag();
 
-            data->Fill(totPE,reconstructedRadiusFB,cosTheta,cosThetaSN,Double_t(k)+1,Double_t(subevents),interaction_type);
+            data->Fill(totPE,reconstructedRadiusFB,cosTheta,cosThetaSN,local_time,Double_t(k)+1,Double_t(subevents),interaction_type);
             if(k ==0 && totPE> 8){
                 hPhotoelectron0->Fill(totPE);
                 hPos0FB->Fill(reconstructedRadiusFB);
@@ -192,6 +213,14 @@ void supernovaAnalysis(const char *file) {
             gPad->SetGrid();
             
             c1->Update();
+            
+            c2->cd(1);
+            hNuE->Draw();
+            
+            c2->cd(2);
+            hNuP->Draw();
+            
+            c2->Update();
         }
         
         int nTracks = mc->GetMCTrackCount();
@@ -244,6 +273,15 @@ void supernovaAnalysis(const char *file) {
     
     c1->Update();
     
+    c2->cd(1);
+    hNuE->Draw();
+    c2->cd(2);
+    hNuP->Draw();
+    
+    
+    c2->Update();
+
+    
     //    f_out->cd();
     data->Write();
     
@@ -251,7 +289,9 @@ void supernovaAnalysis(const char *file) {
     hPhotoelectron1->Write();
     hPos0FB->Write();
     hPos1FB->Write();
+    hNuE->Write();
     c1->Write();
+    c2->Write();
     
     f_out->Close();
     
