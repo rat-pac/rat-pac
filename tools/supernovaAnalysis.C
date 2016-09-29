@@ -75,7 +75,7 @@ void supernovaAnalysis(const char *file) {
     
 
     
-    Double_t totPE = 0.0,totMom;
+    Double_t totPE = 0.0,totMom,goodness,dirGoodness;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
     Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN,local_time;
     int subEvNumber=0;
@@ -93,15 +93,17 @@ void supernovaAnalysis(const char *file) {
     dataTree->Branch("cosTheta",&cosTheta,"cosTheta/D");
     dataTree->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
     dataTree->Branch("local_time_ns",&local_time,"local_time_ns/D");
-    dataTree->Branch("sub_ev",&subEvNumber,"sub_ev/D");
-    dataTree->Branch("sub_ev_cnt",&subevents,"sub_ev_cnt/D");
+    dataTree->Branch("sub_ev",&subEvNumber,"sub_ev/I");
+    dataTree->Branch("sub_ev_cnt",&subevents,"sub_ev_cnt/I");
     dataTree->Branch("interaction",&interaction_type,"interaction/I");
     
-    dataTree->Branch("posTruth","TVector3",&posTruth,32000,0);
+    dataTree->Branch("pos_goodness",&goodness,"pos_goodness/D");
     dataTree->Branch("posReco","TVector3",&posReco,32000,0);
+    dataTree->Branch("posTruth","TVector3",&posTruth,32000,0);
     
-    dataTree->Branch("dirTruth","TVector3",&dirTruth,32000,0);
+    dataTree->Branch("dir_goodness",&dirGoodness,"dir_goodness/D");
     dataTree->Branch("dirReco","TVector3",&dirReco,32000,0);
+    dataTree->Branch("dirTruth","TVector3",&dirTruth,32000,0);
     dataTree->Branch("dirNu","TVector3",&dirNu,32000,0);
     
 
@@ -247,6 +249,9 @@ void supernovaAnalysis(const char *file) {
             
             RAT::DS::BonsaiFit *pb = ev->GetBonsaiFit();
             TVector3 pFitFB = pb->GetPosition();
+            goodness = pb->GetGoodness();
+            dirGoodness = pb->GetDirGoodness();
+            
             posReco =  pb->GetPosition();
             reconstructedRadiusFB = sqrt(pow(pFitFB.X()-prim->GetPosition().X(),2)+ pow(pFitFB.Y()-prim->GetPosition().Y(),2)+ pow(pFitFB.Z()-prim->GetPosition().Z(),2))/1000.;
             
@@ -256,7 +261,9 @@ void supernovaAnalysis(const char *file) {
             }
             cosTheta   =    (pb->GetDirection()* mcmomv_particle)/mcmomv_particle.Mag();
             cosThetaSN =    (pb->GetDirection()* mcmomv_nu      )/mcmomv_nu.Mag();
+            
             dirReco = pb->GetDirection();
+            subEvNumber = k+1;
             data->Fill(totPE,reconstructedRadiusFB,cosTheta,cosThetaSN,local_time,Double_t(k)+1,Double_t(subevents),interaction_type);
             dataTree->Fill();
 
@@ -275,7 +282,7 @@ void supernovaAnalysis(const char *file) {
             
         }
         
-        if (i%100 == 0){
+        if (i%500 == 0){
             c1->cd(1);
             hPhotoelectron0->Draw();
             hPhotoelectron1->Draw("same");
