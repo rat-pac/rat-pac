@@ -84,7 +84,7 @@ namespace RAT {
         
         // Choose which interaction and evaluate the neutrino energy from the spectrum
         virtual G4int  ChooseInteraction();
-        virtual G4double  pickEnergyFromSpectrum();
+//        virtual G4double  pickEnergyFromSpectrum();
         
         // generates a primary vertex with given particle type, direction, and energy.
         virtual void SetState( G4String newValues );
