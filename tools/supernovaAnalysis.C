@@ -61,7 +61,6 @@ void supernovaAnalysis(const char *file) {
     TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
                                 "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
     
-    
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
     
@@ -76,107 +75,168 @@ void supernovaAnalysis(const char *file) {
     
 
     
-    Double_t totPE = 0.0;
+    Double_t totPE = 0.0,totMom;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
     Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN,local_time;
-
+    int subEvNumber=0;
+    Int_t subevents = 0;
+    
     Int_t interaction_type;
     TVector3 mcmomv_nu, mcmomv_particle;
 
+    TTree *dataTree = new TTree("dataTree","dataTree");
+    
+    TVector3 posTruth,posReco,dirTruth,dirNu,dirReco;
+        
+    dataTree->Branch("pe",&totPE,"pe/D");
+    dataTree->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
+    dataTree->Branch("cosTheta",&cosTheta,"cosTheta/D");
+    dataTree->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
+    dataTree->Branch("local_time_ns",&local_time,"local_time_ns/D");
+    dataTree->Branch("sub_ev",&subEvNumber,"sub_ev/D");
+    dataTree->Branch("sub_ev_cnt",&subevents,"sub_ev_cnt/D");
+    dataTree->Branch("interaction",&interaction_type,"interaction/I");
+    
+    dataTree->Branch("posTruth","TVector3",&posTruth,32000,0);
+    dataTree->Branch("posReco","TVector3",&posReco,32000,0);
+    
+    dataTree->Branch("dirTruth","TVector3",&dirTruth,32000,0);
+    dataTree->Branch("dirReco","TVector3",&dirReco,32000,0);
+    dataTree->Branch("dirNu","TVector3",&dirNu,32000,0);
+    
+
+
+
     for (int i = 0; i < nEvents; i++) {
         
-//        printf("###################### event %4d ############################\n",i );
+//        //printf("###################### event %4d ############################\n",i );
         tree->GetEntry(i);
         RAT::DS::MC *mc = rds->GetMC();
         Int_t particleCountMC = mc->GetMCParticleCount();
         for (int mcP =0; mcP < particleCountMC; mcP++) {
             RAT::DS::MCParticle *prim = mc->GetMCParticle(mcP);
-//            printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
+//            //printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
             
         }
         //Get the direction of the neutrino. Saved as last particle
         RAT::DS::MCParticle *prim = mc->GetMCParticle(particleCountMC-1);
         mcmomv_nu=prim->GetMomentum();
+        dirNu =  prim->GetMomentum();
+
         hNuE->Fill(prim->ke);
         
         interaction_type = 0.0;
         
         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
-//            printf("ES Interaction       ... ");
+//            //printf("ES Interaction       ... ");
             es+=1;
             interaction_type = 1;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
-//            printf("IBD Interaction      ... ");
+//            //printf("IBD Interaction      ... ");
             ibd+=1;
             interaction_type = 2;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
+
 
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==1000090160){
-//            printf("CC (16F) Interaction ... ");
+//            //printf("CC (16F) Interaction ... ");
             cc+=1;
             interaction_type = 3;
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
 
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==1000070160){
-//            printf("ICC (16N) Interaction ... ");
+//            //printf("ICC (16N) Interaction ... ");
             icc+=1;;
             interaction_type = 4;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
 
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2112){
-            printf("NC Interaction       ... 5\n");
+            //printf("NC Interaction       ... 5\n");
             nc+=1;
             interaction_type = 5;
-            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
             hNuP->Fill(0.0);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2212){
-            printf("NC Interaction       ... 7\n");
+            //printf("NC Interaction       ... 7\n");
             nc+=1;
             interaction_type = 7;
-            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
             hNuP->Fill(0.0);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
         }
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2112){
-            printf("NC Interaction       ... 6\n");
+            //printf("NC Interaction       ... 6\n");
             nc+=1;
             interaction_type = 6;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
+
         
         }
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2212){
-            printf("NC Interaction       ... 8\n");
+            //printf("NC Interaction       ... 8\n");
             nc+=1;
             interaction_type = 8;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+
         }
         else{
-            printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
+            //printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
         }
         
         RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
         
         //Find out how many subevents:
-        Int_t subevents = rds->GetEVCount();
-//        printf("Found %d detector subevents.\n",subevents);
+        subevents = rds->GetEVCount();
+//        //printf("Found %d detector subevents.\n",subevents);
         for (int k = 0; k<subevents; k++) {
             
             RAT::DS::EV *ev = rds->GetEV(k);
@@ -187,6 +247,7 @@ void supernovaAnalysis(const char *file) {
             
             RAT::DS::BonsaiFit *pb = ev->GetBonsaiFit();
             TVector3 pFitFB = pb->GetPosition();
+            posReco =  pb->GetPosition();
             reconstructedRadiusFB = sqrt(pow(pFitFB.X()-prim->GetPosition().X(),2)+ pow(pFitFB.Y()-prim->GetPosition().Y(),2)+ pow(pFitFB.Z()-prim->GetPosition().Z(),2))/1000.;
             
             for (int j = 0; j<pmtCount;j++) {
@@ -195,9 +256,11 @@ void supernovaAnalysis(const char *file) {
             }
             cosTheta   =    (pb->GetDirection()* mcmomv_particle)/mcmomv_particle.Mag();
             cosThetaSN =    (pb->GetDirection()* mcmomv_nu      )/mcmomv_nu.Mag();
-
+            dirReco = pb->GetDirection();
             data->Fill(totPE,reconstructedRadiusFB,cosTheta,cosThetaSN,local_time,Double_t(k)+1,Double_t(subevents),interaction_type);
-            if(k ==0 && totPE> 8){
+            dataTree->Fill();
+
+	    if(k ==0 && totPE> 8){
                 hPhotoelectron0->Fill(totPE);
                 hPos0FB->Fill(reconstructedRadiusFB);
                 hCos0FB->Fill(cosTheta);
@@ -261,7 +324,7 @@ void supernovaAnalysis(const char *file) {
             
             if((track->GetParticleName() != "opticalphoton" ) ){
                 if(first->ke>1.0 || track->pdgcode>22){//!((last->GetProcess()=="eIoni")||(last->GetProcess()=="hIoni"))){//
-                    printf("%7d  %7d %7d %7d %10d %8.3f %10.3f\n",i,j,pid,tid,track->pdgcode, first->ke,first->globalTime);//
+                    //printf("%7d  %7d %7d %7d %10d %8.3f %10.3f\n",i,j,pid,tid,track->pdgcode, first->ke,first->globalTime);//
                 }
             }// if((track->GetParticleName() != "opticalphoton" ) ){
             int nSteps = track->GetMCTrackStepCount();
@@ -309,7 +372,8 @@ void supernovaAnalysis(const char *file) {
     
     //    f_out->cd();
     data->Write();
-    
+    dataTree->Write();
+
     hPhotoelectron0->Write();
     hPhotoelectron1->Write();
     hPos0FB->Write();
