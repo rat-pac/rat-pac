@@ -19,11 +19,11 @@ void supernovaAnalysis(const char *file) {
     
     hPos0FB->SetXTitle("r_{bonsai}(m)");
     hPos0FB->SetYTitle("Counts");
-//    
+    //
     
     static Int_t nbins 	= 100;
     Double_t xbins[100]; //Needs to be the same number as above
-
+    
     Double_t xmin 	= 1e-2;
     Double_t xmax 	= 20;
     Double_t logxmin = log10(xmin);
@@ -32,7 +32,7 @@ void supernovaAnalysis(const char *file) {
     xbins[0] = xmin;
     for(Int_t i=0; i<nbins;i++){
         xbins[i] = xmin + pow(10,logxmin+i*binwidth);
-//        printf("%6.3f\n",xbins[i]);
+        //        printf("%6.3f\n",xbins[i]);
     }
     
     TH1D *hPos0FBLOG = new TH1D("hPos0FBLOG","primary event",nbins-1,xbins);
@@ -82,8 +82,8 @@ void supernovaAnalysis(const char *file) {
     TTree *tree = (TTree*) f->Get("T");
     
     TFile *f_out = new TFile(Form("ntuple_%s",f->GetName()),"Recreate");
-    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
-                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
+    //    TNtuple* data = new TNtuple("data","Ntuple for Watchman Reconstruction Studies",
+    //                                "pe:r_bonsai_true:cosTheta:cosThetaSN:local_time_ns:sub_ev:sub_ev_cnt:interaction");
     
     RAT::DS::Root *rds = new RAT::DS::Root();
     tree->SetBranchAddress("ds", &rds);
@@ -101,7 +101,8 @@ void supernovaAnalysis(const char *file) {
     
     Double_t totPE = 0.0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
-    Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN,local_time;
+    Int_t ibd=0,es=0,cc=0,icc=0,nc=0;
+    Double_t cosTheta,cosThetaSN,local_time;
     int subEvNumber=0;
     Int_t subevents = 0,cnt,cntLoop;
     Int_t single[40],_single;
@@ -110,31 +111,76 @@ void supernovaAnalysis(const char *file) {
     Int_t interaction_type;
     TVector3 mcmomv_nu, mcmomv_particle;
     
-    TTree *dataTree = new TTree("dataTree","dataTree");
+    TTree *data = new TTree("data","supernova events");
     
     TVector3 posTruth,posReco,dirTruth,dirNu,dirReco;
     
-    dataTree->Branch("pe",&totPE,"pe/D");
-    dataTree->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
-    dataTree->Branch("cosTheta",&cosTheta,"cosTheta/D");
-    dataTree->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
-    dataTree->Branch("local_time_ns",&local_time,"local_time_ns/D");
-    dataTree->Branch("sub_ev",&subEvNumber,"sub_ev/I");
-    dataTree->Branch("sub_ev_cnt",&cnt,"sub_ev_cnt/I");
-    dataTree->Branch("single",&_single,"single/I");
-    dataTree->Branch("interaction",&interaction_type,"interaction/I");
+    data->Branch("pe",&totPE,"pe/D");
+    data->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
+    data->Branch("cosTheta",&cosTheta,"cosTheta/D");
+    data->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
+    data->Branch("local_time_ns",&local_time,"local_time_ns/D");
+    data->Branch("sub_ev",&subEvNumber,"sub_ev/I");
+    data->Branch("sub_ev_cnt",&cnt,"sub_ev_cnt/I");
+    data->Branch("single",&_single,"single/I");
+    data->Branch("interaction",&interaction_type,"interaction/I");
     
-    dataTree->Branch("pos_goodness",&goodness,"pos_goodness/D");
-    dataTree->Branch("posReco","TVector3",&posReco,32000,0);
-    dataTree->Branch("posTruth","TVector3",&posTruth,32000,0);
+    data->Branch("pos_goodness",&goodness,"pos_goodness/D");
+    data->Branch("posReco","TVector3",&posReco,32000,0);
+    data->Branch("posTruth","TVector3",&posTruth,32000,0);
     
-    dataTree->Branch("dir_goodness",&dirGoodness,"dir_goodness/D");
-    dataTree->Branch("dirReco","TVector3",&dirReco,32000,0);
-    dataTree->Branch("dirTruth","TVector3",&dirTruth,32000,0);
-    dataTree->Branch("dirNu","TVector3",&dirNu,32000,0);
+    data->Branch("dir_goodness",&dirGoodness,"dir_goodness/D");
+    data->Branch("dirReco","TVector3",&dirReco,32000,0);
+    data->Branch("dirTruth","TVector3",&dirTruth,32000,0);
+    data->Branch("dirNu","TVector3",&dirNu,32000,0);
     
+    Int_t ES_true, IBD_true,CC_true,ICC_true,NC_true;
     
+    Int_t totSingles, totMultiples, ES_cnt, IBD_cnt,CC_cnt,ICC_cnt,NC_cnt;
+    Double_t ES_ratio, IBD_ratio,CC_ratio,ICC_ratio,NC_ratio;
+    TTree *summary = new TTree("summary","supernova summary");
     
+    Int_t ES_cnt_s, IBD_cnt_s,CC_cnt_s,ICC_cnt_s,NC_cnt_s;
+    Double_t ES_ratio_s, IBD_ratio_s,CC_ratio_s,ICC_ratio_s,NC_ratio_s;
+    
+    summary->Branch("evts_that_are_singles",&totSingles,"evts_that_are_singles/I" );
+    summary->Branch("evts_that_are_multiples",&totMultiples,"evts_that_are_multiples/I");
+    
+    summary->Branch("single_evts_from_ES",&ES_cnt_s,"single_evts_from_ES/I");
+    summary->Branch("single_evts_from_IBD",&IBD_cnt_s,"single_evts_from_IBD/I");
+    summary->Branch("single_evts_from_CC",&CC_cnt_s,"single_evts_from_CC/I");
+    summary->Branch("single_evts_from_ICC",&ICC_cnt_s,"single_evts_from_ICC/I");
+    summary->Branch("single_evts_from_NC",&NC_cnt_s,"single_evts_from_NC/I");
+    summary->Branch("single_evts_from_ratio",&ES_ratio_s,"single_evts_from_ES_ratio/D");
+    summary->Branch("single_evts_from_ratio",&IBD_ratio_s,"single_evts_from_IBD_ratio/D");
+    summary->Branch("single_evts_from_CC_ratio",&CC_ratio_s,"single_evts_from_CC_ratio/D");
+    summary->Branch("single_evts_from_ICC_ratio",&ICC_ratio_s,"single_evts_from_ICC_ratio/D");
+    summary->Branch("single_evts_from_NC_ratio",&NC_ratio_s,"single_evts_from_NC_ratio/D");
+    
+    summary->Branch("physevts_observed_ES",&ES_cnt,"physevts_observed_ES/I");
+    summary->Branch("physevts_observed_IBD",&IBD_cnt,"physevts_observed_IBD/I");
+    summary->Branch("physevts_observed_CC",&CC_cnt,"physevts_observed_CC/I");
+    summary->Branch("physevts_observed_ICC",&ICC_cnt,"physevts_observed_ICC/I");
+    summary->Branch("physevts_observed_NC",&NC_cnt,"physevts_observed_NC/I");
+    summary->Branch("physevts_observed_ratio",&ES_ratio,"physevts_observed_ES_ratio/D");
+    summary->Branch("physevts_observed_ratio",&IBD_ratio,"physevts_observed_IBD_ratio/D");
+    summary->Branch("physevts_observed_CC_ratio",&CC_ratio,"physevts_observed_CC_ratio/D");
+    summary->Branch("physevts_observed_ICC_ratio",&ICC_ratio,"physevts_observed_ICC_ratio/D");
+    summary->Branch("physevts_observed_NC_ratio",&NC_ratio,"physevts_observed_NC_ratio/D");
+    
+    Double_t ES_prod_ratio, IBD_prod_ratio,CC_prod_ratio,ICC_prod_ratio,NC_prod_ratio;
+
+    
+    summary->Branch("phys_evt_ES_produced",&es ,"phys_evt_ES_produced/I");
+    summary->Branch("phys_evt_IBD_produced",&ibd,"phys_evt_IBD_produced/I");
+    summary->Branch("phys_evt_CC_produced",&cc,"phys_evt_CC_produced/I");
+    summary->Branch("phys_evt_ICC_produced",&icc ,"phys_evt_ICC_produced/I");
+    summary->Branch("phys_evt_NC_produced",&nc,"phys_evt_NC_produced/I");
+    summary->Branch("phys_evt_ES_prod_ratio",&ES_prod_ratio,"phys_evt_ES_prod_ratio/D");
+    summary->Branch("phys_evt_IBD_prod_ratio",&IBD_prod_ratio,"phys_evt_IBD_prod_ratio/D");
+    summary->Branch("phys_evt_CC_prod_ratio",&CC_prod_ratio,"phys_evt_CC_prod_ratio/D");
+    summary->Branch("phys_evt_ICC_prod_ratio",&ICC_prod_ratio,"phys_evt_ICC_prod_ratio/D");
+    summary->Branch("phys_evt_NC_prod_ratio",&NC_prod_ratio,"phys_evt_NC_prod_ratio/D");
     
     for (int i = 0; i < nEvents; i++) {
         
@@ -155,10 +201,11 @@ void supernovaAnalysis(const char *file) {
         hNuE->Fill(prim->ke);
         
         interaction_type = 0.0;
-        
+        ES_true = IBD_true = CC_true = ICC_true = NC_true = 0;
         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
             //            //printf("ES Interaction       ... ");
             es+=1;
+            ES_true =1;
             interaction_type = 1;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
@@ -171,6 +218,7 @@ void supernovaAnalysis(const char *file) {
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
             //            //printf("IBD Interaction      ... ");
             ibd+=1;
+            IBD_true =1;
             interaction_type = 2;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
@@ -185,6 +233,7 @@ void supernovaAnalysis(const char *file) {
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==1000090160){
             //            //printf("CC (16F) Interaction ... ");
             cc+=1;
+            CC_true = 1;
             interaction_type = 3;
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
@@ -196,7 +245,9 @@ void supernovaAnalysis(const char *file) {
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==1000070160){
             //            //printf("ICC (16N) Interaction ... ");
-            icc+=1;;
+            icc+=1;
+            ICC_true =1;
+            
             interaction_type = 4;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
             hNuP->Fill(prim->ke);
@@ -210,6 +261,7 @@ void supernovaAnalysis(const char *file) {
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2112){
             //printf("NC Interaction       ... 5\n");
             nc+=1;
+            NC_true = 1;
             interaction_type = 5;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
             hNuP->Fill(0.0);
@@ -222,6 +274,7 @@ void supernovaAnalysis(const char *file) {
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2212){
             //printf("NC Interaction       ... 7\n");
             nc+=1;
+            NC_true = 1;
             interaction_type = 7;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
             hNuP->Fill(0.0);
@@ -234,6 +287,7 @@ void supernovaAnalysis(const char *file) {
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2112){
             //printf("NC Interaction       ... 6\n");
             nc+=1;
+            NC_true = 1;
             interaction_type = 6;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
             hNuP->Fill(prim->ke);
@@ -241,13 +295,11 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-            
-            
-            
         }
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2212){
             //printf("NC Interaction       ... 8\n");
             nc+=1;
+            NC_true = 1;
             interaction_type = 8;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
             hNuP->Fill(prim->ke);
@@ -289,13 +341,13 @@ void supernovaAnalysis(const char *file) {
             single[0]=1;
         }else if(cnt>1){
             for(int kk=1;kk<cnt;kk++){
-//                printf("ev,Cnt,time : %d, %d, %f\n",kk,cnt,timeDiff[kk-1]);
+                //                printf("ev,Cnt,time : %d, %d, %f\n",kk,cnt,timeDiff[kk-1]);
                 if (timeDiff[kk-1]<100000.) {
-//                    printf("Found a double\n");
+                    //                    printf("Found a double\n");
                     single[kk-1] = 0;// Also tag previous event as single
                     single[kk] = 0;
                 }else{
-//                    printf("Next event is a single\n");
+                    //                    printf("Next event is a single\n");
                     single[kk] = 1;
                 }
             }
@@ -330,7 +382,25 @@ void supernovaAnalysis(const char *file) {
                 
                 subEvNumber = cntLoop+1;
                 _single = single[cntLoop];
-                dataTree->Fill();
+                if (subEvNumber == cnt){
+                    ES_cnt  += ES_true;
+                    IBD_cnt += IBD_true;
+                    CC_cnt  += CC_true;
+                    ICC_cnt += ICC_true;
+                    NC_cnt  += NC_true;
+                }
+                if (_single==1) {
+                    totSingles+=1;
+                    ES_cnt_s  += ES_true;
+                    IBD_cnt_s += IBD_true;
+                    CC_cnt_s  += CC_true;
+                    ICC_cnt_s += ICC_true;
+                    NC_cnt_s  += NC_true;
+                }else{
+                    totMultiples+=1;
+                }
+                
+                data->Fill();
                 
                 if(k ==0 && totPE> 12){
                     hPhotoelectron0->Fill(totPE);
@@ -346,7 +416,7 @@ void supernovaAnalysis(const char *file) {
                     hCos1FB->Fill(cosTheta);
                     hCos1FB_SN->Fill(cosThetaSN);
                 }
-    
+                
                 
                 cntLoop+=1;
             }
@@ -362,7 +432,7 @@ void supernovaAnalysis(const char *file) {
             gPad->BuildLegend();
             
             c1->cd(2);
-
+            
             hPos0FBLOG->Draw();
             hPos1FBLOG->Draw("same");
             gPad->SetGrid();
@@ -453,8 +523,36 @@ void supernovaAnalysis(const char *file) {
     
     
     //    f_out->cd();
+    //    data->Write();
     data->Write();
-    dataTree->Write();
+    Double_t TOT_cnt =  Double_t(ES_cnt  + IBD_cnt + CC_cnt  + ICC_cnt + NC_cnt);
+    
+    ES_ratio  = ES_cnt/TOT_cnt;
+    IBD_ratio = IBD_cnt/TOT_cnt;
+    CC_ratio  = CC_cnt/TOT_cnt;
+    ICC_ratio = ICC_cnt/TOT_cnt;
+    NC_ratio  = NC_cnt/TOT_cnt;
+    
+    Double_t TOT_cnt_s =  Double_t(ES_cnt_s  + IBD_cnt_s + CC_cnt_s  + ICC_cnt_s + NC_cnt_s);
+    
+    ES_ratio_s  = ES_cnt_s/TOT_cnt_s;
+    IBD_ratio_s = IBD_cnt_s/TOT_cnt_s;
+    CC_ratio_s  = CC_cnt_s/TOT_cnt_s;
+    ICC_ratio_s = ICC_cnt_s/TOT_cnt_s;
+    NC_ratio_s  = NC_cnt_s/TOT_cnt_s;
+    
+    
+    Double_t tot = Double_t(ibd+es+cc+icc+nc);
+    
+    IBD_prod_ratio = ibd/tot;
+    ES_prod_ratio = es/tot;
+    CC_prod_ratio = cc/tot;
+    ICC_prod_ratio = icc/tot;
+    NC_prod_ratio = nc/tot;
+    
+    
+    summary->Fill();
+    summary->Write();
     
     hPhotoelectron0->Write();
     hPhotoelectron1->Write();
@@ -466,7 +564,6 @@ void supernovaAnalysis(const char *file) {
     
     f_out->Close();
     
-    Double_t tot = ibd+es+cc+icc+nc;
     
     printf("(ibd,es,cc,icc,nc): (%5.4f, %5.4f, %5.4f, %5.4f, %5.4f)  (tot:%d)\n",ibd/tot,es/tot,cc/tot,icc/tot,nc/tot,tot);
     
