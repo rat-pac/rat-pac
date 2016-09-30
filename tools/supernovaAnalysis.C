@@ -11,7 +11,7 @@
 
 void supernovaAnalysis(const char *file) {
     Double_t reconstructedRadius = 0.0;
-
+    
     TH1D *hPos0FB = new TH1D("hPos0FB","primary event",1000,0.01,10);
     hPos0FB->SetLineColor(4);
     TH1D *hPos1FB = new TH1D("hPos1FB","secondary event",1000,0.01,10);
@@ -19,7 +19,31 @@ void supernovaAnalysis(const char *file) {
     
     hPos0FB->SetXTitle("r_{bonsai}(m)");
     hPos0FB->SetYTitle("Counts");
-   
+//    
+    
+    static Int_t nbins 	= 100;
+    Double_t xbins[100]; //Needs to be the same number as above
+
+    Double_t xmin 	= 1e-2;
+    Double_t xmax 	= 20;
+    Double_t logxmin = log10(xmin);
+    Double_t logxmax = log10(xmax);
+    Double_t binwidth= (logxmax-logxmin)/double(nbins);
+    xbins[0] = xmin;
+    for(Int_t i=0; i<nbins;i++){
+        xbins[i] = xmin + pow(10,logxmin+i*binwidth);
+//        printf("%6.3f\n",xbins[i]);
+    }
+    
+    TH1D *hPos0FBLOG = new TH1D("hPos0FBLOG","primary event",nbins-1,xbins);
+    hPos0FBLOG->SetLineColor(4);
+    TH1D *hPos1FBLOG = new TH1D("hPos1FBLOG","secondary event",nbins-1,xbins);
+    hPos1FBLOG->SetLineColor(kRed+3);
+    
+    hPos0FBLOG->SetXTitle(" 3d vertex r_{bonsai} [m]");
+    hPos0FBLOG->SetYTitle("Counts");
+    
+    
     TH1D *hPhotoelectron0 = new TH1D("hPhotoelectron0","primary event",600,0,600);
     hPhotoelectron0->SetLineColor(4);
     TH1D *hPhotoelectron1 = new TH1D("hPhotoelectron1","secondary event",600,0,600);
@@ -27,7 +51,7 @@ void supernovaAnalysis(const char *file) {
     hPhotoelectron0->SetXTitle("photoelectrons");
     hPhotoelectron0->SetYTitle("Counts");
     
-
+    
     TH1D *hCos0FB = new TH1D("hCos0FB","primary event",1000,-1.05,1.05);
     hCos0FB->SetLineColor(4);
     TH1D *hCos1FB = new TH1D("hCos1FB","secondary event",1000,-1.05,1.05);
@@ -47,13 +71,13 @@ void supernovaAnalysis(const char *file) {
     hNuE->SetLineColor(4);
     hNuE->SetXTitle("neutrino energy (MeV)");
     hNuE->SetYTitle("Counts");
-
+    
     TH1D *hNuP = new TH1D("hNuP","particle energy (e^{#pm} or #gamma)",1000,0,100);
     hNuP->SetLineColor(4);
     hNuP->SetXTitle("Cherenkov-inducing particle Energy (MeV)");
     hNuP->SetYTitle("Counts");
     
-
+    
     TFile *f = new TFile(file);
     TTree *tree = (TTree*) f->Get("T");
     
@@ -73,28 +97,31 @@ void supernovaAnalysis(const char *file) {
     c2->Divide(2,2);
     
     
-
     
-    Double_t totPE = 0.0,totMom,goodness,dirGoodness;
+    
+    Double_t totPE = 0.0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
     Double_t ibd=0.0,es=0.0,cc=0.0,icc=0.0,nc=0.0,cosTheta,cosThetaSN,local_time;
     int subEvNumber=0;
-    Int_t subevents = 0;
+    Int_t subevents = 0,cnt,cntLoop;
+    Int_t single[40],_single;
+    Double_t timeDiff[40];
     
     Int_t interaction_type;
     TVector3 mcmomv_nu, mcmomv_particle;
-
+    
     TTree *dataTree = new TTree("dataTree","dataTree");
     
     TVector3 posTruth,posReco,dirTruth,dirNu,dirReco;
-        
+    
     dataTree->Branch("pe",&totPE,"pe/D");
     dataTree->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
     dataTree->Branch("cosTheta",&cosTheta,"cosTheta/D");
     dataTree->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
     dataTree->Branch("local_time_ns",&local_time,"local_time_ns/D");
     dataTree->Branch("sub_ev",&subEvNumber,"sub_ev/I");
-    dataTree->Branch("sub_ev_cnt",&subevents,"sub_ev_cnt/I");
+    dataTree->Branch("sub_ev_cnt",&cnt,"sub_ev_cnt/I");
+    dataTree->Branch("single",&_single,"single/I");
     dataTree->Branch("interaction",&interaction_type,"interaction/I");
     
     dataTree->Branch("pos_goodness",&goodness,"pos_goodness/D");
@@ -106,31 +133,31 @@ void supernovaAnalysis(const char *file) {
     dataTree->Branch("dirTruth","TVector3",&dirTruth,32000,0);
     dataTree->Branch("dirNu","TVector3",&dirNu,32000,0);
     
-
-
-
+    
+    
+    
     for (int i = 0; i < nEvents; i++) {
         
-//        //printf("###################### event %4d ############################\n",i );
+        //        //printf("###################### event %4d ############################\n",i );
         tree->GetEntry(i);
         RAT::DS::MC *mc = rds->GetMC();
         Int_t particleCountMC = mc->GetMCParticleCount();
         for (int mcP =0; mcP < particleCountMC; mcP++) {
             RAT::DS::MCParticle *prim = mc->GetMCParticle(mcP);
-//            //printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
+            //            //printf("%4d momentum  : %8.3f %8.3f %8.3f\n", prim->GetPDGCode(), prim->GetMomentum().X(), prim->GetMomentum().Y(), prim->GetMomentum().Z());
             
         }
         //Get the direction of the neutrino. Saved as last particle
         RAT::DS::MCParticle *prim = mc->GetMCParticle(particleCountMC-1);
         mcmomv_nu=prim->GetMomentum();
         dirNu =  prim->GetMomentum();
-
+        
         hNuE->Fill(prim->ke);
         
         interaction_type = 0.0;
         
         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
-//            //printf("ES Interaction       ... ");
+            //            //printf("ES Interaction       ... ");
             es+=1;
             interaction_type = 1;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
@@ -139,10 +166,10 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
+            
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
-//            //printf("IBD Interaction      ... ");
+            //            //printf("IBD Interaction      ... ");
             ibd+=1;
             interaction_type = 2;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
@@ -151,12 +178,12 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
-
-
+            
+            
+            
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==11 && mc->GetMCParticle(1)->GetPDGCode()==1000090160){
-//            //printf("CC (16F) Interaction ... ");
+            //            //printf("CC (16F) Interaction ... ");
             cc+=1;
             interaction_type = 3;
             hNuP->Fill(prim->ke);
@@ -164,11 +191,11 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
-
+            
+            
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==1000070160){
-//            //printf("ICC (16N) Interaction ... ");
+            //            //printf("ICC (16N) Interaction ... ");
             icc+=1;;
             interaction_type = 4;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
@@ -177,8 +204,8 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
-
+            
+            
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2112){
             //printf("NC Interaction       ... 5\n");
@@ -190,7 +217,7 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
+            
         }
         else if(particleCountMC ==3 && mc->GetMCParticle(0)->GetPDGCode()==2212){
             //printf("NC Interaction       ... 7\n");
@@ -202,7 +229,7 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
+            
         }
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2112){
             //printf("NC Interaction       ... 6\n");
@@ -214,9 +241,9 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
-
-        
+            
+            
+            
         }
         else if(particleCountMC ==4 && mc->GetMCParticle(0)->GetPDGCode()==2212){
             //printf("NC Interaction       ... 8\n");
@@ -228,7 +255,7 @@ void supernovaAnalysis(const char *file) {
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
             dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
             posTruth = prim->GetPosition();
-
+            
         }
         else{
             //printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
@@ -238,7 +265,43 @@ void supernovaAnalysis(const char *file) {
         
         //Find out how many subevents:
         subevents = rds->GetEVCount();
-//        //printf("Found %d detector subevents.\n",subevents);
+        timeTmp1  = cnt = 0;
+        for (int ii=0; ii<40;ii++) {
+            timeDiff[ii] = 0.0;
+            single[ii]=0;
+        }
+        for (int k = 0; k<subevents; k++) {
+            RAT::DS::EV *ev = rds->GetEV(k);
+            qTmp = ev->GetTotalCharge();
+            if (qTmp>12.) {
+                cnt+=1;
+                timeTmp = ev->GetDeltaT(); // Badly name variable by my part.
+                
+                if (cnt ==1) {
+                    timeTmp1 = timeTmp;
+                }else if(cnt>1){
+                    timeDiff[cnt-2] = timeTmp-timeTmp1;
+                    timeTmp1 = timeTmp;
+                }
+            }
+        }
+        if (cnt ==1) {
+            single[0]=1;
+        }else if(cnt>1){
+            for(int kk=1;kk<cnt;kk++){
+//                printf("ev,Cnt,time : %d, %d, %f\n",kk,cnt,timeDiff[kk-1]);
+                if (timeDiff[kk-1]<100000.) {
+//                    printf("Found a double\n");
+                    single[kk-1] = 0;// Also tag previous event as single
+                    single[kk] = 0;
+                }else{
+//                    printf("Next event is a single\n");
+                    single[kk] = 1;
+                }
+            }
+        }
+        //        //printf("Found %d detector subevents.\n",subevents);
+        cntLoop = 0;
         for (int k = 0; k<subevents; k++) {
             
             RAT::DS::EV *ev = rds->GetEV(k);
@@ -257,28 +320,37 @@ void supernovaAnalysis(const char *file) {
             
             for (int j = 0; j<pmtCount;j++) {
                 RAT::DS::PMT *pmt = ev->GetPMT(j);
-                totPE+=pmt->GetCharge()/1.6;
+                totPE+=pmt->GetCharge();
             }
             cosTheta   =    (pb->GetDirection()* mcmomv_particle)/mcmomv_particle.Mag();
             cosThetaSN =    (pb->GetDirection()* mcmomv_nu      )/mcmomv_nu.Mag();
             
             dirReco = pb->GetDirection();
-            subEvNumber = k+1;
-            data->Fill(totPE,reconstructedRadiusFB,cosTheta,cosThetaSN,local_time,Double_t(k)+1,Double_t(subevents),interaction_type);
-            dataTree->Fill();
-
-	    if(k ==0 && totPE> 8){
-                hPhotoelectron0->Fill(totPE);
-                hPos0FB->Fill(reconstructedRadiusFB);
-                hCos0FB->Fill(cosTheta);
-                hCos0FB_SN->Fill(cosThetaSN);
+            if (totPE>12) {
+                
+                subEvNumber = cntLoop+1;
+                _single = single[cntLoop];
+                dataTree->Fill();
+                
+                if(k ==0 && totPE> 12){
+                    hPhotoelectron0->Fill(totPE);
+                    hPos0FB->Fill(reconstructedRadiusFB);
+                    hPos0FBLOG->Fill(reconstructedRadiusFB);
+                    hCos0FB->Fill(cosTheta);
+                    hCos0FB_SN->Fill(cosThetaSN);
+                }
+                if(k > 0 &&  totPE> 12 ){
+                    hPhotoelectron1->Fill(totPE);
+                    hPos1FB->Fill(reconstructedRadiusFB);
+                    hPos1FBLOG->Fill(reconstructedRadiusFB);
+                    hCos1FB->Fill(cosTheta);
+                    hCos1FB_SN->Fill(cosThetaSN);
+                }
+    
+                
+                cntLoop+=1;
             }
-            if(k > 0 &&  totPE> 12 ){
-                hPhotoelectron1->Fill(totPE);
-                hPos1FB->Fill(reconstructedRadiusFB);
-                hCos1FB->Fill(cosTheta);
-                hCos1FB_SN->Fill(cosThetaSN);
-            }
+            
             
         }
         
@@ -290,11 +362,13 @@ void supernovaAnalysis(const char *file) {
             gPad->BuildLegend();
             
             c1->cd(2);
-            hPos0FB->Draw();
-            hPos1FB->Draw("same");
-            gPad->SetGrid();
-            gPad->BuildLegend();
 
+            hPos0FBLOG->Draw();
+            hPos1FBLOG->Draw("same");
+            gPad->SetGrid();
+            gPad->SetLogx();
+            gPad->BuildLegend();
+            
             c1->cd(3);
             hCos0FB->Draw();
             hCos1FB->Draw("same");
@@ -349,9 +423,10 @@ void supernovaAnalysis(const char *file) {
     gPad->BuildLegend();
     
     c1->cd(2);
-    hPos0FB->Draw();
-    hPos1FB->Draw("same");
+    hPos0FBLOG->Draw();
+    hPos1FBLOG->Draw("same");
     gPad->SetGrid();
+    gPad->SetLogx();
     gPad->BuildLegend();
     
     c1->cd(3);
@@ -375,12 +450,12 @@ void supernovaAnalysis(const char *file) {
     
     
     c2->Update();
-
+    
     
     //    f_out->cd();
     data->Write();
     dataTree->Write();
-
+    
     hPhotoelectron0->Write();
     hPhotoelectron1->Write();
     hPos0FB->Write();
