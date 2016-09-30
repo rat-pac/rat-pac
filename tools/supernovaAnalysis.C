@@ -99,13 +99,13 @@ void supernovaAnalysis(const char *file) {
     
     
     
-    Double_t totPE = 0.0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1;
+    Double_t totPE = 0.0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1,oldX,oldY,oldZ;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
-    Int_t ibd=0,es=0,cc=0,icc=0,nc=0;
-    Double_t cosTheta,cosThetaSN,local_time;
+    Int_t ibd=0,es=0,cc=0,icc=0,nc=0,old_singal;
+    Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time;
     int subEvNumber=0;
     Int_t subevents = 0,cnt,cntLoop;
-    Int_t single[40],_single;
+    Int_t single[40],_single,prev_single;
     Double_t timeDiff[40];
     
     Int_t interaction_type;
@@ -113,12 +113,15 @@ void supernovaAnalysis(const char *file) {
     
     TTree *data = new TTree("data","supernova events");
     
-    TVector3 posTruth,posReco,dirTruth,dirNu,dirReco;
+    TVector3 posTruth,posReco,dirTruth,dirNu,dirReco,dirIBD,pos1,pos2;
     
     data->Branch("pe",&totPE,"pe/D");
     data->Branch("r_bonsai_true",&reconstructedRadiusFB,"r_bonsai_true/D");
     data->Branch("cosTheta",&cosTheta,"cosTheta/D");
     data->Branch("cosThetaSN",&cosThetaSN,"cosThetaSN/D");
+    data->Branch("cosThetaSNIBD",&cosThetaSNIBD,"cosThetaSNIBD/D");
+
+    
     data->Branch("local_time_ns",&local_time,"local_time_ns/D");
     data->Branch("sub_ev",&subEvNumber,"sub_ev/I");
     data->Branch("sub_ev_cnt",&cnt,"sub_ev_cnt/I");
@@ -131,6 +134,7 @@ void supernovaAnalysis(const char *file) {
     
     data->Branch("dir_goodness",&dirGoodness,"dir_goodness/D");
     data->Branch("dirReco","TVector3",&dirReco,32000,0);
+    data->Branch("dirIBD","TVector3",&dirIBD,32000,0);
     data->Branch("dirTruth","TVector3",&dirTruth,32000,0);
     data->Branch("dirNu","TVector3",&dirNu,32000,0);
     
@@ -169,7 +173,7 @@ void supernovaAnalysis(const char *file) {
     summary->Branch("physevts_observed_NC_ratio",&NC_ratio,"physevts_observed_NC_ratio/D");
     
     Double_t ES_prod_ratio, IBD_prod_ratio,CC_prod_ratio,ICC_prod_ratio,NC_prod_ratio;
-
+    
     
     summary->Branch("phys_evt_ES_produced",&es ,"phys_evt_ES_produced/I");
     summary->Branch("phys_evt_IBD_produced",&ibd,"phys_evt_IBD_produced/I");
@@ -318,6 +322,7 @@ void supernovaAnalysis(const char *file) {
         //Find out how many subevents:
         subevents = rds->GetEVCount();
         timeTmp1  = cnt = 0;
+        prev_single =2;
         for (int ii=0; ii<40;ii++) {
             timeDiff[ii] = 0.0;
             single[ii]=0;
@@ -382,6 +387,10 @@ void supernovaAnalysis(const char *file) {
                 
                 subEvNumber = cntLoop+1;
                 _single = single[cntLoop];
+                if (cntLoop>0) {
+                    prev_single = single[cntLoop-1];
+                }
+                
                 if (subEvNumber == cnt){
                     ES_cnt  += ES_true;
                     IBD_cnt += IBD_true;
@@ -399,6 +408,15 @@ void supernovaAnalysis(const char *file) {
                 }else{
                     totMultiples+=1;
                 }
+                if(_single ==0  && prev_single ==0){
+                    dirIBD = TVector3(pFitFB.X()-oldX,pFitFB.Y()-oldY,pFitFB.Z()-oldZ);
+                    cosThetaSNIBD =    (dirIBD* mcmomv_nu      )/mcmomv_nu.Mag()/dirIBD.Mag();
+                }else{
+                    cosThetaSNIBD = -2;
+                }
+                oldX = pFitFB.X();
+                oldY = pFitFB.Y();
+                oldZ = pFitFB.Z();
                 
                 data->Fill();
                 
@@ -421,9 +439,20 @@ void supernovaAnalysis(const char *file) {
                 cntLoop+=1;
             }
             
+        }
+        if(cnt==0){
+            subEvNumber = 0;
+            totPE = -10.0;
+            cosTheta = cosThetaSN = cosThetaSNIBD = local_time = -2.0;
+            _single =-1;
+            reconstructedRadiusFB = -10.0;
+            
+            goodness = dirGoodness = -2;
+            posReco = TVector3(-10.0,-10.0,-10.0);
+            dirReco =  TVector3(-10.0,-10.0,-10.0);
+            data->Fill();
             
         }
-        
         if (i%500 == 0){
             c1->cd(1);
             hPhotoelectron0->Draw();
