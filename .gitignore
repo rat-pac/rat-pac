@@ -25,3 +25,4 @@ watchman_supernova.root
 .DS_Store
 *.root
 *.gif
+open.sh

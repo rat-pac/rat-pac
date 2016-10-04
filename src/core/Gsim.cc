@@ -13,10 +13,12 @@
 #include <RAT/GLG4VertexGen.hh>
 #include <RAT/VertexGen_IBD.hh>
 #include <RAT/VertexGen_ReacIBD.hh>
-#include <RAT/Gen_LED.hh>
+#include <RAT/VertexGen_Isotope.hh>
 #include <RAT/VertexGen_ES.hh>
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/VertexGen_SN.hh>
+
+#include <RAT/Gen_LED.hh>
 #include <RAT/DecayChain_Gen.hh>
 #include <RAT/Coincidence_Gen.hh>
 #include <RAT/VertexFile_Gen.hh>
@@ -32,6 +34,7 @@
 #include <RAT/PhysicsList.hh>
 #include <RAT/GLG4SteppingAction.hh>
 #include <RAT/GLG4DebugMessenger.hh>
+
 #include <RAT/GLG4VertexGen.hh>
 
 #include <RAT/PDFPMTTime.hh>
@@ -113,7 +116,10 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("supernova",
                                            new Alloc<GLG4VertexGen,
                                            VertexGen_SN>);
-
+    GlobalFactory<GLG4VertexGen>::Register("isotope",
+                                           new Alloc<GLG4VertexGen,
+                                           VertexGen_Isotope>);
+    
   GlobalFactory<GLG4Gen>::Register("decaychain",
                                    new Alloc<GLG4Gen,DecayChain_Gen>);
   GlobalFactory<GLG4Gen>::Register("cf",
