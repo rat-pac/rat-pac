@@ -28,11 +28,11 @@
 ###  GVKM(ibd,es,cc,icc,nc): (0.840591, 0.0149344, 0.00291923, 0.0223892, 0.119166)
 /generator/supernova/model 2
 /generator/supernova/ibd   0.
-/generator/supernova/es    0.
+/generator/supernova/es    1.
 /generator/supernova/cc    0.
 /generator/supernova/icc   0.
-/generator/supernova/nc	   1.
+/generator/supernova/nc	   0.
 
-/run/beamOn 1000
+/run/beamOn 2000
 
 
