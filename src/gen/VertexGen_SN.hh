@@ -93,6 +93,13 @@ namespace RAT {
         virtual G4String GetState();
         // returns current state formatted as above
         
+        
+        
+        // Differential cross section for inverse beta decay
+//        static double CrossSection(double Enu, double CosThetaLab);
+        
+        static double FindCosTheta(G4double Enu, G4double target_mass_c2,G4double recoil_mass_c2);
+        
     private:
         G4ParticleDefinition *electron, *nu, *n, *p, *eplus,*gamma;
         G4ThreeVector nu_dir;

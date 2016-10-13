@@ -422,12 +422,14 @@ namespace RAT {
             vertex->SetPrimary( s_particle );
         }
         
-        //Adding neutrino to see what happens M.B.
+        //Adding neutrino to see what happens M.B. Chosing random neutrino energy, currently decoupled 
+        
+        Double_t neutrino_energy = sngen.GetNCRandomNuEnergy();
         G4PrimaryParticle* nu_particle =
         new G4PrimaryParticle(14,                  // particle code
-                              ev_nu_dir.x(),         // x component of momentum
-                              ev_nu_dir.y(),         // y component of momentum
-                              ev_nu_dir.z());        // z component of momentum
+                              neutrino_energy*ev_nu_dir.x(),         // x component of momentum
+                              neutrino_energy*ev_nu_dir.y(),         // y component of momentum
+                              neutrino_energy*ev_nu_dir.z());        // z component of momentum
         nu_particle->SetMass(0.0); // Geant4 is silly.
         vertex->SetPrimary( nu_particle );
         
@@ -487,11 +489,13 @@ namespace RAT {
         }
         
         //Adding neutrino to see what happens M.B.
+        Double_t neutrino_energy = sngen.GetNCRandomNuEnergy();
+
         G4PrimaryParticle* nu_particle =
         new G4PrimaryParticle(-14,                  // particle code
-                              ev_nu_dir.x(),         // x component of momentum
-                              ev_nu_dir.y(),         // y component of momentum
-                              ev_nu_dir.z());        // z component of momentum
+                              neutrino_energy*ev_nu_dir.x(),         // x component of momentum
+                              neutrino_energy*ev_nu_dir.y(),         // y component of momentum
+                              neutrino_energy*ev_nu_dir.z());        // z component of momentum
         nu_particle->SetMass(0.0); // Geant4 is silly.
         vertex->SetPrimary( nu_particle );
         
@@ -600,7 +604,8 @@ namespace RAT {
         //        G4cout << "Delta value " << DELTA << G4endl;
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
-        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
+//        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
+        G4double CosThetaLab = FindCosTheta(enu,targetMass,recoilMass);
         
         // Pick energy of neutrino and relative direction of positron
         //            GenInteraction(enu, CosThetaLab);
@@ -654,8 +659,9 @@ namespace RAT {
         
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
-        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
-        
+//        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
+        G4double CosThetaLab = FindCosTheta(enu,targetMass,recoilMass);
+
         // Pick energy of neutrino and relative direction of positron
         //            GenInteraction(enu, CosThetaLab);
         
@@ -706,7 +712,8 @@ namespace RAT {
         
         //        double GFERMI = 1.16639e-11 / CLHEP::MeV / CLHEP::MeV;
         
-        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
+//        G4double CosThetaLab = -1.0+2.0*CLHEP::HepUniformRand();
+        G4double CosThetaLab = FindCosTheta(enu,targetMass,recoilMass);
         
         // Pick energy of neutrino and relative direction of positron
         //            GenInteraction(enu, CosThetaLab);
@@ -717,8 +724,7 @@ namespace RAT {
         G4double v0 = p0/E0;
         // First order correction for finite nucleon mass
         G4double Ysquared = (DELTA*DELTA-CLHEP::electron_mass_c2*CLHEP::electron_mass_c2)/2;
-        G4double E1 = E0*(1-enu/targetMass*(1-v0*CosThetaLab))
-        - Ysquared/targetMass;
+        G4double E1 = E0*(1-enu/targetMass*(1-v0*CosThetaLab))- Ysquared/targetMass;
         G4double p1 = sqrt(E1*E1-CLHEP::electron_mass_c2*CLHEP::electron_mass_c2);
         //G4cout << "Breakpoint 1 ICC" << DELTA << G4endl;
         
@@ -751,6 +757,103 @@ namespace RAT {
         
         
     }
+    
+    
+    
+    
+    double  VertexGen_SN::FindCosTheta(G4double Enu, G4double target_mass_c2,G4double recoil_mass_c2)
+    {
+    
+    
+        double electron_mass_c2 = CLHEP::electron_mass_c2;
+        
+        double DELTA = recoil_mass_c2 - target_mass_c2;
+        double GFERMI = 1.16639e-11 ;
+        
+        double CosThetaC = (0.9741+9756)/2.;
+        double RadCor = 0.024;
+        
+        const double Sigma0 = GFERMI*GFERMI*CosThetaC*CosThetaC/CLHEP::pi*(1+RadCor);
+        const double f = 1.;
+        const double f2 = 3.706;
+        const double g = 1.26;
+        
+        double E0 = Enu - DELTA;
+        if(E0<electron_mass_c2) {E0=electron_mass_c2;}
+        
+        double p0 = sqrt(E0*E0-electron_mass_c2*electron_mass_c2);
+        double v0 = p0/E0;
+        
+        double q1 = 2.*(f+f2)*g*(2.*E0+DELTA);
+        double q2 = v0;
+        double q3 = 2.*(f+f2)*g*electron_mass_c2*electron_mass_c2/E0;
+        double q4 = (f*f+g*g)*(DELTA);
+        double q5 = (f*f+g*g)*electron_mass_c2*electron_mass_c2/E0;
+        double q6 = (f*f+3.*g*g)*(E0+DELTA);
+        double q7 = (f*f+3.*g*g)*DELTA;
+        double q8 = (f*f-g*g)*(E0+DELTA);
+        double q9 = (f*f-g*g)*DELTA;
+        double q10 = (f*f+3.*g*g);
+        double q11 = (f*f-g*g);
+        double q12 = electron_mass_c2*electron_mass_c2;
+        double q13 = 1./target_mass_c2*E0*p0;
+        double q14 = Sigma0/2.; // For completness sake
+        double q15 = (DELTA*DELTA-electron_mass_c2*electron_mass_c2)/2./target_mass_c2;
+        double q16 = E0;
+        double q17 = Enu/target_mass_c2;
+
+        TF1 *E1 = new TF1("E1","([16]  * (1.0 -[17]*(1 - [2]*x) )  -[15])",-1,1);
+        E1->SetParameter(2, q2);
+        E1->SetParameter(15, q15);
+        E1->SetParameter(16, q16);
+        E1->SetParameter(17, q17);
+        
+        
+        TF1 *P1 = new TF1("P1","sqrt(E1*E1 - [12])",-1,1);
+        P1->SetParameter(12, q12);
+        
+        //v1 = P1/E1
+        
+        TF1 *crossSection =  new TF1("crossSection"," [0]*[14]*(([10] + [11] * P1/E1 * x)*P1*E1 - (([1]*(1.-[2]*x)-[3]) + ([4]*(1.+[2]*x)+[5])  +   ([6]*(1.-x/[2])-[7])  +   ([8]*(1.-x/[2])-[9]) * [2]*x) *[13])",-1,1);
+        crossSection->SetNpx(10000);
+        
+        crossSection->SetParameter(0, 1e15);
+        
+        crossSection->SetParameter(1, q1);
+        crossSection->SetParameter(2, q2);
+        crossSection->SetParameter(3, q3);
+        crossSection->SetParameter(4, q4);
+        crossSection->SetParameter(5, q5);
+        crossSection->SetParameter(6, q6);
+        crossSection->SetParameter(7, q7);
+        crossSection->SetParameter(8, q8);
+        crossSection->SetParameter(9, q9);
+        crossSection->SetParameter(10, q10);
+        crossSection->SetParameter(11, q11);
+        crossSection->SetParameter(12, q12);
+        crossSection->SetParameter(13, q13);
+        crossSection->SetParameter(14, q14);
+        crossSection->SetParameter(15, q15);
+        crossSection->SetParameter(16, q16);
+        crossSection->SetParameter(17, q17);
+        
+        double CosThetaLab = crossSection->GetRandom();
+        
+        
+        
+        delete crossSection;
+        delete E1;
+        delete P1;
+
+        return CosThetaLab;
+        
+        
+        
+    
+    }
+    
+    
+    
     
     
 } // namespace RAT

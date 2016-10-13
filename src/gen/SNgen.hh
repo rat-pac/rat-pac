@@ -85,6 +85,7 @@ namespace RAT {
         double GetCCRandomEnergy();
         double GetICCRandomEnergy();
         double GetNCRandomEnergy();
+        double GetNCRandomNuEnergy();
         double GetINCRandomEnergy();
         
 
@@ -137,6 +138,7 @@ namespace RAT {
         TF1 *funcCC;
         TF1 *funcICC;
         TF1 *funcNC;
+        TF1 *funcNCNU;
         TF1 *funcINC;
         
         std::vector<double> spec_E;		// spectrum energy values

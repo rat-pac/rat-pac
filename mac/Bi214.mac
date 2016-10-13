@@ -1,0 +1,26 @@
+/glg4debug/glg4param omit_muon_processes  0.0
+/glg4debug/glg4param omit_hadronic_processes  0.0
+
+/rat/db/set DETECTOR experiment "Watchman"
+/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc lesssimpledaq
+/rat/proc fitbonsai
+/rat/proc fitcentroid
+/rat/proc fitpath
+/rat/proc count
+/rat/procset update 100
+
+# Use IO.default_output_filename
+/rat/proclast outroot
+/rat/procset file "watchman_214Bi_lesssimpledaq.root"
+#END EVENT LOOP
+
+/generator/add decaychain 214Bi:regexfill:poisson
+/generator/pos/set inner_pmts[0-9]+
+/generator/rate/set 6820.0
+
+/run/beamOn 20000

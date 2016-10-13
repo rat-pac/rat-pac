@@ -316,6 +316,7 @@ namespace RAT {
     double CCTGraph2TF1(Double_t *x, Double_t *){ return graphCC->Eval(x[0]);}
     double ICCTGraph2TF1(Double_t *x, Double_t *){ return graphICC->Eval(x[0]);}
     double NCTGraph2TF1(Double_t *x, Double_t *){ return graphNC->Eval(x[0]);}
+    double NCNUTGraph2TF1(Double_t *x, Double_t *){ return graphNCRate->Eval(x[0]);}
     double INCTGraph2TF1(Double_t *x, Double_t *){ return graphINC->Eval(x[0]);}
     
     double SNgen::GetIBDRandomEnergy(){
@@ -332,6 +333,9 @@ namespace RAT {
     }
     double SNgen::GetNCRandomEnergy(){
         return funcNC->GetRandom();
+    }
+    double SNgen::GetNCRandomNuEnergy(){
+        return funcNCNU->GetRandom();
     }
     double SNgen::GetINCRandomEnergy(){
         return funcINC->GetRandom();
@@ -932,6 +936,7 @@ namespace RAT {
         funcCC= new TF1("funcCC",CCTGraph2TF1,2,100,0);
         funcICC= new TF1("funcICC",ICCTGraph2TF1,2,100,0);
         funcNC= new TF1("funcNC",NCTGraph2TF1,0,10,0);
+        funcNCNU= new TF1("funcNCNU",NCNUTGraph2TF1,0,10,0);
         funcINC= new TF1("funcINC",INCTGraph2TF1,0,10,0);
         
         

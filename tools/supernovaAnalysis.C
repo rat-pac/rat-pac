@@ -43,7 +43,6 @@ void supernovaAnalysis(const char *file) {
     hPos0FBLOG->SetXTitle(" 3d vertex r_{bonsai} [m]");
     hPos0FBLOG->SetYTitle("Counts");
     
-    
     TH1D *hPhotoelectron0 = new TH1D("hPhotoelectron0","primary event",600,0,600);
     hPhotoelectron0->SetLineColor(4);
     TH1D *hPhotoelectron1 = new TH1D("hPhotoelectron1","secondary event",600,0,600);
@@ -51,14 +50,12 @@ void supernovaAnalysis(const char *file) {
     hPhotoelectron0->SetXTitle("photoelectrons");
     hPhotoelectron0->SetYTitle("Counts");
     
-    
     TH1D *hCos0FB = new TH1D("hCos0FB","primary event",1000,-1.05,1.05);
     hCos0FB->SetLineColor(4);
     TH1D *hCos1FB = new TH1D("hCos1FB","secondary event",1000,-1.05,1.05);
     hCos1FB->SetLineColor(kRed+3);
     hCos0FB->SetXTitle("cos #theta_{reconstruction}");
     hCos0FB->SetYTitle("Counts");
-    
     
     TH1D *hCos0FB_SN = new TH1D("hCos0FB_SN","primary event",1000,-1.05,1.05);
     hCos0FB_SN->SetLineColor(4);
@@ -97,12 +94,10 @@ void supernovaAnalysis(const char *file) {
     c2->Divide(2,2);
     
     
-    
-    
     Double_t totPE = 0.0,totMom,goodness,dirGoodness,qTmp,timeTmp,timeTmp1,oldX,oldY,oldZ;
     Double_t totQB = 0.0, q2 = 0.0, pmtCount = 0.0,reconstructedRadiusFC,reconstructedRadiusFP,reconstructedRadiusFB, reconstructedRadiusFPMinusFB;
     Int_t ibd=0,es=0,cc=0,icc=0,nc=0,old_singal;
-    Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time;
+    Double_t cosTheta,cosThetaSN,cosThetaSNIBD, local_time,mc_nu_energy,mc_energy;
     int subEvNumber=0;
     Int_t subevents = 0,cnt,cntLoop;
     Int_t single[40],_single,prev_single;
@@ -127,6 +122,8 @@ void supernovaAnalysis(const char *file) {
     data->Branch("sub_ev_cnt",&cnt,"sub_ev_cnt/I");
     data->Branch("single",&_single,"single/I");
     data->Branch("interaction",&interaction_type,"interaction/I");
+    data->Branch("mc_nu_energy",&mc_nu_energy,"mc_nu_energy/D");
+    data->Branch("mc_energy",&mc_energy,"mc_energy/D");
     
     data->Branch("pos_goodness",&goodness,"pos_goodness/D");
     data->Branch("posReco","TVector3",&posReco,32000,0);
@@ -201,8 +198,8 @@ void supernovaAnalysis(const char *file) {
         RAT::DS::MCParticle *prim = mc->GetMCParticle(particleCountMC-1);
         mcmomv_nu=prim->GetMomentum();
         dirNu =  prim->GetMomentum();
-        
-        hNuE->Fill(prim->ke);
+        mc_nu_energy = prim->ke;
+        hNuE->Fill(mc_nu_energy);
         
         interaction_type = 0.0;
         ES_true = IBD_true = CC_true = ICC_true = NC_true = 0;
@@ -212,6 +209,7 @@ void supernovaAnalysis(const char *file) {
             ES_true =1;
             interaction_type = 1;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            mc_energy = prim->ke;
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -225,6 +223,8 @@ void supernovaAnalysis(const char *file) {
             IBD_true =1;
             interaction_type = 2;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            mc_energy = prim->ke;
+
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -239,6 +239,9 @@ void supernovaAnalysis(const char *file) {
             cc+=1;
             CC_true = 1;
             interaction_type = 3;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            mc_energy = prim->ke;
+
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -254,6 +257,7 @@ void supernovaAnalysis(const char *file) {
             
             interaction_type = 4;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            mc_energy = prim->ke;
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -268,6 +272,9 @@ void supernovaAnalysis(const char *file) {
             NC_true = 1;
             interaction_type = 5;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
+            mc_energy = prim->ke;
+
+            
             hNuP->Fill(0.0);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -281,6 +288,8 @@ void supernovaAnalysis(const char *file) {
             NC_true = 1;
             interaction_type = 7;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(1);
+            mc_energy = prim->ke;
+
             hNuP->Fill(0.0);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -294,6 +303,8 @@ void supernovaAnalysis(const char *file) {
             NC_true = 1;
             interaction_type = 6;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
+            mc_energy = prim->ke;
+
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -306,6 +317,8 @@ void supernovaAnalysis(const char *file) {
             NC_true = 1;
             interaction_type = 8;
             RAT::DS::MCParticle *prim = mc->GetMCParticle(2);
+            mc_energy = prim->ke;
+
             hNuP->Fill(prim->ke);
             mcmomv_particle = prim->GetMomentum();
             totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
@@ -317,7 +330,7 @@ void supernovaAnalysis(const char *file) {
             //printf("What is this interaction -> particles %d:(%d, %d, %d) ... \n",particleCountMC, mc->GetMCParticle(0)->GetPDGCode(),mc->GetMCParticle(1)->GetPDGCode(),mc->GetMCParticle(2)->GetPDGCode());
         }
         
-        RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+//        RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
         
         //Find out how many subevents:
         subevents = rds->GetEVCount();
