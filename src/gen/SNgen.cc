@@ -936,7 +936,7 @@ namespace RAT {
         funcCC= new TF1("funcCC",CCTGraph2TF1,2,100,0);
         funcICC= new TF1("funcICC",ICCTGraph2TF1,2,100,0);
         funcNC= new TF1("funcNC",NCTGraph2TF1,0,10,0);
-        funcNCNU= new TF1("funcNCNU",NCNUTGraph2TF1,0,10,0);
+        funcNCNU= new TF1("funcNCNU",NCNUTGraph2TF1,2,100,0);
         funcINC= new TF1("funcINC",INCTGraph2TF1,0,10,0);
         
         
