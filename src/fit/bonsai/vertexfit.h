@@ -1,6 +1,4 @@
-#include "RAT/BONSAI/tree.h"
-
-namespace BONSAI {
+#include "tree.h"
 
 // **********************************************
 // load and adapt vertexfit to detector geometry
@@ -30,5 +28,3 @@ class vertexfit: public tree
     { int i;
       for(i=0; i<3*npmt; i++) array[i]=pmts[i]; };
 };
-
-}

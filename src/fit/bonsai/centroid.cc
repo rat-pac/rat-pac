@@ -1,6 +1,5 @@
 #include <math.h>
-#include "RAT/BONSAI/centroid.h"
-namespace BONSAI {
+#include "BONSAI/centroid.h"
 
  
 // **********************************************
@@ -244,5 +243,4 @@ void centroid::eigen(axes &ax)
 	planegivens(ax,add-matrix[sta]);
       }
   return;
-}
 }

@@ -1,6 +1,6 @@
-    #include <stdlib.h>
+#include <stdlib.h>
 
-#include "RAT/BONSAI/centroid.h"
+#include "BONSAI/centroid.h"
 #define MINPRESEL  10         /* desired minimum number of preselected hits */
 #define MINHIT      3         /* required minimum number of hits            */
 #define MAXRAW   2000         /* maximum number of raw hits                 */
@@ -8,8 +8,6 @@
 #define ALLOWED_SIZE_FRACTION 1.0
 
 #define ARRAYSIZE MAXRAW*(MAXRAW-1)/2
-
-namespace BONSAI {
 
 // **********************************************
 // does hit selection, wenn needed
@@ -20,7 +18,7 @@ namespace BONSAI {
 // **********************************************
 hitsel::~hitsel(void)
 {
-  delete selected;
+  delete [] selected;
 }
 
 // -------------------------------------------------------------------
@@ -139,12 +137,12 @@ short int hitsel::make_causal_table(short int *&related,
 	relations[pmt2]=curnrel;
 	n_cl++;
       }
-  delete(nr_rel);
-  delete(relations);
+  delete [] nr_rel;
+  delete [] relations;
   if (n_cl<=MINHIT)
     {
-      delete select;
-      delete related;
+      delete [] select;
+      delete [] related;
       return(-2); // error: too few clean hits
     }
   new_index=new short int[nsel];
@@ -155,11 +153,11 @@ short int hitsel::make_causal_table(short int *&related,
 	  new_index[pmt]=pmt2;
 	  break;
         }
-  delete selected;
+  delete [] selected;
   selected=new short int[n_cl];
   for(pmt=0; pmt<n_cl; pmt++)
     selected[pmt]=select[pmt];
-  delete select;
+  delete [] select;
   relp1=related;
   relp2=related;
 
@@ -186,8 +184,8 @@ short int hitsel::make_causal_table(short int *&related,
 	      }
 	  }
     }
-  delete new_index;
-  delete relp1;
+  delete [] new_index;
+  delete [] relp1;
   relp=related;
   nsel=n_cl+2;
   for(row=0; row<n_cl; row++)
@@ -320,7 +318,7 @@ short int hitsel::mrclean(float dislimit,float tlimit)
 
   if (nsel<MINHIT)
     {
-      delete selected;
+      delete [] selected;
       return(-1); // error: too few raw hits
     }
 
@@ -342,17 +340,17 @@ short int hitsel::mrclean(float dislimit,float tlimit)
   for(n_cl=pmt=0; pmt<nsel; pmt++)
     if (is_selected[pmt])
       is_selected[n_cl++]=selected[pmt];
-  delete selected;
+  delete [] selected;
   selected=new short int[n_cl];
   if (n_cl<MINHIT)
     {
-      delete is_selected;
-      delete selected;
+      delete [] is_selected;
+      delete [] selected;
       return(-2);                // error: too few clean hits
     }
   for(pmt=0; pmt<n_cl; pmt++)
     selected[pmt]=is_selected[pmt];
-  delete is_selected;
+  delete [] is_selected;
   nsel=n_cl;
   return(n_cl);
 }
@@ -387,17 +385,17 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
   int       max_index;
   short int new_pmt;
   short int *related,*relations,*cluster,**clusterp,*joined,*occur;
-  short int *max_clus=NULL,*clus,*select;
+  short int *max_clus=NULL,*clus,*max_end,*select;
   short int *relp,*relp1,*relp2;
 
   if (nsel>MAXRAW)
     {
-      delete selected;
+      delete [] selected;
       return(-9); // error: too many raw hits
     }
   if (nsel<MINHIT)
     {
-      delete selected;
+      delete [] selected;
       return(-1); // error: too few raw hits
     }
   if ((dlim>0) && (tlim>0))
@@ -415,6 +413,7 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
     max_size=MAXSTOSIZE;
   cluster=new short int[max_size];
   clus=cluster;
+  max_end=cluster+max_size;
   n_clus=0;
   min_size=MINHIT;
   max_size=0;
@@ -519,23 +518,23 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
 	      n_clus++;
 	    }
 	}
-  delete relations;
-  delete related;
-  delete clusterp;
+  delete [] relations;
+  delete [] related;
+  delete [] clusterp;
   /*-------------------------------------------------------------------
     unify all found clusters in one, note, how often a PMT occurs
     -------------------------------------------------------------------*/
   if (n_clus<=0)
     {
-      delete cluster;
-      delete selected;
+      delete [] cluster;
+      delete [] selected;
       return(-5); // error: no cluster found
     }
   n_bd=clus-max_clus;
   joined=new short int[n_bd];
   occur=new short int[n_bd];
   n_bd=reduce(n_bd,max_clus,joined,occur);
-  delete cluster;
+  delete [] cluster;
 
   /*-------------------------------------------------------------------
     take all PMTs with high occurence, take all PMTs with medium
@@ -563,13 +562,13 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
       for(nsel=pmt1=0; pmt1<n_gd; pmt1++)
         if (select[pmt1]) select[nsel++]=selected[pmt1];
     }
-  delete selected;
+  delete [] selected;
   selected=new short int[nsel];
   for(pmt1=0; pmt1<nsel; pmt1++)
     selected[pmt1]=select[pmt1];
 
   hits::qsort(selected,nsel);
-  delete occur;
+  delete [] occur;
   pmt2=*selected;
   for(row=1; row<nsel; row++)
     {
@@ -578,26 +577,26 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
 	{
 	  printf("Time sorting error: PMT %5d (%9.2f)< PMT %5d (%9.2f)\n",
 		 hitcable(pmt1),hittime(pmt1),hitcable(pmt2),hittime(pmt2));
-	  delete select;
-	  delete joined;
-	  delete selected;
+	  delete [] select;
+	  delete [] joined;
+	  delete [] selected;
 	  return(-6); /* time sorting error */
 	}
       if (hitcable(pmt1)==hitcable(pmt2))
 	{
 	  printf("Double hit PMT %5d error\n",hitcable(pmt1));
-	  delete select;
-	  delete joined;
-	  delete selected;
+	  delete [] select;
+	  delete [] joined;
+	  delete [] selected;
 	  return(-7); /* double hit error */
 	}
       pmt2=pmt1;
     }
-  delete select;
-  delete joined;
+  delete [] select;
+  delete [] joined;
   if (nsel<MINHIT)
     {
-      delete selected;
+      delete [] selected;
       return(-3); /* error: too few clean hits */
     }
   //printf("final selected hits: %d\n",nsel);
@@ -608,15 +607,11 @@ short int hitsel::clus_sel(float dlim,         // spatial limit of Mr. Clean
 void hitsel::printset(int nset,short int *set)
 {
   int       m;
-  short int *s = new short int[nset];
+  short int s[nset];
 
   for(m=0; m<nset; m++) s[m]=set[m];
   hits::qsort(s,nset);
   for(m=0; m<nset; m++)
     printf("%3d %5d %10.4f %8.2f\n",m,
            hitcable(s[m]),hittime(s[m]),hitcharge(s[m]));
-  
-  delete s;
-}
-
 }

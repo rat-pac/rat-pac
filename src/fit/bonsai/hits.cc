@@ -1,6 +1,5 @@
-#include "RAT/BONSAI/hits.h"
+#include "BONSAI/hits.h"
 
-namespace BONSAI {
 // return absolute value, if that value is >1,
 //   otherwise return 1/absolute value
 inline double hits::absrat(double el)
@@ -566,5 +565,4 @@ int hits::vertex4(int *fourcombo,int *hitlist,int listsize,
       //printf("%8.4f\n",gdn[s]);
     }
   return(ns);
-}
 }

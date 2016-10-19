@@ -10,16 +10,11 @@
 #define FACT1    (1/BINS1)
 #define FACT2    (1/BINS2)
 
-#include "RAT/BONSAI/timefit.h"
-#include "RAT/BONSAI/centroid.h"
+#include "BONSAI/timefit.h"
+#include "BONSAI/centroid.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "RAT/BONSAI/binfile.h"
-
-#include <RAT/DB.hh>
-#include <RAT/DBLink.hh>
-
-namespace BONSAI {
+#include "BONSAI/binfile.h"
 
 // **********************************************
 // fits the vertex time, assuming a given vertex
@@ -104,7 +99,7 @@ void timefit::integrate_dist(void)
 	   qminmax[set],qminmax[set+1],nneg[set],
 	   0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
   printf("pdf for %5.2fpe<=q: zero at %d total=%fns\n",
-    qminmax[set],nneg[set],0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
+	 qminmax[set],nneg[set],0.2*TBIN*pdf_sum[4*part+offset[set]-1]);
 }
 
 // **********************************************
@@ -120,9 +115,7 @@ void timefit::load_dist(void)
 
   // ********************** load pdfs from file **********************
   printf("Loading pdfs...\n");
-  RAT::DB *db = RAT::DB::Get();
-  RAT::DBLinkPtr table = db->GetLink("BONSAI");
-  binfile bf((char*)table->GetS("likelihood_calibration").c_str(),'r');
+  binfile      bf("like.bin",'r');
 
   if (bf.read(sizes,numbers,starts)!=2)
     {
@@ -426,15 +419,14 @@ inline void timefit::sigrange(float tofmin,float tofmax,
 // **********************************************
 float timefit::makelike(float t0)
 {
-  float tofmin,tofmax;
-  float bg=0,llmax,time,norm;
+  float tofmin,tofmax,norm_fact[nlike],time_range[nlike];
+  float bg,llmax,time,norm;
   int   offs,set,i,j,shift,shift2,nbg;
 
   if (tof==NULL) return(-1e10);
   tofminmax(tofmin,tofmax);
   tofmin-=t0;
   tofmax-=t0;
-  float *norm_fact = new float [nlike], *time_range = new float[nlike];
   sigrange(tofmin,tofmax,norm_fact,time_range);
   if (like!=NULL) delete(like);
   like=new float[event_hits->ntot()];
@@ -470,11 +462,8 @@ float timefit::makelike(float t0)
       if ((tofmax-tofmin-time_range[set])>0) 
 	  sig[set]=event_hits->nhits(set)-nbg*(tofmax-tofmin)/
 	      (tofmax-tofmin-time_range[set]);
-      else {
-        delete [] norm_fact;
-        delete [] time_range;
-	    return(-1e10);
-	  }
+      else
+	  return(-1e10);
 
       if (sig[set]<0) sig[set]=0;
       bg=event_hits->nhits(set)-sig[set];
@@ -493,8 +482,6 @@ float timefit::makelike(float t0)
 	  }
     }
 //  llmax+=nbg*log(bg); // 17-MAY-2008 fixed by M.Smy/Y.Takeuchi 
-  delete [] norm_fact;
-  delete [] time_range;
   if ((bg<0) || ((bg==0) && (nbg!=0))) return(-1e10);
   if (nbg>0) llmax+=nbg*log(bg);
   return(llmax);
@@ -506,7 +493,7 @@ float timefit::makelike(float t0)
 // **********************************************
 float timefit::makesiglike(float t0,float *bg)
 {
-  float tofmin,tofmax;
+  float tofmin,tofmax,norm_fact[nlike],time_range[nlike];
   float llmax,time,norm;
   int   offs,set,i,j,shift,shift2,nbg;
 
@@ -514,7 +501,6 @@ float timefit::makesiglike(float t0,float *bg)
   tofminmax(tofmin,tofmax);
   tofmin-=t0;
   tofmax-=t0;
-  float *norm_fact = new float [nlike], *time_range = new float[nlike];
   sigrange(tofmin,tofmax,norm_fact,time_range);
   if (like!=NULL) delete(like);
   like=new float[event_hits->ntot()];
@@ -561,8 +547,6 @@ float timefit::makesiglike(float t0,float *bg)
           like[i]=-1;
       bg[set]*=norm;
     }
-  delete [] norm_fact;
-  delete [] time_range;
   return(llmax);
 }
 
@@ -574,7 +558,7 @@ inline float timefit::makelike(int set,float &bg,float range)
   float llmax;
   int   i,nbg;
 
-  if ((!sig) || (sig[set]>event_hits->nhits(set))) return(-1e10);
+  if ((sig<0) || (sig[set]>event_hits->nhits(set))) return(-1e10);
   bg=(event_hits->nhits(set)-sig[set])/range;
   nbg=0;
   for(llmax=0,i=event_hits->first_hit(set); i<event_hits->beyond_last_hit(set); i++)
@@ -1038,7 +1022,8 @@ inline void timefit::lcor(float &alpha,float &t0,float &tout,int *bin,float *cor
 		sumt+=t0bin/dt2;
 		sumft+=costh[i]*t0bin/dt2;
 		sum1+=1/dt2;
-		if (i==3) { if (fabs(t0)>dt) t0=t0bin; else t0=0; }
+		if (i==3)
+		  if (fabs(t0)>dt) t0=t0bin; else t0=0;
 	      }
 	  }
       }
@@ -1059,7 +1044,7 @@ inline void timefit::maketof(float alpha,float t0,float tout,float *origtof,int 
 
 inline float timefit::addloglik(float *vertex,double *direct,double cang,float ll0)
 {
-  float *cor,*copytof,ll,alpha,t0,tout=0,dt;
+  float *cor,*copytof,ll,alpha,t0,tout,dt;
   int   *bin,sub=(int) (vertex[3]*BINPERNS)-NLIKE/2;
 
   corfunc(bin,cor,direct,cang);
@@ -1195,7 +1180,7 @@ float timefit::maxconecharge(float *vert,float *direct)
 float timefit::fittime(float *vertex,float &dt,float &signal)
 {
   int   set,offs,ind,nbg,shift,i;
-  float tofmin,tofmax,range;
+  float tofmin,tofmax,range,norm_fact[nlike],time_range[nlike];
   float bg,llmax=0,time;
   float sear[3],lsear[3],fac;
 
@@ -1207,7 +1192,6 @@ float timefit::fittime(float *vertex,float &dt,float &signal)
   tofminmax(tofmin,tofmax);
   tofmin-=vertex[3];
   tofmax-=vertex[3];
-  float *norm_fact = new float [nlike], *time_range = new float[nlike];
   sigrange(tofmin,tofmax,norm_fact,time_range);
   range=tofmax-tofmin;
   signal=0;
@@ -1269,8 +1253,6 @@ float timefit::fittime(float *vertex,float &dt,float &signal)
       signal+=sig[set];
       llmax+=lsear[1];
     }
-  delete [] norm_fact;
-  delete [] time_range;
   return(llmax);
 }
 
@@ -1450,6 +1432,4 @@ float timefit::shapetest(void)
   dev/=sqrt((float)event_hits->ntot());
   return(dev);*/
   return(-1);
-}
-
 }

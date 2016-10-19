@@ -4,9 +4,6 @@
 #define FIT_PARAM_NONE -32767
 
 #define MAX_NUMBER 10
-
-namespace BONSAI {
-
 class fit_param
 {
   static char      *numbers[MAX_NUMBER];
@@ -269,6 +266,4 @@ class fit_param
       return(cbrstop);
     }
 };
-
-}
 #endif

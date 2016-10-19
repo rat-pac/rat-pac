@@ -1,12 +1,10 @@
 #include <stdio.h>
-#include "RAT/BONSAI/vertexfit.h"
-#include "RAT/BONSAI/pmt_geometry.h"
-#include "RAT/BONSAI/fourhitgrid.h"
-#include "RAT/BONSAI/goodness.h"
-#include "RAT/BONSAI/likelihood.h"
-#include "RAT/BONSAI/binfile.h"
-
-namespace BONSAI {
+#include "BONSAI/vertexfit.h"
+#include "BONSAI/pmt_geometry.h"
+#include "BONSAI/fourhitgrid.h"
+#include "BONSAI/goodness.h"
+#include "BONSAI/likelihood.h"
+#include "BONSAI/binfile.h"
 
 vertexfit *vf;
 likelihood *tf;
@@ -35,74 +33,7 @@ extern "C"
   int   bsnwin3_(float *vertex,float *tmin,float *tmax,
 		 float *ttof,float *d,int *cab);
   float bsbestwall_(float *dwall,float *rmin,float *wallv);
-
-void itfitter_init(comtype *itgeom);
-void it_sort(comtype2 *itevent);
-int it_clusfit(float *vert,float *result,float *maxgood,int *nsel,
-	       comtype2 *itevent,void *gridbuffer,short int maxsize);
-int it_bsfit(float *vertex,float *result,float *maxlike,int *nsel,
-	     comtype2 *itevent,void *gridbuffer);
-void it_clus_bonsai_fit(float *clusvert,float *bonsaivert,
-			float *clusresult,float *bonsairesult,
-			float *maxgood,float *maxlike,
-			int *nsel,int *nclusfit,int *nbonsaifit,
-			comtype2 *itevent);
-void it_clus_and_bonsai_fit(float *clusvert,float *bonsaivert,
-			    float *clusresult,float *bonsairesult,
-			    float *maxgood,float *maxlike,
-			    int *nsel,int *nclusfit,int *nbonsaifit,
-			    float cluswallcut,comtype2 *itevent);
-void itfitter_exit(void);
-void it_vfwrite(FILE *itvw,unsigned int event_number,int trigger_type,
-		int keep,int flag,unsigned short clock48_high,
-		unsigned short clock48_middle,unsigned short clock48_low,
-		unsigned int fit_tubes,
-		unsigned int cfit,unsigned int cvertex_tubes,
-		float *cvtx,float *cdir,float cgof,
-		unsigned int bfit,unsigned int bvertex_tubes,
-		float *bvtx,float *bdir,float bgof,float bll,float bll0);
-short int it_vfread(FILE *itvw,unsigned int *event_number,int *trigger_type,
-	       int *keep,int *flag,unsigned short *clock48_high,
-	       unsigned short *clock48_middle,unsigned short *clock48_low,
-	       unsigned int *fit_tubes,
-	       unsigned int *cfit,unsigned int *cvertex_tubes,
-	       float *cvtx,float *cdir,float *cgof,
-	       unsigned int *bfit,unsigned int *bvertex_tubes,
-	       float *bvtx,float *bdir,float *bgof,float *bll,float *bll0);
-void cfbsloadinit_(void);
-void cfbsinit_(int *np,float *ps);
-void cfbsexit_(void);
-void storetest_(int *nhit,int *cab,float *t,float *q,float *tsig,float *dwallmin,
-	    int *nsel,float *goodn);
-int clusfit_(float *vert,float *result,float *maxgood,int *nsel,
-         int *nhit,int *cab,float *t,float *q);
-int bonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
-           int *nhit,int *cab,float *t,float *q);
-int startbonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
-	        int *nhit,int *cab,float *t,float *q);
-void clusbonsaifit_(float *clusvert,float *bonsaivert,
-	        float *clusresult,float *bonsairesult,
-	        float *maxgood,float *maxlike,
-	        int *nsel,int *nclusfit,int *nbonsaifit,
-	        int *nhit,int *cab,float *t,float *q);
-void clusandbonsaifit_(float *clusvert,float *bonsaivert,
-	           float *clusresult,float *bonsairesult,
-	           float *maxgood,float *maxlike,
-	           int *nsel,int *nclusfit,int *nbonsaifit,
-	           float *cluswallcut,
-	          int *nhit,int *cab,float *t,float *q);
-void goodness_(float *guncor,float *vertex,int *nhit,int *cab,float *t,float *q);
-int   nwin1_(float *vertex,float *tmin,float *tmax,
-         int *nhit,int *cab,float *t,float *q);
-int   nwin2_(float *vertex,float *tmin,float *tmax,float *ttof,int *cab);
-int   nwin3_(float *vertex,float *tmin,float *tmax,
-         float *ttof,float *d,int *cab);
-void bsfilereadopen_(char *name,int length);
-void bsfilewriteopen_(char *name,int length);
-void bsfileclose_(void);
-char bsfileitread(unsigned int *eventnr,comtype2 *itevent);
-void bsfileitwrite(unsigned int eventnr,comtype2 *itevent);
-
+#include "BONSAI/bscalls.h"
 }
 
 void bsloadinit_(float *res)
@@ -149,35 +80,28 @@ void bssetfactor_(float *d,float *t)
 
 float bsbestvertex_(float *vertex)
 {
-  float *gdn = new float[vf->sets()],ll;
+  float gdn[vf->sets()],ll;
 
   vf->bestvertex(vertex);
-  float res = (vf->goodness(ll,vertex,gdn));
-  delete [] gdn;
-  return res;
+  return(vf->goodness(ll,vertex,gdn));
 }
 
 float bsvertexfit_(float *vertex)
 {
-  float *gdn = new float[vf->sets()],ll;
+  float gdn[vf->sets()],ll;
 
   vf->search();
   vf->bestvertex(vertex);
-  float res = vf->goodness(ll,vertex,gdn);
-  delete [] gdn;
-  return res;
+  return(vf->goodness(ll,vertex,gdn));
 }
 
 float bsfitvertex_(float *vertex,float *rad,int *maxiter)
 {
-  float *gdn = new float[vf->sets()],ll;
+  float gdn[vf->sets()],ll;
 
   vf->tree::search(vertex,*rad,*maxiter);
   vf->bestvertex(vertex);
-  
-  float res = vf->goodness(ll,vertex,gdn);
-  delete [] gdn;
-  return res;
+  return(vf->goodness(ll,vertex,gdn));
 }
 
 void bsaddvertex_(float *vertex)
@@ -283,9 +207,9 @@ void qsort(float *cabs,short int *list,short int n,short int *first)
 
 void it_sort(comtype2 *itevent)
 {
-  short int *sortlist = new short int[2*itevent->it_index],n;
-  float     *cabs = new float[itevent->it_index];
-  float     *d1 = new float [itevent->it_index], *d2 = new float [itevent->it_index];
+  short int sortlist[2*itevent->it_index],n;
+  float     cabs[itevent->it_index];
+  float     d1[itevent->it_index],d2[itevent->it_index];
   for(n=0; n<itevent->it_index; n++)
     {
       cabs[n]=itevent->hits[n][0];
@@ -300,10 +224,6 @@ void it_sort(comtype2 *itevent)
       itevent->hits[n][1]=d1[sortlist[n]];
       itevent->hits[n][2]=d2[sortlist[n]];
     }
-  delete [] d1;
-  delete [] d2;
-  delete [] sortlist;
-  delete [] cabs;
   return;
 }
 
@@ -532,7 +452,7 @@ short int it_vfread(FILE *itvr,unsigned int *event_number,int *trigger_type,
 
   fgets(line,255,itvr);
   if (feof(itvr)) return(-1);
-  sscanf(line,"%u %d %d %d %hu %hu %hu %u %u %u %f %f %f %f %f %f %f %f %u %u %f %f %f %f %f %f %f %f %f %f %f %f",
+  sscanf(line,"%d %d %d %d %hd %hd %hd %d %d %d %f %f %f %f %f %f %f %f %d %d %f %f %f %f %f %f %f %f %f %f %f %f",
 	 event_number,trigger_type,keep,flag,clock48_high,
 	 clock48_middle,clock48_low,fit_tubes,
 	 cfit,cvertex_tubes,cvtx,cvtx+1,cvtx+2,cvtx+3,
@@ -607,6 +527,7 @@ int bonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   fourhitgrid gr(geom->cylinder_radius(),geom->cylinder_height(),&bshits);
   bonsaifit   cf(tf);
   int         nfit;
+  float       gdn[tf->sets()];
 
   tf->set_hits(&bshits);
   tf->maximize(&cf,&gr);
@@ -614,7 +535,6 @@ int bonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   *vert=cf.xfit();
   vert[1]=cf.yfit();
   vert[2]=cf.zfit();
-  float       *gdn = new float[tf->sets()];
   maxlike[2]=tf->goodness(*maxlike,vert,gdn);
   tf->tgood(vert,0,maxlike[1]);
   nsel[1]=tf->nwind(vert,-6,12);
@@ -624,7 +544,6 @@ int bonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   tf->get_dir(result);
   result[5]=tf->get_ll0();
   tf->set_hits(NULL);
-  delete [] gdn;
   return(nfit);
 }
 
@@ -636,6 +555,7 @@ int startbonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   if (bshits.nselected()<MINHIT) return(0);
   bonsaifit   cf(tf);
   int         nfit;
+  float       gdn[tf->sets()];
 
   tf->set_hits(&bshits);
   tf->maximize(&cf,vert);
@@ -643,7 +563,6 @@ int startbonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   *vert=cf.xfit();
   vert[1]=cf.yfit();
   vert[2]=cf.zfit();
-  float       *gdn = new float[tf->sets()];
   maxlike[2]=tf->goodness(*maxlike,vert,gdn);
   tf->tgood(vert,0,maxlike[1]);
   *maxlike=cf.maxq();
@@ -652,7 +571,6 @@ int startbonsaifit_(float *vert,float *result,float *maxlike,int *nsel,
   tf->get_dir(result);
   result[5]=tf->get_ll0();
   tf->set_hits(NULL);
-  delete [] gdn;
   return(nfit);
 }
 
@@ -669,7 +587,7 @@ void clusbonsaifit_(float *clusvert,float *bonsaivert,
   fourhitgrid gr(geom->cylinder_radius(),geom->cylinder_height(),&good);
   bonsaifit   cf(&good);
   bonsaifit   bf(tf);
-  float       *gdn = new float[tf->sets()];
+  float       gdn[tf->sets()];
 
   tf->set_hits(&good);
   *bonsaivert=0;
@@ -722,7 +640,6 @@ void clusbonsaifit_(float *clusvert,float *bonsaivert,
         }
    }
   tf->set_hits(NULL);
-  delete [] gdn;
 }
 
 void clusandbonsaifit_(float *clusvert,float *bonsaivert,
@@ -739,7 +656,7 @@ void clusandbonsaifit_(float *clusvert,float *bonsaivert,
   fourhitgrid gr(geom->cylinder_radius(),geom->cylinder_height(),&good);
   bonsaifit   cf(&good);
   bonsaifit   bf(tf);
-  float       *gdn = new float[tf->sets()];
+  float       gdn[tf->sets()];
 
   *bonsaivert=0;
   bonsaivert[1]=0;
@@ -773,17 +690,11 @@ void clusandbonsaifit_(float *clusvert,float *bonsaivert,
       zwall=good.returnzvol()-fabs(cf.zfit());
       if (rwall<zwall)
 	{
-	  if (rwall<*cluswallcut) {
-	    delete [] gdn;
-	    return;
-	  }
+	  if (rwall<*cluswallcut) return;
 	}
       else
 	{
-	  if (zwall<*cluswallcut) {
-	    delete [] gdn;
-	    return;
-	  }
+	  if (zwall<*cluswallcut) return;
 	}
     }
   tf->set_hits(&good);
@@ -802,7 +713,6 @@ void clusandbonsaifit_(float *clusvert,float *bonsaivert,
       bonsairesult[5]=tf->get_ll0();
     }
   tf->set_hits(NULL);
-  delete [] gdn;
 }
 
 void goodness_(float *guncor,float *vertex,int *nhit,int *cab,float *t,float *q)
@@ -836,7 +746,7 @@ int nwin3_(float *vertex,float *tmin,float *tmax,
 
 void bsfilereadopen_(char *name,int length)
 {
-  char *cname = new char[length+1];
+  char cname[length+1];
   int i;
 
   for(i=0; i<length; i++)
@@ -844,12 +754,11 @@ void bsfilereadopen_(char *name,int length)
   cname[i]=0;
   printf("Opening BONSAI binary file *%s* to read\n",cname);
   bsfile=new binfile(cname,'r');
-  delete [] cname;
 }
 
 void bsfilewriteopen_(char *name,int length)
 {
-  char *cname = new char[length+1];
+  char cname[length+1];
   int i;
 
   for(i=0; i<length; i++)
@@ -857,7 +766,6 @@ void bsfilewriteopen_(char *name,int length)
   cname[i]=0;
   printf("Opening BONSAI binary file *%s* to write\n",cname);
   bsfile=new binfile(cname,'w');
-  delete [] cname;
 }
 
 void bsfileclose_(void)
@@ -903,8 +811,8 @@ void bsfileitwrite(unsigned int eventnr,comtype2 *itevent)
 {
    int       nhit=itevent->it_index,i,sizes[3],numbers[3];
    void      *starts[2];
-   short int *cabs = new short int[nhit];
-   float     *tq = new float[2*nhit+1];
+   short int cabs[nhit];
+   float     tq[2*nhit+1];
 
    for(i=0; i<itevent->it_index; i++)
      {
@@ -922,9 +830,4 @@ void bsfileitwrite(unsigned int eventnr,comtype2 *itevent)
    starts[0]=cabs;
    starts[1]=tq;
    bsfile->write(sizes,numbers,starts);
-   delete [] cabs;
-   delete [] tq;
 }
-
-}
-

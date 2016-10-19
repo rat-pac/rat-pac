@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
-#include "RAT/BONSAI/fourhitgrid.h"
-namespace BONSAI {
+#include "BONSAI/fourhitgrid.h"
 
 // *************************************************************
 // * print last possible hit for each hit starting a combin.   *
@@ -213,7 +212,7 @@ inline void fourhitgrid::fourcombo(hitsel *event_hits,float tsig,
 				   float cyl_radius,float cyl_height,float dwallmin,
 				   float &goodn)
 {
-  int       *cab = new int[4+event_hits->ntot()];
+  int       cab[4+event_hits->ntot()];
   short int start,stop,sec,thir,four,nsol,nstore,h1,h2,h3,h4;
   int       gstart,gend;
   double    testpoint[8];
@@ -315,7 +314,6 @@ inline void fourhitgrid::fourcombo(hitsel *event_hits,float tsig,
 	}
     }
   goodn=gmax;
-  delete [] cab;
 }
 
 // *************************************************************
@@ -470,6 +468,5 @@ fourhitgrid::fourhitgrid(void *buffer,double r,double z,hitsel *hits):
       sparsify(bongrid());
     }
   return;
-}
+};
  
-}

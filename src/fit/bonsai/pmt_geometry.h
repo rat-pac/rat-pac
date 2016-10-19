@@ -2,8 +2,6 @@
 #define PMT_GEOMETRY
 #include <math.h>
 
-namespace BONSAI {
-
 typedef struct
 {
   float  pmt_position[14000][3];  /*RECALL:C array's 0-n, f77 1-n  */
@@ -89,5 +87,4 @@ class pmt_geometry
       return(2*(rmax+zmax));
     }
 };
-}
 #endif

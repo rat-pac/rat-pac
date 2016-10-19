@@ -1,5 +1,4 @@
-#include "RAT/BONSAI/goodness.h"
-namespace BONSAI {
+#include "BONSAI/goodness.h"
 
 // **********************************************
 // quick sort algorithm to sort the hit ttofs
@@ -271,6 +270,4 @@ float goodness::quality(float *vertex)
     gdns=(1-dirweight)*gdn0;
   if (ngdn==1) set_worst(gdns); else check_worst(gdns);
   return(gdns);
-}
-
 }

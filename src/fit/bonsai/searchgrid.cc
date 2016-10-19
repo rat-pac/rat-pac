@@ -1,7 +1,5 @@
-#include "RAT/BONSAI/searchgrid.h"
+#include "BONSAI/searchgrid.h"
 #define MAXSHORT 32767
-
-namespace BONSAI {
 
 // *************************************************************
 // * create empty grid from packed structure                   *
@@ -171,6 +169,4 @@ void searchgrid::packset(void *buffer,short int max_size,short int set)
 	 else    *ibuffer++=((short int) (0.5+val));
     }
   return;
-}
-
 }

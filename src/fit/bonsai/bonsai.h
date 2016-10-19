@@ -1,8 +1,5 @@
 #ifndef BONSAI
 #define BONSAI
-
-namespace BONSAI {
-
 class vertex;
 
 class bonsai
@@ -55,6 +52,4 @@ class bonsai
   inline void bestpos(float *vert)
   { maxbranch->pos(vert); }*/
 };
-
-}
 #endif

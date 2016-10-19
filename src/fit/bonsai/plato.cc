@@ -1,8 +1,6 @@
 #include<stdio.h>
 #include <math.h>
-#include "RAT/BONSAI/plato.h"
-
-namespace BONSAI {
+#include "BONSAI/plato.h"
 
 double dodecahedron::rt5;
 double dodecahedron::irt5;
@@ -174,5 +172,4 @@ icosahedron::icosahedron(void)
 	}
     }
   for(i=0; i<30; i++) vec[i+30]=-vec[i];
-}
 }

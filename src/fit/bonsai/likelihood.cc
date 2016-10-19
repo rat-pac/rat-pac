@@ -1,6 +1,4 @@
-#include "RAT/BONSAI/likelihood.h"
-
-namespace BONSAI {
+#include "BONSAI/likelihood.h"
 
 // *************************************************************
 // * calculate likelihood with and without timing constraint   *
@@ -24,6 +22,4 @@ float likelihood::quality(float *vertex)
       like=like0-dev*dev*minusdang;
   if (nlike++==0) set_worst(like); else check_worst(like);
   return(like);
-}
-
 }

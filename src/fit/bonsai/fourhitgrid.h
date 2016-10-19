@@ -1,10 +1,8 @@
 #ifndef FOURHITGRID
 #define FOURHITGRID
-#include "RAT/BONSAI/fit_param.h"
-#include "RAT/BONSAI/searchgrid.h"
-#include "RAT/BONSAI/hitsel.h"
-
-namespace BONSAI {
+#include "fit_param.h"
+#include "searchgrid.h"
+#include "hitsel.h"
 
 // *************************************************************
 // * generate a vertex fit search grid using combinations of   *
@@ -60,7 +58,5 @@ class fourhitgrid: public fit_param,public searchgrid
 	searchgrid::packset(buffer,max_size,4);
     };
 };
-
-}
 #endif
 

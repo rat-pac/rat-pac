@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include "RAT/BONSAI/bonsai.h"
-#include "RAT/BONSAI/vertex.h"
-namespace BONSAI {
+#include "BONSAI/bonsai.h"
+#include "BONSAI/vertex.h"
 
 inline void bonsai::makebranch(int index)
 {
@@ -95,12 +94,11 @@ int bonsai::prune(void)
       nbranch=0;
       if (point_index<0) return(1);
     }
-  if (point_index>=0) {
+  if (point_index>=0)
     if (fit->toobad(point_index))
       point_index=-point_index-1;
     else
       sum++;
-  }
   return(sum);
 }
 
@@ -121,5 +119,4 @@ void bonsai::print(int it)
 	printf("%2d. ",i+1);
 	branches[i]->print(it+1);
       }
-}
 }

@@ -10,9 +10,7 @@
 #define MINUSDANG   0.05    // negative error
 
 #include <stdio.h>
-#include "RAT/BONSAI/vertex.h"
-
-namespace BONSAI {
+#include "BONSAI/vertex.h"
 
 // **********************************************
 // creates array
@@ -192,6 +190,4 @@ void vertex::purge(void)
     vert[i]=worstfit[i];
   bestfit=worstfit=vert;
   nvert=NVERTFLOAT;
-}
-
 }
