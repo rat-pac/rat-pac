@@ -132,11 +132,6 @@ inline void hitsel::qsort(void)
   selected=new short int[nsel];
   for(hit=0; hit<nsel; hit++)
     selected[hit]=list[sselected[hit]];
-<<<<<<< HEAD
-  delete [] sselected;
-  delete [] list;
-=======
   delete(sselected);
   delete(list);
->>>>>>> 3d16eafbc8aabae0b217d130f03dd46ce6bcb399
 }

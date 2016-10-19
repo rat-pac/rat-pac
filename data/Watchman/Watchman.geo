@@ -124,7 +124,7 @@ color: [0.1, 0.8, 0.1, 0.01],
 }
 
 // Fiducial defined as separate geometry component a la baccarat
-{
+/*{
 name: "GEO",
 index: "fiducial",
 valid_begin: [0, 0],
@@ -138,7 +138,7 @@ material: "doped_water",
 color: [0.2,0.2,0.2,0.1],
 drawstyle: "solid",
 invisible: 1
-}
+}*/
 
 { 
 name: "GEO", 

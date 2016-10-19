@@ -4,6 +4,8 @@
 /rat/db/set DETECTOR experiment "Watchman" 
 /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
 
+##/tracking/verbose 1
+
 /run/initialize
 
 # BEGIN EVENT LOOP
@@ -16,15 +18,21 @@
 
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "watchman.root"
+/rat/procset file "watchman_supernova.root"
 #END EVENT LOOP
 
-/generator/add combo gun2:fill
-/generator/vtx/set e-  0 0 0 0 30.0 30.0
+/generator/add combo supernova:fill
+/generator/vtx/set e+ 0 0 0 
 /generator/pos/set 0 0 0
 
-#/generator/add combo gun2:fill
-#/generator/vtx/set e-  0 0 0 0 5.0 5.0
-#/generator/pos/set target
+###  GVKM(ibd,es,cc,icc,nc): (0.840591, 0.0149344, 0.00291923, 0.0223892, 0.119166)
+/generator/supernova/model 2
+/generator/supernova/ibd   0.
+/generator/supernova/es    1.
+/generator/supernova/cc    0.
+/generator/supernova/icc   0.
+/generator/supernova/nc	   0.
 
-/run/beamOn 5000
+/run/beamOn 2000
+
+

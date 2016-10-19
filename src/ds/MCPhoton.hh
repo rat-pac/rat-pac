@@ -28,12 +28,12 @@ public:
   virtual ~MCPhoton() {}
 
   /** Time of photon hit at photocathode relative to event start time (ns). */
-  virtual Float_t GetHitTime() const { return hitTime; }
-  virtual void SetHitTime(Float_t _hitTime) { hitTime = _hitTime; }
+  virtual Double_t GetHitTime() const { return hitTime; }
+  virtual void SetHitTime(Double_t _hitTime) { hitTime = _hitTime; }
 
   /** Time of pulse arriving at front-end electronics. */
-  virtual Float_t GetFrontEndTime() const { return frontEndTime; }
-  virtual void SetFrontEndTime(Float_t _frontEndTime) {
+  virtual Double_t GetFrontEndTime() const { return frontEndTime; }
+  virtual void SetFrontEndTime(Double_t _frontEndTime) {
     frontEndTime = _frontEndTime;
   }
   
@@ -72,9 +72,9 @@ public:
   ClassDef(MCPhoton, 1) 
 
 protected:
-  Float_t hitTime;
-  Float_t frontEndTime;
-  Float_t lambda;
+  Double_t hitTime;
+  Double_t frontEndTime;
+  Double_t lambda;
   TVector3 pos;
   TVector3 mom;
   TVector3 pol;

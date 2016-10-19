@@ -18,3 +18,11 @@ src/core/config.hh
 .pydevproject
 .settings
 
+# Personal addition
+rootfiles
+watchman_supernova.root
+*.log
+.DS_Store
+*.root
+*.gif
+open.sh

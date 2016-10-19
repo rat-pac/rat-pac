@@ -4,27 +4,35 @@
 /rat/db/set DETECTOR experiment "Watchman" 
 /rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
 
+#/control/verbose 2 
+#/tracking/verbose 2
+/tracking/storeTrajectory 1
+
 /run/initialize
 
 # BEGIN EVENT LOOP
 /rat/proc lesssimpledaq
 /rat/proc fitbonsai
-#/rat/proc fitcentroid
-#/rat/proc fitpath
+/rat/proc fitcentroid
+/rat/proc fitpath
 /rat/proc count
 /rat/procset update 1
 
+#/rat/proc prune
+#/rat/procset prune "mc.track:opticalphoton"
+
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "watchman.root"
+/rat/procset file "watchman_isotope.root"
 #END EVENT LOOP
 
-/generator/add combo gun2:fill
-/generator/vtx/set e-  0 0 0 0 30.0 30.0
+/generator/add combo isotope:fill
 /generator/pos/set 0 0 0
+/generator/vtx/set GenericIon 0 0 0
+/generator/isotope/A 9.0
+/generator/isotope/Z 3.0
+/generator/isotope/E 0.0
 
-#/generator/add combo gun2:fill
-#/generator/vtx/set e-  0 0 0 0 5.0 5.0
-#/generator/pos/set target
+/run/beamOn 200
 
-/run/beamOn 5000
+

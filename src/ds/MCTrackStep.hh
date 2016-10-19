@@ -43,16 +43,16 @@ public:
   virtual void SetEndpoint(const TVector3 &_endpoint) { endpoint = _endpoint; }
 
   /** Time since start of event, in lab frame (ns). */
-  virtual Float_t GetGlobalTime() const { return globalTime; }
-  virtual void SetGlobalTime(Float_t _globalTime) { globalTime = _globalTime; }
+  virtual Double_t GetGlobalTime() const { return globalTime; }
+  virtual void SetGlobalTime(Double_t _globalTime) { globalTime = _globalTime; }
 
   /** Time since start of track, in lab frame (ns). */
-  virtual Float_t GetLocalTime() const { return localTime; }
-  virtual void SetLocalTime(Float_t _localTime) { localTime = _localTime; }
+  virtual Double_t GetLocalTime() const { return localTime; }
+  virtual void SetLocalTime(Double_t _localTime) { localTime = _localTime; }
 
   /** Time since start of track, in particle frame (ns). */
-  virtual Float_t GetProperTime() const { return properTime; }
-  virtual void SetProperTime(Float_t _properTime) { properTime = _properTime; }
+  virtual Double_t GetProperTime() const { return properTime; }
+  virtual void SetProperTime(Double_t _properTime) { properTime = _properTime; }
 
   /** Momentum of particle (MeV/c) */
   virtual const TVector3& GetMomentum() const { return mom; }
@@ -74,9 +74,9 @@ public:
   
 protected:
   Float_t length;
-  Float_t globalTime;
-  Float_t localTime;
-  Float_t properTime;
+  Double_t globalTime;
+  Double_t localTime;
+  Double_t properTime;
   Float_t ke;  
   TVector3 endpoint;
   TVector3 mom;
