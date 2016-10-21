@@ -39,6 +39,10 @@ private:
   // Construct and register optical processes
   void ConstructOpticalProcesses();
 
+  // Adjust the neutron elastic scattering process so that it uses a more
+  // precise treatment in the thermal region (below 4 eV)
+  void EnableThermalNeutronScattering();
+
   // Register opticalphotons with the PMT G4FastSimulationManagerProcess
   void AddParameterization();
 

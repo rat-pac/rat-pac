@@ -403,3 +403,71 @@ z: 39,
 a:88.9,
 }
 
+{
+name: "ELEMENT",
+index: "TS_H_of_Water",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "H",
+z: 1,
+a: 1.008,
+}
+
+{
+name: "ELEMENT",
+index: "TS_H_of_Polyethylene",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "H",
+z: 1,
+a: 1.008,
+}
+
+{
+name: "ELEMENT",
+index: "TS_D_of_Heavy_Water",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "D",
+z: 1,
+a: 2.0144,
+isotopes: [2],
+isotopes_frac: [1.0],
+}
+
+{
+name: "ELEMENT",
+index: "TS_Aluminium_Metal",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Al",
+z: 13,
+a: 26.98,
+}
+
+{
+name: "ELEMENT",
+index: "TS_C_of_Graphite",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "C",
+z: 6,
+a: 12.01,
+
+}
+
+{
+name: "ELEMENT",
+index: "TS_Iron_Metal",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+
+SYMBOL: "Fe",
+z: 26,
+a: 55.845,
+}
