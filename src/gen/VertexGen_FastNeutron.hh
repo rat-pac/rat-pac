@@ -66,6 +66,8 @@ namespace RAT {
         
         FastNeutronMessenger* messenger;
 
+        static const double DDEFAULT = 400;
+        static const double EDEFAULT = 10;
 
 
     };

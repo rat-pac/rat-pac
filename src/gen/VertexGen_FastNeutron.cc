@@ -12,8 +12,6 @@
 
 #define G4std  std
 namespace RAT {
-    static const double DDEFAULT = 400;
-    static const double EDEFAULT = 10;
 
     VertexGen_FastNeutron::VertexGen_FastNeutron(const char *arg_dbname)
     : GLG4VertexGen(arg_dbname)
