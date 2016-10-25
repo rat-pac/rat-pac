@@ -18,6 +18,7 @@ using namespace std;
 static const int innerPMTcode   = 1;
 static const int vetoPMTcode    = 2;
 
+//minHit should be 1 or above
 static const int minHit         = 4;
 static const int maxHit         = 1000;
 
