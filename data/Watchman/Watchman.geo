@@ -5,10 +5,103 @@ valid_begin: [0, 0],
 valid_end: [0, 0],
 mother: "", // world volume has no mother
 type: "box",
-size: [10000.0, 10000.0, 10000.0], // mm, half-length
-material: "stainless_steel", //rock?
+size: [20000.0, 20000.0, 20000.0], // mm, half-length
+material: "air", //rock?
 invisible: 1,
 }
+
+///////////////////// Define the rock volumes. Thin slab of rock is assumed ////////////////////////
+
+//Create a 1-mm thick slab of rock to put on the top
+{
+name: "GEO",
+index: "rock_21",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [11250.0, 8500.0, 0.50], // mm, half-length
+position: [0.0, 0.0, 15800.50],
+material: "rock", //rock?
+invisible: 1,
+}
+//Create a 1-mm thick slab of rock to put on the bottom
+{
+name: "GEO",
+index: "b_rock",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [11250.0, 8500.0, 0.50], // mm, half-length
+position: [0.0, 0.0, -8000.50],
+material: "rock", //rock?
+color: [0.2,0.2,0.2,0.1],
+drawstyle: "solid"
+}
+
+//Create a 1-mm thick slab of rock to put on side A
+{
+name: "GEO",
+index: "rock_22",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [0.5, 8500.0, 11900.0], // mm, half-length
+position: [11250.5, 0.0, 3900.0],
+material: "rock", //rock?
+invisible: 1,
+}
+
+
+//Create a 1-mm thick slab of rock to put on side A
+{
+name: "GEO",
+index: "rock_32",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [0.5, 8500.0, 11900.0], // mm, half-length
+position: [-11250.5, 0.0, 3900.0],
+material: "rock", //rock?
+invisible: 1,
+}
+
+
+//Create a 1-mm thick slab of rock to put on side B
+{
+name: "GEO",
+index: "rock_23",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [11250.0, 0.5, 11900.0], // mm, half-length
+position: [0.0,8500.5 , 3900.0],
+material: "rock", //rock?
+invisible: 1,
+}
+
+//Create a 1-mm thick slab of rock to put on side B
+{
+name: "GEO",
+index: "rock_33",
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "world", // world volume has no mother
+type: "box",
+size: [11250.0, 0.5, 11900.0], // mm, half-length
+position: [0.0,-8500.5 , 3900.0],
+material: "rock", //rock?
+invisible: 1,
+}
+
+////////////////////////////////// Define the rock volumes done.///////////////////////////////////
+
+
+////////////////////////////////// Define detector properties.  ///////////////////////////////////
 
 {
 name: "GEO",

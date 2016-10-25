@@ -31,6 +31,7 @@ namespace RAT
         float bonsai_vtxfit[4],bonsai_dirfit[5],goodn[2],maxlike[2],*gdn;
         int   nsel[3];
         int maxnhit;
+
     };
     
 }

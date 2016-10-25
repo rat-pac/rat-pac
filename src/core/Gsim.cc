@@ -14,6 +14,7 @@
 #include <RAT/VertexGen_IBD.hh>
 #include <RAT/VertexGen_ReacIBD.hh>
 #include <RAT/VertexGen_Isotope.hh>
+#include <RAT/VertexGen_FastNeutron.hh>
 #include <RAT/VertexGen_ES.hh>
 #include <RAT/VertexGen_Spectrum.hh>
 #include <RAT/VertexGen_SN.hh>
@@ -116,9 +117,12 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("supernova",
                                            new Alloc<GLG4VertexGen,
                                            VertexGen_SN>);
-    GlobalFactory<GLG4VertexGen>::Register("isotope",
+   GlobalFactory<GLG4VertexGen>::Register("isotope",
                                            new Alloc<GLG4VertexGen,
                                            VertexGen_Isotope>);
+  GlobalFactory<GLG4VertexGen>::Register("fastneutron",
+                                           new Alloc<GLG4VertexGen,
+                                           VertexGen_FastNeutron>);
     
   GlobalFactory<GLG4Gen>::Register("decaychain",
                                    new Alloc<GLG4Gen,DecayChain_Gen>);
