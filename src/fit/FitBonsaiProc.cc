@@ -104,11 +104,11 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             printf("Something is wrong with PMT type (%d,%d)\n",count,pmtinfo->GetType(id));
         }
     }
-    printf("Event had (inner,veto) = (%4d [%4.1f pe], %4d [%4.1f pe],%4d) PMTs\n",nhit,IDCharge,nhitVeto,ODCharge,nhitMAX);
+//    printf("Event had (inner,veto) = (%4d [%4.1f pe], %4d [%4.1f pe],%4d) PMTs\n",nhit,IDCharge,nhitVeto,ODCharge,nhitMAX);
     
 
     
-    if ((nhit>minHit) && (nhit<maxHit))
+    if ((nhit>=minHit) && (nhit<maxHit))
     {
         int hit;
         goodness    *bonsai_hits;
