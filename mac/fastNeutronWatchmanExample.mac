@@ -17,16 +17,18 @@
 
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "watchman_214Bi_lesssimpledaq.root"
+/rat/procset file "watchman_fastneutron_lesssimpledaq.root"
 #END EVENT LOOP
 
 
 
 /generator/add combo fastneutron:regexfill
 /generator/pos/set rock_[0-9]+
-/generator/vtx/set GenericIon 0 0 0
-/generator/fastneutron/depth 1.0
-
+/generator/vtx/set 0 0 0
+/generator/fastneutron/depth 600.0
+/generator/fastneutron/enthresh 10.0
+/generator/fastneutron/sidewalls 1.0
 
 
 /run/beamOn 10000
+

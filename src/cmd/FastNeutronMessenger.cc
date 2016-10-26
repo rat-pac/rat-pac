@@ -28,10 +28,16 @@ namespace RAT {
         DCmd->SetParameterName("valueA",false);
         DCmd->SetDefaultValue( fastneutron->GetDepth() );
     
-        ECmd = new G4UIcmdWithADouble("/generator/fastneutron/en_thresh", this);
-        ECmd->SetGuidance("Set the neutron energy threshold (MeV) ");
-        ECmd->SetParameterName("valueE",false);
+        ECmd = new G4UIcmdWithADouble("/generator/fastneutron/enthresh", this);
+        ECmd->SetGuidance("Set the neutron energy threshold (MeV)");
+        ECmd->SetParameterName("valueEt",false);
         ECmd->SetDefaultValue( fastneutron->GetEnThreshold() );
+
+        STCmd = new G4UIcmdWithADouble("/generator/fastneutron/sidewalls", this);
+        STCmd->SetGuidance("Set the location of the incoming fastNeutron. Sidewalls = 1, top-bottom  = 0");
+        STCmd->SetParameterName("valueST",false);
+        STCmd->SetDefaultValue( fastneutron->GetSideBool() );
+    
     }
     
     FastNeutronMessenger::~FastNeutronMessenger() {;}
@@ -48,6 +54,11 @@ namespace RAT {
             double e  = ECmd->GetNewDoubleValue( newValue );
             fastneutron->SetEnThreshold ( e  );
         }
+        else  if ( command == STCmd )
+        {
+            double st   = STCmd->GetNewDoubleValue( newValue );
+            fastneutron->SetSideBool (st);
+        }
         else
         {
             G4cerr << "Error: Invalid FastNeutronMessenger \"set\" command" << G4endl;
@@ -60,6 +71,8 @@ namespace RAT {
             return DCmd->ConvertToString( fastneutron->GetDepth() );
         else if ( command == ECmd )
             return ECmd->ConvertToString( fastneutron->GetEnThreshold() );
+        else if ( command == STCmd )
+            return STCmd->ConvertToString( fastneutron->GetSideBool() );
         // Error if we reach here.
         return G4String("Error: Invalid FastNeutronMessenger \"get\" command");
     }

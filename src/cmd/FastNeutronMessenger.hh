@@ -35,6 +35,7 @@ namespace RAT {
         
         G4UIcmdWithADouble* DCmd;
         G4UIcmdWithADouble* ECmd;
+        G4UIcmdWithADouble* STCmd;
 
     };
     

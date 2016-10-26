@@ -109,7 +109,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
     
 
     
-    if ((nhit>=minHit) && (nhit<maxHit))
+    if ((nhit>=minHit) && (nhit<300))
     {
         int hit;
         goodness    *bonsai_hits;

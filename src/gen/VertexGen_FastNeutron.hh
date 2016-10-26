@@ -27,9 +27,10 @@
 #include <G4ThreeVector.hh>
 #include <globals.hh>
 #include <vector>
+#include <TF1.h>
+#include <TF2.h>
 
 namespace RAT {
-    
     class VertexGen_FastNeutron : public GLG4VertexGen {
     public:
         
@@ -51,23 +52,35 @@ namespace RAT {
         
         /** Set up the FastNeutron array in memory - create normalised cumulative magnitude for easy**/
         
-        void SetDepth(    double AAm =  DDEFAULT);
-        void SetEnThreshold(    double EAm =  EDEFAULT);
+        void SetDepth      ( double DAm);
+        void SetEnThreshold( double EAm);
+        void SetSideBool   ( double SBAm);
         
-        inline double GetDepth()   {return valueD;} ;
-        inline double GetEnThreshold()   {return valueE;} ;
+        inline double GetDepth()      {return valueD; } ;
+        inline double GetEnThreshold(){return valueE; } ;
+        inline double GetSideBool()   {return valueSB;} ;
+        
+        void GetMeiHimeParameters(double depth,double emin, double &cosTheta,double &neutronEnergy);
+        void LoadTangHortonSmithCosTheta(double depth);
+        
+        double GetRandomMuonCosTheta();
+
+        
+        double evalIntegral(TF2 *func1,double x,double e_tmp);
+        
         
     private:
         G4String	_particle;			// name of the particle type
-        G4ParticleDefinition* _pDef,*n ;	// particle definition
+        G4ParticleDefinition *n ;	// particle definition
         G4String	_FastNeutron;			// name of the FastNeutron to use
         
-        double valueD,valueE;
+        double valueD,valueE,valueSB;
         
         FastNeutronMessenger* messenger;
-
-        static const double DDEFAULT = 400;
-        static const double EDEFAULT = 10;
+        
+        G4ThreeVector nu_dir;
+        
+        TF1 *funcMuonCosTheta;
 
 
     };

@@ -22,7 +22,7 @@
 #END EVENT LOOP
 
 /generator/add combo supernova:fill
-/generator/vtx/set e+ 0 0 0 
+/generator/vtx/set 0 0 0 
 /generator/pos/set 0 0 0
 
 ###  GVKM(ibd,es,cc,icc,nc): (0.840591, 0.0149344, 0.00291923, 0.0223892, 0.119166)
