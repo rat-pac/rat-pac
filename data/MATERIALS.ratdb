@@ -37,7 +37,7 @@ valid_end : [0, 0],
 density: 1.0,
 nelements: 2, 
 nmaterials: 0,
-elements: ["Hydrogen", "Oxygen",],
+elements: ["TS_H_of_Water", "Oxygen",],
 elemprop: [0.1119, 0.8881],
 }
 
@@ -50,7 +50,7 @@ valid_end : [0, 0],
 density: 2.7,
 nelements: 1,
 nmaterials: 0,
-elements: ["Aluminum"],
+elements: ["TS_Aluminium_Metal"],
 elemprop: [1.0],
 }
 
@@ -76,7 +76,7 @@ valid_end : [0, 0],
 density: 7.87,
 nelements: 1,
 nmaterials: 0,
-elements: ["Iron"],
+elements: ["TS_Iron_Metal"],
 elemprop: [1.0],
 }
 
@@ -88,7 +88,7 @@ valid_end : [0, 0],
 density: 7.87,
 nelements: 3,
 nmaterials: 0,
-elements: ["Iron", "Chromium","Nitrogen"],
+elements: ["TS_Iron_Metal", "Chromium","Nitrogen"],
 elemprop: [0.71, 0.19, 0.1],
 }
 
@@ -104,7 +104,7 @@ nelements: 10,
 nmaterials: 0,
 elements: [
   "Carbon",     "Manganese",  "Silicon", "Chromium", "Nickel",
-  "Molybdenum", "Phosphorus", "Sulphur", "Nitrogen", "Iron"
+  "Molybdenum", "Phosphorus", "Sulphur", "Nitrogen", "TS_Iron_Metal"
 ],
 elemprop:[
   0.00030, 0.0200,  0.0075,  0.1800, 0.1400, 
@@ -773,7 +773,7 @@ valid_end : [0, 0],
 density: 1.397, // from NIST database
 nelements: 3,
 nmaterials: 0,
-elements: ["Hydrogen", "Carbon","Oxygen"],
+elements: ["TS_H_of_Polyethylene", "Carbon","Oxygen"],
 elemprop: [0.042, 0.625, 0.333],
 }
 
@@ -785,7 +785,7 @@ valid_end : [0, 0],
 density: 1.35, // from NIST database
 nelements: 3,
 nmaterials: 0,
-elements: ["Hydrogen", "Carbon","Oxygen"],
+elements: ["TS_H_of_Polyethylene", "Carbon","Oxygen"],
 elemprop: [0.0416, 0.6942, 0.2642],
 }
 
@@ -986,7 +986,7 @@ valid_end : [0, 0],
 density: 1.0, 
 nelements: 4,
 nmaterials: 0,
-elements: ["Hydrogen", "Oxygen", "Sodium", "Chlorine",],
+elements: ["TS_H_of_Water", "Oxygen", "Sodium", "Chlorine",],
 elemprop: [0.111372, 0.883628,0.001967,0.003033],
 }
 
