@@ -1,0 +1,39 @@
+#!/bin/sh
+
+## Here are a set of instructions to run watchmakers.py.
+## First step  : copy watchmakers.py into an empty working directory.
+## Second step : try out the machinery with few events per run file
+
+python watchmakers.py -m -j -g 0.7 -N 2 -e 50
+
+## The above command will create macro (-m) and job scripts (-m) 
+## for all physics event. For each physics process it will create two 
+## independant macros (-N 2) containing 50 phyiscs event to simulate (-e 50). 
+##Within the job scripts an analyisis with a goodness of fit of 0.7 (-g 0.7)
+## is applied.
+##
+## Your directory should now look like this:
+#
+# fit_param.dat -> /Users/bergevin1/software/rat-getting-up-to-speed/rat-pac/fit_param.dat
+# jobs
+# like.bin -> /Users/bergevin1/software/rat-getting-up-to-speed/rat-pac/like.bin
+# log
+# macro_10pct
+# macro_15pct
+# macro_20pct
+# macro_25pct
+# macro_30pct
+# macro_35pct
+# macro_40pct
+# ntuple_root_files
+# root_files
+# sub_jobs
+# watchmakers.py
+#
+## Where the linked files are required by bonsai. The log directory will contained the 
+## record of the rat routine and cluster job if enabled. macro_*pct contains the macro
+## for each physics events. root_files will contain files outputed from rat-pac and 
+## ntuple_root_files will contain files after 1-st level analyis. Finally sub_jobs
+## is a script to submit all jobs to a cluster.
+
+
