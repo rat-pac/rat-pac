@@ -39,16 +39,19 @@ namespace RAT {
             DS::MCPMT *mcpmt = mc->GetMCPMT(imcpmt);
             if (mcpmt->GetMCPhotonCount() > 0) {
                 for (int i=0; i < mcpmt->GetMCPhotonCount(); i++)  {
-                    timeAndChargeAndID.push_back(mcpmt->GetMCPhoton(i)->GetHitTime());
+                    timeAndChargeAndID.push_back(mcpmt->GetMCPhoton(i)->GetFrontEndTime());
                     timeAndChargeAndID.push_back(mcpmt->GetMCPhoton(i)->GetCharge());
                     timeAndChargeAndID.push_back(mcpmt->GetID());
                     timeAndChargeAndID.push_back(i);
                     timeAndChargeAndID.push_back(mcpmt->GetMCPhotonCount());
                     timeAndChargeAndID.push_back(mcpmt->GetMCPhoton(i)->GetHitTime());
+                    
                     pmtARRAY.push_back(timeAndChargeAndID);
                     timeAndChargeAndID.resize(0);
 //                    pmtQ += mcpmt->GetMCPhoton(i)->GetCharge();
 //                    totalQ += mcpmt->GetMCPhoton(i)->GetCharge();
+                    
+//                    printf("%4.3e\n",mcpmt->GetMCPhoton(i)->GetFrontEndTime()-mcpmt->GetMCPhoton(i)->GetHitTime());
                 }
             }
         }
