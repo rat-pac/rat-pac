@@ -55,7 +55,10 @@ public:
   /** Time since last trigger in ns. */
   Double_t GetDeltaT() const { return deltat; }
   void SetDeltaT(Double_t _deltat) { deltat = _deltat; }
-
+   
+  void SetCalibratedTriggerTime(Double_t _calibratedTriggerTime) {calibratedTriggerTime=_calibratedTriggerTime;}
+  Double_t GetCalibratedTriggerTime() const {return calibratedTriggerTime;}
+    
   /** Total charge in all PMT waveforms (pC). */
   Float_t GetTotalCharge() const { return qTotal; }
   void SetTotalCharge(Float_t _qTotal) { qTotal = _qTotal; }
