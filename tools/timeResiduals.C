@@ -31,11 +31,12 @@ void timeResiduals(const char *file) {
     
     TTree *posTree = (TTree*) f->Get("runT");
     //Giving up doing it properly and cheating
-    runT->Draw("pmtinfo.pos.X():pmtinfo.pos.Y():pmtinfo.pos.Z()","Entry$>-1","goff");
+    runT->Draw("pmtinfo.pos.X():pmtinfo.pos.Y():pmtinfo.pos.Z():pmtinfo.type","Entry$>-1","goff");
     
     Double_t *x = runT->GetV1();
     Double_t *y = runT->GetV2();
     Double_t *z = runT->GetV3();
+    Double_t *typ = runT->GetV4();
     
     for (int i = 0; i < T->GetEntries(); i++) {
 
@@ -64,8 +65,9 @@ void timeResiduals(const char *file) {
                 v_t = sqrt(pow(p_x-v_x,2)+pow(p_y-v_y,2)+pow(p_z-v_z,2)) / (0.2998* 1000. * 0.7519); //c (m/ns * mm/m *index refraction)
                 p_t = pmt->GetTime() + t_t;
 //                printf("%f %f\n",v_t,p_t);
-                timeRes->Fill(p_t-v_t);
-                
+                if(typ[pmt->GetID()]==1){ // Only ID PMTs
+                    timeRes->Fill(p_t-v_t);
+                }
             }
             
             
