@@ -341,13 +341,10 @@ def mergeFiles():
                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                 trees[t_name] = TChain("data")
                 
-                if loc[j] != 'neutron':
-                    s = "ntuple_%s/watchman_%s_%s_*_%s.root" %(cover,ii,cover,\
+                s = "ntuple_root_files/watchman_%s_%s_*_%s.root" %(cover,ii,cover,\
                                                                loc[j])
-                    sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
-                else:
-                    s = "ntuple_%s/watchman_%s_*_N.root" %(cover,cover)
-                    sw = "%s_neutron_%s_N.root"%(pathFinal,cover)
+                sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
+            
                 print "Writing ", sw,"from",s
                 trees[t_name].Add(s)
                 print "Number of entries ",trees[t_name].GetEntries()
