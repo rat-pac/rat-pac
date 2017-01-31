@@ -341,7 +341,7 @@ def mergeFiles():
                 t_name  = "data_%s_%s_%s"%(ii,cover,loc[j])
                 trees[t_name] = TChain("data")
                 
-                s = "ntuple_root_files/watchman_%s_%s_*_%s.root" %(ii,cover,loc[j])
+                s = "ntuple_root_files/watchman_%s_%s_%s_*.root" %(ii,cover,loc[j])
                 sw = "%s_%s_%s_%s.root"%(pathFinal,ii,cover,loc[j])
             
                 print "Writing ", sw,"from",s
