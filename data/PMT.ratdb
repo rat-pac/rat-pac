@@ -142,7 +142,7 @@ valid_end: [0,0],
 dynode_material: "stainless_steel",
 glass_material: "glass",
 pmt_vacuum_material: "pmt_vacuum",
-photocathode_surface: "photocathode_R1408", //used the 1408 photocathode in SNO+ rat
+photocathode_surface: "photocathode_R11780", //used the 1408 photocathode in SNO+ rat
 mirror_surface: "mirror",
 dynode_surface: "stainless_steel",
 
