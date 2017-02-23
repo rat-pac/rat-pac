@@ -203,7 +203,28 @@ void supernovaAnalysis(const char *file) {
         
         interaction_type = 0.0;
         ES_true = IBD_true = CC_true = ICC_true = NC_true = 0;
-        if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
+        
+        
+         if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==-11 && mc->GetMCParticle(1)->GetPDGCode()==2112){
+            //            //printf("IBD Interaction      ... ");
+            ibd+=1;
+            IBD_true =1;
+            interaction_type = 2;
+            RAT::DS::MCParticle *prim = mc->GetMCParticle(0);
+            mc_energy = prim->ke;
+            
+            hNuP->Fill(prim->ke);
+            mcmomv_particle = prim->GetMomentum();
+            totMom = sqrt(pow(prim->GetMomentum().X(),2) +pow(prim->GetMomentum().Y(),2) + pow(prim->GetMomentum().Z(),2));
+            dirTruth =  TVector3(prim->GetMomentum().X()/totMom,prim->GetMomentum().Y()/totMom,prim->GetMomentum().Z()/totMom);
+            posTruth = prim->GetPosition();
+            
+            
+            
+        }
+        
+        
+        else if(particleCountMC ==2 && mc->GetMCParticle(0)->GetPDGCode()==11){
             //            //printf("ES Interaction       ... ");
             es+=1;
             ES_true =1;
