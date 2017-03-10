@@ -96,12 +96,19 @@ public:
   virtual void SetNumReemitPhoton(Int_t _numReemitPhoton) {
     numReemitPhoton = _numReemitPhoton;
   }
+    
+    /** Number of photons produced by the re-emission process */
+    virtual Int_t GetNumCerenkovPhoton() const { return numCerenkovPhoton; }
+    virtual void SetNumCerenkovPhoton(Int_t _numCerenkovPhoton) {
+        numCerenkovPhoton = _numCerenkovPhoton;
+    }
 
-  ClassDef(MCSummary, 1)
+  ClassDef(MCSummary, 2)
     
 protected:
   Int_t numScintPhoton;
   Int_t numReemitPhoton;
+  Int_t numCerenkovPhoton;
   Float_t totalScintEdep;
   Float_t totalScintEdepQuenched;
   Float_t initialScintTime;

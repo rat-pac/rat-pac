@@ -16,6 +16,7 @@ public:
     fCalib = new DS::Calib(); // FIXME
     numScintPhoton = 0;
     numReemitPhoton = 0;
+      numCerenkovPhoton = 0;
     extTriggerType = 0;
     extTriggerTime = 0.0;
   };
@@ -47,7 +48,9 @@ public:
   
   /** Count of reemitted photons in this event */
   int numReemitPhoton;
-
+    
+    /** Count the number of Cerenkov photon in this event */
+    int numCerenkovPhoton;
   /** Type of external trigger associated with this event (0 for none) */
   int extTriggerType;
 

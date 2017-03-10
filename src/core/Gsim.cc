@@ -340,6 +340,8 @@ void Gsim::PreUserTrackingAction(const G4Track* aTrack)  {
     }
     else if (creatorProcessName == "Reemission") {
       eventInfo->numReemitPhoton++;
+    }else if (creatorProcessName == "Cerenkov") {
+        eventInfo->numCerenkovPhoton++;
     }
   }
 }
@@ -518,6 +520,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   summary->SetTotalScintCentroid(scintCentroid);
   summary->SetNumScintPhoton(exinfo->numScintPhoton);
   summary->SetNumReemitPhoton(exinfo->numReemitPhoton);
+  summary->SetNumCerenkovPhoton(exinfo->numCerenkovPhoton);
 
   /** PMT and noise simulation */
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
