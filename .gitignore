@@ -22,8 +22,8 @@ src/core/config.hh
 rootfiles
 watchman_supernova.root
 *.log
-.DS_Store
 *.root
+.DS_Store
 *.gif
 *.mac
 tools/*.py
