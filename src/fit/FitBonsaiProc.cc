@@ -23,7 +23,7 @@ static const int minHit         = 4;
 static const int maxHit         = 1000;
 
 static const double timeOffset  = 800.;
-static const double darkRateHz = 1000.;
+static const double darkRateHz = 10000.;
 
 static const double mm2cm       = 0.1;
 static const double cm2mm       = 10.0;
@@ -38,7 +38,7 @@ int nwin(RAT::DS::PMTInfo *pmtinfo,
          float twin,float *v,int nfit,int *cfit,float *tfit,int *cwin);
 
 FitBonsaiProc::FitBonsaiProc() : Processor::Processor("BONSAI"), bonsai_geometry(NULL), bonsai_likelihood(NULL), bonsai_fit(NULL) {
-    
+
 }
 
 FitBonsaiProc::~FitBonsaiProc() {
@@ -55,7 +55,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
     int         cables[maxHit],cables_win[maxHit];
     float       times[maxHit];
     float       charges[maxHit];
-    
+
     // generate BONSAI geometry object, the likelihood and the maximizer
     if (!bonsai_geometry)
     {
@@ -88,7 +88,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
                                          bonsai_geometry->cylinder_height());
         bonsai_fit=new bonsaifit(bonsai_likelihood);
     }
-    
+
     int nhitMAX= ev->GetPMTCount(); // Includes Inner and Veto PMTs
     int nhit = 0, nhitVeto =0,count, id;
     float IDCharge = 0.0, ODCharge = 0.;
@@ -106,9 +106,9 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
         }
     }
 //    printf("Event had (inner,veto) = (%4d [%4.1f pe], %4d [%4.1f pe],%4d) PMTs\n",nhit,IDCharge,nhitVeto,ODCharge,nhitMAX);
-    
 
-    
+
+
     if ((nhit>=minHit) && (nhit<300))
     {
         int hit;
@@ -169,7 +169,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
                              bonsai_hits);
         bonsai_likelihood->set_hits(bonsai_hits);
         bonsai_likelihood->maximize(bonsai_fit,grid);
-        
+
         if ((nsel[2]=bonsai_likelihood->nfit())>0)
         {
             *bonsai_vtxfit=bonsai_fit->xfit();
@@ -185,7 +185,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             bonsai_vtxfit[3]=bonsai_likelihood->get_zero();
             bonsai_likelihood->get_dir(bonsai_dirfit);
             *maxlike=bonsai_likelihood->get_ll0();
-            
+
             DS::BonsaiFit *result=ev->GetBonsaiFit();
             result->SetPosition(TVector3(bonsai_vtxfit[0]*cm2mm,
                                          bonsai_vtxfit[1]*cm2mm,
@@ -217,24 +217,24 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
                        adir,&agoodn,&aqual,&nscat,&cosscat);
             result->SetDirection(TVector3(adir[0],adir[1],adir[2]));
             result->SetDirGoodness(agoodn);
-            
-            
+
+
             result->SetIDHit(nhit);
             result->SetODHit(nhitVeto);
             result->SetIDCharge(IDCharge);
             result->SetODCharge(ODCharge);
-            
+
         }
-        
+
         bonsai_likelihood->set_hits(NULL);
-        
-        
+
+
         /*DS::BonsaiFit *result = ev->GetBonsaiFit();
          TVector3 pos(bonsai_fit->xfit()*cm2mm,
          bonsai_fit->yfit()*cm2mm,
          bonsai_fit->zfit()*cm2mm);
          result->SetPosition(pos);
-         
+
          bonsai_fit->fitresult();
          result->SetTime(bonsai_likelihood->get_zero()-timeOffset.0);
          bonsai_likelihood->get_dir(bonsai_dirfit);
@@ -242,7 +242,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
          result->SetDirection(direct);
          result->SetLogLike(bonsai_likelihood->get_ll());
          result->SetLogLike0(bonsai_likelihood->get_ll0());
-         
+
          //reset likelihood
          bonsai_likelihood->set_hits(NULL);*/
         delete grid;
@@ -251,19 +251,19 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
     else
     {
         DS::BonsaiFit *result = ev->GetBonsaiFit();
-        
+
         TVector3 pos(-10000,-10000,-10000);
         result->SetPosition(pos);
         result->SetTime(-10000);
         result->SetLogLike(-100);
         result->SetLogLike0(-100);
-        
+
         TVector3 direct(0,0,0);
         result->SetDirection(direct);
         result->SetDirGoodness(-1);
         result->SetGoodness(-1);
 
-        
+
         result->SetIDHit(nhit);
         result->SetODHit(nhitVeto);
         result->SetIDCharge(IDCharge);
@@ -276,10 +276,10 @@ int nwin(RAT::DS::PMTInfo *pmtinfo,
          float twin,float *v,int nfit,int *cfit,float *tfit,int *cwin)
 {
     if (nfit<=0) return(0);
-    
+
     float ttof[nfit],tsort[nfit],dx,dy,dz;
     int   hit,nwin=0,nwindow,hstart_test,hstart,hstop;
-    
+
     // calculate t-tof for each hit
     for(hit=0; hit<nfit; hit++)
     {
@@ -290,7 +290,7 @@ int nwin(RAT::DS::PMTInfo *pmtinfo,
         tsort[hit]=ttof[hit]=tfit[hit]-sqrt(dx*dx+dy*dy+dz*dz)*CM_TO_NS;
     }
     sort(tsort,tsort+nfit);
-    
+
     // find the largest number of hits in a time window <= twin
     nwindow=1;
     hstart_test=hstart=0;
