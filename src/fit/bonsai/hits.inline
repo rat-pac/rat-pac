@@ -114,9 +114,18 @@ inline int hits::nhits(int set)
 inline float hits::charge(int set)
 {
   if ((set<0) || (set>=nchargeset)) return(-1);
-  if (set==0)
-    if (*nhit==0) return(-1); else return(*avcharges);
-  if (nhit[set]==nhit[set-1]) return(-1); else return(avcharges[set]);
+  if (set==0){
+    if (*nhit==0){
+      return(-1);
+    } else {
+      return(*avcharges);
+    }
+  }
+  if (nhit[set]==nhit[set-1]){
+    return(-1);
+    } else {
+    return(avcharges[set]);
+    }
 }
 // **********************************************
 // return sum of hits for this set and higher charge sets
@@ -282,7 +291,7 @@ inline void hits::qsort(short int *list,short int n)
   short int *buffer=new short int[n];
 
   qsort(list,n,buffer);
-  delete(buffer);
+  delete [] buffer;
 }
 // **********************************************
 // sort hits by time
@@ -330,5 +339,6 @@ inline void hits::qsort(short int *list)
   delete(stimes);
   delete(scharges);
   delete(spositions);
-  delete(buffer);
+  //delete(buffer);
+  delete [] buffer;
 }

@@ -2,10 +2,10 @@
     Defines a FastSimulationModel class for handling optical photon
     interactions with PMT: partial reflection, transmission, absorption,
     and hit generation.
-    
+
     This file is part of the GenericLAND software library.
     $Id: GLG4PMTOpticalModel.hh,v 1.1 2005/08/30 19:55:22 volsung Exp $
-    
+
     @author Glenn Horton-Smith, March 20, 2001.
     @author Dario Motta, Feb. 23 2005: Formalism light interaction with photocathode.
 */
@@ -40,11 +40,12 @@ public:
   //-------------------------
   // 28-Jul-2006 WGS: Must define a G4Region for Fast Simulations
   // (change from Geant 4.7 to Geant 4.8).
-  GLG4PMTOpticalModel (G4String, G4Region*, G4LogicalVolume* body, 
-                       G4LogicalBorderSurface *pc_log_surface, 
+  GLG4PMTOpticalModel (G4String, G4Region*, G4LogicalVolume* body,
+                       G4LogicalBorderSurface *pc_log_surface,
 		       double efficiency_correction=1.0,
 		       double dynodeTop = 0.0, double dynodeRadius = 0.0,
-		       double prepulseProb = 0.0);
+		       double prepulseProb = 0.0,double photocathode_MINrho = 0.0,
+				   double photocathode_MAXrho = 0.0);
   // Note: There is no GLG4PMTOpticalModel(G4String) constructor.
   ~GLG4PMTOpticalModel ();
 
@@ -60,7 +61,7 @@ public:
   // following two methods are for G4UImessenger
   void SetNewValue(G4UIcommand * command,G4String newValues);
   G4String GetCurrentValue(G4UIcommand * command);
-  
+
   void SetBEfficiencyCorrection(std::vector<std::pair<int,double> > _BEffiCorr){BEfficiencyCorrection=_BEffiCorr;G4cout<<GetName()<<": B correction table set\n";}
   void DumpBEfficiencyCorrectionTable()
   {
@@ -68,9 +69,9 @@ public:
     for(int i=0;i<int(BEfficiencyCorrection.size());i++)
       G4cout<<BEfficiencyCorrection[i].first<<","<<BEfficiencyCorrection[i].second<<"\n";
   }
-  
+
 private:
-  // material property vector pointers, initialized in constructor, 
+  // material property vector pointers, initialized in constructor,
   // so we don't have to look them up every time DoIt is called.
   G4MaterialPropertyVector * _rindex_glass;        // function of photon energy
   G4MaterialPropertyVector * _rindex_photocathode; // function of photon energy
@@ -90,6 +91,12 @@ private:
   G4double _dynodeTop;
   G4double _dynodeRadius;
   G4double _prepulseProb;
+	G4double _photocathode_MINrho;
+	G4double _photocathode_MAXrho;
+	G4double _rho;
+	G4double _rhoAvg;
+	G4double _rhoDif;
+	G4double _erfProb;
 
   // verbose level -- how verbose to be (diagnostics and such)
   G4int _verbosity;
@@ -127,7 +134,7 @@ private:
   void Refract(G4ThreeVector &dir, G4ThreeVector &pol, G4ThreeVector &norm);
 
   static double surfaceTolerance;
-  
+
   std::vector<std::pair<int,double> > BEfficiencyCorrection;
 };
 

@@ -3,35 +3,35 @@
 #include <RAT/DB.hh>
 #include <G4ThreeVector.hh>
 #include <RAT/DetectorConstruction.hh>
-
+#include <iostream>
 using namespace std;
 
 namespace RAT {
-    
+
     LessSimpleDAQProc::LessSimpleDAQProc() : Processor("lesssimpledaq") {
         //DBLinkPtr ldaq = DB::Get()->GetLink("DAQ");
         //fSPECharge = ldaq->GetDArray("SPE_charge"); // convert pC to gain-normalized units
         fEventCounter = 0;
     }
-    
+
     Processor::Result LessSimpleDAQProc::DSEvent(DS::Root *ds) {
         // This simple simulation assumes only tubes hit by a photon register
         // a hit, and that every MC event corresponds to one triggered event
         // The time of the PMT hit is that of the first photon.
-        
+
         DS::MC *mc = ds->GetMC();
         if(ds->ExistEV()) {  // there is already a EV branch present
             ds->PruneEV();     // remove it, otherwise we'll have multiple detector events
             // in this physics event ** we really should warn the user what is taking place
         }
-        
+
         double totalQ = 0.0;
         double pmtQ = 0.0;
         double time,timeTmp;
         int nSubEvents = 0;
         double timeWindow  = 400., oldGroup;
-        
-        
+
+
         // First part is to load into vector PMT information for full event
         vector <double> timeAndChargeAndID;
         vector<vector <double> > pmtARRAY;
@@ -46,7 +46,7 @@ namespace RAT {
                     timeAndChargeAndID.push_back(i);
                     timeAndChargeAndID.push_back(mcpmt->GetMCPhotonCount());
                     timeAndChargeAndID.push_back(mcpmt->GetMCPhoton(i)->GetHitTime());
-                    
+
                     pmtARRAY.push_back(timeAndChargeAndID);
                     timeAndChargeAndID.resize(0);
 
@@ -54,12 +54,12 @@ namespace RAT {
                 }
             }
         }
-        
+
         // Second part is to find cluster times. This is importan for IBD/ neutron capture
         vector <Double_t> clusterTime;
         // Give an unrealistic time to compare to
         clusterTime.push_back(1000000000000000000);
-        
+
         for (unsigned long pmtIndex = 0; pmtIndex < pmtARRAY.size(); pmtIndex++) {
 
             time = pmtARRAY[pmtIndex][0];
@@ -88,8 +88,8 @@ namespace RAT {
                 nSubEvents+=1;
             }
         }
-        std::sort(clusterTime.begin(), clusterTime.end());
-        
+        // std::sort(clusterTime.begin(), clusterTime.end());
+
         timeTmp = 0.;
         int oldID = -1;
         for (int kk = 0; kk<nSubEvents; kk++) {
@@ -112,10 +112,10 @@ namespace RAT {
                         pmt->SetID(int(pmtARRAY[pmtIndex][2]));
                         pmtQ = 0.0;
                     }
-                    
+
                     pmtQ += pmtARRAY[pmtIndex][1];
                     totalQ += pmtARRAY[pmtIndex][1];
-                    
+
                     //Set an offset of 200 ns for the PMT time and have a relative PMT time
                     // Removed offset
                     pmt->SetTime(timeTmp-clusterTime[kk]);
@@ -128,6 +128,5 @@ namespace RAT {
         }
         return Processor::OK;
     }
-    
-} // namespace RAT
 
+} // namespace RAT

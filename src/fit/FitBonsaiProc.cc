@@ -20,7 +20,7 @@ static const int vetoPMTcode    = 2;
 
 //minHit should be 1 or above
 static const int minHit         = 4;
-static const int maxHit         = 1000;
+static const int maxHit         = 2000;
 
 static const double timeOffset  = 800.;
 static const double darkRateHz = 10000.;
@@ -109,7 +109,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
 
 
 
-    if ((nhit>=minHit) && (nhit<300))
+    if ((nhit>=minHit) && (nhit<maxHit))
     {
         int hit;
         goodness    *bonsai_hits;

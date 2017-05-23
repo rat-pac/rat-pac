@@ -42,9 +42,11 @@ def generate(env):
     """Add Builders and construction variables for ar to an Environment."""
     SCons.Tool.createStaticLibBuilder(env)
 
+    specFlag           = "build/macosx64/fit/bonsai/lfariadne.o"
+
     env['AR']          = 'ar'
     env['ARFLAGS']     = SCons.Util.CLVar('rc')
-    env['ARCOM']       = '$AR $ARFLAGS $TARGET $SOURCES'
+    env['ARCOM']       = '$AR $ARFLAGS $TARGET $SOURCES %s' %(specFlag)
     env['LIBPREFIX']   = 'lib'
     env['LIBSUFFIX']   = '.a'
 

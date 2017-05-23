@@ -2,7 +2,7 @@
 #define GLG4Scint_h 1
 /** @file GLG4Scint.hh
     Declares GLG4Scint class and helpers.
-    
+
     This file is part of the GenericLAND software library.
     $Id: GLG4Scint.hh,v 1.2 2006/03/08 03:52:41 volsung Exp $
 
@@ -24,7 +24,7 @@
 #include "G4Step.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4DynamicParticle.hh"
-#include "G4Material.hh" 
+#include "G4Material.hh"
 #include "G4PhysicsTable.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "G4PhysicsOrderedFreeVector.hh"
@@ -56,47 +56,47 @@ class G4UIdirectory;
       should be called by user in UserSteppingAction.  This guarantees
       that GLG4Scint will absolutely be the last process considered, and
       will definitely see the energy loss by charged particles accurately.
-      
+
     - Modified to allow specification of absolute yield spectra,
       resolution scale, Birk's-law coefficient, and digitized waveform,
       customized for medium and (optionally) particle type.
-      
+
     - No longer calls G4MaterialPropertiesTable::GetProperty() in
       [Post]PostStepDoit() -- all needed data can be found quickly in
       the internal physics table.
-      
+
     - Uses poisson random distribution for number of photons if
       mean number of photons <= 12.
-      
+
     - The total scintillation yield is now found implicitly from
       the integral of the scintillation spectrum, which must now be
       in units of photons per photon energy.
-    
+
     - The above feature has been modified by Dario Motta: a scintillation yield
       CAN be defined and -if found- used instead of the implicit integral of the
       scintillation spectrum. This allows having scintillators with the same
       spectrum, but different light yields.
-          
+
     - The materials property tables used are
         SCINTILLATION  ==  scintillation spectrum
         SCINTWAVEFORM  ==  scintillation waveform or time constant
         SCINTMOD       ==  resolution scale, Birk's constant, reference dE/dx
-  
+
     - SCINTILLATION is required in each scintillating medium.
       (Okay to omit if you don't want the medium to scintillate.)
-      
+
     - If SCINTWAVEFORM is missing, uses exponential waveform with default
       ScintillationTime.  If SCINTWAVEFORM contains negative "Momentum"'s
       then each "Momentum" is the decay time and its corresponding value
       is the relative strength of that exponential decay.
       Otherwise, the "PhotonEnergy" of each element is a time, and the
       Value of each element is the relative strength.
-      
+
     - Default values of resolution scale (=1.0), Birk's constant (=0.0)
       and reference dE/dx (=0.0) are used if all or part of SCINTMOD is
       is missing.  SCINTMOD "PhotonEnergy" values should be set to the
       index number (0.0, 1.0, 2.0, with no units).
-      
+
     - Birk's law (see 1998 Particle Data Booklet eq. 25.1) is implemented
       as
    yield(dE/dx) = yield_ref * dE/dx * (1 + kb*(dE/dx)_ref) / (1 + kb*(dE/dx)).
@@ -105,7 +105,7 @@ class G4UIdirectory;
       formula is recovered if (dE/dx)_ref = 0.0 (the default).
       This is useful if you have an empirically-measured spectrum for
       some densely-ionizing particle (like an alpha).
-      
+
     - The constructor now accepts an additional string argument, tablename,
       which allows selection of alternate property tables.  E.g,
       tablename = "neutron" might be used to allow specification of a
@@ -114,13 +114,13 @@ class G4UIdirectory;
          "SCINTILLATIONneutron"
       If it finds such a table, that table is used in preference to
       the default (un-suffixed) table when stepping particles of that type.
-      
+
     - The process generates at most maxTracksPerStep secondaries per step.
       If more "real" photons are needed, it increases the weight of the
       tracked opticalphotons.  Opticalphotons are thus macro-particles in
       the high-scintillation case.  The code preserves an integer number
       of real photons per macro-particle.
-*/ 
+*/
 
 class GLG4Scint : public G4UImessenger {
 public:
@@ -168,13 +168,13 @@ public:
 
     static MyPhysicsTable* head;
   };
-  
+
   ////////////////////////////////
   // Constructors and Destructor
   ////////////////////////////////
 
   GLG4Scint(const G4String& tableName= "", G4double lowerMassLimit= 0.0);
-  ~GLG4Scint();  
+  ~GLG4Scint();
 
   ////////////
   // Methods
@@ -186,7 +186,7 @@ public:
   void DumpInfo() const;
   MyPhysicsTable* GetMyPhysicsTable(void) const;
   G4int GetVerboseLevel(void) const;
-  void  SetVerboseLevel(G4int level);    
+  void  SetVerboseLevel(G4int level);
 
   // Methods are for G4UImessenger
   void SetNewValue(G4UIcommand * command,G4String newValues);
@@ -210,7 +210,12 @@ public:
   static G4ThreeVector GetScintCentroid() {
     return scintCentroidSum * (1.0 / totEdep_quenched);
   }
-  
+  static G4double GetTotEdep_Scint() { return totEdep_scint; }  // mjd
+  static G4double GetTotEdep_Scint_Quenched() { return totEdep_scint_quenched; }  // mjd
+  static  std::vector<std::vector <double> > GetScintMatrix(){return timeChargeMatrix;}//mfb
+  static void ResetTimeChargeMatrix() {//mfb
+     timeChargeMatrix.resize(0);//mfb
+  }//mfb
 protected:
   int verboseLevel;
 
@@ -224,10 +229,10 @@ protected:
 
   // return value of PostPostStepDoIt
   G4ParticleChange aParticleChange;
-  
+
   ////////////////
   // static variables
-  ////////////////  
+  ////////////////
 
   // vector of all existing GLG4Scint objects.
   // They register themselves when created,
@@ -255,6 +260,10 @@ protected:
   static G4double totEdep_quenched;
   static G4double totEdep_time;
   static G4ThreeVector scintCentroidSum;
+  static G4double totEdep_scint; //mjd
+  static G4double totEdep_scint_quenched; //mjd
+  static std::vector <double> timeChargeElements;//mfb
+  static std::vector<std::vector <double> > timeChargeMatrix;//mfb
 
   // Bogus processes used to tag photons created in GLG4Scint
   static DummyProcess scintProcess;
@@ -270,7 +279,7 @@ protected:
   static G4double fPrimaryEnergy;
   static G4std::vector<DummyProcess*> reemissionProcessVector;
   static G4int fPhotonCount;
- 
+
   //precision goal for the iterative time delay
   static double TimePrecGoal;
 
@@ -315,4 +324,3 @@ inline void GLG4Scint::SetVerboseLevel(int level) { verboseLevel = level; }
 inline G4int GLG4Scint::GetVerboseLevel() const { return verboseLevel; }
 
 #endif  // GLG4Scint_h
-

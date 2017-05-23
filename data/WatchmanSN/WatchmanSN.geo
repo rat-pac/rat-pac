@@ -217,7 +217,7 @@ color: [0.1, 0.8, 0.1, 0.01],
 }
 
 // Fiducial defined as separate geometry component a la baccarat
-/*{
+{
 name: "GEO",
 index: "fiducial",
 valid_begin: [0, 0],
@@ -227,11 +227,11 @@ type: "tube",
 r_max: 5400.0,
 size_z: 5400.0,
 position: [0.0, 0.0, 0.0],
-material: "doped_water",
+material: "Gd_wbls_10pct",
 color: [0.2,0.2,0.2,0.1],
 drawstyle: "solid",
 invisible: 1
-}*/
+}
 
 {
 name: "GEO",

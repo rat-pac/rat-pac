@@ -93,7 +93,7 @@ void Materials::LoadOpticalSurfaces() {
         }
       }
       catch (DBNotFoundError& e) {}
-      
+
       try {
         std::string name = iv->second->GetS("type");
         if (opticalSurfaceTypes.find(name) != opticalSurfaceTypes.end()) {
@@ -178,7 +178,7 @@ void Materials::ConstructMaterials() {
       G4cout << "Materials error: Could not construct elements" << G4endl;
     }
   }
-  
+
   // === Material ===============================================
 
   vector<string> queue;
@@ -277,7 +277,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     G4cout << "Materials: Material read error" << G4endl;
     return false;
   }
-    
+
   try {
     string stringstate = table->GetS("state");
     if (stringstate == "gas")
@@ -290,7 +290,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
   catch (DBNotFoundError &e) {
     state = kStateUndefined;
   }
-      
+
   try {
     temperature = table->GetD("temperature");
   }
@@ -305,7 +305,7 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
     pressure = CLHEP::STP_Pressure;
   }
 
-  G4Material* tempptr = 
+  G4Material* tempptr =
     new G4Material(namedb, densitydb, nelementsdb + nmaterialsdb,
                    state, temperature, pressure);
 
@@ -378,10 +378,10 @@ bool Materials::BuildMaterial(string namedb, DBLinkPtr table) {
       else {
         G4MaterialTable* tmp_table =
           (G4MaterialTable*) tempptr->GetMaterialTable();
-        std::vector<G4Material*>::iterator it = tmp_table->begin() + tempptr->GetIndex(); 
+        std::vector<G4Material*>::iterator it = tmp_table->begin() + tempptr->GetIndex();
         delete tempptr;
-        tmp_table->erase(it); 
-        return false; 
+        tmp_table->erase(it);
+        return false;
       }
     }
   }
@@ -526,7 +526,7 @@ void Materials::LoadOptics() {
   for (DBLinkGroup::iterator iv=mats.begin(); iv!=mats.end(); iv++) {
     std::string name = iv->first;
     G4cout << "Loading optics: " << name << G4endl;
-    
+
     G4Material* material = G4Material::GetMaterial(name);
     if (material == NULL) {
       G4cout << "While loading optics in Materials, "
@@ -582,7 +582,7 @@ void Materials::LoadOptics() {
 
     // Loop over components, adding their properties to the current material's
     // properties table. They are numbered by their index so that we can
-    // e.g. absorb on X and reemit with the right spectrum, except for
+    // e.g. absorb on X and it with the right spectrum, except for
     // scattering, which is combined into a single scattering length
     mpt->AddConstProperty("NCOMPONENTS", components.size());
     for (size_t i=0; i<components.size(); i++) {
@@ -708,4 +708,3 @@ void Materials::LoadOptics() {
 }
 
 } // namespace RAT
-

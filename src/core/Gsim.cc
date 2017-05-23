@@ -92,9 +92,9 @@ void Gsim::Init() {
   // Adapted from glg4sim.cc. Thanks Glenn!
   // Manages GEANT4 simulation process
   theRunManager = G4RunManager::GetRunManager();
-  
+
   // Detector geometry
-  DetectorConstruction* theDetectorConstruction = 
+  DetectorConstruction* theDetectorConstruction =
     DetectorConstruction::GetDetectorConstruction();
   theRunManager->SetUserInitialization(theDetectorConstruction);
 
@@ -123,7 +123,7 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("fastneutron",
                                            new Alloc<GLG4VertexGen,
                                            VertexGen_FastNeutron>);
-    
+
   GlobalFactory<GLG4Gen>::Register("decaychain",
                                    new Alloc<GLG4Gen,DecayChain_Gen>);
   GlobalFactory<GLG4Gen>::Register("cf",
@@ -137,7 +137,7 @@ void Gsim::Init() {
 
   // An additional "messenger" class for user diagnostics
   theDebugMessenger = new GLG4DebugMessenger(theDetectorConstruction);
-  
+
   // User actions to control Run Manager behavior
 
   // Detect start of run so we can create run description objects
@@ -170,16 +170,16 @@ Gsim::~Gsim() {
     delete fPMTCharge[i];
   }
 }
-  
+
 void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
 
   DBLinkPtr lmc = DB::Get()->GetLink("MC");
   runID = DB::Get()->GetDefaultRun();
   utc = TTimeStamp(); // default to now
-  
+
   info << "Gsim: Simulating run " << runID << newline;
   info << "Gsim: Run start at " << utc.AsString() << newline;
-  
+
   if (!DS::RunStore::GetRun(runID)) {
     MakeRun(runID);
   }
@@ -192,15 +192,15 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
 
   DS::Run* run = DS::RunStore::GetRun(runID);
   fPMTInfo = run->GetPMTInfo();
-  
+
   for (size_t i = 0; i < fPMTTime.size(); i++) {
     delete fPMTTime[i];
     delete fPMTCharge[i];
   }
-  
+
   const size_t numModels = fPMTInfo->GetModelCount();
   fPMTTime.resize(numModels);
-  fPMTCharge.resize(numModels);  
+  fPMTCharge.resize(numModels);
   for (size_t i = 0; i < numModels; i++) {
     const std::string modelName = fPMTInfo->GetModelName(i);
     try {
@@ -218,10 +218,10 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
   }
 
   // Tell the generator when the run starts
-  GLG4PrimaryGeneratorAction* theGLG4PGA= 
+  GLG4PrimaryGeneratorAction* theGLG4PGA=
       GLG4PrimaryGeneratorAction::GetTheGLG4PrimaryGeneratorAction();
   theGLG4PGA->SetRunUTC(utc);
-  
+
   // Find out whether /tracking/storeTrajectory was set by user.
   // fpTrackingManager provided by G4UserTrackingAction parent class
   // We have to restore this state at the end of the event.
@@ -230,8 +230,8 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
   // Check for a maximum photoelectron limit. Events exceeding this limit
   // are aborted.
   try {
-    maxpe = lmc->GetI("max_pe"); 
-    warn << "Gsim: Aborting tracking for events exceeding " 
+    maxpe = lmc->GetI("max_pe");
+    warn << "Gsim: Aborting tracking for events exceeding "
          << maxpe << " photoelectrons" << newline;
   }
   catch (DBNotFoundError& e) {
@@ -242,7 +242,7 @@ void Gsim::BeginOfRunAction(const G4Run* /*aRun*/) {
 
 void Gsim::EndOfRunAction(const G4Run* /*arun*/) {
   if(maxpe > 0){
-    info << "Gsim: Tracking aborted for " << nabort 
+    info << "Gsim: Tracking aborted for " << nabort
          << " events exceeding " << maxpe << " photoelectrons" << newline;
   }
 }
@@ -251,10 +251,10 @@ void Gsim::BeginOfEventAction(const G4Event* anEvent) {
   GLG4Scint::ResetTotEdep();
 
   // Clearing theHitPMTCollection clears away the HitPhotons and HitPMTs
-  GLG4VEventAction::GetTheHitPMTCollection()->Clear();  
-  
+  GLG4VEventAction::GetTheHitPMTCollection()->Clear();
+
   EventInfo* eventInfo =
-    dynamic_cast<EventInfo* >(anEvent->GetUserInformation()); 
+    dynamic_cast<EventInfo* >(anEvent->GetUserInformation());
 
   eventInfo->StorePhotonIDs = StoreOpticalTrackID;
 
@@ -301,7 +301,7 @@ void Gsim::PreUserTrackingAction(const G4Track* aTrack)  {
     const_cast<G4Track*>(aTrack)->SetUserInformation(new TrackInfo);
   }
 
-  // For very large, complex tracks, it is not sufficient to 
+  // For very large, complex tracks, it is not sufficient to
   // discard the track if we do not want it.  We must prevent
   // GEANT4 from saving the information in the first place.
   // To support this on a particle-by-particle basis, we have
@@ -310,11 +310,11 @@ void Gsim::PreUserTrackingAction(const G4Track* aTrack)  {
   // the event, which is critical if beamOn is called more than once
   // in a macro.
 
-  // Store track if requested for this particle.  fpTrackingManager 
+  // Store track if requested for this particle.  fpTrackingManager
   // provided by G4UserTrackingAction parent class
   if(GetStoreParticleTraj(aTrack->GetDefinition()->GetParticleName())) {
     fpTrackingManager->SetStoreTrajectory(true);
-    fpTrackingManager->SetTrajectory(new Trajectory(aTrack));    
+    fpTrackingManager->SetTrajectory(new Trajectory(aTrack));
   }
   else {
     fpTrackingManager->SetStoreTrajectory(false);
@@ -322,7 +322,7 @@ void Gsim::PreUserTrackingAction(const G4Track* aTrack)  {
 
   if (aTrack->GetDefinition()->GetParticleName() == "opticalphoton") {
     G4Event* event = G4EventManager::GetEventManager()->GetNonconstCurrentEvent();
-    EventInfo* eventInfo = dynamic_cast<EventInfo* >(event->GetUserInformation());  
+    EventInfo* eventInfo = dynamic_cast<EventInfo* >(event->GetUserInformation());
     TrackInfo *trackInfo = dynamic_cast<TrackInfo*>(aTrack->GetUserInformation());
 
     std::string creatorProcessName;
@@ -352,8 +352,8 @@ void Gsim::PostUserTrackingAction(const G4Track* aTrack) {
   std::string creatorProcessName;
   std::string destroyerProcessName;
 
-  // The road to hell is paved with global variables, 
-  // and GEANT4 is my travelling companion.  
+  // The road to hell is paved with global variables,
+  // and GEANT4 is my travelling companion.
   G4Event* event = G4EventManager::GetEventManager()->GetNonconstCurrentEvent();
   EventInfo* eventInfo = dynamic_cast<EventInfo* >(event->GetUserInformation());
   TrackInfo* trackInfo = dynamic_cast<TrackInfo*>(aTrack->GetUserInformation());
@@ -371,10 +371,10 @@ void Gsim::PostUserTrackingAction(const G4Track* aTrack) {
       nabort ++;
     }
   }
-  
+
   int TrackID = aTrack->GetTrackID();
   int ParentID = aTrack->GetParentID();
-  
+
   // Determine the creator process
   const G4VProcess* creatorProcess = aTrack->GetCreatorProcess();
   if (creatorProcess) {
@@ -389,7 +389,7 @@ void Gsim::PostUserTrackingAction(const G4Track* aTrack) {
   if(trackInfo) {
     // Fill the energy centroid
     eventInfo->energyCentroid.Add(trackInfo->energyCentroid);
-  
+
     // Finally fill the optical centroid information if we have an optical
     // photon which was not created by the TPB but WAS absorbed by it. This
     // represents the best approximation to the "reconstructable" event
@@ -403,7 +403,7 @@ void Gsim::PostUserTrackingAction(const G4Track* aTrack) {
       destroyerProcessName = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
       if ((destroyerProcessName == "SurfaceAbsorption") ||
           (destroyerProcessName == "OpWLS")) {
-        G4ThreeVector startPosition = aTrack->GetVertexPosition();  
+        G4ThreeVector startPosition = aTrack->GetVertexPosition();
         eventInfo->opticalCentroid.Fill(TVector3(startPosition.x(), startPosition.y(), startPosition.z()));
       }
     }
@@ -429,7 +429,7 @@ void Gsim::MakeRun(int _runID) {
 void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   DS::MC* mc = ds->GetMC();
   EventInfo* exinfo = dynamic_cast<EventInfo*>(g4ev->GetUserInformation());
-  
+
   // Event Header
   ds->SetRunID(theRunManager->GetCurrentRun()->GetRunID());
   mc->SetID(g4ev->GetEventID());
@@ -441,7 +441,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
     double t = pv->GetT0();
     TVector3 pos(pv->GetX0(), pv->GetY0(), pv->GetZ0());
-    
+
     for (int ipart=0; ipart<pv->GetNumberOfParticle(); ipart++) {
       DS::MCParticle* rat_mcpart = mc->AddNewMCParticle();
 
@@ -500,13 +500,51 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     }
   }
 
-  // If the event was aborted because of the maximum number of 
+  // If the event was aborted because of the maximum number of
   // photoelectron limit, then store the information about the
   // primary particle and any tracking information, but do not keep
-  // the PMT information. 
+  // the PMT information.
   if(g4ev->IsAborted()) {
     return;
   }
+
+  std::vector<std::vector <double> > a = GLG4Scint::GetScintMatrix();
+
+  std::sort(a.begin(),a.end());
+  int triggers = -1,actualTrigger = 0;
+  double timeWindow = 400.,old_time = -1e9, start_time = -1e9,rollingEnergy = 0.;
+  double avgX = 0.,avgY = 0., avgZ = 0.,avgCnt = 0.;//Might need to do a weighted average
+  // int avgCnt = 0;
+  for(unsigned long aIndex = 0; aIndex < a.size(); aIndex++){
+    if((a[aIndex][0]-old_time) > timeWindow){
+      triggers+=1;
+      // G4cout << "Found a new trigger "<< triggers << "; previous trigger (start time,end time, enerrgy) " << start_time << " " << old_time << " " << rollingEnergy << G4endl;
+      if (rollingEnergy> 0.5) {
+        actualTrigger+=1;
+        if(avgCnt==0){avgCnt+=1;}
+        G4cout << "WUBBA1 "<<   actualTrigger << " " << triggers << " " << start_time << " " << old_time-start_time << " " << rollingEnergy<< " " << avgX/avgCnt <<  " " << avgY/avgCnt <<  " " << avgZ/avgCnt << G4endl;
+      }
+      rollingEnergy =  0.0;
+      avgX = avgY =  avgZ = 0.;
+      avgCnt = 0.;
+      start_time = a[aIndex][0];
+
+    }
+    avgX +=  a[aIndex][6]*a[aIndex][1];
+    avgY +=  a[aIndex][7]*a[aIndex][1];
+    avgZ +=  a[aIndex][8]*a[aIndex][1];
+    avgCnt +=  a[aIndex][1];
+
+   old_time = a[aIndex][0];
+
+   rollingEnergy+= a[aIndex][2];
+  //  G4cout << a[aIndex][0] << " " << a[aIndex][1] <<  " " <<" " << a[aIndex][2] <<  " " <<" " << a[aIndex][6] <<  " " <<" " << a[aIndex][7] <<  " " <<" " << a[aIndex][8] <<  " " << avgX/avgCnt <<  " " << avgY/avgCnt <<  " " << avgZ/avgCnt <<  " " << rollingEnergy << G4endl;
+ }
+ if (rollingEnergy> 0.5) {
+   triggers+=1;
+   actualTrigger+=1;
+   G4cout << "WUBBA1 "<<   actualTrigger << " " << triggers << " " << start_time << " " << old_time-start_time << " " << rollingEnergy<< " " << avgX/avgCnt <<  " " << avgY/avgCnt <<  " " << avgZ/avgCnt << G4endl;
+ }
 
   // MC summary information
   DS::MCSummary* summary = mc->GetMCSummary();
@@ -522,10 +560,13 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
   summary->SetNumReemitPhoton(exinfo->numReemitPhoton);
   summary->SetNumCerenkovPhoton(exinfo->numCerenkovPhoton);
 
+  GLG4Scint::ResetTimeChargeMatrix();
+
+
   /** PMT and noise simulation */
   GLG4HitPMTCollection* hitpmts = GLG4VEventAction::GetTheHitPMTCollection();
   int numPE = 0;
- 
+
   double firsthittime = std::numeric_limits<double>::max();
   double lasthittime = std::numeric_limits<double>::min();
 
@@ -538,7 +579,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     GLG4HitPMT* a_pmt= hitpmts->GetPMT(ipmt);
     a_pmt->SortTimeAscending();
 
-    // Create and initialize a RAT DS::MCPMT 
+    // Create and initialize a RAT DS::MCPMT
     // note that GLG4HitPMTs are given IDs which are their index
     DS::MCPMT* rat_mcpmt = mc->AddNewMCPMT();
     mcpmtObjects[a_pmt->GetID()] = mc->GetMCPMTCount()-1; //the index of the last element represents the index of the PMT we just added
@@ -547,7 +588,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 
     numPE += a_pmt->GetEntries();
 
-    /** Add "real" hits from actual simulated photons */     
+    /** Add "real" hits from actual simulated photons */
     for (int i=0; i<a_pmt->GetEntries(); i++) {
       if (StoreOpticalTrackID) {
         AddMCPhoton(rat_mcpmt, a_pmt->GetPhoton(i), false, exinfo);
@@ -571,7 +612,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     }
   }
   mc->SetNumPE(numPE);
-  
+
   /**
    * Add noise hits
    *
@@ -645,8 +686,8 @@ void Gsim::SetStoreParticleTraj(const G4String& particleName,
 
 bool Gsim::GetStoreParticleTraj(const G4String& particleName) {
   if (!fInitialStoreTrajectoryState) {
-    // in case fStoreParticleTraj has an entry, keep 
-    // track only if particle name is in fStoreParticleTraj 
+    // in case fStoreParticleTraj has an entry, keep
+    // track only if particle name is in fStoreParticleTraj
     if (!fStoreParticleTraj.empty()) {
       std::set<G4String>::const_iterator it = fStoreParticleTraj.find(particleName);
       if (it == fStoreParticleTraj.end())
@@ -657,7 +698,7 @@ bool Gsim::GetStoreParticleTraj(const G4String& particleName) {
     else
       return false;
   }
-  else { 
+  else {
     // check whether request was made to throw these tracks away by checking
     // whether this particleName exists in fDiscardParticleTraj
     std::set<G4String>::const_iterator it = fDiscardParticleTraj.find(particleName);
@@ -719,4 +760,3 @@ void Gsim::SetOpticalPhotonIDs(std::string particle_type, int trackID,
 }
 
 } // namespace RAT
-

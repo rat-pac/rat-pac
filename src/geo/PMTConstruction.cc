@@ -11,7 +11,7 @@
 #include <CLHEP/Units/PhysicalConstants.h>
 
 namespace RAT {
-  
+
   PMTConstruction::PMTConstruction(const PMTConstructionParams &params) : fParams(params)
   {
     assert(fParams.zEdge.size() == fParams.rhoEdge.size());
@@ -22,21 +22,24 @@ namespace RAT {
     assert(fParams.dynode);
     assert(fParams.photocathode);
     assert(fParams.mirror);
+    // assert(fParams.photocathode_MINrho);
+
     // Do not assert fParams.detector.  If detector==0, then do not associate PMT
     // with sensitive volume
     //assert(fParams.detector);
   }
-  
+
   G4LogicalVolume *PMTConstruction::NewPMT(const std::string &prefix, bool simpleVis)
   {
     // envelope cylinder
     G4VSolid *envelope_solid=0;
     if (fParams.useEnvelope)
       envelope_solid = NewEnvelopeSolid(prefix+"_envelope_solid");
-                                        
+
+
     // glass body
     GLG4TorusStack *body_solid = NewBodySolid(prefix+"_body_solid");
-    
+
     // inner vacuum
     GLG4TorusStack *inner1_solid= new GLG4TorusStack(prefix + "_inner1_solid");
     GLG4TorusStack *inner2_solid= new GLG4TorusStack(prefix + "_inner2_solid");
@@ -50,41 +53,55 @@ namespace RAT {
                                    &innerZEdge[equatorIndex],
                                    &innerRhoEdge[equatorIndex],
                                    &fParams.zOrigin[equatorIndex]);
-    
+    // Evalute MIN photocathode
+     if (fParams.photocathode_MINrho != 0.){
+         G4cout << "Value of photocathode MIN. " << fParams.photocathode_MINrho << ", max:" <<innerRhoEdge[equatorIndex] << G4endl;
+    }else{
+      G4cout << "Setting value of photocathode MIN. " << fParams.photocathode_MINrho << " to " <<innerRhoEdge[equatorIndex] << G4endl;
+      fParams.photocathode_MINrho = innerRhoEdge[equatorIndex];
+    }
+    // Evalute MIN photocathode, if inputed
+    if (fParams.photocathode_MAXrho != 0.){
+        G4cout << "Value of photocathode MAX. " << fParams.photocathode_MAXrho << ", max:" <<innerRhoEdge[equatorIndex] << G4endl;
+   }else{
+     G4cout << "Setting value of photocathode MAX. " << fParams.photocathode_MAXrho << " to " <<innerRhoEdge[equatorIndex] << G4endl;
+     fParams.photocathode_MAXrho = innerRhoEdge[equatorIndex];
+   }
+
     // dynode volume
     G4double hhDynode= (fParams.dynodeTop - zLowestDynode)/2.0;
     G4Tubs* dynode_solid = new G4Tubs(prefix+"_dynode_solid",
                                       0.0, fParams.dynodeRadius,// solid cylinder (FIXME?)
                                       hhDynode,                // half height of cylinder
                                       0., CLHEP::twopi );            // cylinder complete in phi
-    
+
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
     G4double hhgap = 0.5e-7 ;                                            // half the needed gap between the front and back of the PMT
     G4double toleranceGapRadius = innerRhoEdge[equatorIndex];            // the outer radius of the gap needs to be equal to the
-                                                                       // inner radius of the PMT where inner1 and inner2 join 
-                                                                       
+                                                                       // inner radius of the PMT where inner1 and inner2 join
+
     G4Tubs* central_gap_solid = new G4Tubs(prefix+"_central_gap_solid",
                                       0.0 , toleranceGapRadius,        // solid cylinder with same radius as PMT
                                       hhgap,                           // half height of cylinder
-                                      0., CLHEP::twopi );                   // cylinder complete in phi 
+                                      0., CLHEP::twopi );                   // cylinder complete in phi
 
     // ------------ Logical Volumes -------------
     G4LogicalVolume *envelope_log=0, *body_log, *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
-    
+
     if (fParams.useEnvelope)
       envelope_log = new G4LogicalVolume(envelope_solid, fParams.exterior, prefix+"envelope_log");
-    
+
     body_log= new G4LogicalVolume(body_solid, fParams.glass, prefix+"_body_log");
     if (fParams.detector)
       body_log->SetSensitiveDetector(fParams.detector);
 
     inner1_log= new G4LogicalVolume(inner1_solid, fParams.vacuum, prefix+"_inner1_log");
     inner1_log->SetSensitiveDetector(fParams.detector);
-    
+
     inner2_log= new G4LogicalVolume(inner2_solid, fParams.vacuum, prefix+"_inner2_log");
 
     dynode_log= new G4LogicalVolume(dynode_solid, fParams.dynode, prefix+"_dynode_log");
-    
+
     central_gap_log = new G4LogicalVolume(central_gap_solid, fParams.vacuum, prefix+"_central_gap_log");
 
     // ------------ Physical Volumes -------------
@@ -101,7 +118,7 @@ namespace RAT {
           false,               // no boolean ops
           0 );                 // copy number
     }
-    
+
     // place inner solids in outer solid (vacuum)
     inner1_phys= new G4PVPlacement
       ( 0,                   // no rotation
@@ -111,7 +128,7 @@ namespace RAT {
         body_log,           // the mother volume
         false,               // no boolean ops
         0 );                 // copy number
-    
+
     inner2_phys= new G4PVPlacement
       ( 0,                   // no rotation
         noTranslation,       // puts face equator in right place, behind the tolerance gap
@@ -128,7 +145,7 @@ namespace RAT {
         prefix+"_central_gap_phys",            // a name for this physical volume
         body_log,           // the mother volume
         false,               // no boolean ops
-        0 );                 // copy number 
+        0 );                 // copy number
     // place dynode in stem/back
     dynode_phys= new G4PVPlacement
       ( 0,
@@ -140,17 +157,17 @@ namespace RAT {
         0 );
     // build the optical surface for the dynode straight away since we already have the logical volume
     new G4LogicalSkinSurface(prefix+"_dynode_logsurf",dynode_log,fParams.dynode_surface);
-     
-    //--------------Exterior Optical Surface----------------- 
+
+    //--------------Exterior Optical Surface-----------------
     // If we're using an envelope, body_phys has been created and we can therefore
     // set the optical surfaces, otherwise this must be done later once the physical volume
     // has been placed
     if (fParams.useEnvelope) {
              SetPMTOpticalSurfaces(body_phys,prefix);
-    } 
-    
+    }
+
     // Go ahead and place the cathode optical surface---this can always be done at this point
-     G4LogicalBorderSurface *pc_log_surface = 
+     G4LogicalBorderSurface *pc_log_surface =
             new G4LogicalBorderSurface(prefix+"_photocathode_logsurf1",
                                inner1_phys, body_phys,
                                fParams.photocathode);
@@ -163,8 +180,9 @@ namespace RAT {
      new GLG4PMTOpticalModel(prefix+"_optical_model", body_region, body_log,
 			     pc_log_surface, fParams.efficiencyCorrection,
 			     fParams.dynodeTop, fParams.dynodeRadius,
-			     fParams.prepulseProb);
-    
+			     fParams.prepulseProb,
+           fParams.photocathode_MINrho,fParams.photocathode_MAXrho);
+
     // ------------ Vis Attributes -------------
     G4VisAttributes * visAtt;
     if (simpleVis) {
@@ -173,8 +191,8 @@ namespace RAT {
       body_log->SetVisAttributes(  G4VisAttributes::Invisible );
       dynode_log->SetVisAttributes(G4VisAttributes::Invisible);
       inner1_log->SetVisAttributes(G4VisAttributes::Invisible);
-      inner2_log->SetVisAttributes(G4VisAttributes::Invisible);  
-      central_gap_log->SetVisAttributes(G4VisAttributes::Invisible); 
+      inner2_log->SetVisAttributes(G4VisAttributes::Invisible);
+      central_gap_log->SetVisAttributes(G4VisAttributes::Invisible);
     } else {
       if (fParams.useEnvelope) envelope_log-> SetVisAttributes (G4VisAttributes::Invisible);
     // PMT glass
@@ -189,7 +207,7 @@ namespace RAT {
       inner1_log->SetVisAttributes (visAtt);
       visAtt= new G4VisAttributes(G4Color(0.6,0.7,0.8,0.67));
       inner2_log->SetVisAttributes (visAtt);
-    // central gap is invisible  
+    // central gap is invisible
       central_gap_log->SetVisAttributes (G4VisAttributes::Invisible);
     }
 
@@ -198,17 +216,17 @@ namespace RAT {
     else
       return body_log;
   }
-  
+
   GLG4TorusStack *PMTConstruction::NewBodySolid(const std::string &name)
   {
     GLG4TorusStack *body = new GLG4TorusStack(name);
-    body->SetAllParameters(fParams.zOrigin.size(), 
+    body->SetAllParameters(fParams.zOrigin.size(),
                            &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
     return body;
   }
   void PMTConstruction::SetPMTOpticalSurfaces(G4PVPlacement *_body_phys, const std::string &prefix)
-  { 
-    /* Set the optical surfaces for a PMT. This must be called *after* the physical PMT has been placed  
+  {
+    /* Set the optical surfaces for a PMT. This must be called *after* the physical PMT has been placed
        If this is not done, the mirror surface is not created.
     */
     //build the mirrored surface
@@ -226,7 +244,7 @@ namespace RAT {
                                _body_phys,central_gap_phys,
                                fParams.mirror);
   }
-  
+
   G4VSolid *PMTConstruction::NewEnvelopeSolid(const std::string &name)
   {
     G4double zTop = fParams.zEdge[0] + fParams.faceGap;
@@ -235,22 +253,22 @@ namespace RAT {
     for (unsigned i = 0; i < fParams.rhoEdge.size(); i++)
       if (fParams.rhoEdge[i] > rho)
         rho = fParams.rhoEdge[i];
-        
+
     G4double mainCylHalfHeight = std::max(zTop, -zBottom);
     G4double subCylHalfHeight = (mainCylHalfHeight - std::min(zTop, -zBottom))/2.0;
     G4double subCylOffset;
     if (zTop < -zBottom) subCylOffset = zTop + subCylHalfHeight;
     else subCylOffset = zBottom - subCylHalfHeight;
-    
-    G4Tubs *mainEnvelope = new G4Tubs(name+"_main", 0.0, rho, mainCylHalfHeight, 
+
+    G4Tubs *mainEnvelope = new G4Tubs(name+"_main", 0.0, rho, mainCylHalfHeight,
                                       0.0, CLHEP::twopi);
-    G4Tubs *subEnvelope  = new G4Tubs(name+"_sub", 0.0, rho*1.1, subCylHalfHeight, 
+    G4Tubs *subEnvelope  = new G4Tubs(name+"_sub", 0.0, rho*1.1, subCylHalfHeight,
                                       0.0, CLHEP::twopi);
-                                      
-    return new G4SubtractionSolid(name, mainEnvelope, subEnvelope, 
+
+    return new G4SubtractionSolid(name, mainEnvelope, subEnvelope,
                                   0, G4ThreeVector(0.0, 0.0, subCylOffset));
   }
-  
+
   void PMTConstruction::CalcInnerParams(GLG4TorusStack *body,
                                   std::vector<double> &innerZEdge,
                                   std::vector<double> &innerRhoEdge,
@@ -263,16 +281,16 @@ namespace RAT {
     const std::vector<G4double> &outerZEdge = fParams.zEdge;
     const std::vector<G4double> &outerRhoEdge = fParams.rhoEdge;
     const int nEdge = fParams.zEdge.size() - 1;
-    
+
     // set shapes of inner volumes, scan for lowest allowed point of dynode
     zLowestDynode = fParams.dynodeTop;
     innerZEdge.resize(fParams.zEdge.size());
     innerRhoEdge.resize(fParams.rhoEdge.size());
-    
+
     // We will have to calculate the inner dimensions of the PMT.
     G4ThreeVector norm;
     equatorIndex = -1;
-    
+
     // calculate inner surface edges, check dynode position, and find equator
     innerZEdge[0]  = outerZEdge[0] - wall;
     innerRhoEdge[0]= 0.0;
@@ -288,11 +306,11 @@ namespace RAT {
 
     innerZEdge[nEdge]  = outerZEdge[nEdge]   + wall;
     innerRhoEdge[nEdge]= outerRhoEdge[nEdge] - wall;
-    
+
     // one final check on dynode allowed position
     if (innerRhoEdge[nEdge] > dynodeRadius && innerZEdge[nEdge] < zLowestDynode)
       zLowestDynode= innerZEdge[nEdge];
-      
+
     // sanity check equator index
     if (equatorIndex < 0)
       Log::Die("PMTConstruction::CalcInnerParams: Pathological PMT shape with no equator edge");
@@ -300,8 +318,7 @@ namespace RAT {
     if (fParams.dynodeTop > innerZEdge[equatorIndex])
       Log::Die("PMTConstruction::CalcInnerParams: Top of PMT dynode cannot be higher than equator.");
   }
-  
-  
-  
-} // namespace RAT
 
+
+
+} // namespace RAT

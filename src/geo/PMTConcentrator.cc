@@ -33,7 +33,7 @@ PMTConcentrator::PMTConcentrator
   this->d=_d;
   this->upper_radius=_upper_radius;
   this->lower_radius=_lower_radius;
-  
+
   // Make Solid
   const int n = 20;
   G4double z[n],  r_inner_oil[n], r_oil_plastic_boundary[n], r_outer_plastic[n];
@@ -46,14 +46,14 @@ PMTConcentrator::PMTConcentrator
     r_outer_plastic[i] = r_oil_plastic_boundary[i] + 1.0 * CLHEP::mm;
     z[i] = z[i] - z_from_r(lower_radius);
   }
-  
+
   G4Polycone *outer_solid = new G4Polycone(name, 0, CLHEP::twopi, n, z, r_inner_oil,
 					   r_outer_plastic);
   SetSolid(outer_solid);
 
   // Split into plastic concentrator and oil layer so we can add reflective
   // surface in between
-  G4Polycone *conc_solid = new G4Polycone(name+"_plastic", 0, CLHEP::twopi, n, z, 
+  G4Polycone *conc_solid = new G4Polycone(name+"_plastic", 0, CLHEP::twopi, n, z,
 					  r_oil_plastic_boundary,
 					  r_outer_plastic);
 
