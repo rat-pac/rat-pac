@@ -40,7 +40,7 @@ namespace RAT {
     SetDecayType(DecayBeta);
     SetNeutrinoMass(0.);
     SetLifeTime(0.);
-  
+
     SetVerbose(false);
     SetProbabilityCulmulative(true);
     NumberOfBranches = 0;
@@ -50,7 +50,7 @@ namespace RAT {
     std::string dirName;
     if ( path == 0 )
       {
-	// RATDecayDataDir enviornment variable not found.  
+	// RATDecayDataDir enviornment variable not found.
 	// Check to see if RATROOT is set
 	path = getenv("RATROOT");
 	if( path == 0 )
@@ -62,7 +62,7 @@ namespace RAT {
 	else
 	  {
 	    // RATROOT enviornment variable found.
-	    // Add data subdir to get the correct directory. 
+	    // Add data subdir to get the correct directory.
 	    dirName = std::string(path) + "/data";
 	  }
       }
@@ -84,10 +84,10 @@ namespace RAT {
     printf("Neutrino Mass     : %f \n", GetNeutrinoMass());
     printf("Number of Branches: %d \n", GetNBranches());
     printf("Branch Prob. \t Spin \t Endpoint \t NGammas \t Energies \n");
- 
+
     int nBr = GetNBranches();
     if (nBr > 0) {
-    
+
       for (int i = 0; i < nBr; i++) {
 	printf("%f \t", GetBranch(i));
 	printf("%d \t", GetSpin(i));
@@ -128,16 +128,16 @@ namespace RAT {
       printf("No charge has been set. \n");
       return;
     }
-  
+
     int nBr = GetNBranches();
-  
+
     ParticleBranch[nBr] = Branch;
     ParticleSpin[nBr] = Spin;
     ParticleEndPoint[nBr] = EndPoint;
     ParticleEnergy[nBr][0] = EndPoint;
-  
+
     NumberOfParticles[nBr] = 1;
-  
+
     if (GetDecayType() != DecayAlpha) {
       if (iZ > 0)
 	ParticleID[nBr][0] = DecayBeta;
@@ -174,7 +174,7 @@ namespace RAT {
   {
     int iBranch = GetNBranches() - 1;
     int iParticle = GetNParticles(iBranch);
-  
+
     ParticleID[iBranch][iParticle] = DecayGamma;
     ParticleEnergy[iBranch][iParticle] = energy;
     NumberOfParticles[iBranch]++;
@@ -191,7 +191,7 @@ namespace RAT {
 
   void BetaFunction::SetTargetMass(double A)
   {
-  
+
     TargetMass = 0.;
     double Z = GetCharge();
     if ((A < 1) && (Z > 0)) {
@@ -204,7 +204,7 @@ namespace RAT {
 
   void BetaFunction::SetNorm(int iBranch)
   {
-  
+
     double Norm = 0.;
     if (GetDecayType() == DecayAlpha) {
       Norm = 1.;
@@ -279,13 +279,13 @@ namespace RAT {
       ErrorLog(2);
       return iBAD;
     }
-  
+
     if (n > NumberOfParticles[iBranch]) {
       return energy;
     } else {
       energy = ParticleEnergy[iBranch][n];
     }
-  
+
     return energy;
   }
 
@@ -293,10 +293,10 @@ namespace RAT {
   {
     double Value = 0.;
     int iBeta = GetParticleID(iBranch, 0);
-  
+
     if ((iBeta != DecayEC) && (iBeta != DecayBeta))
       return Value;
-  
+
     int iSpin = GetSpin(iBranch);
     double Z = GetCharge();
     double A = GetTargetMass();
@@ -314,12 +314,12 @@ namespace RAT {
       En[i] = 0.;
       IDn[i] = 0;
     }
-  
+
     int iBr = GetNBranches();
     int itag = 0;
     double prob = 0.;
     double r = GetRandomNumber();
-  
+
     for (int i = 0; i < iBr; i++) {
       if (isCulmulative) {
 	prob = GetBranch(i);
@@ -331,7 +331,7 @@ namespace RAT {
 	break;
       }
     }
-  
+
     int nP = GetNParticles(itag);
     double W = 0.;
     for (int n = 0; n <= nP; n++) {
@@ -360,7 +360,7 @@ namespace RAT {
 
   void BetaFunction::SetEventTime()
   {
-    double tau = GetLifeTime();
+    double tau = GetLifeTime()*1.0e9;
     double r = GetRandomNumber();
     nTime = -tau * log(r) / log(2.);
   }
@@ -385,10 +385,10 @@ namespace RAT {
 
   double BetaFunction::GetEventTotE()
   {
-  
+
     int nG = GetNGenerated();
     double eTot = 0.;
-  
+
     for (int i = 0; i < nG; i++) {
       eTot = eTot + GetEventEnergy(i);
     }
@@ -418,40 +418,40 @@ namespace RAT {
 
   bool BetaFunction::ReadInputFile(const std::string dName, int iZ, int iA, int iType)
   {
-  
+
     const int nReadGamma = 6;
-  
+
     std::string eProbe = "END";
     std::string aProbe = "ALPHA:";
     std::string bProbe = "DECAY:";
     char dummy[80];
     std::string dProbe;
     char tName[80];
-  
+
     if (iType != DecayAlpha) {
       dProbe = bProbe;
     } else {
       dProbe = aProbe;
     }
-  
+
     bool iFound = false;
-  
+
     int iSpin, nP;
     int Z, A;
     float tau;
     float iBr, W0, eP[nReadGamma], aC[3];
-  
+
     SetProbabilityCulmulative(true);
-  
+
     FILE* inputFile = fopen(GetFileName().c_str(), "r");
-  
+
     if (!inputFile) {
       printf("Error opening file : %s \n", GetFileName().c_str());
       return iFound;
     }
-  
+
     bool iRead = true;
-  
+
     while ((iRead) && (!iFound)) {
       iRead = (fscanf(inputFile, "%s", dummy) > 0);
       std::string iString(dummy);
@@ -468,7 +468,7 @@ namespace RAT {
 	  SetCharge((double) Z);
 	  SetLifeTime((double) tau);
 	  SetDecayType(iType);
-	
+
 	  bool iScan = true;
 	  while (iScan) {
 	    fscanf(inputFile, "%f %d %f %d", &iBr, &iSpin, &W0, &nP);
@@ -488,9 +488,9 @@ namespace RAT {
 	}
       }
     }
-  
+
     fclose(inputFile);
-  
+
     if (iFound) {
       if (isVerbose)
 	Show();
