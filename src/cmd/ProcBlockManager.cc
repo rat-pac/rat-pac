@@ -17,6 +17,7 @@
 #include <RAT/FitCentroidProc.hh>
 #include <RAT/FitPathProc.hh>
 #include <RAT/SimpleDAQProc.hh>
+#include <RAT/EventSplitter.hh>
 
 namespace RAT {
 
@@ -65,7 +66,8 @@ ProcBlockManager::ProcBlockManager(ProcBlock *theMainBlock)
 
   // DAQ
   procAllocators["simpledaq"]= new ProcAllocatorTmpl<SimpleDAQProc>;
-
+  procAllocators["eventsplitterdaq"]= new ProcAllocatorTmpl<EventSplitter>;
+    
   // Misc
   procAllocators["count"] = new ProcAllocatorTmpl<CountProc>;
   procAllocators["prune"] = new ProcAllocatorTmpl<PruneProc>;

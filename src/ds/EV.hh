@@ -34,7 +34,17 @@ public:
   /** Event number. */
   virtual Int_t GetID() const { return id; }
   virtual void SetID(Int_t _id) { id = _id; }
+    
+  /** Sub Event information. Including trigger time of sub event with respect 
+   to event start.*/
+  virtual Int_t GetSubEV() const { return subevent; }
+  virtual void SetSubEV(Int_t _subevent) { subevent = _subevent; }
+  virtual Int_t GetTotalSubEV() const { return nSubevents; }
+  virtual void SetTotalSubEV(Int_t _nSubevents) { nSubevents = _nSubevents; }
+  Float_t GetSubTriggerTime() const { return triggerTime; }
+  void SetSubTriggerTime(Float_t _triggerTime) { triggerTime = _triggerTime; }
 
+    
   /** Date/time of event trigger (UTC)*/
   virtual TTimeStamp GetUTC() const { return utc; }
   virtual void SetUTC(const TTimeStamp& _utc) { utc = _utc; }
@@ -59,6 +69,7 @@ public:
   Float_t GetTotalCharge() const { return qTotal; }
   void SetTotalCharge(Float_t _qTotal) { qTotal = _qTotal; }
 
+    
   /** Centroid position fitter. */
   virtual Centroid* GetCentroid() {
     if (centroid.empty()) {
@@ -85,7 +96,11 @@ protected:
   Int_t id;
   Float_t qTotal;
   Float_t calibratedTriggerTime;
+  Float_t triggerTime;  //Trigger time of subevent. PMT times of subevents are
+                        //subtracted by this value
   Float_t deltat;
+  Int_t nSubevents; //Total number of subevent in event.
+  Int_t subevent;   //subevent index. Allows to select PMT in a specific range
   TTimeStamp utc;
   std::vector<PMT> pmt;
   std::vector<Centroid> centroid;
