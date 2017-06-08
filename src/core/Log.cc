@@ -1,7 +1,8 @@
 #include <RAT/Log.hh>
 #include <RAT/fileio.hpp>
 #include <iostream>
-#include <stdlib.h>
+#include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -48,8 +49,6 @@ omtext debug;
 omtext *Log::outstreams[4] = { &warn, &info, &detail, &debug };
 std::string Log::filename;
 oftext Log::logfile;
-ostext Log::logbuffer;
-bool Log::use_buffer = true;
 int Log::display_level = Log::DEBUG;
 int Log::log_level = Log::DETAIL;
 std::string Log::macro;
@@ -64,8 +63,7 @@ Log::Log()
 
 //**** Member functions
 
-  bool Log::Init(std::string _filename, Level display, Level log,
-		 bool _use_buffer)
+  bool Log::Init(std::string _filename, Level display, Level log)
 {
   // Redirect cout and cerr through Log
   cerr.rdbuf(&warn_streambuf);
@@ -75,7 +73,6 @@ Log::Log()
   logfile.open(filename, 0);
   display_level = display;
   log_level = log;
-  Log::use_buffer = _use_buffer;
   dbtrace = new TMap();
   dbtrace->SetOwner();
   enable_dbtrace = true;
@@ -116,14 +113,12 @@ void Log::SetupIO()
     ClearOMText(outstreams[i]);
     if (display_level >= i) {
       if (i == WARN)
-	outstreams[i]->add(ferr); // special case to ensure warn is unbuffered
+        outstreams[i]->add(ferr); // special case to ensure warn is unbuffered
       else
-	outstreams[i]->add(fout);
+        outstreams[i]->add(fout);
     }
     if (log_level >= i) {
       outstreams[i]->add(logfile);
-      if (use_buffer)
-	outstreams[i]->add(logbuffer);
     }
   }
 }
@@ -133,6 +128,15 @@ void Log::ClearOMText(omtext *out)
   int count = out->device_count();
   for (int i = 0; i < count; i++)
     out->remove(0); // Always remove head device
+}
+
+const std::string Log::GetLogBuffer() {
+  std::ifstream fin(filename.c_str());
+  std::string content( (std::istreambuf_iterator<char>(fin) ),
+                         (std::istreambuf_iterator<char>() ) );
+  fin.close();
+  return content;
+
 }
 
 
