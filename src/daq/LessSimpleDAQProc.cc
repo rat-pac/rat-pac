@@ -29,7 +29,7 @@ namespace RAT {
         double pmtQ = 0.0;
         double time,timeTmp;
         int nSubEvents = 0;
-        double timeWindow  = 400., oldGroup;
+        double timeWindow  = 800., oldGroup;
 
 
         // First part is to load into vector PMT information for full event

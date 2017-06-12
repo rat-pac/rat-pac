@@ -67,13 +67,13 @@ public:
   virtual Float_t GetTotalScintEdepQuenched() const {
     return totalScintEdepQuenched;
   }
-  virtual void SetTotalScintEdepQuenched(Float_t _totalScintEdepQuenched) { 
-    totalScintEdepQuenched = _totalScintEdepQuenched; 
+  virtual void SetTotalScintEdepQuenched(Float_t _totalScintEdepQuenched) {
+    totalScintEdepQuenched = _totalScintEdepQuenched;
   }
-  
+
   /** Centroid of the scintillation energy loss */
-  virtual const TVector3 &GetTotalScintCentroid() const { 
-    return totalScintCentroid; 
+  virtual const TVector3 &GetTotalScintCentroid() const {
+    return totalScintCentroid;
   }
   virtual void SetTotalScintCentroid(const TVector3 &_totalScintCentroid) {
     totalScintCentroid = _totalScintCentroid;
@@ -81,8 +81,8 @@ public:
 
   /** Initial time of the scintillation (ns) */
   virtual Float_t GetInitialScintTime() const { return initialScintTime; }
-  virtual void SetInitialScintTime(Float_t _initialScintTime) { 
-    initialScintTime = _initialScintTime; 
+  virtual void SetInitialScintTime(Float_t _initialScintTime) {
+    initialScintTime = _initialScintTime;
   }
 
   /** Number of photons produced by the scintillation process */
@@ -96,15 +96,45 @@ public:
   virtual void SetNumReemitPhoton(Int_t _numReemitPhoton) {
     numReemitPhoton = _numReemitPhoton;
   }
-    
+
     /** Number of photons produced by the re-emission process */
     virtual Int_t GetNumCerenkovPhoton() const { return numCerenkovPhoton; }
     virtual void SetNumCerenkovPhoton(Int_t _numCerenkovPhoton) {
         numCerenkovPhoton = _numCerenkovPhoton;
     }
 
-  ClassDef(MCSummary, 2)
-    
+    virtual void SetPhotonInfo(std::vector<std::vector<double> > _photonComposition) {
+        photonComposition = _photonComposition;
+    }
+    virtual std::vector<std::vector<double> > GetPhotonInfo() const { return photonComposition; }
+    virtual double GetNPhotonsTriggers() const {
+      return photonComposition.size();
+    }
+    virtual double GetCherenkovPhotons(int _trigger) const {
+      return photonComposition[_trigger][2];
+    }
+    virtual double GetScintPhotons(int _trigger) const {
+      return photonComposition[_trigger][0];
+    }
+    virtual double GetRemmitPhotons(int _trigger) const {
+      return photonComposition[_trigger][1];
+    }
+    virtual double GetTimePhotons(int _trigger) const {
+          return photonComposition[_trigger][3];
+    }
+
+    virtual void SetPMTPhotonInfo(std::vector<std::vector<double> > _pmtHitVector) {
+         pmtHitVector = _pmtHitVector;
+    }
+
+    virtual std::vector<std::vector<double> > GetPMTPhotonInfo() {
+         return pmtHitVector;
+    }
+
+
+
+  ClassDef(MCSummary, 3)
+
 protected:
   Int_t numScintPhoton;
   Int_t numReemitPhoton;
@@ -118,10 +148,12 @@ protected:
   TVector3 opticalRMS;
   TVector3 totalScintCentroid;
   StringDoubleMap energyLoss;
+  std::vector<std::vector<double> > photonComposition;
+  std::vector<std::vector<double> > pmtHitVector;
+
 };
 
   } // namespace DS
 } // namespace RAT
 
 #endif
-

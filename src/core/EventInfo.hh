@@ -12,11 +12,11 @@ namespace RAT {
 // Holds extra event information inside the G4Event
 class EventInfo : public G4VUserEventInformation {
 public:
-  EventInfo () { 
+  EventInfo () {
     fCalib = new DS::Calib(); // FIXME
     numScintPhoton = 0;
     numReemitPhoton = 0;
-      numCerenkovPhoton = 0;
+    numCerenkovPhoton = 0;
     extTriggerType = 0;
     extTriggerTime = 0.0;
   };
@@ -45,10 +45,10 @@ public:
 
   /** Count of scintillation photons in this event */
   int numScintPhoton;
-  
+
   /** Count of reemitted photons in this event */
   int numReemitPhoton;
-    
+
     /** Count the number of Cerenkov photon in this event */
     int numCerenkovPhoton;
   /** Type of external trigger associated with this event (0 for none) */
@@ -56,12 +56,17 @@ public:
 
   /** Time of external trigger relative to start of event primaries */
   double extTriggerTime;
-  
+
   bool StorePhotonIDs;
 
   /** Map of photon track ID to original parent ID and creation step */
   std::map<int, std::vector<int> > PhotonIDParentStep;
-  
+
+  /**  Vector to store time/photon information */
+  std::vector<G4double>  timePhotonID;//mfb
+  std::vector<std::vector<G4double> > timePhotonMatrix;//mfb
+
+
 protected:
   DS::Calib* fCalib;
 };
@@ -69,4 +74,3 @@ protected:
 } // namespace RAT
 
 #endif
-

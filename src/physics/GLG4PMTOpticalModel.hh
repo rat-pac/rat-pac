@@ -69,6 +69,33 @@ public:
     for(int i=0;i<int(BEfficiencyCorrection.size());i++)
       G4cout<<BEfficiencyCorrection[i].first<<","<<BEfficiencyCorrection[i].second<<"\n";
   }
+ void fillPMTVector(double code, double A,double An,double T,double R,
+	 double collection_eff, double N_pe, double x,double y,double z,
+	 double gx,double gy,double gz,double wavelength,double time){
+	 pmtHitVectorIndex.push_back(code);
+	 pmtHitVectorIndex.push_back(A);
+	 pmtHitVectorIndex.push_back(An);
+	 pmtHitVectorIndex.push_back(T);
+	 pmtHitVectorIndex.push_back(R);
+	 pmtHitVectorIndex.push_back(collection_eff);
+	 pmtHitVectorIndex.push_back(N_pe);
+	 pmtHitVectorIndex.push_back(x);
+	 pmtHitVectorIndex.push_back(y);
+	 pmtHitVectorIndex.push_back(z);
+	 pmtHitVectorIndex.push_back(gx);
+	 pmtHitVectorIndex.push_back(gy);
+	 pmtHitVectorIndex.push_back(gz);
+	 pmtHitVectorIndex.push_back(wavelength);
+	 pmtHitVectorIndex.push_back(time);
+	 pmtHitVector.push_back(pmtHitVectorIndex);
+	 pmtHitVectorIndex.resize(0);
+ }
+
+ std::vector<std::vector<double> > GetPMTVector(){
+	return pmtHitVector;
+ }
+ static std::vector<std::vector<double> > pmtHitVector;
+
 
 private:
   // material property vector pointers, initialized in constructor,
@@ -136,6 +163,10 @@ private:
   static double surfaceTolerance;
 
   std::vector<std::pair<int,double> > BEfficiencyCorrection;
+
+	std::vector<double>  pmtHitVectorIndex;
+
+
 };
 
 #endif
