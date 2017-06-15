@@ -19,6 +19,7 @@
 #include <RAT/FitPathProc.hh>
 #include <RAT/SimpleDAQProc.hh>
 #include <RAT/LessSimpleDAQProc.hh>
+#include <RAT/LessSimpleDAQ2Proc.hh>
 
 namespace RAT {
 
@@ -69,6 +70,7 @@ ProcBlockManager::ProcBlockManager(ProcBlock *theMainBlock)
   // DAQ
   procAllocators["simpledaq"]= new ProcAllocatorTmpl<SimpleDAQProc>;
   procAllocators["lesssimpledaq"]= new ProcAllocatorTmpl<LessSimpleDAQProc>;
+  procAllocators["lesssimpledaq2"]= new ProcAllocatorTmpl<LessSimpleDAQ2Proc>;
 
   // Misc
   procAllocators["count"] = new ProcAllocatorTmpl<CountProc>;
