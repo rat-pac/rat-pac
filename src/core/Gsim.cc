@@ -580,7 +580,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
     old_time = exinfo->timePhotonMatrix[aIndex][0];
   }
   for(unsigned long aIndex = 0; aIndex < rollingPhotons.size(); aIndex++){
-    G4cout << "Mysterious !  " << aIndex << " " << rollingPhotons[aIndex][3] << " |  " << rollingPhotons[aIndex][0] << " " << rollingPhotons[aIndex][1] << " " <<rollingPhotons[aIndex][2] << G4endl;
+    //G4cout << "Mysterious !  " << aIndex << " " << rollingPhotons[aIndex][3] << " |  " << rollingPhotons[aIndex][0] << " " << rollingPhotons[aIndex][1] << " " <<rollingPhotons[aIndex][2] << G4endl;
   }
 
 
