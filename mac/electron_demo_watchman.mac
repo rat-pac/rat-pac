@@ -4,17 +4,17 @@
 /run/initialize
 
 # BEGIN EVENT LOOP
-/rat/proc simpledaq
+/rat/proc lesssimpledaq
 /rat/proc count
-/rat/procset update 10
+/rat/procset update 1
 
 /rat/proclast outroot
 /rat/procset file "watchman.root"
 #END EVENT LOOP
 
-/generator/add combo gun2:point
-/generator/vtx/set e-  0 0 0 0 10.0 10.0
+/generator/add combo gun2:fill
+/generator/vtx/set e-  0 0 0 0 5.0 5.0
 /generator/pos/set 0 0 0
 
-/run/beamOn 100
+/run/beamOn 5000
 

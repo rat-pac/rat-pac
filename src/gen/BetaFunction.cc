@@ -346,23 +346,26 @@ namespace RAT {
 	  W = energy / ElectronMass;
 	  if (R < F)
 	    ithrow = false;
-	}
-	IDn[n] = id;
-	En[n] = ElectronMass * W - ElectronMass;
-      } else {
-	IDn[n] = id;
-	En[n] = GetEnergy(itag, n);
+	  }
+  	IDn[n] = id;
+	  En[n] = ElectronMass * W - ElectronMass;
+  } else {
+	  IDn[n] = id;
+	   En[n] = GetEnergy(itag, n);
       }
     }
     SetEventTime();
     nGenerated = nP;
+    // std::cout << "Chosen time " << nTime << ", id "<<  itag << std::endl;
+
   }
 
   void BetaFunction::SetEventTime()
   {
-    double tau = GetLifeTime()*1.0e9;
+    double tau = GetLifeTime();
     double r = GetRandomNumber();
-    nTime = -tau * log(r) / log(2.);
+
+    nTime = -tau * log(r)/log(2.);
   }
 
   int BetaFunction::GetEventID(int n)

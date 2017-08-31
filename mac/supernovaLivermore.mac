@@ -1,8 +1,8 @@
 /glg4debug/glg4param omit_muon_processes  0.0
 /glg4debug/glg4param omit_hadronic_processes  0.0
 
-/rat/db/set DETECTOR experiment "Watchman" 
-/rat/db/set DETECTOR geo_file "Watchman/Watchman.geo"
+/rat/db/set DETECTOR experiment "WatchmanSN" 
+/rat/db/set DETECTOR geo_file "WatchmanSN/WatchmanSN.geo"
 
 ##/tracking/verbose 1
 
@@ -18,7 +18,7 @@
 
 # Use IO.default_output_filename
 /rat/proclast outroot
-/rat/procset file "watchman_supernova.root"
+/rat/procset file "watchman_supernova_wbls10pct.root"
 #END EVENT LOOP
 
 /generator/add combo supernova:fill
@@ -27,13 +27,20 @@
 
 ###  GVKM(ibd,es,cc,icc,nc): (0.840591, 0.0149344, 0.00291923, 0.0223892, 0.119166)
 ## 0.779059, 0.087042, 0.00270554, 0.0207503, 0.110443
-/generator/supernova/model 1
-/generator/supernova/ibd   0.779059
-/generator/supernova/es    0.087042
-/generator/supernova/cc    0.00270554
-/generator/supernova/icc   0.0207503
-/generator/supernova/nc	   0.110443
+#/generator/supernova/model 1
+#/generator/supernova/ibd   0.779059
+#/generator/supernova/es    0.087042
+#/generator/supernova/cc    0.00270554
+#/generator/supernova/icc   0.0207503
+#/generator/supernova/nc	   0.110443
 
-/run/beamOn 2000
+/generator/supernova/model 1
+/generator/supernova/ibd   0.0
+/generator/supernova/es    1.0
+/generator/supernova/cc    0.0
+/generator/supernova/icc   0.0
+/generator/supernova/nc    0.0
+
+/run/beamOn 100
 
 

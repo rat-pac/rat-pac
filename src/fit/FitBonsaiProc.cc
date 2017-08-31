@@ -19,8 +19,8 @@ static const int innerPMTcode   = 1;
 static const int vetoPMTcode    = 2;
 
 //minHit should be 1 or above
-static const int minHit         = 4;
-static const int maxHit         = 2000;
+static const int minHit         = 10;
+static const int maxHit         = 4000;
 
 static const double timeOffset  = 800.;
 static const double darkRateHz = 10000.;
@@ -81,7 +81,7 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             xyz[3*i+2]=pos[2]*mm2cm;
             //printf("%d: %lf %lf %lf\n",i,xyz[3*i],xyz[3*i+1],xyz[3*i+2]);
         }
-        printf("have %d PMTs for BONSAI (%d inner pmts + %d veto pmts)\n",n,totInner,totVeto);
+        //printf("have %d PMTs for BONSAI (%d inner pmts + %d veto pmts)\n",n,totInner,totVeto);
 
         bonsai_geometry=new pmt_geometry(n,xyz);
         bonsai_likelihood=new likelihood(bonsai_geometry->cylinder_radius(),
@@ -105,10 +105,10 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             printf("Something is wrong with PMT type (%d,%d)\n",count,pmtinfo->GetType(id));
         }
     }
-//    printf("Event had (inner,veto) = (%4d [%4.1f pe], %4d [%4.1f pe],%4d) PMTs\n",nhit,IDCharge,nhitVeto,ODCharge,nhitMAX);
+    //printf("Event had (inner,veto) = (%4d [%4.1f pe], %4d [%4.1f pe],%4d) PMTs\n",nhit,IDCharge,nhitVeto,ODCharge,nhitMAX);
 
 
-
+    try{
     if ((nhit>=minHit) && (nhit<maxHit))
     {
         int hit;
@@ -161,14 +161,22 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
                 //printf("now %lf/%lf\n",times[hit],charges[hit]);
             }
         }
+        //printf("Dark hits were added. New nhit is %d.\n", nhit);
         bonsai_hits=new goodness(bonsai_likelihood->sets(),
                                  bonsai_likelihood->chargebins(),
                                  bonsai_geometry,nhit,cables,times,charges);
+      //  printf("Goodness succeeded.\n");
         grid=new fourhitgrid(bonsai_geometry->cylinder_radius(),
                              bonsai_geometry->cylinder_height(),
                              bonsai_hits);
+        //printf("fourhitgrid succeeded.\n");
+
         bonsai_likelihood->set_hits(bonsai_hits);
+        //printf("set_hits succeeded.\n");
+
         bonsai_likelihood->maximize(bonsai_fit,grid);
+        //printf("maximize succeeded.\n");
+
 
         if ((nsel[2]=bonsai_likelihood->nfit())>0)
         {
@@ -177,14 +185,21 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             bonsai_vtxfit[2]=bonsai_fit->zfit();
             gdn=new float[bonsai_likelihood->sets()];
             goodn[1]=bonsai_likelihood->goodness(maxlike[1],bonsai_vtxfit,gdn);
+            //printf("goodn succeeded.\n");
             delete gdn;
             bonsai_likelihood->tgood(bonsai_vtxfit,0,goodn[0]);
+            //printf("tgood succeeded.\n");
+
             nsel[1]=bonsai_likelihood->nwind(bonsai_vtxfit,-3,6);
+            //printf("bonsai_likelihood->nwind succeeded.\n");
+
             *maxlike=bonsai_fit->maxq();
             bonsai_fit->fitresult();
             bonsai_vtxfit[3]=bonsai_likelihood->get_zero();
             bonsai_likelihood->get_dir(bonsai_dirfit);
             *maxlike=bonsai_likelihood->get_ll0();
+          //  printf("bonsai_likelihood->get_ll0 succeeded.\n");
+
 
             DS::BonsaiFit *result=ev->GetBonsaiFit();
             result->SetPosition(TVector3(bonsai_vtxfit[0]*cm2mm,
@@ -199,6 +214,8 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
             result->SetNsel(nsel[0]);
             result->SetN9(nsel[1]);
             result->SetBonsaiDir(bonsai_dirfit);
+            //printf("Good all the result.\n");
+
             int cfit[maxHit],hit;
             float tfit[maxHit],qfit[maxHit],apmt[3*maxHit],av[4];
             float agoodn,aqual,cosscat;
@@ -213,6 +230,8 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
                 apmt[3*hit+1]=pos.Y()*mm2cm;
                 apmt[3*hit+2]=pos.Z()*mm2cm;
             }
+            //printf("n10 variable is %d.\n", n10);
+
             lfariadne_(bonsai_vtxfit,&n10,apmt,
                        adir,&agoodn,&aqual,&nscat,&cosscat);
             result->SetDirection(TVector3(adir[0],adir[1],adir[2]));
@@ -269,6 +288,11 @@ Processor::Result FitBonsaiProc::Event(DS::Root *ds, DS::EV *ev)
         result->SetIDCharge(IDCharge);
         result->SetODCharge(ODCharge);
     }
+  }
+  catch(...){
+    printf("Bonsai failed to reconstruct events.\n");
+  }
+  //printf("Bonsai made it this far.\n");
     return OK;
 }
 

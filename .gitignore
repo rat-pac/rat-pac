@@ -12,6 +12,7 @@ lib
 bin
 config.log
 src/core/config.hh
+root_files
 # Eclipse aux files
 .cproject
 .project
@@ -29,3 +30,4 @@ watchman_supernova.root
 tools/*.py
 open.sh
 SCRATCH
+fixDynamicLink.py

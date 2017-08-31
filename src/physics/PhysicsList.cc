@@ -7,6 +7,7 @@
 #include <G4ProcessManager.hh>
 #include <G4Cerenkov.hh>
 #include <G4OpBoundaryProcess.hh>
+#include <G4VUserPhysicsList.hh>
 #include <G4RunManager.hh>
 #include <RAT/GLG4OpAttenuation.hh>
 #include <RAT/GLG4Scint.hh>
@@ -106,9 +107,9 @@ void PhysicsList::ConstructOpticalProcesses() {
   opBoundaryProcess->SetVerboseLevel(verboseLevel-1);
 
   // Apply processes to all particles where applicable
-  theParticleIterator->reset();
-  while((*theParticleIterator)()) {
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  GetParticleIterator()->reset();
+  while((*GetParticleIterator())()) {
+    G4ParticleDefinition* particle = GetParticleIterator()->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     G4String particleName = particle->GetParticleName();
     if (cerenkovProcess->IsApplicable(*particle)) {
@@ -125,9 +126,9 @@ void PhysicsList::ConstructOpticalProcesses() {
 void PhysicsList::AddParameterization() {
   G4FastSimulationManagerProcess* fastSimulationManagerProcess =
     new G4FastSimulationManagerProcess();
-  theParticleIterator->reset();
-  while((*theParticleIterator)()) {
-    G4ParticleDefinition* particle = theParticleIterator->value();
+  GetParticleIterator()->reset();
+  while((*GetParticleIterator())()) {
+    G4ParticleDefinition* particle = GetParticleIterator()->value();
     G4ProcessManager* pmanager = particle->GetProcessManager();
     if (particle->GetParticleName() == "opticalphoton") {
       pmanager->AddProcess(fastSimulationManagerProcess, -1, -1, 1);
@@ -136,4 +137,3 @@ void PhysicsList::AddParameterization() {
 }
 
 }  // namespace RAT
-
