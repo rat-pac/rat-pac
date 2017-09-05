@@ -1,26 +1,20 @@
-RAT - RAT is an Analysis Tool
+Decay0 - The Decay0 Generator for Initial Kinematics in Alpha,
+Beta and Double Beta Decays
 
-Copyright (c) 2006 Stan Seibert, Chris Tunnell, Josh Klein, Matthew Worcester,
-Tim Bolton, William Seligman, Stephen Sekula, Gabriel Orebi Gann and 
-the Braidwood Collaboration.
+Copyright (c) 2017 V. Tretyak and the SNO+ Collaboration
 
-Copyright (c) 2014 Stan Seibert, Chris Tunnell, Josh Klein, Matthew Worcester,
-Tim Bolton, William Seligman, Stephen Sekula, Gabriel Orebi Gann, Tom Caldwell,
-Andy Mastbaum, the Braidwood Collaboration, the MiniCLEAN collaboration.
+The authors of Decay0 request that derivative works acknowledge the code
+by citing the following reference:
 
-GLG4sim is Copyright (c) Glenn Horton-Smith and the KamLAND Collaboration.
-GdHPCapture is Copyright (c) Karim Zbiri.
-STLplus is Copyright (c) 2004 Andy Rushton. All rights reserved.
-CxxTest is Copyright (c) Erez Volk. Licensed under the LGPL.
-SCons is Copyright (c) 2004 The SCons Foundation.
-Decay0 is Copyright (c) 2017 V. Tretyak and the SNO+ Collaboration
+  O.A.Ponkratenko, V.I.Tretyak, Yu.G.Zdesenko, Phys. At. Nucl. 63 (2000)
+  1282 (nucl-ex/0104018).
 
-See COPYING.stlplus, COPYING.cxxtest, COPYING.scons, and COPYING.decay0 for the
-licenses for those packages.
+However this is not a condition of the license.
 
+The implementation of Decay0 contained herein is covered by following
+MIT-style license, which is the same as that of other code in RAT-PAC not
+otherwise identified in the COPYING file.
 
-All code not covered by other licenses is covered by this MIT-style
-license:
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
