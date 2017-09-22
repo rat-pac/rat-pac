@@ -11,8 +11,8 @@
 /glg4debug/glg4param omit_muon_processes 1.0
 /glg4debug/glg4param omit_hadronic_processes 1.0
 
-/rat/db/set DETECTOR experiment "Theia"
-/rat/db/set DETECTOR detector_factory "Theia"
+/rat/db/set DETECTOR experiment "Theia_0vbb"
+/rat/db/set DETECTOR detector_factory "Theia_0vbb"
 
 /run/initialize
 
@@ -22,7 +22,7 @@
 /rat/proc fitcentroid
 /rat/proclast outroot
 
-/generator/add decaychain I130:fill:poisson
+/generator/add decaychain 130I:fill:poisson
 /generator/pos/set 0 0 0
 /generator/rate/set 1
 

@@ -1,11 +1,11 @@
-# theia_solar_b8_numu.mac
-# 
-# THEIA Production MC: Solar 8B numu elastic scattering (ES generator)
+# theia_i130ms.mac
 #
-# A. Mastbaum <mastbaum@uchicago.edu>, 2017/09/06
+# THEIA Production MC: I130ms decays (decaychain)
+#
+# A. Mastbaum <mastbaum@uchicago.edu>, 2017/09/22
 #
 # Revision History:
-#   2017/09/06 A. Mastbaum - Initial version
+#   2017/09/22 A. Mastbaum - Initial version
 #
 
 /glg4debug/glg4param omit_muon_processes 1.0
@@ -22,8 +22,7 @@
 /rat/proc fitcentroid
 /rat/proclast outroot
 
-/generator/add combo es:fill:poisson
-/generator/vtx/set 0 0 0 b8:numu
+/generator/add decaychain MS130I:fill:poisson
 /generator/pos/set 0 0 0
 /generator/rate/set 1
 
