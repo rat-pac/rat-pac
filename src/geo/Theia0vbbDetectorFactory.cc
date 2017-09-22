@@ -56,7 +56,6 @@ void Theia0vbbDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
     const double nylon2_r_max = nylon1_r_min-evoh_thickness;
     const double nylon2_r_min = nylon2_r_max-nylon_thickness;
     const double nylon3_r_max = nylon2_r_min-evoh_thickness;
-    const double nylon3_r_min = nylon3_r_max-nylon_thickness;
     const double target_r_max = balloon_radius-balloon_thickness;
   
     //calculate the area of the defined inner_pmts
@@ -229,12 +228,9 @@ void Theia0vbbDetectorFactory::DefineDetector(DBLinkPtr /*detector*/) {
     db->SetD("GEO","detector","size_z",det_halfheight);
     db->SetD("GEO","balloon","r_max",balloon_r_max);
     db->SetD("GEO","balloon_nylon_layer1","r_max",nylon1_r_max);
-    db->SetD("GEO","balloon_nylon_layer1","r_min",nylon1_r_min);
     db->SetD("GEO","balloon_nylon_layer2","r_max",nylon2_r_max);
-    db->SetD("GEO","balloon_nylon_layer2","r_min",nylon2_r_min);
     db->SetD("GEO","balloon_nylon_layer3","r_max",nylon3_r_max);
-    db->SetD("GEO","balloon_nylon_layer3","r_min",nylon3_r_min);
-    db->SetD("GEO","0vbb_target","r_max",target_r_max);
+    db->SetD("GEO","target","r_max",target_r_max);
 
     info << "Generating PMTINFO...\n";
     db->SetDArray("PMTINFO","x",x);

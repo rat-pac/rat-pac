@@ -51,9 +51,8 @@ valid_end: [0,0],
 mother: "detector",
 type: "sphere",
 r_max: 6500.0,
-r_min: 0.0,
 position: [0.0, 0.0, 0.0],
-material: "evoh",
+material: "nylon",
 color: [0.8, 0.9, 0.9, 0.1],
 drawstyle: "solid"
 }
@@ -63,10 +62,9 @@ name: "GEO",
 index: "balloon_nylon_layer1"
 valid_begin: [0,0],
 valid_end: [0,0],
-mother: "detector",
+mother: "balloon",
 type: "sphere",
 r_max: 6499.985,
-r_min: 6499.960,
 position: [0.0, 0.0, 0.0],
 material: "nylon",
 color: [0.8, 0.9, 0.9, 0.1],
@@ -78,10 +76,9 @@ name: "GEO",
 index: "balloon_nylon_layer2"
 valid_begin: [0,0],
 valid_end: [0,0],
-mother: "detector",
+mother: "balloon_nylon_layer1",
 type: "sphere",
 r_max: 6499.945,
-r_min: 6499.920,
 position: [0.0, 0.0, 0.0],
 material: "nylon",
 color: [0.8, 0.9, 0.9, 0.1],
@@ -93,10 +90,9 @@ name: "GEO",
 index: "balloon_nylon_layer3"
 valid_begin: [0,0],
 valid_end: [0,0],
-mother: "detector",
+mother: "balloon_nylon_layer2",
 type: "sphere",
 r_max: 6499.905,
-r_min: 6499.880,
 position: [0.0, 0.0, 0.0],
 material: "nylon",
 color: [0.8, 0.9, 0.9, 0.1],
@@ -105,53 +101,51 @@ drawstyle: "solid"
 
 {
 name: "GEO",
-index: "0vbb_target"
+index: "target"
 valid_begin: [0, 0],
 valid_end: [0, 0],
-mother: "detector",
+mother: "balloon_nylon_layer3",
 type: "sphere",
 r_max: 6499.865,
-r_min: 0.0,
 position: [0.0, 0.0, 0.0],
 material: "scintillator",
 color: [0.8,0.9, 0.4, 0.2],
 drawstyle: "solid"
 }
 
-{ 
-name: "GEO", 
-index: "inner_pmts", 
+{
+name: "GEO",
+index: "inner_pmts",
 enable: 1,
-valid_begin: [0, 0], 
-valid_end: [0, 0], 
-mother: "detector", 
-type: "pmtarray", 
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "detector",
+type: "pmtarray",
 pmt_model: "r11780_hqe",
 pmt_detector_type: "idpmt",
-sensitive_detector: "/mydet/pmt/inner", 
-efficiency_correction: 1.000,  
+sensitive_detector: "/mydet/pmt/inner",
+efficiency_correction: 1.000,
 pos_table: "PMTINFO", //generated on the fly
 start_idx: 0, //index of first inner pmt
 end_idx: 0, //index of last inner pmt
 orientation: "manual",
-} 
+}
 
-{ 
-name: "GEO", 
+{
+name: "GEO",
 index: "veto_pmts",
 enable: 1,
-valid_begin: [0, 0], 
-valid_end: [0, 0], 
-mother: "detector", 
-type: "pmtarray", 
+valid_begin: [0, 0],
+valid_end: [0, 0],
+mother: "detector",
+type: "pmtarray",
 pmt_model: "r11780_hqe",
 pmt_detector_type: "idpmt",
-sensitive_detector: "/mydet/pmt/veto", 
-efficiency_correction: 1.000,  
+sensitive_detector: "/mydet/pmt/veto",
+efficiency_correction: 1.000,
 pos_table: "PMTINFO", //generated on the fly
 start_idx: 0, //index of first veto pmt
 end_idx: 0, //index of last veto pmt
 orientation: "manual",
-} 
-
+}
 

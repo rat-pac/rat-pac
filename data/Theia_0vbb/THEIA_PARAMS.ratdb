@@ -7,7 +7,7 @@ name: "THEIA_PARAMS",
 valid_begin: [0, 0],
 valid_end: [0, 0],
 
-photocathode_coverage: 0.01,
+photocathode_coverage: 0.90,
 veto_coverage: 0.00,
 
 fiducial_diameter: 40000.0,
@@ -24,3 +24,4 @@ balloon_thickness: 0.435,
 
 0vbb_target_radius: 12999.565
 }
+
