@@ -90,7 +90,7 @@ public:
   virtual void PruneMCTrack() { track.resize(0); };
   virtual void PruneMCTrack(const std::string& particleName) {
     ParticleNameEqualityFunctor pnef(particleName);
-    std::remove_if(track.begin(), track.end(), pnef);
+    track.erase( std::remove_if(track.begin(), track.end(), pnef), track.end() );
   }
 
   /** List of PMTs which had at least one photoelectron generated */
