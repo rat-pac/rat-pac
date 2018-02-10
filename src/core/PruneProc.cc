@@ -79,8 +79,9 @@ Processor::Result PruneProc::DSEvent(DS::Root *ds) {
       if (track_cut.size() == 0)
         pmc->PruneMCTrack();
       else { // remove each listed particle name
-	for (unsigned i=0; i < track_cut.size(); i++)
+	for (unsigned i=0; i < track_cut.size(); i++){
 	  pmc->PruneMCTrack(track_cut[i]);
+	}
       }
     }
 
