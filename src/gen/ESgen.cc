@@ -14,7 +14,6 @@
 
 #include <RAT/ESgen.hh>
 #include <RAT/ESCrossSec.hh>
-#include <RAT/ESgenMessenger.hh>
 #include <RAT/DB.hh>
 
 #include <G4ParticleDefinition.hh>
