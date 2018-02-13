@@ -1,0 +1,41 @@
+# Example Macro for generating neutrinoless double beta events with the
+# Decay0 generator. Options for two-neutrino mode are also shown.
+#
+# See Decay0 generator notes in src/gen/Decay0.hh.
+
+/glg4debug/glg4param omit_muon_processes  1.0
+/glg4debug/glg4param omit_hadronic_processes  1.0
+
+/rat/db/set DETECTOR experiment "sphere"
+/rat/db/set DETECTOR geo_file "sphere/sphere.geo"
+
+/run/initialize
+
+# BEGIN EVENT LOOP
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+/rat/proc fitcentroid
+/rat/proclast outroot
+/rat/procset file "sphere_0vbb_te130.root"
+# END EVENT LOOP
+
+# Use the Decay0 generator to generate vertices in the normal combo generator
+/generator/add combo decay0:fill:poisson
+
+# Example of neutrinoless double-beta decay of Te130
+# Vertex settings are type, isotope, level, mode, Elo, Ehi
+# See src/gen/Decay0.hh for more details
+/generator/vtx/set 2beta Te130 0 1
+
+# Example of two-neutrino beta decay with a limited energy range
+#/generator/vtx/set 2beta Te130 0 4 1.0 3.0
+
+# Position generator settings
+/generator/pos/set 0 0 0
+
+# Time generator settings (Poisson event rate of 1 Hz)
+/generator/rate/set 1
+
+/run/beamOn 100
+
