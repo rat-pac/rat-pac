@@ -23,6 +23,9 @@
 #include <RAT/PhysicsListMessenger.hh>
 #include <RAT/PhysicsList.hh>
 
+template<>
+G4VUPLData* G4VUPLSplitter<G4VUPLData>::offset = NULL;
+
 namespace RAT {
 
 PhysicsList::PhysicsList() : Shielding(), wlsModel(NULL) {
