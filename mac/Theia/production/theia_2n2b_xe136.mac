@@ -1,0 +1,31 @@
+# theia_2n2b_xe136.mac
+# 
+# THEIA Production MC: Xe136 two-neutrino double-beta decay (Decay0)
+#
+# A. Mastbaum <mastbaum@uchicago.edu>, 2017/09/06
+#
+# Revision History:
+#   2017/09/06 A. Mastbaum - Initial version
+#
+
+/glg4debug/glg4param omit_muon_processes 1.0
+/glg4debug/glg4param omit_hadronic_processes 1.0
+
+/rat/db/set DETECTOR experiment "Theia_0vbb"
+/rat/db/set DETECTOR detector_factory "Theia_0vbb"
+
+/run/initialize
+
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+/rat/proc fitcentroid
+/rat/proclast outroot
+
+/generator/add combo decay0:fill:poisson
+/generator/vtx/set 2beta Xe136 0 4
+/generator/pos/set 0 0 0
+/generator/rate/set 1
+
+/run/beamOn 1000
+

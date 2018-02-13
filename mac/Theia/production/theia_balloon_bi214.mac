@@ -1,0 +1,31 @@
+# theia_balloon_bi214.mac
+#
+# THEIA Production MC: Bi214 (Decay0) in the balloon
+#
+# A. Mastbaum <mastbaum@uchicago.edu>, 2017/09/22
+#
+# Revision History:
+#   2017/09/22 A. Mastbaum - Initial version
+#
+
+/glg4debug/glg4param omit_muon_processes 1.0
+/glg4debug/glg4param omit_hadronic_processes 1.0
+
+/rat/db/set DETECTOR experiment "Theia_0vbb"
+/rat/db/set DETECTOR detector_factory "Theia_0vbb"
+
+/run/initialize
+
+/rat/proc simpledaq
+/rat/proc count
+/rat/procset update 10
+/rat/proc fitcentroid
+/rat/proclast outroot
+
+/generator/add combo decay0:regexfill:poisson
+/generator/vtx/set backg Bi214
+/generator/pos/set balloon
+/generator/rate/set 1
+
+/run/beamOn 1000
+
