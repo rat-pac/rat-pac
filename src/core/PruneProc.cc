@@ -21,7 +21,7 @@ void PruneProc::SetS(std::string param, std::string value) {
     vector<string> parts = split(value, ",");
     for (unsigned int i = 0; i < parts.size(); i++) {
       vector<string> subparts = split(parts[i], ":");
-
+      
       if (subparts.size() == 1)
 	SetPruneState(parts[i], true); // normal case
       else {
@@ -30,9 +30,18 @@ void PruneProc::SetS(std::string param, std::string value) {
 	  throw ParamInvalid(param, "Cannot use colon in " + parts[i]);
 
 	SetPruneState("mc.track", true);
-	track_cut.push_back(subparts[1]);
+        if(subparts[1].substr(0,1) == "-"){
+          subparts[1].erase( subparts[1].begin() );
+          track_cut_except.push_back(subparts[1]);
+        } else {
+          track_cut.push_back(subparts[1]);
+        }
       }
     }
+
+    if(track_cut.size() && track_cut_except.size()) 
+      throw ParamInvalid(param, "Cannot combine '-' option with no-'-' option ");
+    
   } else
     throw ParamUnknown(param);
 }
@@ -76,12 +85,14 @@ Processor::Result PruneProc::DSEvent(DS::Root *ds) {
       pmc->PruneMCParticle();
 
     if (mc_track) {
-      if (track_cut.size() == 0)
+      if (track_cut.size() == 0 && track_cut_except.size() == 0)
         pmc->PruneMCTrack();
-      else { // remove each listed particle name
+      else if(track_cut.size() != 0){ // remove each listed particle name
 	for (unsigned i=0; i < track_cut.size(); i++){
 	  pmc->PruneMCTrack(track_cut[i]);
 	}
+      } else if(track_cut_except.size() != 0){
+        pmc->PruneAllMCTrackExcept(track_cut_except);
       }
     }
 

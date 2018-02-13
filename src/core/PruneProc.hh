@@ -85,6 +85,11 @@ protected:
    *  If this vector is empty and @c mc_track is true, cut all tracks.
    */
   std::vector<std::string> track_cut;
+  /** Names of particles to conserve tracks.
+   *
+   *  This vector can't be set at the same time than track_cut
+   */
+  std::vector<std::string> track_cut_except;
 };
 
 } // namespace RAT

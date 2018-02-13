@@ -45,6 +45,16 @@ public:
     std::string name;
   };
   
+  class ParticleNameInequalityFunctor {
+  public:
+    ParticleNameInequalityFunctor(std::vector<std::string> _name) : name(_name) {}
+    bool operator()(MCTrack& _track) {
+      return ( std::find(this->name.begin(), this->name.end(), _track.GetParticleName()) == this->name.end() );
+    }
+  private:
+    std::vector<std::string> name;
+  };
+  
   /** Event number. */
   virtual int GetID() const { return id; }
   virtual void SetID(int _id) { id = _id; }
@@ -90,6 +100,10 @@ public:
   virtual void PruneMCTrack() { track.resize(0); };
   virtual void PruneMCTrack(const std::string& particleName) {
     ParticleNameEqualityFunctor pnef(particleName);
+    track.erase( std::remove_if(track.begin(), track.end(), pnef), track.end() );
+  }
+  virtual void PruneAllMCTrackExcept(const std::vector<std::string>& particleName) {
+    ParticleNameInequalityFunctor pnef(particleName);
     track.erase( std::remove_if(track.begin(), track.end(), pnef), track.end() );
   }
 
