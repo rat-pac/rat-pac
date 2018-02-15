@@ -3,8 +3,8 @@
 #include <G4SubtractionSolid.hh>
 #include <G4UnionSolid.hh>
 #include <G4Box.hh>
-#include <RAT/PMTConstruction.hh>
-#include <RAT/GeoPMTParser.hh>
+#include <RAT/ToroidalPMTConstruction.hh>
+#include <RAT/PMTInfoParser.hh>
 #include <G4Tubs.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -17,6 +17,9 @@ namespace RAT {
 G4VSolid *GeoPerfTubeFactory::ConstructSolid(DBLinkPtr table)
 {
     string volume_name = table->GetIndex();
+    // Find mother
+    string mother_name = table->GetS("mother");
+    G4LogicalVolume *mother = FindMother(mother_name);
     G4double r_max = table->GetD("r_max") * CLHEP::mm;        // radius of main plate
     G4double size_z = table->GetD("size_z") * CLHEP::mm;      // half thickness of plate
     
@@ -61,12 +64,12 @@ G4VSolid *GeoPerfTubeFactory::ConstructSolid(DBLinkPtr table)
     }
     else
     {
-	string pmt_table = table->GetS("pmt_table");
-	DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-	GeoPMTParser pmt_parser(lgeo_pmt);
-	PMTConstructionParams params = pmt_parser.GetPMTParams();
-	PMTConstruction pmtConstruct(params);
-	G4VSolid *pmtBody = pmtConstruct.NewBodySolid("dummy");
+    string pmt_table = table->GetS("pmt_table");
+    DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
+    PMTInfoParser pmt_parser(lgeo_pmt,mother_name);
+    DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
+    ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
+    G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");
 	
 	vector<G4ThreeVector> pmtloc = pmt_parser.GetPMTLocations();
 	vector<G4ThreeVector> pmtdir = pmt_parser.GetPMTDirections();

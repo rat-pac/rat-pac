@@ -39,7 +39,7 @@
 #include <RAT/TimeUtil.hh>
 #include <RAT/Config.hh>
 
-#include <RAT/GeoPMTFactoryBase.hh>
+#include <RAT/PMTFactoryBase.hh>
 
 #include <Randomize.hh>
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -408,7 +408,7 @@ void Gsim::MakeRun(int _runID) {
   run->SetID(_runID);
   run->SetType((unsigned) lrun->GetI("runtype"));
 
-  run->SetPMTInfo(&GeoPMTFactoryBase::GetPMTInfo());
+  run->SetPMTInfo(&PMTFactoryBase::GetPMTInfo());
 
   DS::RunStore::AddNewRun(run);
 }

@@ -104,11 +104,11 @@ int main(int argc, char** argv) {
     try { // Catch database errors
       // Set default input and output files
       if (options.input_filename != "") {
-	rdb->SetS("IO", "", "default_input_filename", options.input_filename);
+	rdb->Set("IO", "", "default_input_filename", options.input_filename);
 	info << "Setting default input file to " << options.input_filename << "\n";
       }
       if (options.output_filename != "") {
-	rdb->SetS("IO", "", "default_output_filename", options.output_filename);
+	rdb->Set("IO", "", "default_output_filename", options.output_filename);
 	info << "Setting default output file to " << options.output_filename << "\n";
       }
 

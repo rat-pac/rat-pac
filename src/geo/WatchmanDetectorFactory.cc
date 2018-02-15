@@ -189,35 +189,35 @@ namespace RAT {
         }
         
         info << "Override default PMTINFO information...\n";
-        db->SetDArray("PMTINFO","x",x);
-        db->SetDArray("PMTINFO","y",y);
-        db->SetDArray("PMTINFO","z",z);
-        db->SetDArray("PMTINFO","dir_x",dir_x);
-        db->SetDArray("PMTINFO","dir_y",dir_y);
-        db->SetDArray("PMTINFO","dir_z",dir_z);
-        db->SetIArray("PMTINFO","type",type);
+        db->Set("PMTINFO","x",x);
+        db->Set("PMTINFO","y",y);
+        db->Set("PMTINFO","z",z);
+        db->Set("PMTINFO","dir_x",dir_x);
+        db->Set("PMTINFO","dir_y",dir_y);
+        db->Set("PMTINFO","dir_z",dir_z);
+        db->Set("PMTINFO","type",type);
         
         info << "Update geometry fields related to veto PMTs...\n";
-        db->SetI("GEO","shield","veto_start",num_pmts);
-        db->SetI("GEO","shield","veto_len",num_vetos);
-        db->SetI("GEO","veto_pmts","start_idx",num_pmts);
-        db->SetI("GEO","veto_pmts","end_idx",total_pmts-1);
+        db->Set("GEO","shield","veto_start",num_pmts);
+        db->Set("GEO","shield","veto_len",num_vetos);
+        db->Set("GEO","veto_pmts","start_idx",num_pmts);
+        db->Set("GEO","veto_pmts","end_idx",total_pmts-1);
         
         info << "Update geometry fields related to normal PMTs...\n";
-        db->SetI("GEO","shield","cols",cols);
-        db->SetI("GEO","shield","rows",rows);
-        db->SetI("GEO","shield","inner_start",0);
-        db->SetI("GEO","shield","inner_len",num_pmts);
-        db->SetI("GEO","inner_pmts","start_idx",0);
-        db->SetI("GEO","inner_pmts","end_idx",num_pmts-1);
+        db->Set("GEO","shield","cols",cols);
+        db->Set("GEO","shield","rows",rows);
+        db->Set("GEO","shield","inner_start",0);
+        db->Set("GEO","shield","inner_len",num_pmts);
+        db->Set("GEO","inner_pmts","start_idx",0);
+        db->Set("GEO","inner_pmts","end_idx",num_pmts-1);
         
         info << "Update cable positions to match shield...\n";
-        db->SetDArray("cable_pos","x",cable_x);
-        db->SetDArray("cable_pos","y",cable_y);
-        db->SetDArray("cable_pos","z",vector<double>(cols,0.0));
-        db->SetDArray("cable_pos","dir_x",vector<double>(cols,0.0));
-        db->SetDArray("cable_pos","dir_y",vector<double>(cols,0.0));
-        db->SetDArray("cable_pos","dir_z",vector<double>(cols,1.0));
+        db->Set("cable_pos","x",cable_x);
+        db->Set("cable_pos","y",cable_y);
+        db->Set("cable_pos","z",vector<double>(cols,0.0));
+        db->Set("cable_pos","dir_x",vector<double>(cols,0.0));
+        db->Set("cable_pos","dir_y",vector<double>(cols,0.0));
+        db->Set("cable_pos","dir_z",vector<double>(cols,1.0));
     }
 
 }

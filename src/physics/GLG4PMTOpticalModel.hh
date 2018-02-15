@@ -15,11 +15,13 @@
 
 #include "G4VFastSimulationModel.hh"
 #include "G4MaterialPropertyVector.hh"
+#include "G4OpticalSurface.hh"
 #include "G4LogicalVolume.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4UImessenger.hh"
 #include <utility>
 #include <vector>
+#include <map>
 
 class G4UIcommand;
 class G4UIdirectory;
@@ -41,7 +43,7 @@ public:
   // 28-Jul-2006 WGS: Must define a G4Region for Fast Simulations
   // (change from Geant 4.7 to Geant 4.8).
   GLG4PMTOpticalModel (G4String, G4Region*, G4LogicalVolume* body, 
-                       G4LogicalBorderSurface *pc_log_surface, 
+                       G4OpticalSurface *op_surface, 
 		       double efficiency_correction=1.0,
 		       double dynodeTop = 0.0, double dynodeRadius = 0.0,
 		       double prepulseProb = 0.0);
@@ -61,12 +63,13 @@ public:
   void SetNewValue(G4UIcommand * command,G4String newValues);
   G4String GetCurrentValue(G4UIcommand * command);
   
-  void SetBEfficiencyCorrection(std::vector<std::pair<int,double> > _BEffiCorr){BEfficiencyCorrection=_BEffiCorr;G4cout<<GetName()<<": B correction table set\n";}
-  void DumpBEfficiencyCorrectionTable()
+  void SetEfficiencyCorrection(std::map<int,double> _EffiCorr){EfficiencyCorrection=_EffiCorr;G4cout<<GetName()<<": Individual efficiency correction table set\n";}
+  void DumpEfficiencyCorrectionTable()
   {
-    G4cout<<"Magnetic correction table for the PMT efficiencies of "<<GetName()<<":\nPMT ID  corr. factor\n";
-    for(int i=0;i<int(BEfficiencyCorrection.size());i++)
-      G4cout<<BEfficiencyCorrection[i].first<<","<<BEfficiencyCorrection[i].second<<"\n";
+    G4cout<<"Individual correction table for the PMT efficiencies of "<<GetName()<<":\nPMT ID  corr. factor\n";
+    for(std::map<int,double>::iterator iter = EfficiencyCorrection.begin(); iter != EfficiencyCorrection.end(); iter++) {
+      G4cout<<iter->first<<","<<iter->second<<"\n";
+    }
   }
   
 private:
@@ -128,7 +131,7 @@ private:
 
   static double surfaceTolerance;
   
-  std::vector<std::pair<int,double> > BEfficiencyCorrection;
+  std::map<int,double> EfficiencyCorrection;
 };
 
 #endif

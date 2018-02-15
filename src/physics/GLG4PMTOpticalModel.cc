@@ -11,10 +11,10 @@
 */
 
 #include "GLG4PMTOpticalModel.hh"
-#include "GLG4PMTSD.hh"
+#include "GLG4VEventAction.hh"
+#include "GLG4HitPhoton.hh"
 
 #include "G4LogicalBorderSurface.hh"
-#include "G4OpticalSurface.hh"
 #include "G4MaterialPropertiesTable.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4TransportationManager.hh"
@@ -43,7 +43,7 @@ double GLG4PMTOpticalModel::surfaceTolerance = 0.0;
 GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
 					  G4Region* envelope_region,
 					  G4LogicalVolume* envelope_log,
-					  G4LogicalBorderSurface *pc_log_surface,
+					  G4OpticalSurface* pc_opsurf,
 					  double efficiency_correction,
 					  double dynodeTop,
 					  double dynodeRadius,
@@ -76,23 +76,7 @@ GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
   // be VERY careful about how to do this
   _inner2_phys= envelope_log->GetDaughter(1);
   _central_gap_phys = envelope_log->GetDaughter(2);
-  
-  if (pc_log_surface == NULL)
-    G4Exception(__FILE__, "Bad Properties", FatalException, "GLG4PMTOpticalModel: no photocathode logical surface!?!");
 
-#if (G4VERSION_NUMBER < 600 )
-  // it used to be so easy...
-  G4OpticalSurface* pc_opsurf= pc_log_surface->GetOpticalSurface();
-#else
-  // G4LogicalSurface::GetOpticalSurface() function was eliminated from Geant4
-  // version 6.  G4OpticalSurface now inherits from G4SurfaceProperty.
-  // We have to trust that the G4SurfaceProperty returned by
-  // pc_log_surface->GetSurfaceProperty() will be a G4OpticalSurface,
-  // and cast the pointer accordingly by faith alone!
-  G4OpticalSurface* pc_opsurf= (G4OpticalSurface*)
-    ( pc_log_surface->GetSurfaceProperty() );
-#endif
-  
   if (pc_opsurf == NULL)
     G4Exception(__FILE__, "Bad Properties", FatalException, "GLG4PMTOpticalModel: no photocathode optical surface!?!");
   G4MaterialPropertiesTable* pc_pt=
@@ -122,7 +106,7 @@ GLG4PMTOpticalModel::GLG4PMTOpticalModel (G4String modelName,
   _photon_energy= -1.0;
   
   //make sure the B efficiency table is initially empty
-  BEfficiencyCorrection.clear();
+  EfficiencyCorrection.clear();
 
   // add UI commands
   if ( fgCmdDir == NULL ) {
@@ -238,8 +222,6 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
   G4double energy;
   G4double n_glass;
   G4VSolid *envelope_solid = fastTrack.GetEnvelopeSolid();
-  G4VSensitiveDetector* detector=
-    fastTrack.GetEnvelopeLogicalVolume()->GetSensitiveDetector();
   enum EWhereAmI { kInGlass, kInVacuum } whereAmI;
   int ipmt= -1;
 
@@ -411,14 +393,14 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
     // "the track is absorbed", which is implemented correctly below for
     // the weight == 1 case, and as good as can be done for weight>1 case.
     G4double mean_N_pe= weight*A*collection_eff;
-    for(int i=0;i<int(BEfficiencyCorrection.size());i++)
-      if(BEfficiencyCorrection[i].first==ipmt){
-        if(BEfficiencyCorrection[i].second>=0)
-          mean_N_pe *=BEfficiencyCorrection[i].second;
-        else
-          G4cout<<"GLG4PMTOpticalModel["<<GetName()<<"] warning: magnetic efficiency correction for PMT "
-            <<ipmt<<" is "<<BEfficiencyCorrection[i].second<<", resetting to 1\n";
+    if (EfficiencyCorrection.count(ipmt)) {
+      if (EfficiencyCorrection[ipmt]>=0) {
+        mean_N_pe *= EfficiencyCorrection[ipmt];
+      } else {
+        G4cout<<"GLG4PMTOpticalModel["<<GetName()<<"] warning: individual efficiency correction for PMT "
+          <<ipmt<<" is "<<EfficiencyCorrection[ipmt]<<", resetting to 1\n";
       }
+    }
     G4double ranno_absorb= G4UniformRand();
     G4int N_pe= (G4int)( mean_N_pe + (1.0-ranno_absorb) );
     // if the photon was transmitted into the vacuum in the last step, check 
@@ -437,21 +419,22 @@ GLG4PMTOpticalModel::DoIt(const G4FastTrack& fastTrack, G4FastStep& fastStep)
     }
 
     if (N_pe > 0) {
-      if ( detector != NULL && detector->isActive() )
-	((GLG4PMTSD *)detector)->SimpleHit( ipmt,
-					    time,
-					    energy,
-					    pos,
-					    dir,
-					    pol,
-					    N_pe,
-					    fastTrack.GetPrimaryTrack()->GetTrackID(),
-					    prepulse);
+      //GLG4PMTSD was doing this and nothing else, so move code here
+      GLG4HitPhoton* hit_photon = new GLG4HitPhoton();
+      hit_photon->SetPMTID((int)ipmt);
+      hit_photon->SetTime((double)time);
+      hit_photon->SetKineticEnergy((double)energy);
+      hit_photon->SetPosition((double)pos.x(), (double)pos.y(), (double)pos.z());
+      hit_photon->SetMomentum((double)dir.x(), (double)dir.y(), (double)dir.z());
+      hit_photon->SetPolarization((double)pol.x(), (double)pol.y(), (double)pol.z());
+      hit_photon->SetCount(N_pe);
+      hit_photon->SetTrackID(fastTrack.GetPrimaryTrack()->GetTrackID());
+      hit_photon->SetPrepulse(prepulse);
+      GLG4VEventAction::GetTheHitPMTCollection()->DetectPhoton(hit_photon);
       if(prepulse)
-	break;
-      if (_verbosity >= 2) {
-	G4cout << "GLG4PMTOpticalModel made " << N_pe << " pe\n";
-      }
+	    break;
+      if (_verbosity >= 2) 
+	    G4cout << "GLG4PMTOpticalModel made " << N_pe << " pe\n";
     }
     
     // Now maybe absorb the track.
@@ -727,7 +710,7 @@ GLG4PMTOpticalModel::SetNewValue(G4UIcommand * command, G4String newValues)
      _luxlevel= strtol((const char *)newValues, NULL, 0);
    }
    else if(commandName=="BcorrTable")
-     DumpBEfficiencyCorrectionTable();
+     DumpEfficiencyCorrectionTable();
    else{
      G4cerr << "No PMTOpticalModel command named " << commandName << G4endl;
    }

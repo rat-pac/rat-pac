@@ -58,6 +58,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     info << "Loading detector factory " << detector_factory << newline;
     DetectorFactory::DefineWithFactory(detector_factory,ldetector);
   } catch (DBNotFoundError &e) {
+    info << "DetectorConstruction: could not access " << e.table << "[" << e.index << "]." << e.field << endl;
     try {
       string geo_file = ldetector->GetS("geo_file");
       info << "Loading detector geometry from " << geo_file << newline;
@@ -65,6 +66,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
         Log::Die("DetectorConstruction: Could not open detector geometry");
       }
     } catch (DBNotFoundError &_e) {
+        info << "DetectorConstruction: could not access " << _e.table << "[" << _e.index << "]." << _e.field << endl;
         Log::Die("DetectorConstruction: Could not open geo_file or detector_factory");
     }
   }

@@ -1,6 +1,5 @@
 #include <RAT/GeoRevArrayFactory.hh>
 #include <RAT/PMTConstruction.hh>
-#include <RAT/GeoPMTParser.hh>
 #include <RAT/Log.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
 #include <CLHEP/Units/SystemOfUnits.h>

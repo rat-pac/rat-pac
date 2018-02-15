@@ -404,6 +404,9 @@ DBTable *DB::FindTable(std::string tblname, std::string index, int runNumber)
     }
   }
   
+  /*
+  // This code was not actually doing anything because the bytes were not being 
+  // tracked before in the first place, but keep commented for historical reasons.
   // 5) Flush out some tables if we need the space
   int newTableBytes = newTable->GetBytes();
   int serverTableBytes = 0;
@@ -421,6 +424,7 @@ DBTable *DB::FindTable(std::string tblname, std::string index, int runNumber)
     tables.erase(forDeletion.first);
     cerr << "Evicting " << forDeletion.first.name << "[" << forDeletion.first.index << "], run " << forDeletion.first.run << " (" << deleteSize << " bytes)\n";
   }
+  */
     
   // 6) Add this table to the memory cache
   simple_ptr_nocopy<DBTable> newTablePtr(newTable);
@@ -441,45 +445,6 @@ DBTable *DB::FindTable(std::string tblname, std::string index, int runNumber)
 
   return newTable;
 }
-
-void DB::SetI(std::string tblname, std::string index, std::string fieldname, int val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetI(fieldname, val);
-}
-
-void DB::SetD(std::string tblname, std::string index, std::string fieldname, double val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetD(fieldname, val);
-}
-
-
-void DB::SetS(std::string tblname, std::string index, std::string fieldname, std::string val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetS(fieldname, val);
-}
-
-  
-void DB::SetIArray(std::string tblname, std::string index, std::string fieldname, const std::vector<int> &val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetIArray(fieldname, val);
-}
-
-void DB::SetDArray(std::string tblname, std::string index, std::string fieldname, const std::vector<double> &val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetDArray(fieldname, val);
-}
-
-void DB::SetSArray(std::string tblname, std::string index, std::string fieldname, const std::vector<std::string> &val)
-{
-  DBTable *t = FindOrCreateTable(tblname, index, -1);
-  t->SetSArray(fieldname, val);
-}
-
 
 DBTable *DB::FindOrCreateTable(std::string tblname, std::string index, int runNumber)
 {

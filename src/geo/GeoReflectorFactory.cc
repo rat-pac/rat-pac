@@ -5,8 +5,8 @@
 #include <G4SubtractionSolid.hh>
 #include <G4DisplacedSolid.hh>
 #include <RAT/UnionSolidArray.hh>
-#include <RAT/PMTConstruction.hh>
-#include <RAT/GeoPMTParser.hh>
+#include <RAT/ToroidalPMTConstruction.hh>
+#include <RAT/PMTInfoParser.hh>
 #include <RAT/Log.hh>
 #include <G4PVPlacement.hh>
 #include <RAT/Materials.hh>
@@ -71,18 +71,18 @@ G4VPhysicalVolume *GeoReflectorFactory::Construct(DBLinkPtr table)
 
   string pmt_table = table->GetS("pmt_table");
   DBLinkPtr lgeo_pmt = DB::Get()->GetLink("GEO", pmt_table);
-  GeoPMTParser pmt_parser(lgeo_pmt);
-  PMTConstructionParams params = pmt_parser.GetPMTParams();
-  PMTConstruction pmtConstruct(params);
-  G4VSolid *pmtBody = pmtConstruct.NewBodySolid("dummy");
-
+  PMTInfoParser pmt_parser(lgeo_pmt,mother_name);
+  DBLinkPtr lpmt_model = DB::Get()->GetLink("PMT", lgeo_pmt->GetS("pmt_model"));
+  ToroidalPMTConstruction pmtConstruct(lpmt_model,mother);
+  G4VSolid *pmtBody = pmtConstruct.BuildSolid("dummy");
+  
   vector<G4ThreeVector> pmtloc = pmt_parser.GetPMTLocations();
   int max_pmts = pmtloc.size();
 
   vector<G4VSolid *> dimples_whole(max_pmts);
   vector<G4VSolid *> dimples_in(max_pmts);
   vector<G4VSolid *> dimples_out(max_pmts);
-
+    
   for (int pmtID = 0; pmtID < max_pmts; pmtID++) {
     G4String name_in = "reflector_in" + ::to_string(pmtID);
     G4String name_out = "reflector_out" + ::to_string(pmtID);

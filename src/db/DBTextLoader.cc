@@ -360,11 +360,11 @@ DBTable *Parser::Next()
 	state = STATE_VAL;
 
 	switch (toktype) {
-	case Tokenizer::TYPE_STRING: tbl->SetS(identifier, tokenizer.Token());
+	case Tokenizer::TYPE_STRING: tbl->Set(identifier, tokenizer.Token());
 	  break;
-	case Tokenizer::TYPE_INTEGER: tbl->SetI(identifier, tokenizer.AsInt());
+	case Tokenizer::TYPE_INTEGER: tbl->Set(identifier, tokenizer.AsInt());
 	  break;
-	case Tokenizer::TYPE_DOUBLE: tbl->SetD(identifier, tokenizer.AsDouble());
+	case Tokenizer::TYPE_DOUBLE: tbl->Set(identifier, tokenizer.AsDouble());
 	  break;
 	default:
 	  assert(0); // should never get here
@@ -416,9 +416,9 @@ DBTable *Parser::Next()
 	// Allow array to be closed after a comma (to be nice)
 	state = STATE_VAL;
 	switch (array_type) {
-	case Tokenizer::TYPE_STRING: tbl->SetSArray(identifier, string_array); break;
-	case Tokenizer::TYPE_INTEGER: tbl->SetIArray(identifier, integer_array); break;
-	case Tokenizer::TYPE_DOUBLE: tbl->SetDArray(identifier, double_array); break;
+	case Tokenizer::TYPE_STRING: tbl->Set(identifier, string_array); break;
+	case Tokenizer::TYPE_INTEGER: tbl->Set(identifier, integer_array); break;
+	case Tokenizer::TYPE_DOUBLE: tbl->Set(identifier, double_array); break;
 	case Tokenizer::TYPE_ERROR:
 	  tokenizer.RaiseError("Empty arrays not allowed");
 	  break;
@@ -436,9 +436,9 @@ DBTable *Parser::Next()
 	  && tokenizer.Token() == "]") {
 	state = STATE_VAL;
 	switch (array_type) {
-	case Tokenizer::TYPE_STRING: tbl->SetSArray(identifier, string_array); break;
-	case Tokenizer::TYPE_INTEGER: tbl->SetIArray(identifier, integer_array); break;
-	case Tokenizer::TYPE_DOUBLE: tbl->SetDArray(identifier, double_array); break;
+	case Tokenizer::TYPE_STRING: tbl->Set(identifier, string_array); break;
+	case Tokenizer::TYPE_INTEGER: tbl->Set(identifier, integer_array); break;
+	case Tokenizer::TYPE_DOUBLE: tbl->Set(identifier, double_array); break;
 	case Tokenizer::TYPE_ERROR:
 	  tokenizer.RaiseError("Empty array not allowed");
 	  break;
@@ -570,13 +570,13 @@ std::vector<DBTable *> DBTextLoader::parse(std::string filename)
           run_range[0] = run_range[1] = 0;
 
           // Add modern run_range field
-          table->SetIArray("run_range", run_range);
+          table->Set("run_range", run_range);
           table->SetRunRange(run_range[0], run_range[1]);
         } else if (valid_begin[0] == -1 && valid_begin[1] == -1 && valid_end[0] == -1 && valid_end[1] == -1) {
           run_range[0] = run_range[1] = -1;
           
           // Add modern run_range field
-          table->SetIArray("run_range", run_range);
+          table->Set("run_range", run_range);
           table->SetRunRange(run_range[0], run_range[1]);          
         } else {
           cerr << "Table has old-style valid_begin/valid_end arrays not set to default or user plane.  Discarding..."
