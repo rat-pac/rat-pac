@@ -14,31 +14,31 @@ namespace RAT {
     {
 	
 	string volume_name = table->GetIndex();
-	G4double r_max = table->GetD("r_max") * mm;
-	G4double size_z = table->GetD("size_z") * mm;   // this is the lenght of the LG face to the PMT closest point
+	G4double r_max = table->GetD("r_max") * CLHEP::mm;
+	G4double size_z = table->GetD("size_z") * CLHEP::mm;   // this is the lenght of the LG face to the PMT closest point
 	
 	// Optional parameters
 	G4double r_min = 0.0;
-	try { r_min = table->GetD("r_min") * mm; } 
+	try { r_min = table->GetD("r_min") * CLHEP::mm; } 
 	catch (DBNotFoundError &e) { };
 	G4double phi_start = 0.0;
-	try { phi_start = table->GetD("phi_start") * deg; } 
+	try { phi_start = table->GetD("phi_start") * CLHEP::deg; } 
 	catch (DBNotFoundError &e) { };
-	G4double phi_delta = twopi;
-	try { phi_delta = table->GetD("phi_delta") * deg; } 
+	G4double phi_delta = CLHEP::twopi;
+	try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; } 
 	catch (DBNotFoundError &e) { };
 
 	// can cut out a sphereical region from all the solids of 
 	// radius sphere_cut_r.
         // requires that rescale_r be set.
 	G4double s_cut_r = -1.0;
-	try { s_cut_r = table->GetD("sphere_cut_r") * mm; } 
+	try { s_cut_r = table->GetD("sphere_cut_r") * CLHEP::mm; } 
 	catch (DBNotFoundError &e) { };
 	
 	// can rescale Solid radius from mother volume center for
 	// case where Solids have spherical layout symmetry
 	G4double rescale_r = -1.0;
-	try { rescale_r = table->GetD("rescale_radius") * mm; } 
+	try { rescale_r = table->GetD("rescale_radius") * CLHEP::mm; } 
 	catch (DBNotFoundError &e) { };
 
   int preflip=0;
@@ -61,7 +61,7 @@ namespace RAT {
 	}
 
   if(preflip){
-    G4RotationMatrix* fliprot=new G4RotationMatrix(G4ThreeVector(1,0,0),pi);
+    G4RotationMatrix* fliprot=new G4RotationMatrix(G4ThreeVector(1,0,0),CLHEP::pi);
     BaseSolid=new G4DisplacedSolid(volume_name+"flipped",BaseSolid,fliprot,G4ThreeVector(0,0,0));
   }
 

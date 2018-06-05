@@ -3,6 +3,8 @@
 #include <RAT/Log.hh>
 #include <RAT/DB.hh>
 #include <Randomize.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 #include <G4Event.hh>
 #include <G4ParticleTable.hh>
 #include <G4PrimaryParticle.hh>
@@ -35,7 +37,7 @@ namespace RAT {
       // Pick direction isotropically
       G4ThreeVector mom;
       double theta = acos(2.0 * G4UniformRand() - 1.0);
-      double phi = 2.0 * G4UniformRand() * pi;
+      double phi = 2.0 * G4UniformRand() * CLHEP::pi;
 
       // Use fixed energy unless spectrum was provided
       double energy;
@@ -54,7 +56,7 @@ namespace RAT {
       G4PrimaryParticle* photon = new G4PrimaryParticle(fOpticalPhoton, 
                                                         mom.x(),mom.y(),mom.z());
       // Generate random polarization
-      phi = (G4UniformRand()*2.0-1.0)*pi;
+      phi = (G4UniformRand()*2.0-1.0)*CLHEP::pi;
       G4ThreeVector e1 = mom.orthogonal().unit();
       G4ThreeVector e2 = mom.unit().cross(e1);
       G4ThreeVector pol = e1*cos(phi)+e2*sin(phi);
@@ -95,7 +97,7 @@ namespace RAT {
       std::vector<double> wlarr = loptics->GetDArray("SCINTILLATION_value1");
       std::vector<double> wlamp = loptics->GetDArray("SCINTILLATION_value2");
       for (unsigned i=0; i<wlarr.size(); i++)
-	wlarr[i] = hbarc * twopi / (wlarr[i] * nm);
+	wlarr[i] = CLHEP::hbarc * CLHEP::twopi / (wlarr[i] * CLHEP::nm);
       if(wlarr.front() > wlarr.back()){
 	reverse(wlarr.begin(), wlarr.end());
 	reverse(wlamp.begin(), wlamp.end());
@@ -128,7 +130,7 @@ namespace RAT {
       fRndmEnergy = new CLHEP::RandGeneral(energyResample, nbins);
     }
     else
-      fEnergy = hbarc * twopi / (wavelength * nm);
+      fEnergy = CLHEP::hbarc * CLHEP::twopi / (wavelength * CLHEP::nm);
 
     double exp = 0.0;
     is >> exp;

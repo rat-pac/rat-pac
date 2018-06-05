@@ -9,6 +9,8 @@
 #include <G4UserLimits.hh>
 #include <string>
 #include <vector>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -47,11 +49,11 @@ namespace RAT {
     
     for (int i=0; i < count; i++) {
       string bubble_name = name + dformat("%d", i);
-      float radius = G4RandGauss::shoot(radius_mean, radius_sigma) * mm;
+      float radius = G4RandGauss::shoot(radius_mean, radius_sigma) * CLHEP::mm;
       if (radius < 0)
-        radius = 0.001 * radius_mean * mm;
+        radius = 0.001 * radius_mean * CLHEP::mm;
         
-      G4VSolid *solid_bubble = new G4Sphere(bubble_name, 0, radius, /*phi*/ 0, twopi, /*theta*/ 0, pi);
+      G4VSolid *solid_bubble = new G4Sphere(bubble_name, 0, radius, /*phi*/ 0, CLHEP::twopi, /*theta*/ 0, CLHEP::pi);
       G4LogicalVolume *logi_bubble = new G4LogicalVolume(solid_bubble, material, bubble_name);
       
       // Pick location for bubble touching surface of volume

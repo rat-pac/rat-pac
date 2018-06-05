@@ -16,7 +16,7 @@ namespace RAT {
       void Print() const {}; // required for G4VUserPrimaryVertexInformation
 
       /** Parent particles of interaction */
-      G4PrimaryParticle* GetParentParticle(Int_t i) { return parents[i]; }
+      G4PrimaryParticle* GetParentParticle(int i) { return parents[i]; }
       int GetParentParticleCount() const { return parents.size(); }
       void AddNewParentParticle(G4PrimaryParticle* part) {
         parents.push_back(part);

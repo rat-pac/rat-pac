@@ -1,6 +1,8 @@
 #include <RAT/GeoRevolutionFactory.hh>
 #include <G4Polycone.hh>
 #include <RAT/Log.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -36,10 +38,10 @@ G4VSolid *GeoRevolutionFactory::ConstructSolid(DBLinkPtr table)
 
     // Optional parameters
     G4double phi_start = 0.0;
-    try { phi_start = table->GetD("phi_start") * deg; } 
+    try { phi_start = table->GetD("phi_start") * CLHEP::deg; } 
     catch (DBNotFoundError &e) { };
-    G4double phi_delta = twopi;                  
-    try { phi_delta = table->GetD("phi_delta") * deg; } 
+    G4double phi_delta = CLHEP::twopi;                  
+    try { phi_delta = table->GetD("phi_delta") * CLHEP::deg; } 
     catch (DBNotFoundError &e) { };
     
     G4double *z_array;
@@ -52,9 +54,9 @@ G4VSolid *GeoRevolutionFactory::ConstructSolid(DBLinkPtr table)
     
     for ( G4int i=0; i < numZPlanes; ++i )
     {
-	z_array[i] = z[i] * mm;
-	r_array[i] = fabs(r_max[i]) * mm;
-	r_min_array[i] = fabs(r_min[i]) * mm;
+	z_array[i] = z[i] * CLHEP::mm;
+	r_array[i] = fabs(r_max[i]) * CLHEP::mm;
+	r_min_array[i] = fabs(r_min[i]) * CLHEP::mm;
     }
 
     if(solid)

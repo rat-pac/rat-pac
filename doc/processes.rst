@@ -1,5 +1,5 @@
-Gsim Physics Processes
-----------------------
+Physics Processes
+-----------------
 
 The standard RAT simulation includes many standard GEANT4 physics processes, as well as some custom processes:
 
@@ -72,6 +72,14 @@ The specification of delay distribution is described in the RATDB section below.
 Wavelength Shifting
 ```````````````````
 
+There are a few ways of doing bulk wavelength shifting in RAT. The default
+behavior is for GLG4Scint to handle opticalphotons as well as charged
+particles. Alternatively, you can also let GLG4Scint handle the primary
+scintillation, then use Geant4's G4OpWLS process or the custom BNLOpWLSModel
+to do the reemission.
+
+GLG4Scint Model
+'''''''''''''''
 The previous sections only apply to particles other than optical photons.  Optical photons are ignored by GLG4Scint, *except* when the photon is absorbed inside the medium, but not at a geometry boundary.  If the photon is absorbed in the bulk, then it is possible that it was absorbed by wavelength-shifter present in the scintillator.
 
 The decision whether to reemit the photon is made by looking at the REEMISSION_PROB table, which gives the Poisson mean number of photons number of photons produced per photon absorbed.  (NOTE: This model is used because TPB shifts extreme UV light to visible light, so it is energetically possible for more than one photon to be produced.  This model of reemission may not be applicable to all wavelength shifters.)  The number of outgoing photons is drawn from this Poisson distribution.
@@ -80,8 +88,42 @@ The spectrum of the outgoing photons is drawn from a separate distribution from 
 
 Wavelength shifted photons are delayed from their absorption time according to the same time distribution as the original scintillator.  (WARNING: THIS IS ALMOST CERTAINLY WRONG FOR MEDIA WITH BOTH SCINTILLATOR AND WAVELENGTH SHIFTER.  SHOULD FIX!)
 
+G4OpWLS Model
+'''''''''''''
+Choose this model in the macro with::
+
+    /PhysicsList/setOpWLS g4
+
+before calling initialize. See the Geant4 documentation for more details on
+the required material properties.
+
+BNLOpWLS Model
+''''''''''''''
+Choose this model in the macro with::
+
+    /PhysicsList/setOpWLS bnl
+
+This was written by L. Bignell at BNL to better model measurements of
+scintillator cocktails with secondary fluors. The reemission spectrum (and
+probability) is sampled depending on the photon wavelength, based on
+measured data. The file to read this data from is in RATDB,
+in `BNL_WLS_MODEL[].data_path`, which defaults to
+`data/ExEmMatrix.root`. The reemission time can be set to
+either a delta function or an exponential distribution, but currently is
+hard-coded to use an exponential. The latter is set through the property in
+the OPTICS table `WLSTIMECONSTANT`.
+
+This model also requires OPTICS properties `QUANTUMYIELD` (vector, decides
+how many secondary photons to generate) and `WLSCOMPONENT` (vector, WLS
+wavelength intensity) for WLS materials.
+
+This WLS model has been validated by Chao Zhang of BNL. See
+these slides for details:
+:download:`bnl_wls_validation.pdf <bnl_wls_validation.pdf>`.
+
 RATDB Fields
-''''''''''''
+````````````
+This section needs work!
 
 All of the RATDB fields which control scintillation are found in the OPTICS table for that material.  The following table describes these parameters.  Note that '''x''' denotes a slot where a particle name (neutron,alpha,Ar40,Ar39,Ne20) which can be substituted in for particle-specific scintillation behavior.  For example, one could create a field named SCINTILLATIONalpha_option.  The default case would be written SCINTILLATION_option.
 

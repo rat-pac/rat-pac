@@ -35,7 +35,8 @@ Run* RunStore::InstanceGetRun(int run) {
   
   // Scan quickly through tree
   //fReadTree->SetBranchStatus("*", 0); //for some reason this segfaults
-  fReadTree->SetBranchStatus("runID", 1);
+  //fReadTree->SetBranchStatus("runID", 1);
+  fReadTree->SetBranchStatus("id", 1);
   
   // Have to reset branch address after calling SetBranchStatus
   // in case fReadTree is TChain

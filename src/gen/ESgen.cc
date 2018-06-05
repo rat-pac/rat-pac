@@ -13,7 +13,7 @@
 // from IBDgen.
 
 #include <RAT/ESgen.hh>
-#include <RAT/ESgenMessenger.hh>
+#include <RAT/ESCrossSec.hh>
 #include <RAT/DB.hh>
 
 #include <G4ParticleDefinition.hh>
@@ -21,208 +21,284 @@
 #include <G4ThreeVector.hh>
 #include <Randomize.hh>
 #include <CLHEP/Units/PhysicalConstants.h>
+#include <TGraph.h>
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <TMath.h>
 
 #include <cmath>
 
+using namespace CLHEP;
+
 namespace RAT {
 
-  // WGS: Constants copied from various places to make the code work.
-  const double XMaxDefault  = 1e-45; // Reasonable minimum for x-section (cm^2).
-  const double GFERMI = 1.16639e-11 / MeV / MeV;
-  const double XcMeVtoCmsqrd = 0.389379292e-21;
+  // This class is a helper to take care of the type of spectrum that is going to be used and
+  // reads the RATDB entries accordingly.
 
-  // WGS: We have to start from some value of sin2theta; use the stanard-model value:
-  const double ESgen::WEAKANGLE = 0.2227;
-  const int    ESgen::NTRIAL    = 10000;
- 
-  ESgen::ESgen()
+  ESgen::ESgen() : fNuType("pep"), fNuFlavor("nue"),fXS(NULL), fNuSpectrum(NULL), fFluxMax(0.),
+  fGenLoaded(false),fSpectrumRndm(0),fDBName("SOLAR")
   {
-    // Initialize everything.
-    Reset();
+    // Initialize pointers
+    fMassElectron = electron_mass_c2;
 
-    // Create a messenger to allow the user to change some ES parameters.
-    messenger = new ESgenMessenger(this);
+    // Load the default generator
+    // Later, depending on the options passed this can be reloaded
+    // Data needed to Load the stuff: type of spectrum (solar or ibd, flux and flavor)
+    LoadGenerator();
+  }
 
-    // Get parameters from database. Note that we get the flux from the
-    // IBD values; we assume that the flux for ES is the same as the
-    // flux for IBD.
-    DBLinkPtr libd = DB::Get()->GetLink("IBD");
+  void ESgen::LoadGenerator() {
+    // Check if the generator is already loaded.
+    // If it is, do nothing
+    if (fGenLoaded)
+      return;
 
-    Emin = libd->GetD("emin");
-    Emax = libd->GetD("emax");
-    // Flux function
-    rmpflux.Set(libd->GetDArray("spec_e"), libd->GetDArray("spec_flux"));
-  
-    // Other useful numbers
-    FluxMax = rmpflux(Emin);
+    // The parameters are taken from the database, depending of the option passed.
+    // The original test with IBD data should still work
+    DBLinkPtr linkdb;
 
-    // Get the electron mass.
-    G4ParticleDefinition* electron = G4ParticleTable::GetParticleTable()->FindParticle("e-");  
-    massElectron = electron->GetPDGMass();
+    if (fDBName != "SOLAR") {
+      // should be IBD data
+      linkdb = DB::Get()->GetLink(fDBName);
+      fNuFlavor = "nuebar";
+    }else{
+      // Solar generator
+      // The nu type is obtained from the job options (it defaults to pep)
+      linkdb = DB::Get()->GetLink(fDBName,fNuType);
+      fTotalFlux = linkdb->GetD("flux");
+    }
+    fEnuMin = linkdb->GetD("emin");
+    fEnuMax = linkdb->GetD("emax");
+    fEnuTbl = linkdb->GetDArray("spec_e");
+    fFluxTbl = linkdb->GetDArray("spec_flux");
+
+    // Check what type of ES generator we are dealing with
+    // Depending on type the parameters and cross section pointers
+    // are initialized differently
+    
+    fNuSpectrum = new TGraph(fEnuTbl.size(),&fEnuTbl[0],&fFluxTbl[0]);
+
+    // initialize the cross-section
+    if (fXS != 0) {
+      delete fXS;
+    }
+    fXS = new ESCrossSec(fNuFlavor);
+
+    // To sample neutrino energy need to scale flux by total
+    // cross section at that neutrino energy
+    std::vector<double> csScaledFluxTbl(fFluxTbl.size(),0);
+    for (size_t i=0;i<csScaledFluxTbl.size();i++){
+      csScaledFluxTbl[i] = fFluxTbl[i] * fXS->Sigma(fEnuTbl[i]);
+    }
+
+
+    // If random sampler hasn't been initialized yet, lets do it now
+    if (!fSpectrumRndm) {
+      // Be7 is always a particular case due to its discrete nature
+      // The last parameter is set to 1 to disallow interpolations
+      if (fNuType == "be7") {
+        fSpectrumRndm = new CLHEP::RandGeneral(&csScaledFluxTbl[0],fFluxTbl.size(),1);
+      } else {
+        // set interpolation bit to 0 to allow for interpolations in continuous
+        // spectra
+        fSpectrumRndm = new CLHEP::RandGeneral(&csScaledFluxTbl[0],fFluxTbl.size(),0);
+      }
+    }
+
+    // If it reaches this point without failing then everything should be fine
+    fGenLoaded = true;
   }
 
 
   ESgen::~ESgen()
   {
-    // I compulsively delete unused pointers.
-    if ( messenger != 0 )
-      {
-	delete messenger;
-	messenger = 0;
-      }
+    if ( fXS != 0 )
+    {
+      delete fXS;
+      fXS = 0;
+    }
+
+    if ( fNuSpectrum  != 0) {
+      delete fNuSpectrum;
+      fNuSpectrum = 0;
+    }
+
+    if (fSpectrumRndm) {
+      delete fSpectrumRndm;
+      fSpectrumRndm = 0;
+    }
+
   }
 
 
-  CLHEP::HepLorentzVector ESgen::GenerateEvent(const G4ThreeVector& theNeutrino)
+  void ESgen::GenerateEvent(const G4ThreeVector& theNeutrino,
+      G4LorentzVector& nu_incoming,
+      G4LorentzVector& electron)
   {
-    //
-    //  Check if the maximum throwing number has been set.
-    //
-    if (!GetNormFlag()) SetXSecMax(NTRIAL);
-    double XSecNorm = GetXSecMax();
-  
-    // Throw values against a cross-section.
-    bool passed=false;
-    double E, Nu;
 
-    while(!passed){
-      // Pick a random E and Nu.
-      E = GetRandomNumber(Emin, Emax);
-      Nu = GetRandomNumber(0., E);
-      
-      // Decided whether to draw again based on relative cross-section.
-      float XCtest = XSecNorm * FluxMax * GetRandomNumber(0.,1.);
-      double XCWeight = GetXSec(E, Nu);
-      double FluxWeight = rmpflux(E);
-      passed = XCWeight * FluxWeight > XCtest;
+    // Check if the generator has been loaded successfully
+    // For now just throw something that can be caught at an upper level.
+    // Need to define a set of specific exceptions
+    if (!fGenLoaded) {
+      G4Exception("[ESgen]::GenerateEvent","ArgError",FatalErrorInArgument,"Vertex generation called but it seems that it is not ready yet.");
     }
 
-    //
-    //  Calculate the neutrino pT and incoming angle
-    //
-    G4double pT = E * theNeutrino.perp()/theNeutrino.mag();
-    G4double pTq = asin(pT/E);
+    ///!
+    ///! Have to be careful with the line neutrino types (pep)
+    ///! and even more careful with the double line (be7)
+    ///!
 
-    //
-    //  Set kinematic variables from kinetic energy
-    //
-    G4double X = 1.;
-    G4double Y = Nu / E;
-    G4double Q2  = 2. * E * X * Y * massElectron;
-    G4double sin2q = Q2 / (4. * E * (E - Nu));
-    G4double theta_lab = 2. * asin(sqrt(sin2q)) + pTq;
-    G4double phi = GetRandomNumber(0., 2.*M_PI);
+    // Throw values against a cross-section.
+    //bool passed=false;
+    double Enu, Te;
 
-    //
-    //  Now that energy/Q2 is selected, write a momentum transfer 4-vector q.
-    //
-    G4double qp = sqrt(pow(Nu,2) + Q2);
-    CLHEP::HepLorentzVector qVector;
-    qVector.setPx(qp * sin(theta_lab) * cos(phi));
-    qVector.setPy(qp * sin(theta_lab) * sin(phi));
-    qVector.setPz(qp * cos(theta_lab));
-    qVector.setE(Nu);
+    // Updated sampler (orders of magnitude faster)
+    // Given the neutrino energy, use the differential cross section
+    // shape and sample from it.
+    Enu = SampleNuEnergy()*MeV;
+    Te = SampleRecoilEnergy(Enu)*MeV;
 
-    //
-    // Let pe_new = pe - (pv - pv_new) == pe - q;
-    //
-    CLHEP::HepLorentzVector theElectron;
-    theElectron.setE(massElectron);
-    theElectron += qVector;
 
-    return theElectron;
+    // from the incoming neutrino we have already the initial direction.
+    // The final electron direction will follow that.
+
+    // Now we have :
+    // - the initial direction of the neutrino (unnormalized)
+    // - the energy of the neutrino
+    // - the recoil energy of the electron
+
+    // build the 4-momentum vector of the neutrino
+    // We will only use the neutrino initial momentum as a baseline to add up to the electron direction
+
+    G4double theta_e = acos(sqrt((Te*(fMassElectron+Enu)*(fMassElectron+Enu))/(2*fMassElectron*Enu*Enu + Enu*Enu*Te)));
+
+    G4double tot_Ee = Te + fMassElectron;
+    G4double p_e = sqrt(tot_Ee*tot_Ee - fMassElectron*fMassElectron);
+
+    // We have theta. Now randomly generate phi
+    G4double phi_e = twopi*G4UniformRand();
+
+    // This is the incoming neutrino information
+    nu_incoming.setVect(theNeutrino*Enu);
+    nu_incoming.setE(Enu);
+
+    // compute electron 4-momentum
+    G4ThreeVector e_mom(p_e*theNeutrino);
+
+    // Rotation from nu direction into electron direction
+    G4ThreeVector rotation_axis = theNeutrino.orthogonal();
+    rotation_axis.rotate(phi_e,theNeutrino);
+    e_mom.rotate(theta_e,rotation_axis);
+    electron.setVect(e_mom);
+    electron.setE(tot_Ee);
+
+
+    // TODO: If we want to keep track of the outgoing neutrino have to add it
+    // here as well and store the information in a new argument G4LorentzVector variable
+    // For the moment we only pass the incoming neutrino information back.
   }
 
   void ESgen::Reset()
   {
-    XSecMax = 0.0;
-    SetNormFlag(false);
-    SetMixingAngle(WEAKANGLE);
-    SetNeutrinoMoment(0.0);
+    // Reset the falg dependent objects.
+    // After this method a call to LoadGenerator should always follow
+    if (fNuSpectrum) {
+      delete fNuSpectrum;
+      fNuSpectrum = 0;
+    }
+    if (fSpectrumRndm) {
+      delete fSpectrumRndm;
+      fSpectrumRndm = 0;
+    }
+
+    LoadGenerator();
   }
 
   void ESgen::Show()
   {
-    G4cout << "Elastic Scatteing Settings:" << G4endl;
-    G4cout << "Weak Mixing Angle (sinsq(ThetaW)):" << GetMixingAngle() << G4endl;
-    G4cout << "Neutrino Magnetic Moment: " << GetMagneticMoment() << G4endl;
+    G4cout << "Elastic Scattering Settings:\n";
+    G4cout << "NuType : " << fNuType.c_str() << "\n";
+
   }
 
-  void ESgen::SetMixingAngle(double sin2thw)
-  {
-    if ((sin2thw < 0.) || (sin2thw > 1.)) 
-      {
-	G4cerr << "Error in value setting." << G4endl;
-	return;
-      }
-    SinSqThetaW = sin2thw;
+  //
+  // If we change the neutrino type we should reload the generator
+  // to force it to reload the spectra from the database
+  void ESgen::SetNuType(const G4String &nutype) {
+
+    if (fGenType != nutype ) {
+      fNuType = nutype;
+      fGenLoaded = false;
+      LoadGenerator();
+    }
   }
 
-  void ESgen::SetNeutrinoMoment(double vMu)
-  {
-    if (vMu < 0.) 
-      {
-	G4cerr << "Error in value setting." << G4endl;
-	return;
-      }
-    MagneticMoment = vMu;
+  //
+  // If we change the neutrino flavor we should reload the generator
+  // to force it to reload the spectra from the database
+  void ESgen::SetNuFlavor(const G4String &nuflavor) {
+
+    if (fNuFlavor != nuflavor ) {
+      fNuFlavor = nuflavor;
+      fGenLoaded = false;
+      LoadGenerator();
+    }
   }
 
-  double ESgen::GetXSec(double Enu, double T){
-
-    double XC = 0.;
-
-    //  Set up constants for cross-section scale.  
-    double XCunits = XcMeVtoCmsqrd;
-    double Sigma0 = GFERMI * GFERMI * massElectron / (2. * M_PI);
-
-    //  Set up weak mixing parameters & neutrino magnetic moment.
-    double sin2thw = GetMixingAngle();
-    double vMu = GetMagneticMoment();
-    double g_v = 2.*sin2thw + 0.5;
-    double g_a = -0.5;
-
-    //  Reject events in prohibited regions.
-    if (T > Enu) return 0.;
-
-    //  Compute differential cross-section
-    XC = pow((g_v + g_a),2)
-      +pow((g_v - g_a),2)*pow((1.-T/Enu),2)
-      +(pow(g_a,2) - pow(g_v,2))*(massElectron * T / pow(Enu,2));
-  
-    XC *= Sigma0 ;
-
-    //  Add term due to neutrino magnetic moment.
-    static const double alphainv = 1./fine_structure_const;
-    if (T > 0.) XC += (M_PI / pow(alphainv,2) * pow(vMu,2) / pow(massElectron,2)) * (1. - T/Enu)/T;
-
-    //  Convert to detector units and return.
-    XC *= XCunits;
-
-    return XC;
+  void ESgen::SetDBName(const G4String name) {
+    if (fDBName != name) {
+      fDBName = name;
+      fGenLoaded = false;
+      LoadGenerator();
+    }
   }
 
-  void ESgen::SetXSecMax(int ntry)
-  {
-    double xMax = XMaxDefault;
+  // This function samples the energy spectrum of the chosen neutrino and
+  // decides from it the proper energy.
+  // Keep in mind that pep is always the same, but be7 is a *very* special case
+  G4double ESgen::SampleRecoilEnergy(G4double Enu) {
 
-    for(int i = 0; i < ntry+1; i++)
-      {
-	double Enu = GetRandomNumber(0.,10.);
-	double T = GetRandomNumber(0.,Enu);    
-	double xsec = GetXSec(Enu,T);    
-	if (xsec > xMax) xMax = xsec;    
-      }
+    G4double Te = 0.0;
 
-    XSecMax = xMax;
-    SetNormFlag(true);
+    // Get the shape of the differential cross section.
+    TGraph *dsigmadt = fXS->DrawdSigmadT(Enu);
+
+    // Interpolate between the discrete points
+    CLHEP::RandGeneral *rndm = new CLHEP::RandGeneral(dsigmadt->GetY(),dsigmadt->GetN(),0);
+
+    Te = rndm->shoot()*(dsigmadt->GetX())[dsigmadt->GetN()-1];
+    delete rndm;
+    delete dsigmadt;
+
+    return Te;
   }
 
-  double ESgen::GetRandomNumber(double rmin, double rmax)
-  {
-    double rnd = G4UniformRand(); // random number from 0 to 1.
-    double value = rmin + (rmax - rmin) * rnd;
-    return value;
+  // This function samples the energy spectrum of the chosen neutrino and
+  // decides from it the proper energy.
+  // Keep in mind that pep is always the same, but be7 is a *very* special case
+  G4double ESgen::SampleNuEnergy() {
+    G4double Enu = 0.0;
+    G4double tmp = 0.0;
+
+    if (fNuType == G4String("pep")) {
+      // This is a line flux. Only 1 energy possible.
+      Enu = fEnuMin;
+    } else if ( fNuType == G4String("be7") ) {
+      // The neutrino energy of be7 must follow the branching ratio.
+      // Otherwise the flux is not properly sampled.
+      // Use CLHEP RandGeneral generator, with interpolation disabled to build
+      // a discrete distribution of two states.
+      // The random generator will return either 0 or 0.5
+      tmp = fSpectrumRndm->shoot();
+      Enu = (tmp<0.5)?fEnuMin:fEnuMax;
+    } else {
+      // Continuous distributions will return a random number between 0 and 1
+      // Following the spectrum shape.
+      // Scale it to the energy of the spectrum
+      double scale = fEnuMax - fEnuMin;
+      Enu = fEnuMin + fSpectrumRndm->shoot() * scale;
+    }
+
+    return Enu;
   }
 
 } // namespace RAT

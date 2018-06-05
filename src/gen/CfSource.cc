@@ -14,6 +14,7 @@
 #include <CLHEP/Random/RandFlat.h>
 #include <CLHEP/Random/RandGeneral.h>
 #include <CLHEP/Vector/LorentzVector.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <cmath>
 #include <iostream>
@@ -62,7 +63,7 @@ namespace RAT {
 
 	  // Initialize the G4 particle definitions.
 	  G4ParticleDefinition* neutron = G4Neutron::Neutron();
-	  massNeutron = neutron->GetPDGMass() * MeV;
+	  massNeutron = neutron->GetPDGMass() * CLHEP::MeV;
 
 	  // In the original code, the probability densities used the
 	  // funlxp and funlux routines in CERNLIB to generate random
@@ -145,9 +146,18 @@ namespace RAT {
 	  double phi = CLHEP::RandFlat::shoot(0.,M_PI);
 	  double cosTheta = CLHEP::RandFlat::shoot(-1.,1.);
 	  double sinTheta = sqrt( 1. - cosTheta*cosTheta );
-	  double px = neutronKE * sinTheta * cos(phi);
-	  double py = neutronKE * sinTheta * sin(phi);
-	  double pz = neutronKE * cosTheta;
+
+	  // Compute the momentum squared. If it comes out negative
+	  // due to roundoff errors, just set it equal to zero. This
+	  // prevents problems when we take the square root below.
+	  double neutronP2 = std::max(0., energy*energy
+	    - massNeutron*massNeutron);
+
+	  // Compute the momentum components
+	  double neutronP = std::sqrt(neutronP2);
+	  double px = neutronP * sinTheta * cos(phi);
+	  double py = neutronP * sinTheta * sin(phi);
+	  double pz = neutronP * cosTheta;
 #ifdef DEBUG
 	  std::cout << "CfSource::CfSource() - neutron energy " 
 		    << nn << " = " << energy
@@ -242,15 +252,15 @@ namespace RAT {
   CfSource::~CfSource()
   {;}
 
-  CfSource::CfSource(const CfSource& CfSource)
+  CfSource::CfSource(const CfSource& _CfSource)
   {
-    Isotope   = CfSource.Isotope;
-    Nneutron  = CfSource.Nneutron;
-    Ngamma    = CfSource.Ngamma;
-    neutronE  = CfSource.neutronE;
-    Tneutron  = CfSource.Tneutron;
-    gammaE    = CfSource.gammaE;
-    Tgamma    = CfSource.Tgamma;
+    Isotope   = _CfSource.Isotope;
+    Nneutron  = _CfSource.Nneutron;
+    Ngamma    = _CfSource.Ngamma;
+    neutronE  = _CfSource.neutronE;
+    Tneutron  = _CfSource.Tneutron;
+    gammaE    = _CfSource.gammaE;
+    Tgamma    = _CfSource.Tgamma;
   }    
 
   CfSource& CfSource::operator=(const CfSource& rhs){

@@ -205,8 +205,8 @@ namespace RAT {
       if (iString == dProbe) 
 	{
 	  fscanf(inputFile, "%s", tName);
-	  std::string iString(tName);
-	  if (dName == iString) 
+	  std::string iString2(tName);
+	  if (dName == iString2) 
 	    {
 	      iFound = true;
 	      fscanf(inputFile, "%d", &eP);
@@ -216,9 +216,9 @@ namespace RAT {
 		{
 		  fscanf(inputFile, "%s %d %f %d %f", sName, &iChain,
 			 &weight, &iDecay, &tau);
-		  std::string iString(sName);
+		  std::string iString3(sName);
 		  if(iDecay != NullParticle) {
-		    AddElement(iString, iChain, iDecay, (double) tau,
+		    AddElement(iString3, iChain, iDecay, (double) tau,
 			       (double) weight);
 		  }
 		}

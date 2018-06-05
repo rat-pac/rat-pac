@@ -28,13 +28,11 @@
 
 #include "G4VGraphicsScene.hh"
 #include "G4Polyhedron.hh"
-#include "G4NURBS.hh"
-#include "G4NURBStube.hh"
-#include "G4NURBScylinder.hh"
-#include "G4NURBStubesector.hh"
 #include "G4VisExtent.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4Version.hh"
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 #include "G4ios.hh" // for G4cerr
 
@@ -1269,7 +1267,7 @@ G4ThreeVectorList*
     G4int crossSection,noCrossSections;
 
 // Compute no of cross-sections necessary to mesh tube
-    noCrossSections=G4int (twopi/kMeshAngleDefault)+1;
+    noCrossSections=G4int (CLHEP::twopi/kMeshAngleDefault)+1;
     if (noCrossSections<kMinMeshSections)
 	{
 	    noCrossSections=kMinMeshSections;
@@ -1279,7 +1277,7 @@ G4ThreeVectorList*
 	    noCrossSections=kMaxMeshSections;
 	}
 	
-    meshAngle= twopi/(noCrossSections-1);
+    meshAngle= CLHEP::twopi/(noCrossSections-1);
     meshRMax= max_rho/cos(meshAngle*0.5);
 
 // set start angle such that mesh will be at fRmax
@@ -1331,12 +1329,6 @@ G4VisExtent GLG4TorusStack::GetExtent() const {
   return G4VisExtent (-max_rho, max_rho,
 		      -max_rho, max_rho,
 		      z_edge[0], z_edge[n]);
-}
-
-G4NURBS* GLG4TorusStack::CreateNURBS () const {
-  G4NURBS* pNURBS;
-  pNURBS = new G4NURBScylinder (max_rho, G4std::max(fabs(z_edge[0]),fabs(z_edge[n])));
-  return pNURBS;
 }
 
 // ================================================================
@@ -1509,7 +1501,7 @@ GLG4PolyhedronTorusStack::GLG4PolyhedronTorusStack(const G4int n,
   
   //   R O T A T E    P O L Y L I N E S
 
-  RotateAroundZ(0, 0.0, twopi, np1, np2, zz, rr, -1, 1); 
+  RotateAroundZ(0, 0.0, CLHEP::twopi, np1, np2, zz, rr, -1, 1); 
   SetReferences();
 
   delete [] zz;

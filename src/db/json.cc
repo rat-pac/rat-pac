@@ -21,6 +21,8 @@
 #include <cstring>
 #include <sstream>
 #include <limits>
+#include <climits>
+#include <cerrno>
 
 namespace json {
 
@@ -282,12 +284,14 @@ namespace json {
                                 default: {
                                     char next = *cur;
                                     *cur = '\0';
-                                    TUInteger hex;
-                                    std::stringstream temp;
-                                    temp << std::hex << start;
-                                    temp >> hex;
+                                    errno = 0;
+                                    char *end;
+                                    TUInteger ui = strtoul(start,&end,16);
+                                    if (end != cur) throw parser_error(line,cur-lastbr,"Malformed hex number");
+                                    if (ui == ULONG_MAX && errno == ERANGE)
+                                        throw parser_error(line,cur-lastbr,"Unsigned integer out of bounds.");
                                     *cur = next;
-                                    return Value(hex);
+                                    return Value(ui);
                                 }
                             }
                         }
@@ -301,7 +305,12 @@ namespace json {
                 case 'u': //non-json explicit unsigned
                     *cur = '\0';
                     cur++;
-                    return Value((TUInteger)atoi(start));
+                    {
+                        char *end;
+                        Value v((TUInteger)strtoul(start,&end,10));
+                        if (end != cur-1) throw parser_error(line,cur-lastbr,"Malformed integer");
+                        return v;
+                    }
                 case 'd': //non-json explicit real OR strange exponential
                     switch (cur[1]) {
                         case '+':
@@ -328,7 +337,12 @@ namespace json {
                 case 'f': //non-json explicit real
                     *cur = '\0';
                     cur++;
-                    return Value((TReal)atof(start));
+                    {
+                        char *end;
+                        Value v((TReal)strtod(start,&end));
+                        if (end != cur-1) throw parser_error(line,cur-lastbr,"Malformed real");
+                        return v;
+                    }
                 case '.': //real
                     real = true;
                 case '+':
@@ -350,9 +364,25 @@ namespace json {
                     *cur = '\0';
                     Value val;
                     if (real || exp) {
-                        val = Value((TReal)atof(start));
+                        char *end;
+                        val = Value((TReal)strtod(start,&end));
+                        if (end != cur) throw parser_error(line,cur-lastbr,"Malformed real");
                     } else {
-                        val = Value((TInteger)atoi(start));
+                        errno = 0;
+                        char *end;
+                        TInteger i = strtol(start,&end,10);
+                        if (end != cur) throw parser_error(line,cur-lastbr,"Malformed integer");
+                        if (i == LONG_MIN && errno == ERANGE) 
+                            throw parser_error(line,cur-lastbr,"Signed integer out of bounds.");
+                        if (i == LONG_MAX && errno == ERANGE) {
+                            errno = 0;
+                            TUInteger ui = strtoul(start,NULL,10);
+                            if (ui == ULONG_MAX && errno == ERANGE)
+                                throw parser_error(line,cur-lastbr,"Unsigned integer out of bounds.");
+                            val = Value(ui);
+                        } else {
+                            val = Value(i);
+                        }
                     }
                     *cur = next;
                     return val;

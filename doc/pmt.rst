@@ -1,10 +1,82 @@
 PMT Simulation
 --------------
 
-RAT uses a custom PMT simulation extracted from GLG4Sim.
+RAT uses a custom PMT simulation extracted from GLG4Sim. 
+
+PMT Models
+``````````
+
+Various PMTs build types are stored in tables named ``PMT`` and referenced by 
+their index which refer to a ``pmt_model``. RAT-PAC supports multiple build 
+types of PMTs which are placed in the geometry with the ``pmtarray`` geometry
+factory. The following build types are supported with the specified fields
+
+Toroidal (GLG4TorusStack):
+
+==========================  ==============  ===================
+**Field**                   **Type**        **Description**
+==========================  ==============  ===================
+``construction``            ``string``      Must be "toroidal".
+``dynode_material``         ``string``      Material used for the dynode stack.              
+``glass_material``          ``string``      Material used for the PMT body.
+``pmt_vacuum_material``     ``string``      Material used for the PMT vacuum.
+``photocathode_surface``    ``string``      Surface containing photocathode properties.
+``mirror_surface``          ``string``      Surface containing reflective back properties.
+``dynode_surface``          ``string``      Surface containing dynode surface properties.
+``dynode_radius``           ``double``      Radius of dynode.
+``dynode_top``              ``double``      Top Z of dynode relative to PMT equator.
+``wall_thickness``          ``double``      Thickness of the PMT body.
+``z_edge``                  ``double[]``    PMT shape argument to GLG4TorusStack.
+``rho_edge``                ``double[]``    PMT shape argument to GLG4TorusStack.
+``z_origin``                ``double[]``    PMT shape argument to GLG4TorusStack.
+==========================  ==============  ===================
+
+Revolution (G4Polycone):
+
+==========================  ==============  ===================
+**Field**                   **Type**        **Description**
+==========================  ==============  ===================
+``construction``            ``string``      Must be "revolution".
+``dynode_material``         ``string``      Material used for the dynode stack.              
+``glass_material``          ``string``      Material used for the PMT body.
+``pmt_vacuum_material``     ``string``      Material used for the PMT vacuum.
+``photocathode_surface``    ``string``      Surface containing photocathode properties.
+``mirror_surface``          ``string``      Surface containing reflective back properties.
+``dynode_surface``          ``string``      Surface containing dynode surface properties.
+``dynode_radius``           ``double``      Radius of dynode.
+``dynode_top``              ``double``      Top Z of dynode relative to PMT equator.
+``dynode_height``           ``double``      Total height of the dynode stack.
+``rho_inner``               ``double[]``    Cylindrical radius of inner edge coordinates.
+``z_inner``                 ``double[]``    Z value of inner edge coordinates.
+``rho_edge``                ``double[]``    Cylindrical radius of outer edge coordinates.
+``z_edge``                  ``double[]``    Z value of outer edge coordinates.
+==========================  ==============  ===================
+
+``PMTINFO`` Tables:
+
+These tables are used by ``pmtarray`` to place PMT and the information contained
+is passed along to Gsim. The order of items in this PMT array assigns IDs to the
+PMTs, though the order of placement determines the order in which various
+``PMTINFO`` tables are assigned indexes when using multiple ``pmtarray`` elements.
+Positions given in these tables are in global coordinates. If the PMTs are placed
+in sub volumes the appropriate transformations are made on the fly.
+
+==========================  ==============  ===================
+**Field**                   **Type**        **Description**
+==========================  ==============  ===================
+``x``                       ``double[]``    List of X positions in global coordinates.
+``y``                       ``double[]``    List of Y positions in global coordinates.
+``z``                       ``double[]``    List of Z positions in global coordinates.
+``dir_x``                   ``double[]``    List of X direction vector (will be normalized).
+``dir_y``                   ``double[]``    List of Y direction vector (will be normalized).
+``dir_z``                   ``double[]``    List of Z direction vector (will be normalized).
+``type``                    ``int[]``       List of logical PMT types (stored in DB).
+``efficiency``              ``double[]``    List of individul PMT efficiency corrections (optional).
+==========================  ==============  ===================
 
 Q/T Response
 ````````````
+
 Gsim checks the database for single photoelectron charge and transit time PDFs 
 automatically for PMT models that are added to the geometry. These PDFs are 
 stored in tables named ``PMTCHARGE`` and ``PMTTRANSIT`` respectively, where the 
@@ -16,14 +88,35 @@ zero spread from photoelectron absorption time and the charge defaults to a
 phenomenological model used by MiniCLEAN.
 
 ``PMTCHARGE`` fields:
- * ``charge`` - "x" values of the charge PDF (arbitrary units)
- * ``charge_prob`` - "y" values of the charge PDF (will be normalized)
+
+==========================  ==============  ===================
+**Field**                   **Type**        **Description**
+==========================  ==============  ===================
+``charge``                  ``double[]``    "X" values of the charge PDF (arbitrary units)
+``charge_prob``             ``double[]``    "Y" values of the charge PDF (will be normalized)
+==========================  ==============  ===================
  
  
 ``PMTTRANSIT`` fields:
- * ``cable_delay`` - constant offset applied to all PMTs of this model (nanoseconds)
- * ``time`` - "x" values of the time PDF (nanoseconds)
- * ``time_prob`` - "y" values of the time PDF (will be normalized)
+
+==========================  ==============  ===================
+**Field**                   **Type**        **Description**
+==========================  ==============  ===================
+``cable_delay``             ``double``      Constant offset applied to all PMTs of this model (nanoseconds)
+``time``                    ``double[]``    "X" values of the time PDF (nanoseconds)
+``time_prob``               ``double[]``    "Y" values of the time PDF (will be normalized)
+==========================  ==============  ===================
+ 
+Efficiency Model
+````````````````
+
+Efficiency for detecting a photo electron before any DAQ process is applied is 
+based on the following.
+
+* PMT Geometry - reflections of the photons from the PMT and internal reflections.
+* Photocathode QE - defined in the photocathode surface ``OPTICS`` table as the ``EFFICIENCY`` property (wavelength dependent).
+* Placement Correction - each ``pmtarray`` ``GEO`` placement has an (optional) ``efficiency_correction`` muplicative factor that applies to all PMTs it palces.
+* Individual Correction - the (optional) ``efficiency`` field in ``PMTINFO`` tables specifies an individual correction to each PMT (settable from macro).
 
 Dark Current
 ````````````
@@ -37,7 +130,7 @@ spectrum as is used for regular PMT hits.  The only subtleties are in the timing
 hits, and the rates at which noise is generated.  This document describes the inclusion of noise hits in 
 RAT.
 
-There old noise processor (source:rat/src/daq/NoiseProc.cc) had several problems with the implementation, in particular the
+The old noise processor (source:rat/src/daq/NoiseProc.cc) had several problems with the implementation, in particular the
 hits were incorrectly distributed in time (generated for one sampling window width from the start of the
 simulated event, therefore not extending throughout the event window), and noise was defined in terms of a number of hits per event
 instead of a rate (which is what we are more likely to measure).  
@@ -96,6 +189,7 @@ The file size increased by ~5% when noise was included in the simulation.
 
 Parameters
 ''''''''''
+
 All are stored in DAQ.ratdb
 
 noise_rate: 500.0d, // The mean noise rate across all PMTs, in Hz

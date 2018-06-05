@@ -12,6 +12,8 @@
 #include <RAT/Factory.hh>
 #include <RAT/GLG4VertexGen.hh>
 #include <RAT/VertexGen_IBD.hh>
+#include <RAT/VertexGen_ReacIBD.hh>
+#include <RAT/VertexGen_Decay0.hh>
 #include <RAT/Gen_LED.hh>
 #include <RAT/VertexGen_ES.hh>
 #include <RAT/VertexGen_Spectrum.hh>
@@ -19,13 +21,14 @@
 #include <RAT/Coincidence_Gen.hh>
 #include <RAT/VertexFile_Gen.hh>
 #include <RAT/CfGen.hh>
+#include <RAT/ReacIBDgen.hh>
 #include <RAT/EventInfo.hh>
 #include <RAT/TrackInfo.hh>
 #include <RAT/PrimaryVertexInformation.hh>
 
 #include <RAT/GLG4PrimaryGeneratorAction.hh>
 #include <RAT/GLG4Scint.hh>
-#include <RAT/GLG4PhysicsList.hh>
+#include <RAT/PhysicsList.hh>
 #include <RAT/GLG4SteppingAction.hh>
 #include <RAT/GLG4DebugMessenger.hh>
 #include <RAT/GLG4VertexGen.hh>
@@ -39,6 +42,7 @@
 #include <RAT/PMTFactoryBase.hh>
 
 #include <Randomize.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
 #include <vector>
 #include <cstdlib>
 #include <math.h>
@@ -69,7 +73,7 @@ int get_pdgcode(const G4PrimaryParticle* p) {
   if (glg4pdgcode==0 && p->GetG4code()!=0) {
     G4ParticleDefinition* pdef = p->GetG4code();
     if (G4IonTable::IsIon(pdef)) {
-      int atomicNumber = G4int(pdef->GetPDGCharge()/eplus);
+      int atomicNumber = G4int(pdef->GetPDGCharge()/CLHEP::eplus);
       int atomicMass = pdef->GetBaryonNumber();
       glg4pdgcode = \
         GLG4VertexGen_HEPEvt::kIonCodeOffset + 1000*atomicNumber + atomicMass;
@@ -96,12 +100,18 @@ void Gsim::Init() {
   GlobalFactory<GLG4VertexGen>::Register("ibd",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_IBD>);
-  GlobalFactory<GLG4VertexGen>::Register("es",
+  GlobalFactory<GLG4VertexGen>::Register("reacibd",
+                                         new Alloc<GLG4VertexGen,
+                                         VertexGen_ReacIBD>);
+   GlobalFactory<GLG4VertexGen>::Register("es",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_ES>);
   GlobalFactory<GLG4VertexGen>::Register("spectrum",
                                          new Alloc<GLG4VertexGen,
                                          VertexGen_Spectrum>);
+  GlobalFactory<GLG4VertexGen>::Register("decay0",
+                                         new Alloc<GLG4VertexGen,
+                                         VertexGen_Decay0>);
 
   GlobalFactory<GLG4Gen>::Register("decaychain",
                                    new Alloc<GLG4Gen,DecayChain_Gen>);
@@ -391,11 +401,11 @@ void Gsim::PostUserTrackingAction(const G4Track* aTrack) {
   }
 }
 
-void Gsim::MakeRun(int runID) {
-  DBLinkPtr lrun = DB::Get()->GetLink("RUN", "", runID);
+void Gsim::MakeRun(int _runID) {
+  DBLinkPtr lrun = DB::Get()->GetLink("RUN", "", _runID);
   DS::Run* run = new DS::Run();
 
-  run->SetID(runID);
+  run->SetID(_runID);
   run->SetType((unsigned) lrun->GetI("runtype"));
 
   run->SetPMTInfo(&PMTFactoryBase::GetPMTInfo());
@@ -555,15 +565,15 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
    * to last photon hits.
    */
   double noiseWindowWidth = lasthittime - firsthittime;
-  size_t npmts = fPMTInfo->GetPMTCount();
+  size_t pmtcount = fPMTInfo->GetPMTCount();
   double channelRate = noiseRate * noiseWindowWidth;
-  double detectorWideRate = channelRate * npmts / channelEfficiency;
+  double detectorWideRate = channelRate * pmtcount / channelEfficiency;
   int noiseHits = \
     static_cast<int>(floor(CLHEP::RandPoisson::shoot(detectorWideRate)));
 
   for (int ihit=0; ihit<noiseHits; ihit++) {
     GLG4HitPhoton* hit = new GLG4HitPhoton();
-    int pmtid = static_cast<int>(G4UniformRand() * npmts);
+    int pmtid = static_cast<int>(G4UniformRand() * pmtcount);
     hit->SetPMTID(pmtid);
     hit->SetTime(firsthittime + G4UniformRand() * noiseWindowWidth);
     hit->SetCount(1);
@@ -580,7 +590,7 @@ void Gsim::MakeEvent(const G4Event* g4ev, DS::Root* ds) {
 }
 
 void Gsim::AddMCPhoton(DS::MCPMT* rat_mcpmt, const GLG4HitPhoton* photon,
-                       bool isDarkHit, EventInfo* exinfo) {
+                       bool isDarkHit, EventInfo* /*exinfo*/) {
   DS::MCPhoton* rat_mcphoton = rat_mcpmt->AddNewMCPhoton();
   rat_mcphoton->SetDarkHit(isDarkHit);
 

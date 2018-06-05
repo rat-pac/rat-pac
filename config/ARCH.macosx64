@@ -19,4 +19,5 @@ if len(parts) >= 2 and int(parts[1]) >= 8:
 
 arch['Xm'].update( { 'CPPPATH' : '/sw/include',
                      'LIBPATH' : '/sw/lib' }    )
+arch['default']['CXXFLAGS'] += ['-Wno-reserved-id-macro', '-Wno-keyword-macro']
 Return('arch')

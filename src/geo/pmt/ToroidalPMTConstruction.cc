@@ -9,6 +9,7 @@
 #include <G4VisAttributes.hh>
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalSkinSurface.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     log_pmt = 0;   
 
     // Setup PMT parameters
-    fParams.faceGap = 0.1 * mm;
+    fParams.faceGap = 0.1 * CLHEP::mm;
     fParams.zEdge = table->GetDArray("z_edge");
     fParams.rhoEdge = table->GetDArray("rho_edge");
     fParams.zOrigin = table->GetDArray("z_origin");
@@ -115,7 +116,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     G4Tubs* dynode_solid = new G4Tubs(prefix+"_dynode_solid",
                                       0.0, fParams.dynodeRadius,// solid cylinder (FIXME?)
                                       hhDynode,                // half height of cylinder
-                                      0., twopi );            // cylinder complete in phi
+                                      0., CLHEP::twopi );            // cylinder complete in phi
     
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
     G4double hhgap = 0.5e-7 ;                                            // half the needed gap between the front and back of the PMT
@@ -125,7 +126,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     G4Tubs* central_gap_solid = new G4Tubs(prefix+"_central_gap_solid",
                                       0.0 , toleranceGapRadius,        // solid cylinder with same radius as PMT
                                       hhgap,                           // half height of cylinder
-                                      0., twopi );                   // cylinder complete in phi 
+                                      0., CLHEP::twopi );                   // cylinder complete in phi 
 
     // ------------ Logical Volumes -------------
     G4LogicalVolume *envelope_log=0, *body_log, *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
@@ -279,9 +280,9 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     return log_pmt;
   }
   
-  G4VSolid *ToroidalPMTConstruction::BuildSolid(const string &name)
+  G4VSolid *ToroidalPMTConstruction::BuildSolid(const string &_name)
   {
-    GLG4TorusStack *body = new GLG4TorusStack(name);
+    GLG4TorusStack *body = new GLG4TorusStack(_name);
     body->SetAllParameters(fParams.zOrigin.size(), &fParams.zEdge[0], &fParams.rhoEdge[0], &fParams.zOrigin[0]);
     return body;
   }
@@ -289,29 +290,29 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
   G4PVPlacement* ToroidalPMTConstruction::PlacePMT(
             G4RotationMatrix *pmtrot, 
             G4ThreeVector pmtpos, 
-            const std::string &name, 
+            const std::string &_name, 
             G4LogicalVolume *logi_pmt, 
             G4VPhysicalVolume *mother_phys, 
             bool booleanSolid, int copyNo) {
     if (fParams.useEnvelope) {
-        return new G4PVPlacement(pmtrot, pmtpos, name, logi_pmt, mother_phys,  booleanSolid, copyNo);
+        return new G4PVPlacement(pmtrot, pmtpos, _name, logi_pmt, mother_phys,  booleanSolid, copyNo);
     } else {
-        body_phys = new G4PVPlacement(pmtrot, pmtpos, name, logi_pmt, mother_phys,  booleanSolid, copyNo);
+        body_phys = new G4PVPlacement(pmtrot, pmtpos, _name, logi_pmt, mother_phys,  booleanSolid, copyNo);
 
         //build the mirrored surface
-        new G4LogicalBorderSurface(name+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
-        new G4LogicalBorderSurface(name+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
+        new G4LogicalBorderSurface(_name+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(_name+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
         
         // also include the tolerance gap
-        new G4LogicalBorderSurface(name+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
-        new G4LogicalBorderSurface(name+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
+        new G4LogicalBorderSurface(_name+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
+        new G4LogicalBorderSurface(_name+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
         
         // photocathode surface
-        new G4LogicalBorderSurface(name+"_photocathode_logsurf1", inner1_phys, body_phys, fParams.photocathode);
+        new G4LogicalBorderSurface(_name+"_photocathode_logsurf1", inner1_phys, body_phys, fParams.photocathode);
 
         // if not using envelope place waveguide now
         if (fWaveguideFactory) {
-            G4LogicalVolume *log_wg = fWaveguideFactory->Construct(name+"_waveguide_log", logi_pmt, fParams.simpleVis);
+            G4LogicalVolume *log_wg = fWaveguideFactory->Construct(_name+"_waveguide_log", logi_pmt, fParams.simpleVis);
             // pmtrot is a passive rotation, but we need an active one to put offsetWg
             // into coordinates of mother
             G4ThreeVector offsetWg = fWaveguideFactory->GetPlacementOffset();
@@ -320,7 +321,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
             new G4PVPlacement(
                 pmtrot,               
                 waveguidepos,      
-                name+"_waveguide", // a name for this physical volume
+                _name+"_waveguide", // a name for this physical volume
                 log_wg,               // the logical volume
                 mother_phys,          // the mother volume
                 false,                // no boolean ops
@@ -330,7 +331,7 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     }
   }
   
-  G4VSolid *ToroidalPMTConstruction::NewEnvelopeSolid(const std::string &name)
+  G4VSolid *ToroidalPMTConstruction::NewEnvelopeSolid(const std::string &_name)
   {
     G4double zTop = fParams.zEdge[0] + fParams.faceGap;
     G4double zBottom = fParams.zEdge[fParams.zEdge.size()-1];
@@ -345,12 +346,12 @@ ToroidalPMTConstruction::ToroidalPMTConstruction(DBLinkPtr table, G4LogicalVolum
     if (zTop < -zBottom) subCylOffset = zTop + subCylHalfHeight;
     else subCylOffset = zBottom - subCylHalfHeight;
     
-    G4Tubs *mainEnvelope = new G4Tubs(name+"_main", 0.0, rho, mainCylHalfHeight, 
-                                      0.0, twopi);
-    G4Tubs *subEnvelope  = new G4Tubs(name+"_sub", 0.0, rho*1.1, subCylHalfHeight, 
-                                      0.0, twopi);
+    G4Tubs *mainEnvelope = new G4Tubs(_name+"_main", 0.0, rho, mainCylHalfHeight, 
+                                      0.0, CLHEP::twopi);
+    G4Tubs *subEnvelope  = new G4Tubs(_name+"_sub", 0.0, rho*1.1, subCylHalfHeight, 
+                                      0.0, CLHEP::twopi);
                                       
-    return new G4SubtractionSolid(name, mainEnvelope, subEnvelope, 
+    return new G4SubtractionSolid(_name, mainEnvelope, subEnvelope, 
                                   0, G4ThreeVector(0.0, 0.0, subCylOffset));
   }
   
