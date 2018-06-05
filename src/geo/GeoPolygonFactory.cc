@@ -4,6 +4,8 @@
 #include <G4Tubs.hh>
 #include <G4SubtractionSolid.hh>
 #include <G4TwoVector.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
 
 using namespace std;
 
@@ -12,7 +14,7 @@ namespace RAT {
 G4VSolid *GeoPolygonFactory::ConstructSolid(DBLinkPtr table)
 {
   string volume_name = table->GetIndex();
-  G4double size_z = table->GetD("size_z") * mm;      // half thickness of plate
+  G4double size_z = table->GetD("size_z") * CLHEP::mm;      // half thickness of plate
   string poly_table_name = table->GetS("poly_table");
   DBLinkPtr lpoly_table = DB::Get()->GetLink(poly_table_name);
   const vector<G4double> &vertex_pnts_x = lpoly_table->GetDArray("x");
@@ -29,13 +31,13 @@ G4VSolid *GeoPolygonFactory::ConstructSolid(DBLinkPtr table)
   
   // end optional parms
 
-  G4double poly_max = 0.0 * mm;
-  G4double poly_max_tmp = 0.0 * mm;
+  G4double poly_max = 0.0 * CLHEP::mm;
+  G4double poly_max_tmp = 0.0 * CLHEP::mm;
   vector<G4TwoVector> g4Polygon;
   for ( G4int i=0; i < G4int(vertex_pnts_x.size()); ++i ) 
   {
-      g4Polygon.push_back( G4TwoVector(vertex_pnts_x[i] * mm, vertex_pnts_y[i] *mm ) );
-      poly_max_tmp = sqrt((vertex_pnts_x[i] * mm * vertex_pnts_x[i] * mm) + ( vertex_pnts_y[i] * mm *vertex_pnts_y[i] * mm));
+      g4Polygon.push_back( G4TwoVector(vertex_pnts_x[i] * CLHEP::mm, vertex_pnts_y[i] *CLHEP::mm ) );
+      poly_max_tmp = sqrt((vertex_pnts_x[i] * CLHEP::mm * vertex_pnts_x[i] * CLHEP::mm) + ( vertex_pnts_y[i] * CLHEP::mm *vertex_pnts_y[i] * CLHEP::mm));
       if (poly_max_tmp >= poly_max)
 	  poly_max = poly_max_tmp;
   }

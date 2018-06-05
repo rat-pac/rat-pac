@@ -105,7 +105,7 @@ double FitPathProc::FTPProbability(const double x, const double y, const double 
     const double nCherenkov = nHits*fCherenkovMultiplier;
     const double sensitive_area = fPhotocathodeArea;
     
-    double prob = 1.0;
+    double neglogprob = 0.0;
     //cout << x << ' ' << y << ' ' << z << ' ' << dx << ' ' << dy << ' ' << dz << ' ' << t << ") = ";
     for (size_t i = 0; i < nHits; i++) {
         const hit &cur = fHits[i]; //constant reference for speed
@@ -128,10 +128,10 @@ double FitPathProc::FTPProbability(const double x, const double y, const double 
         const double prob_directangle = nCherenkov*PDFCherenkovAngle(cosalpha)*solidangle/(2.0*M_PI); //probability of detecting direct light at this angle
         
         const double hitprob = prob_direct*prob_directtime*prob_directangle + prob_other*prob_othertime;
-        if (hitprob > 1e-50) prob *= hitprob; else prob *= 1e-50;
+        if (hitprob > 1e-50) neglogprob -= log(hitprob); else neglogprob -= log(1e-50);
     }
     //cout << prob << endl;
-    return prob < 1e-200 ? 1e-200 : prob;
+    return neglogprob;
 }
 
 double FitPathProc::AvgSquareTimeResid(double x, double y, double z, double t) {
@@ -159,7 +159,7 @@ double FitPathProc::AvgSquareTimeResid(double x, double y, double z, double t) {
 double FitPathProc::operator()(const std::vector<double>& lParams ) const {
     const double costheta = cos(lParams[3]);
     const double sintheta = sqrt(1-costheta*costheta);
-    return -log(FTPProbability(lParams[0],lParams[1],lParams[2],sintheta*cos(lParams[4]),sintheta*sin(lParams[4]),costheta,lParams[5]));
+    return FTPProbability(lParams[0],lParams[1],lParams[2],sintheta*cos(lParams[4]),sintheta*sin(lParams[4]),costheta,lParams[5]);
 }
 
 
@@ -180,6 +180,8 @@ double FitPathProc::operator()(double *params) {
 }
 
 Processor::Result FitPathProc::Event(DS::Root* ds, DS::EV* ev) {
+
+    if (ev->GetPMTCount() == 0) return Processor::OK; //do not create DS entry
 
     fHits.resize(ev->GetPMTCount());
 

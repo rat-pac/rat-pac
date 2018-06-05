@@ -56,7 +56,7 @@ public:
 /** Exception: Base class of file errors in RATDB. */
 class FileError : public TextLoaderError {
 public: 
-  FileError(std::string filename) : filename(filename) { };
+  FileError(std::string _filename) : filename(_filename) { };
   bool operator== (const FileError &other) const {
     return filename == other.filename;
   };
@@ -67,13 +67,13 @@ public:
 /** Exception: Error finding RATDB file. */
 class FileNotFoundError : public FileError { 
 public :
-  FileNotFoundError(std::string filename) : FileError(filename) { };
+  FileNotFoundError(std::string _filename) : FileError(_filename) { };
 };
 
 /** Exception: Insufficient access privileges to read file. */
 class FileAccessError : public FileError { 
 public :
-  FileAccessError(std::string filename) : FileError(filename) { };
+  FileAccessError(std::string _filename) : FileError(_filename) { };
 };
 
 } // namespace RAT

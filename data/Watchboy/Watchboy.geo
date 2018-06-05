@@ -8,7 +8,7 @@ type: "tube",
 r_max: 1980.2,
 size_z: 1651.2,
 position: [0.0, 0.0, 0.0],
-material: "steel",
+material: "stainless_steel",
 color: [1.0, 0.0, 0.0, 0.1],
 drawstyle: "solid"
 }

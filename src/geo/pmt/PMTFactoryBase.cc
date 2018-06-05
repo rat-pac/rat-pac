@@ -221,34 +221,34 @@ G4VPhysicalVolume *PMTFactoryBase::ConstructPMTs(DBLinkPtr table,
     if(BFieldOn){
       //finds the point of the B grid closest to the current PMT, and attributes it that Bfield
       double MinDist=DBL_MAX;
-      int imin=-1;
-      for(int i=0;i<int(Bpos.size());i++){
-        if(MinDist>(pmtpos-Bpos[i]).mag()){
-          MinDist=(pmtpos-Bpos[i]).mag();
-          imin=i;
+      int jmin=-1;
+      for(int j=0;j<int(Bpos.size());j++){
+        if(MinDist>(pmtpos-Bpos[j]).mag()){
+          MinDist=(pmtpos-Bpos[j]).mag();
+          jmin=j;
         }
       }
-      if(imin<0)
+      if(jmin<0)
         cout<<"can't find a point close to the "<<id<<"-th pmt; MinDist is "<<MinDist<<"\n";
       else{
-        G4ThreeVector bfield=Bf[imin].perpPart(pmtdir);
+        G4ThreeVector bfield=Bf[jmin].perpPart(pmtdir);
         G4ThreeVector dynorient;
         if(HaveDynoData){
-          int mini=-1;
+          int minj=-1;
           double MinDiff=DBL_MAX;
-          for(int i=0;i<int(Dorie.size());i++)
-            if((pmtpos.unit()-Dpos[i].unit()).mag()<MinDiff){
-              MinDiff=(pmtpos.unit()-Dpos[i].unit()).mag();
-              mini=i;
+          for(int j=0;j<int(Dorie.size());j++)
+            if((pmtpos.unit()-Dpos[j].unit()).mag()<MinDiff){
+              MinDiff=(pmtpos.unit()-Dpos[j].unit()).mag();
+              minj=j;
             }
-          if(mini<0){
+          if(minj<0){
             cout<<"can't find the orientation of the "<<id<<"-th pmt's dynode; MinDiff is "<<MinDiff<<"\n"
               <<"Throwing a random dynode orientation\n";
             dynorient=G4RandomDirection();
             dynorient=dynorient.perpPart(pmtdir);
           }
           else
-            dynorient=Dorie[mini];
+            dynorient=Dorie[minj];
         }
         else{
 //random dynode orientation

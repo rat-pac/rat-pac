@@ -18,6 +18,7 @@
 class G4UImessenger; // for G4ProcessTable.hh
 #include "G4ProcessTable.hh"
 #include "GLG4PrimaryGeneratorAction.hh"
+#include <CLHEP/Units/PhysicalConstants.h>
 
 
 ////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ G4double GLG4DeferTrackProc::PostStepGetPhysicalInteractionLength(
     return G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
   }
   G4double beta = (aTrack.GetDynamicParticle()->GetTotalMomentum())/(aTrack.GetTotalEnergy());
-  return beta*c_light*dTime;
+  return beta*CLHEP::c_light*dTime;
 }
 
 ////////////////////////////////////////////////////////////////

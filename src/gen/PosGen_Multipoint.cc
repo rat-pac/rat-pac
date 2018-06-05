@@ -4,6 +4,7 @@
 #include <RAT/DB.hh>
 #include <RAT/RadicalInverse.hh>
 #include <RAT/StringUtil.hh>
+#include <CLHEP/Units/PhysicalConstants.h>
 
 namespace RAT {
 
@@ -104,7 +105,7 @@ void PosGen_Multipoint::LoadUniformPoints(unsigned numPoints,
   fPos.resize(numPoints);
   for (unsigned i=0; i < numPoints; i++) {
     double radius   = pow( inner3 + RadicalInverse(i, 2) * range3, 1.0/3.0 );
-    double phi      = RadicalInverse(i, 3) * 2 * pi;
+    double phi      = RadicalInverse(i, 3) * 2 * CLHEP::pi;
     double costheta = 2.0 * RadicalInverse(i, 5) - 1.0;
     double theta    = acos(costheta);
 

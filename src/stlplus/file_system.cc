@@ -105,11 +105,11 @@ public:
 
   const std::string& drive(void) const {return m_drive;}
   std::string& drive(void) {return m_drive;}
-  void set_drive(const std::string& drive) {m_drive = drive;}
+  void set_drive(const std::string& _drive) {m_drive = _drive;}
 
   const std::vector<std::string>& path(void) const {return m_path;}
   std::vector<std::string>& path(void) {return m_path;}
-  void set_path(const std::vector<std::string>& path) {m_path = path;}
+  void set_path(const std::vector<std::string>& _path) {m_path = _path;}
 
   void add_subpath(const std::string& subpath) {m_path.push_back(subpath);}
   unsigned subpath_size(void) const {return m_path.size();}
@@ -118,7 +118,7 @@ public:
 
   const std::string& file(void) const {return m_filename;}
   std::string& file(void) {return m_filename;}
-  void set_file(const std::string& file) {m_filename = file;}
+  void set_file(const std::string& _file) {m_filename = _file;}
 
   std::string image(void) const;
   otext& print(otext& str) const {return str << image();}

@@ -17,6 +17,7 @@
 #include <RAT/DetectorFactory.hh>
 #include <RAT/WatchmanDetectorFactory.hh>
 #include <RAT/TheiaDetectorFactory.hh>
+#include <RAT/Theia0vbbDetectorFactory.hh>
 
 using namespace std;
 
@@ -27,6 +28,7 @@ DetectorConstruction* DetectorConstruction::sDetectorConstruction = NULL;
 DetectorConstruction::DetectorConstruction() {
     DetectorFactory::Register("Watchman",new WatchmanDetectorFactory());
     DetectorFactory::Register("Theia",new TheiaDetectorFactory());
+    DetectorFactory::Register("Theia_0vbb",new Theia0vbbDetectorFactory());
 }
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
@@ -63,8 +65,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
       if (db->Load(geo_file) == 0) {
         Log::Die("DetectorConstruction: Could not open detector geometry");
       }
-    } catch (DBNotFoundError &e) {
-        info << "DetectorConstruction: could not access " << e.table << "[" << e.index << "]." << e.field << endl;
+    } catch (DBNotFoundError &_e) {
+        info << "DetectorConstruction: could not access " << _e.table << "[" << _e.index << "]." << _e.field << endl;
         Log::Die("DetectorConstruction: Could not open geo_file or detector_factory");
     }
   }

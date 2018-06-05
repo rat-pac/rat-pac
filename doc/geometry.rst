@@ -123,7 +123,7 @@ PMTArray Fields:
 **Field**               **Type**                    **Description**
 ======================  ==========================  ===================
 ``pmt_model``           ``string``                  Serves as the index for ``PMT``, ``PMTCHARGE``, and ``PMTTRANSIT`` tables giving the geometry, charge response, and time response models.
-``pos_table``           ``string``                  Specifies the table containing position (and direction) arrays specifying how to place PMTs
+``pos_table``           ``string``                  Specifies the ``PMTINFO`` table to use when placing these PMTs (see PMT Simulation)
 ``start_idx``           ``int`` (optional)          Index to start building PMTs in the ``PMTINFO`` table specified (inclusive, defaults to 0)
 ``end_idx``             ``int`` (optional)          Index to stop building PMTs in the ``PMTINFO`` table specified (inclusive, defaults to length-1)
 ``orientation``         ``string``                  Method of determining PMT direction.  "point" will aim all PMTs at a point in space.  "manual" requires that the position table also contain dir_x, dir_y, and dir_z fields which define the direction vector for each PMT.

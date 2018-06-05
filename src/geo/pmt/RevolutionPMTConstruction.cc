@@ -76,20 +76,20 @@ G4LogicalVolume* RevolutionPMTConstruction::BuildVolume(const std::string &prefi
     vector<double> zeros(fParams.rInner.size(),0.0);
     
     // inner vacuum
-    G4Polycone *inner1_solid = new G4Polycone(prefix + "_inner1_solid",0.0,2.0*pi,inner_equator_idx+1,&fParams.zInner[0],&zeros[0],&fParams.rInner[0]);
-    G4Polycone *inner2_solid = new G4Polycone(prefix + "_inner2_solid",0.0,2.0*pi,fParams.rInner.size()-inner_equator_idx,&fParams.zInner[inner_equator_idx],&zeros[0],&fParams.rInner[inner_equator_idx]);
+    G4Polycone *inner1_solid = new G4Polycone(prefix + "_inner1_solid",0.0,2.0*CLHEP::pi,inner_equator_idx+1,&fParams.zInner[0],&zeros[0],&fParams.rInner[0]);
+    G4Polycone *inner2_solid = new G4Polycone(prefix + "_inner2_solid",0.0,2.0*CLHEP::pi,fParams.rInner.size()-inner_equator_idx,&fParams.zInner[inner_equator_idx],&zeros[0],&fParams.rInner[inner_equator_idx]);
 
     // dynode (FIXME solid like other tube...?)
-    G4Tubs *dynode_solid = new G4Tubs(prefix+"_dynode_solid", 0.0, fParams.dynodeRadius, fParams.dynodeHeight/2.0, 0., twopi);
+    G4Tubs *dynode_solid = new G4Tubs(prefix+"_dynode_solid", 0.0, fParams.dynodeRadius, fParams.dynodeHeight/2.0, 0., CLHEP::twopi);
 
     // tolerance gap between inner1 and inner2, needed to prevent overlap due to floating point roundoff
     G4double hhgap = 0.5e-7; // half the needed gap between the front and back of the PMT
     G4double toleranceGapRadius = fParams.rInner[inner_equator_idx]; // gap goes at equator
                                                                        
-    G4Tubs *central_gap_solid = new G4Tubs(prefix+"_central_gap_solid", 0.0, toleranceGapRadius, hhgap, 0., twopi);
+    G4Tubs *central_gap_solid = new G4Tubs(prefix+"_central_gap_solid", 0.0, toleranceGapRadius, hhgap, 0., CLHEP::twopi);
 
     // Logical volumes
-    G4LogicalVolume *body_log, *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
+    G4LogicalVolume *inner1_log, *inner2_log, *dynode_log, *central_gap_log;
     body_log = new G4LogicalVolume(body_solid, fParams.glass, prefix+"_body_log");
     inner1_log = new G4LogicalVolume(inner1_solid, fParams.vacuum, prefix+"_inner1_log");
     inner2_log = new G4LogicalVolume(inner2_solid, fParams.vacuum, prefix+"_inner2_log");
@@ -165,16 +165,16 @@ G4LogicalVolume* RevolutionPMTConstruction::BuildVolume(const std::string &prefi
     return body_log;
 }
 
-G4VSolid* RevolutionPMTConstruction::BuildSolid(const string &name) {
+G4VSolid* RevolutionPMTConstruction::BuildSolid(const string &_name) {
     vector<double> zeros(fParams.rEdge.size(),0.0);
-    G4Polycone *body = new G4Polycone(name,0,2*pi,fParams.rEdge.size(),&fParams.zEdge[0],&zeros[0],&fParams.rEdge[0]);
+    G4Polycone *body = new G4Polycone(_name,0,2*CLHEP::pi,fParams.rEdge.size(),&fParams.zEdge[0],&zeros[0],&fParams.rEdge[0]);
     return body;
 }
 
 G4PVPlacement* RevolutionPMTConstruction::PlacePMT(
         G4RotationMatrix *pmtrot, 
         G4ThreeVector pmtpos, 
-        const std::string &name, 
+        const std::string &_name, 
         G4LogicalVolume *logi_pmt, 
         G4VPhysicalVolume *mother_phys, 
         bool booleanSolid, int copyNo) {
@@ -182,15 +182,15 @@ G4PVPlacement* RevolutionPMTConstruction::PlacePMT(
     G4PVPlacement *body_phys = new G4PVPlacement(pmtrot, pmtpos, name, logi_pmt, mother_phys,  booleanSolid, copyNo);
     
     // photocathode surface
-    new G4LogicalBorderSurface(name+"_photocathode_logsurf1", inner1_phys, body_phys, fParams.photocathode);
+    new G4LogicalBorderSurface(_name+"_photocathode_logsurf1", inner1_phys, body_phys, fParams.photocathode);
 
     // build the mirrored surface
-    new G4LogicalBorderSurface(name+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
-    new G4LogicalBorderSurface(name+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
+    new G4LogicalBorderSurface(_name+"_mirror_logsurf1", inner2_phys, body_phys, fParams.mirror);
+    new G4LogicalBorderSurface(_name+"_mirror_logsurf2", body_phys, inner2_phys, fParams.mirror);
     
     // treate tolerance gap as mirrored also
-    new G4LogicalBorderSurface(name+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
-    new G4LogicalBorderSurface(name+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
+    new G4LogicalBorderSurface(_name+"_central_gap_logsurf1", central_gap_phys, body_phys, fParams.mirror);
+    new G4LogicalBorderSurface(_name+"_central_gap_logsurf2", body_phys, central_gap_phys, fParams.mirror);
 
     return body_phys;
 }

@@ -184,7 +184,9 @@ protected:
     if (!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {
       // Then try the run plane
       tbl = db->GetRunTable(tblname, index, currentRun);
-      if(!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {
+      if (tbl) { 
+        if (tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) throw DBNotFoundError(tblname, index, fieldname);
+      } else {
         // Finally try default plane
         tbl = db->GetDefaultTable(tblname, index);
         if (!tbl || tbl->GetFieldType(fieldname) == DBTable::NOTFOUND) {

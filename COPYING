@@ -13,8 +13,9 @@ GdHPCapture is Copyright (c) Karim Zbiri.
 STLplus is Copyright (c) 2004 Andy Rushton. All rights reserved.
 CxxTest is Copyright (c) Erez Volk. Licensed under the LGPL.
 SCons is Copyright (c) 2004 The SCons Foundation.
+Decay0 is Copyright (c) 2017 V. Tretyak and the SNO+ Collaboration
 
-See COPYING.stlplus, COPYING.cxxtest, and COPYING.scons for the
+See COPYING.stlplus, COPYING.cxxtest, COPYING.scons, and COPYING.decay0 for the
 licenses for those packages.
 
 
