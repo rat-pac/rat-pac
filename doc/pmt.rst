@@ -71,7 +71,7 @@ in sub volumes the appropriate transformations are made on the fly.
 ``dir_y``                   ``double[]``    List of Y direction vector (will be normalized).
 ``dir_z``                   ``double[]``    List of Z direction vector (will be normalized).
 ``type``                    ``int[]``       List of logical PMT types (stored in DB).
-``efficiency``              ``double[]``    List of individul PMT efficiency corrections (optional).
+``efficiency``              ``double[]``    List of individual PMT efficiency corrections (optional).
 ==========================  ==============  ===================
 
 Q/T Response
