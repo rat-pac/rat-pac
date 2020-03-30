@@ -33,8 +33,8 @@ int main(int argc, char ** argv)
   parse_command_line(argc, argv);
 
   TFile file(input_filename.c_str(),"READ");
-  TTree *tree = dynamic_cast <TTree*> (file.Get("gtree"));
-  genie::NtpMCEventRecord *eventbranch;
+  TTree *tree = (TTree*)file.Get("gtree");
+  genie::NtpMCEventRecord *eventbranch = new genie::NtpMCEventRecord();
   tree->SetBranchAddress("gmcrec", &eventbranch);
 
   if (num_events <= 0){
