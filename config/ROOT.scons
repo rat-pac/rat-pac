@@ -45,7 +45,9 @@ rootenv.ParseConfig("root-config --cflags --ldflags --libs")
 rootenv.Append(LIBS='-lSpectrum')
 rootenv.Append(LIBS=['-lFoam', '-lPyROOT','-lMinuit2'])
 
-
+# SCons puts -std=c++11 into CFLAGS b/c RAT's version of SCons is old
+# So lets move an CFLAGS manually into the CCFlags
+rootenv["CCFLAGS"].append(rootenv["CFLAGS"])
 # Put it into form that can be easily merged into main environment
 rootopts = { 'BUILDERS'      : {'RootDict' : rootdict} }
 for key in ['ASFLAGS','CCFLAGS','CPPFLAGS','CPPPATH','LIBPATH','LIBS',
