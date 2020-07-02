@@ -92,6 +92,7 @@ Log::Die("Could not open " + filename + " for input.");
 #include <TObjString.h>
 #include <RAT/json.hh>
 
+ class TRootIOCtor;
 namespace RAT {
 
 class Log {
@@ -204,8 +205,10 @@ public:
 
   static TMap *GetDBTraceMap() { return dbtrace; };
 
+  Log(TRootIOCtor*) {};
+
 protected:
-  /** This class cannot be instantiated. */
+  /** This class cannot be instantiated, except by ROOT IO Constructor! */
   Log();
 
   /** Add a string key/value pair to the dbtrace map */

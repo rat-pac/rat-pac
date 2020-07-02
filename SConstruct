@@ -51,9 +51,11 @@ if bool(ARGUMENTS.get('cppjailbreak', True)):
     jailbreak_env = env.Clone(CPPDEFINES=[('protected','public')])
     ratdict = jailbreak_env.RootDict(os.path.join(jailbreak_env['BUILDDIR'], 'RAT_Dict_jailbreak.cc'),
                                      cint_headers)
+    pcm_filename = "RAT_Dict_jailbreak_rdict.pcm"
 else:
     ratdict = env.RootDict(os.path.join(env['BUILDDIR'], 'RAT_Dict.cc'),
                            cint_headers)
+    pcm_filename = "RAT_Dict_rdict.pcm"
 
 #### Target: RAT Library
 ratlib = env.StaticLibrary(env['RATLIB'], ratobj + ratdict)
@@ -79,6 +81,9 @@ solib_obj = env.SharedObject([os.path.join(env['BUILDDIR'], clsname+'.cc')
                               for clsname in cint_source])
 ratsolib = env.SharedLibrary(env['RATSOLIB'], solib_obj + ratdict)
 env.Default(ratsolib)
+
+pcm_install = Install("#/lib", os.path.join(jailbreak_env['BUILDDIR'], pcm_filename))
+env.Default(pcm_install)
 
 #### Target: Shared library to make RooFit stop printing that stupid banner
 nobanner_obj = env.SharedObject([os.path.join(env['BUILDDIR'], 'util', 'SilenceRooFitBanner.cc')])
