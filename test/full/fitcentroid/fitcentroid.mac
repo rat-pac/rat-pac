@@ -1,6 +1,7 @@
 /glg4debug/glg4param omit_muon_processes  1.0
 /glg4debug/glg4param omit_hadronic_processes  1.0
 
+/rat/db/set DETECTOR experiment "cylinder"
 /rat/db/set DETECTOR geo_file "cylinder/cylinder.geo"
 
 /run/initialize
