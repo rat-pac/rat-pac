@@ -22,9 +22,12 @@
 #include <RAT/BNLOpWLSBuilder.hh>
 #include <RAT/PhysicsListMessenger.hh>
 #include <RAT/PhysicsList.hh>
+#include <CLHEP/Units/SystemOfUnits.h>
+#include <G4VUserPhysicsList.hh>
 
-template<>
-G4VUPLData* G4VUPLSplitter<G4VUPLData>::offset = NULL;
+#if G4VERSION_NUMBER < 1030
+template<> G4VUPLData* G4VUPLSplitter<G4VUPLData>::offset = NULL;
+#endif
 
 namespace RAT {
 
@@ -84,7 +87,7 @@ void PhysicsList::EnableThermalNeutronScattering() {
 
   // Exclude the thermal scattering region (below 4 eV) from the "regular"
   // elastic scattering model
-  n_elastic_hp->SetMinEnergy(4.*eV);
+  n_elastic_hp->SetMinEnergy(4.*CLHEP::eV);
 
   // Use the more detailed HP thermal scattering treatment below 4 eV instead
   n_elastic_process->RegisterMe(new G4NeutronHPThermalScattering);
@@ -162,6 +165,9 @@ void PhysicsList::ConstructOpticalProcesses() {
   opBoundaryProcess->SetVerboseLevel(verboseLevel-1);
 
   // Apply processes to all particles where applicable
+#if G4VERSION_NUMBER > 1023
+  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
+#endif
   theParticleIterator->reset();
   while((*theParticleIterator)()) {
     G4ParticleDefinition* particle = theParticleIterator->value();
@@ -181,6 +187,9 @@ void PhysicsList::ConstructOpticalProcesses() {
 void PhysicsList::AddParameterization() {
   G4FastSimulationManagerProcess* fastSimulationManagerProcess =
     new G4FastSimulationManagerProcess();
+#if G4VERSION_NUMBER > 1023
+  G4ParticleTable::G4PTblDicIterator* theParticleIterator = theParticleTable->GetIterator();
+#endif
   theParticleIterator->reset();
   while((*theParticleIterator)()) {
     G4ParticleDefinition* particle = theParticleIterator->value();
