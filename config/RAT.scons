@@ -75,6 +75,16 @@ ratapp_nomain = Builder(action=env['BUILDERS']['Program'].action,
 rootopts = SConscript('ROOT.scons')
 g4opts = SConscript('GEANT4.scons')
 arch = SConscript('ARCH.'+ROOTARCH)
+import ipdb;ipdb.set_trace()
+
+# If, for example, g4opts has "-std=c++98" and rootopts has "-std=c++11"
+# I need to decide who wins. Right now I just sort the clags...that will means
+# the priority will be c++11 then 14 then 17 then 20 then 98
+stds = [x for x in (g4opts["CCFLAGS"] + rootopts["CCFLAGS"]) if "-std=c++" in x]
+if(len(stds) > 1):
+    chosen_std = sorted(stds)[0]
+    g4opts["CCFLAGS"] = [x for x in g4opts["CCFLAGS"] if ("-std=c++" not in x) or x is chosen_std]
+    rootopts["CCFLAGS"] = [x for x in rootopts["CCFLAGS"] if ("-std=c++" not in x) or x is chosen_std]
 
 for key in ['CXX', 'CC']:
     if os.environ.has_key(key):

@@ -9,7 +9,7 @@ g4env = Environment(ENV={'PATH' : os.environ['PATH']})
 g4env.ParseConfig('geant4-config --cflags --libs')
 
 # RATs version of scons is old and puts -std=c++11 into CFLAGS instead of CCFLAGS.
-g4env["CCFLAGS"].append(g4env["CFLAGS"])
+g4env["CCFLAGS"]+=g4env["CFLAGS"]
 g4opts = { 'ARCHEXTRA' : ''}
 for key in ['ASFLAGS','CCFLAGS','CPPFLAGS','CPPPATH','LIBPATH','LIBS',
             'LINKFLAGS', 'CPPDEFINES']:
