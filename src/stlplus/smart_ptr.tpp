@@ -135,28 +135,28 @@ simple_ptr<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& simple_ptr<T>::operator*(void) throw(null_dereference)
+T& simple_ptr<T>::operator*(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr<T>::operator*(void) const throw(null_dereference)
+const T& simple_ptr<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-T* simple_ptr<T>::operator->(void) throw(null_dereference)
+T* simple_ptr<T>::operator->(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::operator->");
   return m_pointer;
 }
 
 template<typename T>
-const T* simple_ptr<T>::operator->(void) const throw(null_dereference)
+const T* simple_ptr<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::operator->");
   return m_pointer;
@@ -172,14 +172,14 @@ void simple_ptr<T>::set_value(const T& data)
 }
 
 template<typename T>
-T& simple_ptr<T>::value(void) throw(null_dereference)
+T& simple_ptr<T>::value(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::value");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr<T>::value(void) const throw(null_dereference)
+const T& simple_ptr<T>::value(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr::value");
   return *m_pointer;
@@ -281,7 +281,7 @@ simple_ptr<T> simple_ptr<T>::copy(void) const
 // a simple_ptr is used to point to non-clonable objects, so use the standard dump/restore for pointers
 
 template<typename T>
-void simple_ptr<T>::dump(dump_context& context) const throw(persistent_dump_failed)
+void simple_ptr<T>::dump(dump_context& context) const __THROW__(persistent_dump_failed)
 {
   // get a magic key for the count - this also returns a flag saying whether its been seen before
   std::pair<bool,unsigned> mapping = context.pointer_map(m_count);
@@ -294,7 +294,7 @@ void simple_ptr<T>::dump(dump_context& context) const throw(persistent_dump_fail
 }
 
 template<typename T>
-void simple_ptr<T>::restore(restore_context& context) throw(persistent_restore_failed)
+void simple_ptr<T>::restore(restore_context& context) __THROW__(persistent_restore_failed)
 {
   // restore the magic key
   unsigned magic = 0;
@@ -388,13 +388,13 @@ otext& print_simple_ptr(otext& str, const simple_ptr<T>& ptr, unsigned indent, s
 // Persistence - non-member functions actually called by the user
 
 template<typename T>
-void dump_simple_ptr(dump_context& context, const simple_ptr<T>& data) throw(persistent_dump_failed)
+void dump_simple_ptr(dump_context& context, const simple_ptr<T>& data) __THROW__(persistent_dump_failed)
 {
   data.dump(context);
 }
 
 template<typename T>
-void restore_simple_ptr(restore_context& context, simple_ptr<T>& data) throw(persistent_restore_failed)
+void restore_simple_ptr(restore_context& context, simple_ptr<T>& data) __THROW__(persistent_restore_failed)
 {
   data.restore(context);
 }
@@ -518,28 +518,28 @@ simple_ptr_clone<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& simple_ptr_clone<T>::operator*(void) throw(null_dereference)
+T& simple_ptr_clone<T>::operator*(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr_clone<T>::operator*(void) const throw(null_dereference)
+const T& simple_ptr_clone<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-T* simple_ptr_clone<T>::operator->(void) throw(null_dereference)
+T* simple_ptr_clone<T>::operator->(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::operator->");
   return m_pointer;
 }
 
 template<typename T>
-const T* simple_ptr_clone<T>::operator->(void) const throw(null_dereference)
+const T* simple_ptr_clone<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::operator->");
   return m_pointer;
@@ -555,14 +555,14 @@ void simple_ptr_clone<T>::set_value(const T& data)
 }
 
 template<typename T>
-T& simple_ptr_clone<T>::value(void) throw(null_dereference)
+T& simple_ptr_clone<T>::value(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::value");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr_clone<T>::value(void) const throw(null_dereference)
+const T& simple_ptr_clone<T>::value(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_clone::value");
   return *m_pointer;
@@ -664,7 +664,7 @@ simple_ptr_clone<T> simple_ptr_clone<T>::copy(void) const
 // a simple_ptr_clone is used to point to non-clonable objects, so use the standard dump/restore for pointers
 
 template<typename T>
-void simple_ptr_clone<T>::dump(dump_context& context) const throw(persistent_dump_failed)
+void simple_ptr_clone<T>::dump(dump_context& context) const __THROW__(persistent_dump_failed)
 {
   // get a magic key for the count - this also returns a flag saying whether its been seen before
   std::pair<bool,unsigned> mapping = context.pointer_map(m_count);
@@ -677,7 +677,7 @@ void simple_ptr_clone<T>::dump(dump_context& context) const throw(persistent_dum
 }
 
 template<typename T>
-void simple_ptr_clone<T>::restore(restore_context& context) throw(persistent_restore_failed)
+void simple_ptr_clone<T>::restore(restore_context& context) __THROW__(persistent_restore_failed)
 {
   // restore the magic key
   unsigned magic = 0;
@@ -771,13 +771,13 @@ otext& print_simple_ptr_clone(otext& str, const simple_ptr_clone<T>& ptr, unsign
 // Persistence - non-member functions actually called by the user
 
 template<typename T>
-void dump_simple_ptr_clone(dump_context& context, const simple_ptr_clone<T>& data) throw(persistent_dump_failed)
+void dump_simple_ptr_clone(dump_context& context, const simple_ptr_clone<T>& data) __THROW__(persistent_dump_failed)
 {
   data.dump(context);
 }
 
 template<typename T>
-void restore_simple_ptr_clone(restore_context& context, simple_ptr_clone<T>& data) throw(persistent_restore_failed)
+void restore_simple_ptr_clone(restore_context& context, simple_ptr_clone<T>& data) __THROW__(persistent_restore_failed)
 {
   data.restore(context);
 }
@@ -885,28 +885,28 @@ simple_ptr_nocopy<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& simple_ptr_nocopy<T>::operator*(void) throw(null_dereference)
+T& simple_ptr_nocopy<T>::operator*(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr_nocopy<T>::operator*(void) const throw(null_dereference)
+const T& simple_ptr_nocopy<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::operator*");
   return *m_pointer;
 }
 
 template<typename T>
-T* simple_ptr_nocopy<T>::operator->(void) throw(null_dereference)
+T* simple_ptr_nocopy<T>::operator->(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::operator->");
   return m_pointer;
 }
 
 template<typename T>
-const T* simple_ptr_nocopy<T>::operator->(void) const throw(null_dereference)
+const T* simple_ptr_nocopy<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::operator->");
   return m_pointer;
@@ -916,14 +916,14 @@ const T* simple_ptr_nocopy<T>::operator->(void) const throw(null_dereference)
 // explicit function forms of the above assignment dereference operators
 
 template<typename T>
-T& simple_ptr_nocopy<T>::value(void) throw(null_dereference)
+T& simple_ptr_nocopy<T>::value(void) __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::value");
   return *m_pointer;
 }
 
 template<typename T>
-const T& simple_ptr_nocopy<T>::value(void) const throw(null_dereference)
+const T& simple_ptr_nocopy<T>::value(void) const __THROW__(null_dereference)
 {
   if (!m_pointer) throw null_dereference("null pointer dereferenced in simple_ptr_nocopy::value");
   return *m_pointer;
@@ -1245,28 +1245,28 @@ smart_ptr<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& smart_ptr<T>::operator*(void) throw(null_dereference)
+T& smart_ptr<T>::operator*(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr<T>::operator*(void) const throw(null_dereference)
+const T& smart_ptr<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-T* smart_ptr<T>::operator->(void) throw(null_dereference)
+T* smart_ptr<T>::operator->(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::operator->");
   return m_holder->pointer();
 }
 
 template<typename T>
-const T* smart_ptr<T>::operator->(void) const throw(null_dereference)
+const T* smart_ptr<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::operator->");
   return m_holder->pointer();
@@ -1282,14 +1282,14 @@ void smart_ptr<T>::set_value(const T& data)
 }
 
 template<typename T>
-T& smart_ptr<T>::value(void) throw(null_dereference)
+T& smart_ptr<T>::value(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::value");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr<T>::value(void) const throw(null_dereference)
+const T& smart_ptr<T>::value(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr::value");
   return m_holder->value();
@@ -1392,7 +1392,7 @@ smart_ptr<T> smart_ptr<T>::copy(void) const
 // a smart_ptr is used to point to non-clonable objects, so use the standard dump/restore for pointers
 
 template<typename T>
-void smart_ptr<T>::dump(dump_context& context) const throw(persistent_dump_failed)
+void smart_ptr<T>::dump(dump_context& context) const __THROW__(persistent_dump_failed)
 {
   // Many smart pointers can point to the same object.
   // I could have used the address of the object to differentiate, 
@@ -1409,7 +1409,7 @@ void smart_ptr<T>::dump(dump_context& context) const throw(persistent_dump_faile
 }
 
 template<typename T>
-void smart_ptr<T>::restore(restore_context& context) throw(persistent_restore_failed)
+void smart_ptr<T>::restore(restore_context& context) __THROW__(persistent_restore_failed)
 {
   // get the old substructure magic key
   unsigned magic = 0;
@@ -1493,13 +1493,13 @@ otext& print_smart_ptr(otext& str, const smart_ptr<T>& ptr, unsigned indent, std
 // Persistence - non-member functions actually called by the user
 
 template<typename T>
-void dump_smart_ptr(dump_context& context, const smart_ptr<T>& data) throw(persistent_dump_failed)
+void dump_smart_ptr(dump_context& context, const smart_ptr<T>& data) __THROW__(persistent_dump_failed)
 {
   data.dump(context);
 }
 
 template<typename T>
-void restore_smart_ptr(restore_context& context, smart_ptr<T>& data) throw(persistent_restore_failed)
+void restore_smart_ptr(restore_context& context, smart_ptr<T>& data) __THROW__(persistent_restore_failed)
 {
   data.restore(context);
 }
@@ -1617,28 +1617,28 @@ smart_ptr_clone<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& smart_ptr_clone<T>::operator*(void) throw(null_dereference)
+T& smart_ptr_clone<T>::operator*(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr_clone<T>::operator*(void) const throw(null_dereference)
+const T& smart_ptr_clone<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-T* smart_ptr_clone<T>::operator->(void) throw(null_dereference)
+T* smart_ptr_clone<T>::operator->(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::operator->");
   return m_holder->pointer();
 }
 
 template<typename T>
-const T* smart_ptr_clone<T>::operator->(void) const throw(null_dereference)
+const T* smart_ptr_clone<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::operator->");
   return m_holder->pointer();
@@ -1654,14 +1654,14 @@ void smart_ptr_clone<T>::set_value(const T& data)
 }
 
 template<typename T>
-T& smart_ptr_clone<T>::value(void) throw(null_dereference)
+T& smart_ptr_clone<T>::value(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::value");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr_clone<T>::value(void) const throw(null_dereference)
+const T& smart_ptr_clone<T>::value(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_clone::value");
   return m_holder->value();
@@ -1764,7 +1764,7 @@ smart_ptr_clone<T> smart_ptr_clone<T>::copy(void) const
 // a smart_ptr_clone is used to point to clonable objects, so use the dump/restore for the clonable interface
 
 template<typename T>
-void smart_ptr_clone<T>::dump(dump_context& context) const throw(persistent_dump_failed)
+void smart_ptr_clone<T>::dump(dump_context& context) const __THROW__(persistent_dump_failed)
 {
   // Many smart pointers can point to the same object.
   // I could have used the address of the object to differentiate, 
@@ -1781,7 +1781,7 @@ void smart_ptr_clone<T>::dump(dump_context& context) const throw(persistent_dump
 }
 
 template<typename T>
-void smart_ptr_clone<T>::restore(restore_context& context) throw(persistent_restore_failed)
+void smart_ptr_clone<T>::restore(restore_context& context) __THROW__(persistent_restore_failed)
 {
   // get the old substructure magic key
   unsigned magic = 0;
@@ -1865,13 +1865,13 @@ otext& print_smart_ptr_clone(otext& str, const smart_ptr_clone<T>& ptr, unsigned
 // Persistence - non-member functions actually called by the user
 
 template<typename T>
-void dump_smart_ptr_clone(dump_context& context, const smart_ptr_clone<T>& data) throw(persistent_dump_failed)
+void dump_smart_ptr_clone(dump_context& context, const smart_ptr_clone<T>& data) __THROW__(persistent_dump_failed)
 {
   data.dump(context);
 }
 
 template<typename T>
-void restore_smart_ptr_clone(restore_context& context, smart_ptr_clone<T>& data) throw(persistent_restore_failed)
+void restore_smart_ptr_clone(restore_context& context, smart_ptr_clone<T>& data) __THROW__(persistent_restore_failed)
 {
   data.restore(context);
 }
@@ -1970,28 +1970,28 @@ smart_ptr_nocopy<T>::operator bool(void) const
 // dereference operators and functions
 
 template<typename T>
-T& smart_ptr_nocopy<T>::operator*(void) throw(null_dereference)
+T& smart_ptr_nocopy<T>::operator*(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr_nocopy<T>::operator*(void) const throw(null_dereference)
+const T& smart_ptr_nocopy<T>::operator*(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::operator*");
   return m_holder->value();
 }
 
 template<typename T>
-T* smart_ptr_nocopy<T>::operator->(void) throw(null_dereference)
+T* smart_ptr_nocopy<T>::operator->(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::operator->");
   return m_holder->pointer();
 }
 
 template<typename T>
-const T* smart_ptr_nocopy<T>::operator->(void) const throw(null_dereference)
+const T* smart_ptr_nocopy<T>::operator->(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::operator->");
   return m_holder->pointer();
@@ -2001,14 +2001,14 @@ const T* smart_ptr_nocopy<T>::operator->(void) const throw(null_dereference)
 // explicit function forms of the above assignment dereference operators
 
 template<typename T>
-T& smart_ptr_nocopy<T>::value(void) throw(null_dereference)
+T& smart_ptr_nocopy<T>::value(void) __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::value");
   return m_holder->value();
 }
 
 template<typename T>
-const T& smart_ptr_nocopy<T>::value(void) const throw(null_dereference)
+const T& smart_ptr_nocopy<T>::value(void) const __THROW__(null_dereference)
 {
   if (m_holder->null()) throw null_dereference("null pointer dereferenced in smart_ptr_nocopy::value");
   return m_holder->value();

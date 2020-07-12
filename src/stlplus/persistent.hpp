@@ -21,6 +21,11 @@
 #include <string>
 #include <typeinfo>
 #include <stdexcept>
+#if __cplusplus < 201103L
+#define __THROW__(x) __THROW(x)
+#else
+#define __THROW__(x)
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // The format version number currently supported
@@ -35,25 +40,25 @@ extern unsigned char PersistentVersion;
 class persistent_illegal_type : public std::logic_error
 {
 public:
-  persistent_illegal_type(const std::string& type) throw();
-  persistent_illegal_type(unsigned short key) throw();
-  ~persistent_illegal_type(void) throw();
+  persistent_illegal_type(const std::string& type) __THROW__();
+  persistent_illegal_type(unsigned short key) __THROW__();
+  ~persistent_illegal_type(void) __THROW__();
 };
 
 // exception thrown if a dump fails for any reason - but typically because the output stream couldn't take the data
 class persistent_dump_failed : public std::runtime_error
 {
 public:
-  persistent_dump_failed(const std::string& message) throw();
-  ~persistent_dump_failed(void) throw();
+  persistent_dump_failed(const std::string& message) __THROW__();
+  ~persistent_dump_failed(void) __THROW__();
 };
 
 // exception thrown if you try to restore from an out of date or unrecognised byte stream
 class persistent_restore_failed : public std::runtime_error
 {
 public:
-  persistent_restore_failed(const std::string& message) throw();
-  ~persistent_restore_failed(void) throw();
+  persistent_restore_failed(const std::string& message) __THROW__();
+  ~persistent_restore_failed(void) __THROW__();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,11 +82,11 @@ public:
 
   //////////////////////////////////////////////////////////////////////////////
 
-  dump_context(const otext& device, unsigned char version = PersistentVersion) throw(persistent_dump_failed);
+  dump_context(const otext& device, unsigned char version = PersistentVersion) __THROW__(persistent_dump_failed);
   ~dump_context(void);
 
   // low level output used to dump a byte
-  void put(unsigned char data) throw(persistent_dump_failed);
+  void put(unsigned char data) __THROW__(persistent_dump_failed);
 
   // access the device, for example to check the error status
   const otext& device(void) const;
@@ -100,12 +105,12 @@ public:
   // Assist functions for Polymorphous classes (i.e. subclasses) using callback approach
   unsigned short register_type(const std::type_info& info, dump_callback);
   bool is_callback(const std::type_info& info) const;
-  callback_data lookup_type(const std::type_info&) const throw(persistent_illegal_type);
+  callback_data lookup_type(const std::type_info&) const __THROW__(persistent_illegal_type);
 
   // Assist functions for Polymorphous classes (i.e. subclasses) using interface approach
   unsigned short register_interface(const std::type_info& info);
   bool is_interface(const std::type_info& info) const;
-  unsigned short lookup_interface(const std::type_info&) const throw(persistent_illegal_type);
+  unsigned short lookup_interface(const std::type_info&) const __THROW__(persistent_illegal_type);
 
   // Register all Polymorphous classes using either approach by calling an installer callback
   void register_all(installer);
@@ -148,11 +153,11 @@ public:
 
   //////////////////////////////////////////////////////////////////////////////
 
-  restore_context(const itext& device) throw(persistent_restore_failed);
+  restore_context(const itext& device) __THROW__(persistent_restore_failed);
   ~restore_context(void);
 
   // low level input used to restore a byte
-  int get(void) throw(persistent_restore_failed);
+  int get(void) __THROW__(persistent_restore_failed);
 
   // access the device, for example to check the error status
   const itext& device(void) const;
@@ -171,13 +176,13 @@ public:
   // Assist functions for Polymorphous classes using the callback approach
   unsigned short register_type(create_callback,restore_callback);
   bool is_callback(unsigned short) const;
-  callback_data lookup_type(unsigned short) const throw(persistent_illegal_type);
+  callback_data lookup_type(unsigned short) const __THROW__(persistent_illegal_type);
 
   // Assist functions for Polymorphous classes using the interface approach
   // the object class must be a derivative of class persistent - i.e. it must implement the persistent interface
   unsigned short register_interface(const persistent&);
   bool is_interface(unsigned short) const;
-  const persistent& lookup_interface(unsigned short) const throw(persistent_illegal_type);
+  const persistent& lookup_interface(unsigned short) const __THROW__(persistent_illegal_type);
 
   // Register all Polymorphous classes using either approach by calling an installer callback
   void register_all(installer);
@@ -200,34 +205,34 @@ private:
 class persistent : public clonable
 {
 public:
-  virtual void dump(dump_context&) const throw(persistent_dump_failed) = 0;
-  virtual void restore(restore_context&)  throw(persistent_restore_failed) = 0;
+  virtual void dump(dump_context&) const __THROW__(persistent_dump_failed) = 0;
+  virtual void restore(restore_context&)  __THROW__(persistent_restore_failed) = 0;
   virtual ~persistent() {};
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 // Integers
 
-void dump(dump_context&, const bool& data) throw(persistent_dump_failed);
-void restore(restore_context&, bool& data) throw(persistent_restore_failed);
-void dump(dump_context&, const char& data) throw(persistent_dump_failed);
-void restore(restore_context&, char& data) throw(persistent_restore_failed);
-void dump(dump_context&, const signed char& data) throw(persistent_dump_failed);
-void restore(restore_context&, signed char& data) throw(persistent_restore_failed);
-void dump(dump_context&, const unsigned char& data) throw(persistent_dump_failed);
-void restore(restore_context&, unsigned char& data) throw(persistent_restore_failed);
-void dump(dump_context&, const short& data) throw(persistent_dump_failed);
-void restore(restore_context&, short& data) throw(persistent_restore_failed);
-void dump(dump_context&, const unsigned short& data) throw(persistent_dump_failed);
-void restore(restore_context&, unsigned short& data) throw(persistent_restore_failed);
-void dump(dump_context&, const int& data) throw(persistent_dump_failed);
-void restore(restore_context&, int& data) throw(persistent_restore_failed);
-void dump(dump_context&, const unsigned& data) throw(persistent_dump_failed);
-void restore(restore_context&, unsigned& data) throw(persistent_restore_failed);
-void dump(dump_context&, const long& data) throw(persistent_dump_failed);
-void restore(restore_context&, long& data) throw(persistent_restore_failed);
-void dump(dump_context&, const unsigned long& data) throw(persistent_dump_failed);
-void restore(restore_context&, unsigned long& data) throw(persistent_restore_failed);
+void dump(dump_context&, const bool& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, bool& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const char& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, char& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const signed char& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, signed char& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const unsigned char& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, unsigned char& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const short& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, short& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const unsigned short& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, unsigned short& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const int& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, int& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const unsigned& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, unsigned& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const long& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, long& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const unsigned long& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, unsigned long& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Floating point types
@@ -237,18 +242,18 @@ void restore(restore_context&, unsigned long& data) throw(persistent_restore_fai
 // Therefore a binary dump is not necessarily portable between platforms.
 // Solving this is (currently) beyond the scope of the STLplus project.
 
-void dump(dump_context&, const float& data) throw(persistent_dump_failed);
-void restore(restore_context&, float& data) throw(persistent_restore_failed);
-void dump(dump_context&, const double& data) throw(persistent_dump_failed);
-void restore(restore_context&, double& data) throw(persistent_restore_failed);
+void dump(dump_context&, const float& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, float& data) __THROW__(persistent_restore_failed);
+void dump(dump_context&, const double& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, double& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // enumeration types
 
 template<typename T>
-void dump_enum(dump_context&, const T& data) throw(persistent_dump_failed);
+void dump_enum(dump_context&, const T& data) __THROW__(persistent_dump_failed);
 template<typename T>
-void restore_enum(restore_context&, T& data) throw(persistent_restore_failed);
+void restore_enum(restore_context&, T& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // C-style char arrays.
@@ -264,19 +269,19 @@ void restore_enum(restore_context&, T& data) throw(persistent_restore_failed);
 // standard new. If the data field is non-null on entry it will be deleted by
 // standard delete. Best to make it null in the first place.
 
-void dump(dump_context&, char*& data) throw(persistent_dump_failed);
-void restore(restore_context&, char*& data) throw(persistent_restore_failed);
+void dump(dump_context&, char*& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, char*& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // STL strings
 
 template<typename charT, typename traits, typename allocator>
-void dump_basic_string(dump_context&, const std::basic_string<charT,traits,allocator>& data) throw(persistent_dump_failed);
+void dump_basic_string(dump_context&, const std::basic_string<charT,traits,allocator>& data) __THROW__(persistent_dump_failed);
 template<typename charT, typename traits, typename allocator>
-void restore_basic_string(restore_context&, std::basic_string<charT,traits,allocator>& data) throw(persistent_restore_failed);
+void restore_basic_string(restore_context&, std::basic_string<charT,traits,allocator>& data) __THROW__(persistent_restore_failed);
 
-void dump(dump_context&, const std::string& data) throw(persistent_dump_failed);
-void restore(restore_context&, std::string& data) throw(persistent_restore_failed);
+void dump(dump_context&, const std::string& data) __THROW__(persistent_dump_failed);
+void restore(restore_context&, std::string& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pointers
@@ -295,10 +300,10 @@ void restore(restore_context&, std::string& data) throw(persistent_restore_faile
 // pointers now pojnt to the restored object.
 
 template<typename T>
-void dump_pointer(dump_context&, const T* const data) throw(persistent_dump_failed);
+void dump_pointer(dump_context&, const T* const data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_pointer(restore_context&, T*& data) throw(persistent_restore_failed);
+void restore_pointer(restore_context&, T*& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Cross-references
@@ -315,10 +320,10 @@ void restore_pointer(restore_context&, T*& data) throw(persistent_restore_failed
 // something not dumped before.
 
 template<typename T>
-void dump_xref(dump_context&, const T* const data) throw(persistent_dump_failed);
+void dump_xref(dump_context&, const T* const data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_xref(restore_context&, T*& data) throw(persistent_restore_failed);
+void restore_xref(restore_context&, T*& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Polymorphous types using the callback approach
@@ -331,10 +336,10 @@ void restore_xref(restore_context&, T*& data) throw(persistent_restore_failed);
 // polymorphic types - see dump_context::register_type and restore_context::register_type.
 
 template<typename T>
-void dump_polymorph(dump_context&, const T* const data) throw(persistent_dump_failed);
+void dump_polymorph(dump_context&, const T* const data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_polymorph(restore_context&, T*& data) throw(persistent_restore_failed);
+void restore_polymorph(restore_context&, T*& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Polymorphous types using the interface approach
@@ -347,63 +352,63 @@ void restore_polymorph(restore_context&, T*& data) throw(persistent_restore_fail
 // polymorphic types - see dump_context::register_interface and restore_context::register_interface
 
 template<typename T>
-void dump_interface(dump_context&, const T* const data) throw(persistent_dump_failed);
+void dump_interface(dump_context&, const T* const data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_interface(restore_context&, T*& data) throw(persistent_restore_failed);
+void restore_interface(restore_context&, T*& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // STL Containers
 
 template<size_t N>
-void dump_bitset(dump_context&, const std::bitset<N>& data) throw(persistent_dump_failed);
+void dump_bitset(dump_context&, const std::bitset<N>& data) __THROW__(persistent_dump_failed);
 template<size_t N>
-void restore_bitset(restore_context&, std::bitset<N>& data) throw(persistent_restore_failed);
+void restore_bitset(restore_context&, std::bitset<N>& data) __THROW__(persistent_restore_failed);
 
 template<typename T>
-void dump_complex(dump_context&, const std::complex<T>& data) throw(persistent_dump_failed);
+void dump_complex(dump_context&, const std::complex<T>& data) __THROW__(persistent_dump_failed);
 template<typename T>
-void restore_complex(restore_context&, std::complex<T>& data) throw(persistent_restore_failed);
+void restore_complex(restore_context&, std::complex<T>& data) __THROW__(persistent_restore_failed);
 
 template<typename T>
-void dump_deque(dump_context&, const std::deque<T>& data) throw(persistent_dump_failed);
+void dump_deque(dump_context&, const std::deque<T>& data) __THROW__(persistent_dump_failed);
 template<typename T>
-void restore_deque(restore_context&, std::deque<T>& data) throw(persistent_restore_failed);
+void restore_deque(restore_context&, std::deque<T>& data) __THROW__(persistent_restore_failed);
 
 template<typename T>
-void dump_list(dump_context&, const std::list<T>& data) throw(persistent_dump_failed);
+void dump_list(dump_context&, const std::list<T>& data) __THROW__(persistent_dump_failed);
 template<typename T>
-void restore_list(restore_context&, std::list<T>& data) throw(persistent_restore_failed);
+void restore_list(restore_context&, std::list<T>& data) __THROW__(persistent_restore_failed);
 
 template<typename K, typename T>
-void dump_pair(dump_context&, const std::pair<K,T>& data) throw(persistent_dump_failed);
+void dump_pair(dump_context&, const std::pair<K,T>& data) __THROW__(persistent_dump_failed);
 template<typename K, typename T>
-void restore_pair(restore_context&, std::pair<K,T>& data) throw(persistent_restore_failed);
+void restore_pair(restore_context&, std::pair<K,T>& data) __THROW__(persistent_restore_failed);
 
 template<typename K, typename T, typename P>
-void dump_map(dump_context&, const std::map<K,T,P>& data) throw(persistent_dump_failed);
+void dump_map(dump_context&, const std::map<K,T,P>& data) __THROW__(persistent_dump_failed);
 template<typename K, typename T, typename P>
-void restore_map(restore_context&, std::map<K,T,P>& data) throw(persistent_restore_failed);
+void restore_map(restore_context&, std::map<K,T,P>& data) __THROW__(persistent_restore_failed);
 
 template<typename K, typename T, typename P>
-void dump_multimap(dump_context&, const std::multimap<K,T,P>& data) throw(persistent_dump_failed);
+void dump_multimap(dump_context&, const std::multimap<K,T,P>& data) __THROW__(persistent_dump_failed);
 template<typename K, typename T, typename P>
-void restore_multimap(restore_context&, std::multimap<K,T,P>& data) throw(persistent_restore_failed);
+void restore_multimap(restore_context&, std::multimap<K,T,P>& data) __THROW__(persistent_restore_failed);
 
 template<typename K, typename P>
-void dump_set(dump_context&, const std::set<K,P>& data) throw(persistent_dump_failed);
+void dump_set(dump_context&, const std::set<K,P>& data) __THROW__(persistent_dump_failed);
 template<typename K, typename P>
-void restore_set(restore_context&, std::set<K,P>& data) throw(persistent_restore_failed);
+void restore_set(restore_context&, std::set<K,P>& data) __THROW__(persistent_restore_failed);
 
 template<typename K, typename P>
-void dump_multiset(dump_context&, const std::multiset<K,P>& data) throw(persistent_dump_failed);
+void dump_multiset(dump_context&, const std::multiset<K,P>& data) __THROW__(persistent_dump_failed);
 template<typename K, typename P>
-void restore_multiset(restore_context&, std::multiset<K,P>& data) throw(persistent_restore_failed);
+void restore_multiset(restore_context&, std::multiset<K,P>& data) __THROW__(persistent_restore_failed);
 
 template<typename T>
-void dump_vector(dump_context&, const std::vector<T>& data) throw(persistent_dump_failed);
+void dump_vector(dump_context&, const std::vector<T>& data) __THROW__(persistent_dump_failed);
 template<typename T>
-void restore_vector(restore_context&, std::vector<T>& data) throw(persistent_restore_failed);
+void restore_vector(restore_context&, std::vector<T>& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 // short-cut functions for dumping and restoring to common targets
@@ -414,24 +419,24 @@ void restore_vector(restore_context&, std::vector<T>& data) throw(persistent_res
 
 template<typename T>
 void dump_to_device(const T& source, otext& result, dump_context::installer installer)
-  throw(persistent_dump_failed);
+  __THROW__(persistent_dump_failed);
 template<typename T>
 void restore_from_device(itext& source, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed);
+  __THROW__(persistent_restore_failed);
 
 template<typename T>
 void dump_to_string(const T& source, std::string& result, dump_context::installer installer)
-  throw(persistent_dump_failed);
+  __THROW__(persistent_dump_failed);
 template<typename T>
 void restore_from_string(const std::string& source, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed);
+  __THROW__(persistent_restore_failed);
 
 template<typename T>
 void dump_to_file(const T& source, const std::string& filename, dump_context::installer installer)
-  throw(persistent_dump_failed);
+  __THROW__(persistent_dump_failed);
 template<typename T>
 void restore_from_file(const std::string& filename, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed);
+  __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "persistent.tpp"

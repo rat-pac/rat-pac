@@ -12,13 +12,13 @@
 // enumeration types
 
 template<typename T>
-void dump_enum(dump_context& context, const T& data) throw(persistent_dump_failed)
+void dump_enum(dump_context& context, const T& data) __THROW__(persistent_dump_failed)
 {
   dump(context, (unsigned)data);
 }
 
 template<typename T>
-void restore_enum(restore_context& context, T& data) throw(persistent_restore_failed)
+void restore_enum(restore_context& context, T& data) __THROW__(persistent_restore_failed)
 {
   unsigned value = 0;
   restore(context, value);
@@ -29,7 +29,7 @@ void restore_enum(restore_context& context, T& data) throw(persistent_restore_fa
 // STL strings
 
 template<typename charT, typename traits, typename allocator>
-void dump_basic_string(dump_context& context, const std::basic_string<charT,traits,allocator>& data) throw(persistent_dump_failed)
+void dump_basic_string(dump_context& context, const std::basic_string<charT,traits,allocator>& data) __THROW__(persistent_dump_failed)
 {
   dump(context, data.size());
   for (size_t i = 0; i < data.size(); i++)
@@ -37,7 +37,7 @@ void dump_basic_string(dump_context& context, const std::basic_string<charT,trai
 }
 
 template<typename charT, typename traits, typename allocator>
-void restore_basic_string(restore_context& context, std::basic_string<charT,traits,allocator>& data) throw(persistent_restore_failed)
+void restore_basic_string(restore_context& context, std::basic_string<charT,traits,allocator>& data) __THROW__(persistent_restore_failed)
 {
   data.erase();
   size_t size = 0;
@@ -55,7 +55,7 @@ void restore_basic_string(restore_context& context, std::basic_string<charT,trai
 // format: magic_key [ data ]
 
 template<typename T>
-void dump_pointer(dump_context& context, const T* const data) throw(persistent_dump_failed)
+void dump_pointer(dump_context& context, const T* const data) __THROW__(persistent_dump_failed)
 {
   // register the address and get the magic key for it
   std::pair<bool,unsigned> mapping = context.pointer_map(data);
@@ -67,7 +67,7 @@ void dump_pointer(dump_context& context, const T* const data) throw(persistent_d
 }
 
 template<typename T>
-void restore_pointer(restore_context& context, T*& data) throw(persistent_restore_failed)
+void restore_pointer(restore_context& context, T*& data) __THROW__(persistent_restore_failed)
 {
   if (data)
   {
@@ -100,7 +100,7 @@ void restore_pointer(restore_context& context, T*& data) throw(persistent_restor
 // format: magic_key [ data ]
 
 template<typename T>
-void dump_xref(dump_context& context, const T* const data) throw(persistent_dump_failed)
+void dump_xref(dump_context& context, const T* const data) __THROW__(persistent_dump_failed)
 {
   // register the address and get the magic key for it
   std::pair<bool,unsigned> mapping = context.pointer_map(data);
@@ -111,7 +111,7 @@ void dump_xref(dump_context& context, const T* const data) throw(persistent_dump
 }
 
 template<typename T>
-void restore_xref(restore_context& context, T*& data) throw(persistent_restore_failed)
+void restore_xref(restore_context& context, T*& data) __THROW__(persistent_restore_failed)
 {
   // Note: I do not try to delete the old data because this is a cross-reference
   // get the magic key
@@ -131,7 +131,7 @@ void restore_xref(restore_context& context, T*& data) throw(persistent_restore_f
 // format: address [ key data ]
 
 template<typename T>
-void dump_polymorph(dump_context& context, const T* data) throw(persistent_dump_failed)
+void dump_polymorph(dump_context& context, const T* data) __THROW__(persistent_dump_failed)
 {
   try
   {
@@ -159,7 +159,7 @@ void dump_polymorph(dump_context& context, const T* data) throw(persistent_dump_
 }
 
 template<typename T>
-void restore_polymorph(restore_context& context, T*& data) throw(persistent_restore_failed)
+void restore_polymorph(restore_context& context, T*& data) __THROW__(persistent_restore_failed)
 {
   try
   {
@@ -222,7 +222,7 @@ void restore_polymorph(restore_context& context, T*& data) throw(persistent_rest
 // format: address [ key data ]
 
 template<typename T>
-void dump_interface(dump_context& context, const T* data) throw(persistent_dump_failed)
+void dump_interface(dump_context& context, const T* data) __THROW__(persistent_dump_failed)
 {
   try
   {
@@ -251,7 +251,7 @@ void dump_interface(dump_context& context, const T* data) throw(persistent_dump_
 }
 
 template<typename T>
-void restore_interface(restore_context& context, T*& data) throw(persistent_restore_failed)
+void restore_interface(restore_context& context, T*& data) __THROW__(persistent_restore_failed)
 {
   try
   {
@@ -313,7 +313,7 @@ void restore_interface(restore_context& context, T*& data) throw(persistent_rest
 // hard way.
 
 template<size_t N>
-void dump_bitset(dump_context& context, const std::bitset<N>& data) throw(persistent_dump_failed)
+void dump_bitset(dump_context& context, const std::bitset<N>& data) __THROW__(persistent_dump_failed)
 {
   size_t bits = data.size();
   size_t bytes = (bits+7)/8;
@@ -331,7 +331,7 @@ void dump_bitset(dump_context& context, const std::bitset<N>& data) throw(persis
 }
 
 template<size_t N>
-void restore_bitset(restore_context& context, std::bitset<N>& data) throw(persistent_restore_failed)
+void restore_bitset(restore_context& context, std::bitset<N>& data) __THROW__(persistent_restore_failed)
 {
   size_t bits = data.size();
   size_t bytes = (bits+7)/8;
@@ -352,14 +352,14 @@ void restore_bitset(restore_context& context, std::bitset<N>& data) throw(persis
 // complex
 
 template<typename T>
-void dump_complex(dump_context& context, const std::complex<T>& data) throw(persistent_dump_failed)
+void dump_complex(dump_context& context, const std::complex<T>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.real());
   dump(context,data.imag());
 }
 
 template<typename T>
-void restore_complex(restore_context& context, std::complex<T>& data) throw(persistent_restore_failed)
+void restore_complex(restore_context& context, std::complex<T>& data) __THROW__(persistent_restore_failed)
 {
   T re, im;
   restore(context,re);
@@ -371,7 +371,7 @@ void restore_complex(restore_context& context, std::complex<T>& data) throw(pers
 // deque
 
 template<typename T>
-void dump_deque(dump_context& context, const std::deque<T>& data) throw(persistent_dump_failed)
+void dump_deque(dump_context& context, const std::deque<T>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::deque<T>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -379,7 +379,7 @@ void dump_deque(dump_context& context, const std::deque<T>& data) throw(persiste
 }
 
 template<typename T>
-void restore_deque(restore_context& context, std::deque<T>& data) throw(persistent_restore_failed)
+void restore_deque(restore_context& context, std::deque<T>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -395,7 +395,7 @@ void restore_deque(restore_context& context, std::deque<T>& data) throw(persiste
 // list
 
 template<typename T>
-void dump_list(dump_context& context, const std::list<T>& data) throw(persistent_dump_failed)
+void dump_list(dump_context& context, const std::list<T>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::list<T>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -403,7 +403,7 @@ void dump_list(dump_context& context, const std::list<T>& data) throw(persistent
 }
 
 template<typename T>
-void restore_list(restore_context& context, std::list<T>& data) throw(persistent_restore_failed)
+void restore_list(restore_context& context, std::list<T>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -419,14 +419,14 @@ void restore_list(restore_context& context, std::list<T>& data) throw(persistent
 // pair
 
 template<typename K, typename T>
-void dump_pair(dump_context& context, const std::pair<K,T>& data) throw(persistent_dump_failed)
+void dump_pair(dump_context& context, const std::pair<K,T>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.first);
   dump(context,data.second);
 }
 
 template<typename K, typename T>
-void restore_pair(restore_context& context, std::pair<K,T>& data) throw(persistent_restore_failed)
+void restore_pair(restore_context& context, std::pair<K,T>& data) __THROW__(persistent_restore_failed)
 {
   restore(context,data.first);
   restore(context,data.second);
@@ -436,7 +436,7 @@ void restore_pair(restore_context& context, std::pair<K,T>& data) throw(persiste
 // Map
 
 template<typename K, typename T, typename P>
-void dump_map(dump_context& context, const std::map<K,T,P>& data) throw(persistent_dump_failed)
+void dump_map(dump_context& context, const std::map<K,T,P>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::map<K,T,P>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -447,7 +447,7 @@ void dump_map(dump_context& context, const std::map<K,T,P>& data) throw(persiste
 }
 
 template<typename K, typename T, typename P>
-void restore_map(restore_context& context, std::map<K,T,P>& data) throw(persistent_restore_failed)
+void restore_map(restore_context& context, std::map<K,T,P>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -464,7 +464,7 @@ void restore_map(restore_context& context, std::map<K,T,P>& data) throw(persiste
 // Multimap
 
 template<typename K, typename T, typename P>
-void dump_multimap(dump_context& context, const std::multimap<K,T,P>& data) throw(persistent_dump_failed)
+void dump_multimap(dump_context& context, const std::multimap<K,T,P>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::multimap<K,T,P>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -475,7 +475,7 @@ void dump_multimap(dump_context& context, const std::multimap<K,T,P>& data) thro
 }
 
 template<typename K, typename T, typename P>
-void restore_multimap(restore_context& context, std::multimap<K,T,P>& data) throw(persistent_restore_failed)
+void restore_multimap(restore_context& context, std::multimap<K,T,P>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -493,7 +493,7 @@ void restore_multimap(restore_context& context, std::multimap<K,T,P>& data) thro
 // Set
 
 template<typename K, typename P>
-void dump_set(dump_context& context, const std::set<K,P>& data) throw(persistent_dump_failed)
+void dump_set(dump_context& context, const std::set<K,P>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::set<K,P>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -501,7 +501,7 @@ void dump_set(dump_context& context, const std::set<K,P>& data) throw(persistent
 }
 
 template<typename K, typename P>
-void restore_set(restore_context& context, std::set<K,P>& data) throw(persistent_restore_failed)
+void restore_set(restore_context& context, std::set<K,P>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -521,7 +521,7 @@ void restore_set(restore_context& context, std::set<K,P>& data) throw(persistent
 // Shame that a multiset is not just a derivative of set since it has the same interface
 
 template<typename K, typename P>
-void dump_multiset(dump_context& context, const std::multiset<K,P>& data) throw(persistent_dump_failed)
+void dump_multiset(dump_context& context, const std::multiset<K,P>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (typename std::multiset<K,P>::const_iterator i = data.begin(); i != data.end(); i++)
@@ -529,7 +529,7 @@ void dump_multiset(dump_context& context, const std::multiset<K,P>& data) throw(
 }
 
 template<typename K, typename P>
-void restore_multiset(restore_context& context, std::multiset<K,P>& data) throw(persistent_restore_failed)
+void restore_multiset(restore_context& context, std::multiset<K,P>& data) __THROW__(persistent_restore_failed)
 {
   data.clear();
   size_t size = 0;
@@ -548,7 +548,7 @@ void restore_multiset(restore_context& context, std::multiset<K,P>& data) throw(
 //vector
 
 template<typename T>
-void dump_vector(dump_context& context, const std::vector<T>& data) throw(persistent_dump_failed)
+void dump_vector(dump_context& context, const std::vector<T>& data) __THROW__(persistent_dump_failed)
 {
   dump(context,data.size());
   for (size_t i = 0; i < data.size(); i++)
@@ -556,7 +556,7 @@ void dump_vector(dump_context& context, const std::vector<T>& data) throw(persis
 }
 
 template<typename T>
-void restore_vector(restore_context& context, std::vector<T>& data) throw(persistent_restore_failed)
+void restore_vector(restore_context& context, std::vector<T>& data) __THROW__(persistent_restore_failed)
 {
   size_t size = 0;
   restore(context,size);
@@ -569,7 +569,7 @@ void restore_vector(restore_context& context, std::vector<T>& data) throw(persis
 
 template<typename T>
 void dump_to_device(const T& source, otext& result, dump_context::installer installer)
-  throw(persistent_dump_failed)
+  __THROW__(persistent_dump_failed)
 {
   dump_context context(result);
   context.register_all(installer);
@@ -578,7 +578,7 @@ void dump_to_device(const T& source, otext& result, dump_context::installer inst
 
 template<typename T>
 void restore_from_device(itext& source, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed)
+  __THROW__(persistent_restore_failed)
 {
   restore_context context(source);
   context.register_all(installer);
@@ -587,7 +587,7 @@ void restore_from_device(itext& source, T& result, restore_context::installer in
 
 template<typename T>
 void dump_to_string(const T& source, std::string& result, dump_context::installer installer)
-  throw(persistent_dump_failed)
+  __THROW__(persistent_dump_failed)
 {
   ostext output;
   dump_to_device(source, output, installer);
@@ -596,7 +596,7 @@ void dump_to_string(const T& source, std::string& result, dump_context::installe
 
 template<typename T>
 void restore_from_string(const std::string& source, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed)
+  __THROW__(persistent_restore_failed)
 {
   istext input(source);
   restore_from_device(input, result, installer);
@@ -604,7 +604,7 @@ void restore_from_string(const std::string& source, T& result, restore_context::
 
 template<typename T>
 void dump_to_file(const T& source, const std::string& filename, dump_context::installer installer)
-  throw(persistent_dump_failed)
+  __THROW__(persistent_dump_failed)
 {
   oftext output(filename);
   dump_to_device(source, output, installer);
@@ -612,7 +612,7 @@ void dump_to_file(const T& source, const std::string& filename, dump_context::in
 
 template<typename T>
 void restore_from_file(const std::string& filename, T& result, restore_context::installer installer)
-  throw(persistent_restore_failed)
+  __THROW__(persistent_restore_failed)
 {
   iftext input(filename);
   restore_from_device(input, result, installer);

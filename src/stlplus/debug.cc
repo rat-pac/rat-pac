@@ -16,13 +16,13 @@ static const char* unknown_function = "";
 
 ////////////////////////////////////////////////////////////////////////////////
 
-assert_failed::assert_failed(const char* file, int line, const char* function, const std::string& message) throw() : 
+assert_failed::assert_failed(const char* file, int line, const char* function, const std::string& message) __THROW__() : 
   std::logic_error(std::string(file) + std::string(":") + to_string(line) + std::string(":") + 
                    std::string(function ? function : unknown_function) + std::string(": assertion failed: ") + message)
 {
 }
 
-assert_failed::~assert_failed(void) throw()
+assert_failed::~assert_failed(void) __THROW__()
 {
 }
 
@@ -43,7 +43,7 @@ void _debug_global(const char* file, int line, const char* function, bool state)
   fprintf(stderr, "debug global : %s\n", debug_global ? "on" : "off");
 }
 
-void _debug_assert_fail(const char* file, int line, const char* function, const char* test) throw(assert_failed)
+void _debug_assert_fail(const char* file, int line, const char* function, const char* test) __THROW__(assert_failed)
 {
   fprintf(stderr, "%s:%i:[%i]%s: assertion failed: %s\n", 
           filename_part(file).c_str(), line, debug_trace_depth, function ? function : unknown_function, test);

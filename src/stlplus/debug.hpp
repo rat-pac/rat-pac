@@ -16,14 +16,19 @@
 #include <stdio.h>
 #include <string>
 
+#if __cplusplus < 201103L
+#define __THROW__(x) throw(x)
+#else
+#define __THROW__(x)
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 // Exception thrown if an assertion fails
 
 class assert_failed : public std::logic_error
 {
 public:
-  assert_failed(const char* file, int line, const char* function, const std::string& message) throw();
-  ~assert_failed(void) throw();
+  assert_failed(const char* file, int line, const char* function, const std::string& message) __THROW__();
+  ~assert_failed(void) __THROW__();
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +68,7 @@ public:
 // infrastructure - don't use directly
 
 void _debug_global(const char* file, int line, const char* function, bool state = true);
-void _debug_assert_fail(const char* file, int line, const char* function, const char* test) throw(assert_failed);
+void _debug_assert_fail(const char* file, int line, const char* function, const char* test) __THROW__(assert_failed);
 
 class _debug_trace
 {

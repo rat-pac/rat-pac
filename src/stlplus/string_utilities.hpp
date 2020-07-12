@@ -20,6 +20,11 @@
 #include <set>
 #include <vector>
 #include <stdexcept>
+#if __cplusplus < 201103L
+#define __THROW__(x) throw(x)
+#else
+#define __THROW__(x)
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // Conversions of Integer types to string
@@ -38,28 +43,28 @@
 // For example, using the hash representation of 0 in hex with width=4 gives: 16#0000 - so there's 4 digits in the number part
 
 std::string to_string(bool i,           unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(short i,          unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(unsigned short i, unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(int i,            unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(unsigned int i,   unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(long i,           unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(unsigned long i,  unsigned radix = 10, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 std::string to_string(const void*,      unsigned radix = 16, radix_display_t display = radix_c_style_or_hash, unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 ////////////////////////////////////////////////////////////////////////////////
 // convert a real type to string
@@ -71,9 +76,9 @@ std::string to_string(const void*,      unsigned radix = 16, radix_display_t dis
 // Using any other value for the display type causes std::invalid_argument to be thrown
 
 std::string to_string(float f,  real_display_t display = display_mixed, unsigned width = 0, unsigned precision = 6)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 std::string to_string(double f, real_display_t display = display_mixed, unsigned width = 0, unsigned precision = 6)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Convert a string to string
@@ -99,36 +104,36 @@ std::string to_string(const char* value);
 // Any other value will cause std::invalid_argument to be thrown
 
 bool to_bool(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 short to_short(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 unsigned short to_ushort(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 int to_int(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 unsigned int to_uint(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 long to_long(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 unsigned long to_ulong(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 void* to_void_star(const std::string& value, unsigned radix = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 // Convert a floating-point type
 
 float to_float(const std::string& value)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 double to_double(const std::string& value)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 ////////////////////////////////////////////////////////////////////////////////
 // template string conversions for pointers and STL containers
@@ -183,54 +188,54 @@ otext& print_indent(otext& str, unsigned indent);
 otext& print(otext& str, const bool& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const short& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const unsigned short& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const int& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const unsigned int& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const long& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const unsigned long& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, const void*& value,
              unsigned radix = 10, radix_display_t display = radix_c_style_or_hash,
              unsigned width = 0)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 // print routines for floating-point types
 
 otext& print(otext& str, float f, 
              real_display_t display = display_mixed,
              unsigned width = 0, unsigned precision = 6)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 otext& print(otext& str, double f,
              real_display_t display = display_mixed,
              unsigned width = 0, unsigned precision = 6)
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 // print routines for string
 // this is needed for completeness, e.g. when calling print_vector on a vector of strings
@@ -300,7 +305,7 @@ otext& print_vector(otext& str, const std::vector<T>& values, unsigned indent);
 // Any other value will cause std::invalid_argument to be thrown
 
 std::string pad(const std::string& str, alignment_t alignment, unsigned width, char padch = ' ')
-  throw(std::invalid_argument);
+  __THROW__(std::invalid_argument);
 
 // whitespace trimming
 std::string trim_left(const std::string& val);

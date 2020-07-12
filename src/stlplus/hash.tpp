@@ -33,7 +33,7 @@ public:
 
 template<typename K, typename T, class H, class E, typename V>
 void hash_iterator<K,T,H,E,V>::check_owner(const hash<K,T,H,E>* _owner) const
-  throw(wrong_object)
+  __THROW__(wrong_object)
 {
   if (_owner != m_owner)
     throw wrong_object("hash iterator");
@@ -41,7 +41,7 @@ void hash_iterator<K,T,H,E,V>::check_owner(const hash<K,T,H,E>* _owner) const
 
 template<typename K, typename T, class H, class E, typename V>
 void hash_iterator<K,T,H,E,V>::check_non_null(void) const
-  throw(null_dereference)
+  __THROW__(null_dereference)
 {
   if (null())
     throw null_dereference("hash iterator");
@@ -49,7 +49,7 @@ void hash_iterator<K,T,H,E,V>::check_non_null(void) const
 
 template<typename K, typename T, class H, class E, typename V>
 void hash_iterator<K,T,H,E,V>::check_non_end(void) const
-  throw(end_dereference)
+  __THROW__(end_dereference)
 {
   if (end())
     throw end_dereference("hash iterator");
@@ -57,7 +57,7 @@ void hash_iterator<K,T,H,E,V>::check_non_end(void) const
 
 template<typename K, typename T, class H, class E, typename V>
 void hash_iterator<K,T,H,E,V>::check_valid(void) const
-  throw(null_dereference,end_dereference)
+  __THROW__((null_dereference,end_dereference))
 {
   check_non_null();
   check_non_end();
@@ -65,7 +65,7 @@ void hash_iterator<K,T,H,E,V>::check_valid(void) const
 
 template<typename K, typename T, class H, class E, typename V>
 void hash_iterator<K,T,H,E,V>::check(const hash<K,T,H,E>* _owner) const
-  throw(wrong_object,null_dereference,end_dereference)
+  __THROW__((wrong_object,null_dereference,end_dereference))
 {
   check_valid();
   if (_owner) check_owner(_owner);
@@ -157,7 +157,7 @@ typename hash_iterator<K,T,H,E,V>::iterator hash_iterator<K,T,H,E,V>::deconstify
 
 template<typename K, typename T, class H, class E, typename V>
 typename hash_iterator<K,T,H,E,V>::this_iterator& hash_iterator<K,T,H,E,V>::operator ++ (void)
-  throw(null_dereference,end_dereference)
+  __THROW__((null_dereference,end_dereference))
 {
   check_valid();
   if (m_element->m_next)
@@ -186,7 +186,7 @@ typename hash_iterator<K,T,H,E,V>::this_iterator& hash_iterator<K,T,H,E,V>::oper
 
 template<typename K, typename T, class H, class E, typename V>
 typename hash_iterator<K,T,H,E,V>::this_iterator hash_iterator<K,T,H,E,V>::operator ++ (int)
-  throw(null_dereference,end_dereference)
+  __THROW__((null_dereference,end_dereference))
 {
   typename hash_iterator<K,T,H,E,V>::this_iterator old = *this;
   ++(*this);
@@ -218,7 +218,7 @@ bool hash_iterator<K,T,H,E,V>::operator < (const hash_iterator<K,T,H,E,V>& r) co
 
 template<typename K, typename T, class H, class E, typename V>
 V& hash_iterator<K,T,H,E,V>::operator*(void) const
-  throw(null_dereference,end_dereference)
+  __THROW__((null_dereference,end_dereference))
 {
   check_valid();
   return m_element->m_value;
@@ -226,7 +226,7 @@ V& hash_iterator<K,T,H,E,V>::operator*(void) const
 
 template<typename K, typename T, class H, class E, typename V>
 V* hash_iterator<K,T,H,E,V>::operator->(void) const
-  throw(null_dereference,end_dereference)
+  __THROW__((null_dereference,end_dereference))
 {
   check_valid();
   return &(m_element->m_value);
@@ -636,7 +636,7 @@ typename hash<K,T,H,E>::iterator hash<K,T,H,E>::end(void)
 
 template<typename K, typename T, class H, class E>
 void hash<K,T,H,E>::dump(dump_context& context) const
-  throw(persistent_dump_failed)
+  __THROW__(persistent_dump_failed)
 {
   ::dump(context,size());
   for (typename hash<K,T,H,E>::const_iterator i = begin(); i != end(); i++)
@@ -648,7 +648,7 @@ void hash<K,T,H,E>::dump(dump_context& context) const
 
 template<typename K, typename T, class H, class E>
 void hash<K,T,H,E>::restore(restore_context& context)
-  throw(persistent_restore_failed)
+  __THROW__(persistent_restore_failed)
 {
   erase();
   size_t _size = 0;
@@ -742,13 +742,13 @@ otext& operator << (otext& str, const hash<K,T,H,E>& table)
 template<typename K, typename T, class H, class E>
 void dump_hash(dump_context& context, const hash<K,T,H,E>& data)
 
-  throw(persistent_dump_failed)
+  __THROW__(persistent_dump_failed)
 {
   data.dump(context);
 }
 
 template<typename K, typename T, class H, class E>
-void restore_hash(restore_context& context, hash<K,T,H,E>& data) throw(persistent_restore_failed)
+void restore_hash(restore_context& context, hash<K,T,H,E>& data) __THROW__(persistent_restore_failed)
 {
   data.restore(context);
 }

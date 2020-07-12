@@ -22,39 +22,39 @@ unsigned char PersistentVersion = 2;
 ////////////////////////////////////////////////////////////////////////////////
 // exceptions
 
-persistent_illegal_type::persistent_illegal_type(const std::string& type) throw() : 
+persistent_illegal_type::persistent_illegal_type(const std::string& type) __THROW__() : 
   std::logic_error(std::string("illegal type: ") + type)
 {
 }
 
-persistent_illegal_type::persistent_illegal_type(unsigned short key) throw() : 
+persistent_illegal_type::persistent_illegal_type(unsigned short key) __THROW__() : 
   std::logic_error(std::string("illegal key: ") + to_string(key))
 {
 }
 
-persistent_illegal_type::~persistent_illegal_type(void) throw()
+persistent_illegal_type::~persistent_illegal_type(void) __THROW__()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-persistent_dump_failed::persistent_dump_failed(const std::string& message) throw() :
+persistent_dump_failed::persistent_dump_failed(const std::string& message) __THROW__() :
   std::runtime_error(std::string("dump failed: ") + message)
 {
 }
 
-persistent_dump_failed::~persistent_dump_failed(void) throw()
+persistent_dump_failed::~persistent_dump_failed(void) __THROW__()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-persistent_restore_failed::persistent_restore_failed(const std::string& message) throw() :
+persistent_restore_failed::persistent_restore_failed(const std::string& message) __THROW__() :
   std::runtime_error(std::string("restore failed: ") + message)
 {
 }
 
-persistent_restore_failed::~persistent_restore_failed(void) throw()
+persistent_restore_failed::~persistent_restore_failed(void) __THROW__()
 {
 }
 
@@ -77,7 +77,7 @@ public:
   callback_map m_callbacks;
   interface_map m_interfaces;
 
-  dump_context_body(const otext& _device, unsigned char _version) throw(persistent_dump_failed) : 
+  dump_context_body(const otext& _device, unsigned char _version) __THROW__(persistent_dump_failed) : 
     m_max_key(0), m_version(_version), m_little_endian(::little_endian()), m_device(_device)
     {
       m_device.set_binary_mode();
@@ -88,7 +88,7 @@ public:
         throw persistent_dump_failed(std::string("wrong version: ") + to_string(m_version));
     }
 
-  void put(unsigned char data) throw(persistent_dump_failed)
+  void put(unsigned char data) __THROW__(persistent_dump_failed)
     {
       if (!m_device.put(data))
       {
@@ -141,7 +141,7 @@ public:
       return m_callbacks.find(info.name()) != m_callbacks.end();
     }
 
-  dump_context::callback_data lookup_type(const std::type_info& info) const throw(persistent_illegal_type)
+  dump_context::callback_data lookup_type(const std::type_info& info) const __THROW__(persistent_illegal_type)
     {
       std::string key = info.name();
       callback_map::const_iterator found = m_callbacks.find(key);
@@ -163,7 +163,7 @@ public:
       return m_interfaces.find(info.name()) != m_interfaces.end();
     }
 
-  unsigned short lookup_interface(const std::type_info& info) const throw(persistent_illegal_type)
+  unsigned short lookup_interface(const std::type_info& info) const __THROW__(persistent_illegal_type)
     {
       std::string key = info.name();
       interface_map::const_iterator found = m_interfaces.find(key);
@@ -175,7 +175,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-dump_context::dump_context(const otext& _device, unsigned char _version) throw(persistent_dump_failed) : 
+dump_context::dump_context(const otext& _device, unsigned char _version) __THROW__(persistent_dump_failed) : 
   m_body(0)
 {
   m_body = new dump_context_body(_device,_version);
@@ -186,7 +186,7 @@ dump_context::~dump_context(void)
   delete m_body;
 }
 
-void dump_context::put(unsigned char data) throw(persistent_dump_failed)
+void dump_context::put(unsigned char data) __THROW__(persistent_dump_failed)
 {
   DEBUG_ASSERT(m_body);
   m_body->put(data);
@@ -228,7 +228,7 @@ bool dump_context::is_callback(const std::type_info& info) const
   return m_body->is_callback(info);
 }
 
-dump_context::callback_data dump_context::lookup_type(const std::type_info& info) const throw(persistent_illegal_type)
+dump_context::callback_data dump_context::lookup_type(const std::type_info& info) const __THROW__(persistent_illegal_type)
 {
   DEBUG_ASSERT(m_body);
   return m_body->lookup_type(info);
@@ -246,7 +246,7 @@ bool dump_context::is_interface(const std::type_info& info) const
   return m_body->is_interface(info);
 }
 
-unsigned short dump_context::lookup_interface(const std::type_info& info) const throw(persistent_illegal_type)
+unsigned short dump_context::lookup_interface(const std::type_info& info) const __THROW__(persistent_illegal_type)
 {
   DEBUG_ASSERT(m_body);
   return m_body->lookup_interface(info);
@@ -278,7 +278,7 @@ public:
   callback_map m_callbacks;
   interface_map m_interfaces;
 
-  restore_context_body(const itext& _device) throw(persistent_restore_failed) : 
+  restore_context_body(const itext& _device) __THROW__(persistent_restore_failed) : 
     m_max_key(0), m_little_endian(::little_endian()), m_device(_device)
     {
       m_device.set_binary_mode();
@@ -309,7 +309,7 @@ public:
       return m_little_endian;
     }
 
-  int get(void) throw(persistent_restore_failed)
+  int get(void) __THROW__(persistent_restore_failed)
     {
       int result = m_device.get();
       if (result < 0)
@@ -348,7 +348,7 @@ public:
       return m_callbacks.find(key) != m_callbacks.end();
     }
 
-  restore_context::callback_data lookup_type(unsigned short key) const throw(persistent_illegal_type)
+  restore_context::callback_data lookup_type(unsigned short key) const __THROW__(persistent_illegal_type)
     {
       callback_map::const_iterator found = m_callbacks.find(key);
       if (found == m_callbacks.end())
@@ -368,7 +368,7 @@ public:
       return m_interfaces.find(key) != m_interfaces.end();
     }
 
-  const persistent& lookup_interface(unsigned short key) const throw(persistent_illegal_type)
+  const persistent& lookup_interface(unsigned short key) const __THROW__(persistent_illegal_type)
     {
       interface_map::const_iterator found = m_interfaces.find(key);
       if (found == m_interfaces.end())
@@ -379,7 +379,7 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-restore_context::restore_context(const itext& _device) throw(persistent_restore_failed) : 
+restore_context::restore_context(const itext& _device) __THROW__(persistent_restore_failed) : 
   m_body(0)
 {
   m_body = new restore_context_body(_device);
@@ -408,7 +408,7 @@ bool restore_context::little_endian(void) const
   return m_body->little_endian();
 }
 
-int restore_context::get(void) throw(persistent_restore_failed)
+int restore_context::get(void) __THROW__(persistent_restore_failed)
 {
   DEBUG_ASSERT(m_body);
   return m_body->get();
@@ -438,7 +438,7 @@ bool restore_context::is_callback(unsigned short key) const
   return m_body->is_callback(key);
 }
 
-restore_context::callback_data restore_context::lookup_type(unsigned short key) const throw(persistent_illegal_type)
+restore_context::callback_data restore_context::lookup_type(unsigned short key) const __THROW__(persistent_illegal_type)
 {
   DEBUG_ASSERT(m_body);
   return m_body->lookup_type(key);
@@ -456,7 +456,7 @@ bool restore_context::is_interface(unsigned short key) const
   return m_body->is_interface(key);
 }
 
-const persistent& restore_context::lookup_interface(unsigned short key) const throw(persistent_illegal_type)
+const persistent& restore_context::lookup_interface(unsigned short key) const __THROW__(persistent_illegal_type)
 {
   DEBUG_ASSERT(m_body);
   return m_body->lookup_interface(key);
@@ -496,7 +496,7 @@ void restore_context::register_all(restore_context::installer _installer)
 // mind-numbingly stupid...). However, to be able to do anything at all, I've
 // had to assume that a char is 1 byte.
 
-static void dump_unsigned(dump_context& context, size_t bytes, unsigned char* data) throw(persistent_dump_failed)
+static void dump_unsigned(dump_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_dump_failed)
 {
   // first skip zero bytes - this may reduce the data to zero bytes long
   size_t i = bytes;
@@ -509,7 +509,7 @@ static void dump_unsigned(dump_context& context, size_t bytes, unsigned char* da
     context.put(data[INDEX(i)]);
 }
 
-static void dump_signed(dump_context& context, size_t bytes, unsigned char* data) throw(persistent_dump_failed)
+static void dump_signed(dump_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_dump_failed)
 {
   // first skip all-zero or all-one bytes but only if doing so does not change the sign
   size_t i = bytes;
@@ -532,7 +532,7 @@ static void dump_signed(dump_context& context, size_t bytes, unsigned char* data
     context.put(data[INDEX(i)]);
 }
 
-static void restore_unsigned(restore_context& context, size_t bytes, unsigned char* data) throw(persistent_restore_failed)
+static void restore_unsigned(restore_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_restore_failed)
 {
   // get the dumped size from the file
   size_t dumped_bytes = (size_t)context.get();
@@ -552,7 +552,7 @@ static void restore_unsigned(restore_context& context, size_t bytes, unsigned ch
   }
 }
 
-static void restore_signed(restore_context& context, size_t bytes, unsigned char* data) throw(persistent_restore_failed)
+static void restore_signed(restore_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_restore_failed)
 {
   // get the dumped size from the file
   size_t dumped_bytes = (size_t)context.get();
@@ -588,103 +588,103 @@ static void restore_signed(restore_context& context, size_t bytes, unsigned char
 // exported functions
 
 // bool is dumped and restored as an unsigned char
-void dump(dump_context& context, const bool& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const bool& data) __THROW__(persistent_dump_failed)
 {
   context.put((unsigned char)data);
 }
 
-void restore(restore_context& context, bool& data) throw(persistent_restore_failed)
+void restore(restore_context& context, bool& data) __THROW__(persistent_restore_failed)
 {
   data = context.get() != 0;
 }
 
 // char is dumped and restored as an unsigned char because the signedness of char is not defined and can vary
-void dump(dump_context& context, const char& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const char& data) __THROW__(persistent_dump_failed)
 {
   context.put((unsigned char)data);
 }
 
-void restore(restore_context& context, char& data) throw(persistent_restore_failed)
+void restore(restore_context& context, char& data) __THROW__(persistent_restore_failed)
 {
   data = (char)(unsigned char)context.get();
 }
 
-void dump(dump_context& context, const signed char& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const signed char& data) __THROW__(persistent_dump_failed)
 {
   context.put((unsigned char)data);
 }
 
-void restore(restore_context& context, signed char& data) throw(persistent_restore_failed)
+void restore(restore_context& context, signed char& data) __THROW__(persistent_restore_failed)
 {
   data = (signed char)(unsigned char)context.get();
 }
 
-void dump(dump_context& context, const unsigned char& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const unsigned char& data) __THROW__(persistent_dump_failed)
 {
   context.put((unsigned char)data);
 }
 
-void restore(restore_context& context, unsigned char& data) throw(persistent_restore_failed)
+void restore(restore_context& context, unsigned char& data) __THROW__(persistent_restore_failed)
 {
   data = (signed char)(unsigned char)context.get();
 }
 
-void dump(dump_context& context, const short& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const short& data) __THROW__(persistent_dump_failed)
 {
   dump_signed(context, sizeof(short), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, short& data) throw(persistent_restore_failed)
+void restore(restore_context& context, short& data) __THROW__(persistent_restore_failed)
 {
   restore_signed(context, sizeof(short),(unsigned char*)&data);
 }
 
-void dump(dump_context& context, const unsigned short& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const unsigned short& data) __THROW__(persistent_dump_failed)
 {
   dump_unsigned(context, sizeof(unsigned short), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, unsigned short& data) throw(persistent_restore_failed)
+void restore(restore_context& context, unsigned short& data) __THROW__(persistent_restore_failed)
 {
   restore_unsigned(context, sizeof(unsigned short),(unsigned char*)&data);
 }
 
-void dump(dump_context& context, const int& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const int& data) __THROW__(persistent_dump_failed)
 {
   dump_signed(context, sizeof(int), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, int& data) throw(persistent_restore_failed)
+void restore(restore_context& context, int& data) __THROW__(persistent_restore_failed)
 {
   restore_signed(context, sizeof(int),(unsigned char*)&data);
 }
 
-void dump(dump_context& context, const unsigned& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const unsigned& data) __THROW__(persistent_dump_failed)
 {
   dump_unsigned(context, sizeof(unsigned), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, unsigned& data) throw(persistent_restore_failed)
+void restore(restore_context& context, unsigned& data) __THROW__(persistent_restore_failed)
 {
   restore_unsigned(context, sizeof(unsigned),(unsigned char*)&data);
 }
 
-void dump(dump_context& context, const long& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const long& data) __THROW__(persistent_dump_failed)
 {
   dump_signed(context, sizeof(long), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, long& data) throw(persistent_restore_failed)
+void restore(restore_context& context, long& data) __THROW__(persistent_restore_failed)
 {
   restore_signed(context, sizeof(long),(unsigned char*)&data);
 }
 
-void dump(dump_context& context, const unsigned long& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const unsigned long& data) __THROW__(persistent_dump_failed)
 {
   dump_unsigned(context, sizeof(unsigned long), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, unsigned long& data) throw(persistent_restore_failed)
+void restore(restore_context& context, unsigned long& data) __THROW__(persistent_restore_failed)
 {
   restore_unsigned(context, sizeof(unsigned long),(unsigned char*)&data);
 }
@@ -698,7 +698,7 @@ void restore(restore_context& context, unsigned long& data) throw(persistent_res
 // the big-endian and little-endian argument applies to multi-word data so
 // this may need reworking by splitting into words and then bytes.
 
-static void dump_float(dump_context& context, size_t bytes, unsigned char* data) throw(persistent_dump_failed)
+static void dump_float(dump_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_dump_failed)
 {
   size_t i = bytes;
   // put the size
@@ -708,7 +708,7 @@ static void dump_float(dump_context& context, size_t bytes, unsigned char* data)
     context.put(data[INDEX(i)]);
 }
 
-static void restore_float(restore_context& context, size_t bytes, unsigned char* data) throw(persistent_restore_failed)
+static void restore_float(restore_context& context, size_t bytes, unsigned char* data) __THROW__(persistent_restore_failed)
 {
   // get the dumped size from the file
   size_t dumped_bytes = (size_t)context.get();
@@ -729,22 +729,22 @@ static void restore_float(restore_context& context, size_t bytes, unsigned char*
 ////////////////////////////////////////////////////////////////////////////////
 // exported functions which simply call the low-levl byte-dump and byte-restore routines above
 
-void dump(dump_context& context, const float& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const float& data) __THROW__(persistent_dump_failed)
 {
   dump_float(context, sizeof(float), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, float& data) throw(persistent_restore_failed)
+void restore(restore_context& context, float& data) __THROW__(persistent_restore_failed)
 {
   restore_float(context, sizeof(float), (unsigned char*)&data);
 }
 
-void dump(dump_context& context, const double& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const double& data) __THROW__(persistent_dump_failed)
 {
   dump_float(context, sizeof(double), (unsigned char*)&data);
 }
 
-void restore(restore_context& context, double& data) throw(persistent_restore_failed)
+void restore(restore_context& context, double& data) __THROW__(persistent_restore_failed)
 {
   restore_float(context, sizeof(double), (unsigned char*)&data);
 }
@@ -753,7 +753,7 @@ void restore(restore_context& context, double& data) throw(persistent_restore_fa
 // Null-terminated char arrays
 // Format: address [ size data ]
 
-void dump(dump_context& context, char*& data) throw(persistent_dump_failed)
+void dump(dump_context& context, char*& data) __THROW__(persistent_dump_failed)
 {
   // register the address and get the magic key for it
   std::pair<bool,unsigned> mapping = context.pointer_map(data);
@@ -769,7 +769,7 @@ void dump(dump_context& context, char*& data) throw(persistent_dump_failed)
   }
 }
 
-void restore(restore_context& context, char*& data) throw(persistent_restore_failed)
+void restore(restore_context& context, char*& data) __THROW__(persistent_restore_failed)
 {
   // destroy any previous contents
   if (data)
@@ -800,12 +800,12 @@ void restore(restore_context& context, char*& data) throw(persistent_restore_fai
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void dump(dump_context& context, const std::string& data) throw(persistent_dump_failed)
+void dump(dump_context& context, const std::string& data) __THROW__(persistent_dump_failed)
 {
   dump_basic_string(context, data);
 }
 
-void restore(restore_context& context, std::string& data) throw(persistent_restore_failed)
+void restore(restore_context& context, std::string& data) __THROW__(persistent_restore_failed)
 {
   restore_basic_string(context, data);
 }

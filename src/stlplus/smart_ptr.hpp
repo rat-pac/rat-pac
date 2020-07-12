@@ -24,6 +24,13 @@
 #include <map>
 #include <string>
 
+#if __cplusplus < 201103L
+#define __THROW__(x) throw(x)
+#else
+#define __THROW__(x)
+#endif
+
+//
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Simple pointer class
@@ -85,12 +92,12 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
@@ -98,8 +105,8 @@ public:
   // set the value
   void set_value(const T& data);
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
@@ -137,8 +144,8 @@ public:
   simple_ptr<T> copy(void) const;
 
   // persistence functions
-  void dump(dump_context& str) const throw(persistent_dump_failed);
-  void restore(restore_context& str) throw(persistent_restore_failed);
+  void dump(dump_context& str) const __THROW__(persistent_dump_failed);
+  void restore(restore_context& str) __THROW__(persistent_restore_failed);
 
 protected:
   T* m_pointer;
@@ -178,10 +185,10 @@ otext& print_simple_ptr(otext& str, const simple_ptr<T>& ptr, unsigned indent, s
 // so therefore the class T should have non-member dump/restore functions
 
 template<typename T>
-void dump_simple_ptr(dump_context& str, const simple_ptr<T>& data) throw(persistent_dump_failed);
+void dump_simple_ptr(dump_context& str, const simple_ptr<T>& data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_simple_ptr(restore_context& str, simple_ptr<T>& data) throw(persistent_restore_failed);
+void restore_simple_ptr(restore_context& str, simple_ptr<T>& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -245,12 +252,12 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
@@ -258,8 +265,8 @@ public:
   // set the value
   void set_value(const T& data);
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
@@ -297,8 +304,8 @@ public:
   simple_ptr_clone<T> copy(void) const;
 
   // persistence functions
-  void dump(dump_context& str) const throw(persistent_dump_failed);
-  void restore(restore_context& str) throw(persistent_restore_failed);
+  void dump(dump_context& str) const __THROW__(persistent_dump_failed);
+  void restore(restore_context& str) __THROW__(persistent_restore_failed);
 
 protected:
   T* m_pointer;
@@ -338,10 +345,10 @@ otext& print_simple_ptr_clone(otext& str, const simple_ptr_clone<T>& ptr, unsign
 // so therefore the class T should implement the persistent interface defined by the class persistent in persistent.hpp
 
 template<typename T>
-void dump_simple_ptr_clone(dump_context& str, const simple_ptr_clone<T>& data) throw(persistent_dump_failed);
+void dump_simple_ptr_clone(dump_context& str, const simple_ptr_clone<T>& data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_simple_ptr_clone(restore_context& str, simple_ptr_clone<T>& data) throw(persistent_restore_failed);
+void restore_simple_ptr_clone(restore_context& str, simple_ptr_clone<T>& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,19 +403,19 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
 
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
@@ -538,12 +545,12 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
@@ -551,8 +558,8 @@ public:
   // set the value
   void set_value(const T& data);
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
@@ -590,8 +597,8 @@ public:
   smart_ptr<T> copy(void) const;
 
   // persistence functions
-  void dump(dump_context& str) const throw(persistent_dump_failed);
-  void restore(restore_context& str) throw(persistent_restore_failed);
+  void dump(dump_context& str) const __THROW__(persistent_dump_failed);
+  void restore(restore_context& str) __THROW__(persistent_restore_failed);
 
 protected:
   smart_ptr_holder<T>* m_holder;
@@ -630,10 +637,10 @@ otext& print_smart_ptr(otext& str, const smart_ptr<T>& ptr, unsigned indent, std
 // so therefore the class T should have non-member dump/restore functions
 
 template<typename T>
-void dump_smart_ptr(dump_context& str, const smart_ptr<T>& data) throw(persistent_dump_failed);
+void dump_smart_ptr(dump_context& str, const smart_ptr<T>& data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_smart_ptr(restore_context& str, smart_ptr<T>& data) throw(persistent_restore_failed);
+void restore_smart_ptr(restore_context& str, smart_ptr<T>& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -697,12 +704,12 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
@@ -710,8 +717,8 @@ public:
   // set the value
   void set_value(const T& data);
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
@@ -749,8 +756,8 @@ public:
   smart_ptr_clone<T> copy(void) const;
 
   // persistence functions
-  void dump(dump_context& str) const throw(persistent_dump_failed);
-  void restore(restore_context& str) throw(persistent_restore_failed);
+  void dump(dump_context& str) const __THROW__(persistent_dump_failed);
+  void restore(restore_context& str) __THROW__(persistent_restore_failed);
 
 protected:
   smart_ptr_holder<T>* m_holder;
@@ -789,10 +796,10 @@ otext& print_smart_ptr_clone(otext& str, const smart_ptr_clone<T>& ptr, unsigned
 // so therefore the class T should implement the persistent interface defined by the class persistent in persistent.hpp
 
 template<typename T>
-void dump_smart_ptr_clone(dump_context& str, const smart_ptr_clone<T>& data) throw(persistent_dump_failed);
+void dump_smart_ptr_clone(dump_context& str, const smart_ptr_clone<T>& data) __THROW__(persistent_dump_failed);
 
 template<typename T>
-void restore_smart_ptr_clone(restore_context& str, smart_ptr_clone<T>& data) throw(persistent_restore_failed);
+void restore_smart_ptr_clone(restore_context& str, smart_ptr_clone<T>& data) __THROW__(persistent_restore_failed);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -847,19 +854,19 @@ public:
   // dereference operators and functions
 
   // dereference the smart pointer to get the object - use in the form *p1
-  T& operator*(void) throw(null_dereference);
-  const T& operator*(void) const throw(null_dereference);
+  T& operator*(void) __THROW__(null_dereference);
+  const T& operator*(void) const __THROW__(null_dereference);
 
   // used as a prefix to a member access to the contained object e.g. p1->print() calls T::print()
-  T* operator->(void) throw(null_dereference);
-  const T* operator->(void) const throw(null_dereference);
+  T* operator->(void) __THROW__(null_dereference);
+  const T* operator->(void) const __THROW__(null_dereference);
 
   //////////////////////////////////////////////////////////////////////////////
   // explicit function forms of the above assignment and dereference operators
 
   // get the value
-  T& value(void) throw(null_dereference);
-  const T& value(void) const throw(null_dereference);
+  T& value(void) __THROW__(null_dereference);
+  const T& value(void) const __THROW__(null_dereference);
 
   // set the pointer
   // deletes the previous pointer and adopts the passed pointer instead
