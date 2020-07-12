@@ -11,10 +11,10 @@ namespace RAT {
 struct pyhash
 {
   unsigned operator()(const std::string& s) const {
-    register int len;
-    register int full_len;
-    register unsigned char *p;
-    register long x;
+    int len;
+    int full_len;
+    unsigned char *p;
+    long x;
     
     full_len = len = s.size();
     p = (unsigned char *) s.c_str();
