@@ -25,7 +25,7 @@
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <G4VUserPhysicsList.hh>
 
-#if G4VERSION_NUMBER < 1030
+#if G4VERSION_NUMBER > 1012 && G4VERSION_NUMBER < 1030
 template<> G4VUPLData* G4VUPLSplitter<G4VUPLData>::offset = NULL;
 #endif
 
