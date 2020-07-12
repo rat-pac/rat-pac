@@ -75,7 +75,6 @@ ratapp_nomain = Builder(action=env['BUILDERS']['Program'].action,
 rootopts = SConscript('ROOT.scons')
 g4opts = SConscript('GEANT4.scons')
 arch = SConscript('ARCH.'+ROOTARCH)
-import ipdb;ipdb.set_trace()
 
 # If, for example, g4opts has "-std=c++98" and rootopts has "-std=c++11"
 # I need to decide who wins. Right now I just sort the clags...that will means
