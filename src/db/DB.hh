@@ -378,7 +378,7 @@ protected:
   }
   
   /** Set array field index in user plane, with table index. */
-  template <typename T> void RAT::DB::SetArrayIndex(const std::string &tblname, const std::string &index, const std::string &fieldname, size_t idx, const T &val) {
+  template <typename T> void RAT::DB::SetArrayIndex(const std::string &tblname, const std::string &index, const std::string &fieldname, size_t, const T &val) {
     DBTable *t = FindOrCreateTable(tblname, index, -1);
     DBLinkPtr p = GetLink(tblname,index); //This ensures we always grab either the previously set or default plane array without keeping track explicitly
     json::Value jval = p->Get<json::Value>(fieldname);

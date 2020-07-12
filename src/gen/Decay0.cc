@@ -13143,7 +13143,7 @@ void Decay0::tgold(float a,float b,TF1 &fb,float eps,int minmax,float&xextr,floa
 ///************************************************/
 complex<double> Decay0::cgamma(complex<double> z)
 {
-  complex<double> g,z0,z1;
+  complex<double> g;
   double x0=0.,q1=0.,q2=0.,x=0.,y=0.,th=0.,th1=0.,th2=0.;
   double g0=0.,gr=0.,gi=0.,gr1=0.,gi1=0.;
   double na=0.,t=0.,x1=0.,sr=0.,si=0.;
