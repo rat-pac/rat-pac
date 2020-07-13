@@ -20,11 +20,7 @@
 #include <set>
 #include <vector>
 #include <stdexcept>
-#if __cplusplus < 201103L
-#define __THROW__(x) throw(x)
-#else
-#define __THROW__(x)
-#endif
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Conversions of Integer types to string

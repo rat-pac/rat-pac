@@ -16,11 +16,6 @@
 #include <stdio.h>
 #include <string>
 
-#if __cplusplus < 201103L
-#define __THROW__(x) throw(x)
-#else
-#define __THROW__(x)
-#endif
 ////////////////////////////////////////////////////////////////////////////////
 // Exception thrown if an assertion fails
 

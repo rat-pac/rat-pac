@@ -21,11 +21,6 @@
 #include <string>
 #include <typeinfo>
 #include <stdexcept>
-#if __cplusplus < 201103L
-#define __THROW__(x) __THROW(x)
-#else
-#define __THROW__(x)
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // The format version number currently supported
