@@ -50,7 +50,7 @@ void PosGen_RegexFill::SetState(G4String regex) {
 }
 
 void PosGen_RegexFill::FindVolumes(G4LogicalVolume *mother, regex_t *re, vector<FillVolume> &found) {
-    for (int i = 0; i < mother->GetNoDaughters(); i++) {
+    for (size_t i = 0; i < (size_t)mother->GetNoDaughters(); i++) {
         G4VPhysicalVolume *daughterPhys = mother->GetDaughter(i);
         G4LogicalVolume *daughterLog = daughterPhys->GetLogicalVolume();
         // this projects from daughter to mother coordinates
@@ -65,7 +65,7 @@ void PosGen_RegexFill::FindVolumes(G4LogicalVolume *mother, regex_t *re, vector<
             G4VSolid *solid = daughterLog->GetSolid();
             //volume of parent+daughters needs to be corrected
             vol.solidVolume = GetVolume(solid);
-            for (int j = 0; j < daughterLog->GetNoDaughters(); j++) {
+            for (size_t j = 0; j < (size_t)daughterLog->GetNoDaughters(); j++) {
                 G4VPhysicalVolume *grandPhys = daughterLog->GetDaughter(j);
                 G4AffineTransform grandTransform(grandPhys->GetRotation(), grandPhys->GetTranslation());
                 G4VSolid *grandSolid = grandPhys->GetLogicalVolume()->GetSolid();

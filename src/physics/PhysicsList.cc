@@ -58,7 +58,7 @@ void PhysicsList::EnableThermalNeutronScattering() {
   G4HadronicProcess* n_elastic_process = NULL;
   G4ProcessVector* proc_vec = n_definition->GetProcessManager()
     ->GetProcessList();
-  for (int i = 0; i < proc_vec->size(); i++) {
+  for (size_t i = 0; i < (size_t)proc_vec->size(); i++) {
     G4VProcess* proc = proc_vec->operator[](i);
     if (proc->GetProcessSubType() == fHadronElastic
       && proc->GetProcessType() == fHadronic)

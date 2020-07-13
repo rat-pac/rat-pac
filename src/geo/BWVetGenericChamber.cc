@@ -210,7 +210,7 @@ G4bool BWVetGenericChamber::ProcessHits(G4Step*aStep,G4TouchableHistory* /*ROhis
 
   
   if (_hitsCollection) {
-    for(G4int i=0;i<_hitsCollection->entries();i++)
+    for(G4int i=0;i<(G4int)_hitsCollection->entries();i++)
       {
 // 	G4cout << "  * BWVetGenericChamber::ProcessHits checking hit " 
 // 	       << i + 1
