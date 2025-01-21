@@ -1,3 +1,7 @@
+# ⚠️ This repository is archived
+
+**Please see `ratpac-two` at https://github.com/rat-pac/ratpac-two for the latest version of RAT-PAC.**
+
 RAT (is an Analysis Tool), Public Edition
 -----------------------------------------
 RAT is a simulation and analysis package built with GEANT4, ROOT, and C++,
